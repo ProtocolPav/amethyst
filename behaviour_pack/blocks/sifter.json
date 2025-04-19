@@ -1,0 +1,28 @@
+{
+  "format_version": "1.21.70",
+  "minecraft:block": {
+    "description": {
+      "identifier": "amethyst:sifter",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:geometry": "geometry.sifter",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "sifter",
+          "render_method": "alpha_test"
+        }
+      },
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 1.5
+      },
+      "minecraft:destructible_by_explosion": {
+        "explosion_resistance": 2.0
+      },
+      "minecraft:map_color": "#8B4513",
+      "minecraft:light_dampening": 15
+    }
+  }
+}

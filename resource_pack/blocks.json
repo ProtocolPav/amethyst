@@ -19,5 +19,9 @@
 	"amethyst:everthorn_e": {
 		"textures": "everthorn_e",
 		"sound": "amethyst"
+	},
+	"amethyst:sifter": {
+		"textures": "sifter",
+		"sound": "wood"
 	}
 }

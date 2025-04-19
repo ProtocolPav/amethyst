@@ -21,6 +21,9 @@
 		},
 		"everthorn_e": {
 			"textures": "textures/blocks/everthorn_e.png"
+		},
+		"sifter": {
+			"textures": "textures/blocks/sifter.png"
 		}
 	}
 }
