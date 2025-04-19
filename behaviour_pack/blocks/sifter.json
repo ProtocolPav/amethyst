@@ -5,6 +5,9 @@
       "identifier": "amethyst:sifter",
       "menu_category": {
         "category": "construction"
+      },
+      "states": {
+        "amethyst:sifting": [false, true]
       }
     },
     "components": {
@@ -22,7 +25,14 @@
         "explosion_resistance": 2.0
       },
       "minecraft:map_color": "#8B4513",
-      "minecraft:light_dampening": 15
+      "minecraft:light_dampening": 15,
+      "minecraft:custom_components": [
+        "amethyst:sift"
+      ],
+      "minecraft:tick": {
+        "interval_range": [2, 2],
+        "looping": true
+      }
     }
   }
 }
