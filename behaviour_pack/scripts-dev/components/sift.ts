@@ -22,7 +22,7 @@ export default function load_sift_component() {
 
     const LOOT_TABLE = {
         "minecraft:dirt": [
-            {item: MinecraftItemTypes.Sand}
+            {item: MinecraftItemTypes.Sand, amount: 1, }
         ]
     }
 
