@@ -18,7 +18,7 @@
           "min": "easy"
         },
         "minecraft:weight": {
-          "default": 100
+          "default": 40
         },
         "minecraft:herd": {
           "min_size": 2,
