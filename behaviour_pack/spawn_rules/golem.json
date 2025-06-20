@@ -11,7 +11,7 @@
         "minecraft:biome_filter": {
           "test": "has_biome_tag",
           "operator": "==",
-          "value": "end"
+          "value": "the_end"
         },
         "minecraft:spawns_above_ground": {},
         "minecraft:difficulty_filter": {
