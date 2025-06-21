@@ -5,12 +5,9 @@ import {
     EntityComponentTypes,
     EquipmentSlot,
     TicksPerSecond,
-    ItemComponentTypes,
-    world
+    ItemComponentTypes
 } from "@minecraft/server";
 import utils from "../utils";
-import api from "../api";
-import {WorldCache} from "../api/sacrifice";
 
 type playerName = string;
 type timeoutID = number;
@@ -33,8 +30,6 @@ export default function load_altar_component(guild_id: string) {
             const playerName = event.player.name;
             const mainhand = event.player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand);
 
-            const border = WorldCache.world
-
             if (mainhand && !banned_gamertags.includes(playerName)) {
                 if (mainhand.amount == 1) {
                     event.player.getComponent(EntityComponentTypes.Equippable)?.setEquipment(EquipmentSlot.Mainhand);
@@ -46,50 +41,16 @@ export default function load_altar_component(guild_id: string) {
                 event.dimension.playSound("random.pop", event.player.location, {volume: 0.5})
 
                 try {
-                    const sacrificial_item = await api.Item.get_item(mainhand.typeId)
-                    sacrificial_item.current_uses += 1
                     let modifier = 0
-
-                    // Enchantment Modifier
-                    let enchantment_levels = 0
-                    let enchantments = 0
-                    mainhand.getComponent(ItemComponentTypes.Enchantable)?.getEnchantments().forEach(enchantment => {
-                        enchantment_levels += enchantment.level
-                        enchantments += 1
-                    })
-
-                    modifier += (enchantment_levels * enchantments * 0.3) / 100 + (mainhand.nameTag ? 0.1 : 0)
-
-                    // Damage Modifier
-                    const durability = mainhand.getComponent(ItemComponentTypes.Durability)
-                    if (durability) {
-                        modifier -= durability.damage / durability.maxDurability
-                    }
-
-                    // Compute New Block Value
-                    const original_block_value = sacrificial_item.value * (1 + modifier)
-
-                    // Depreciate Block Value
-                    const log = Math.exp(-sacrificial_item.depreciation * 0.5 * Math.log(sacrificial_item.current_uses))
-                    const weight = sacrificial_item.current_uses / sacrificial_item.max_uses
-                    const linear = 1 - weight
-
-                    const block_value = original_block_value * ((1 - weight) * log + weight * linear)
-
-                    // Update APIs
-                    await sacrificial_item.update_item()
-                    border.end_border += block_value
-                    await border.update_world()
-                    // Reloads the world into the world cache
-                    await WorldCache.load_world(border.guild_id)
+                    const block_value = 10
 
                     const total_value = sacrificeTotals.get(playerName)?.val
                     const total_original_value = sacrificeTotals.get(playerName)?.orig
 
                     if (total_value && total_original_value) {
-                        sacrificeTotals.set(playerName, {val: block_value + total_value, orig: original_block_value + total_original_value})
+                        sacrificeTotals.set(playerName, {val: block_value + total_value, orig: 10})
                     } else {
-                        sacrificeTotals.set(playerName, {val: block_value, orig: original_block_value})
+                        sacrificeTotals.set(playerName, {val: block_value, orig: 10})
                     }
 
                     // Cancel any existing timeout
@@ -143,7 +104,7 @@ export default function load_altar_component(guild_id: string) {
             else {
                 ambient(event);
 
-                const message = utils.AltarMessage.random_info(Math.round(border.end_border))
+                const message = utils.AltarMessage.random_info(1434)
                 utils.commands.send_message(
                     event.dimension.id,
                     playerName,
