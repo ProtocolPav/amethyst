@@ -6,7 +6,7 @@ export default function load_glitch_component() {
     function glitch(event : BlockComponentTickEvent) {
         if (Math.random() < 0.07 && event.block.isValid) {
             const location = event.block.location;
-            const radius = 20;
+            const radius = 18;
 
             const glitches_type = [
                 utils.commands.noise_glitch,
@@ -17,10 +17,15 @@ export default function load_glitch_component() {
 
             const glitch = glitches_type[Math.floor(Math.random() * glitches_type.length)]
 
-            event.block.dimension.getPlayers({location: location, maxDistance: radius})
-                .forEach((player: Player) => {
+            const players = event.block.dimension.getPlayers({location: location, maxDistance: radius})
+
+            if (players.length === 0) {
+                event.block.setType('minecraft:air')
+            } else {
+                players.forEach((player: Player) => {
                     glitch(player)
                 })
+            }
         }
     }
 

@@ -1,0 +1,32 @@
+{
+    "format_version": "1.21.40",
+    "minecraft:block": {
+        "description": {
+            "identifier": "amethyst:draconic_heart",
+            "menu_category": {
+                "category": "nature",
+                "is_hidden_in_commands": false
+            }
+        },
+        "components": {
+            "minecraft:geometry": "geometry.draconic_heart",
+            "minecraft:material_instances": {
+                "*": {
+                    "texture": "draconic_heart",
+                    "render_method": "opaque"
+                }
+            },
+            "minecraft:destructible_by_mining": {
+                "seconds_to_destroy": 4.5
+            },
+            "minecraft:display_name": "Draconic Heart",
+            "minecraft:custom_components": [
+                "amethyst:heal_dragon"
+            ],
+            "minecraft:tick": {
+                "interval_range": [20, 20],
+                "looping": true
+            }
+        }
+    }
+}

@@ -10,12 +10,15 @@ function do_glitch() {
         utils.commands.effect_glitch
     ]
 
-    if (random <= 0.2) {
+    if (random <= 0.27) {
         const glitch = glitches_type[Math.floor(Math.random() * glitches_type.length)]
-        console.log(`[Loops] Doing Glitches: ${glitch}`)
         for (const player of world.getAllPlayers()) {
             glitch(player)
-            player.sendMessage('§oWhat was that?')
+            player.sendMessage('[You whisper to yourself] §oWhat was that?')
+
+            if (Math.random() < 0.4) {
+                utils.commands.place_glitch_block(player)
+            }
         }
     }
 }

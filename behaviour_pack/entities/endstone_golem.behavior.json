@@ -1,5 +1,5 @@
 {
-	"format_version": "1.13.0",
+	"format_version": "1.21.60",
 	"minecraft:entity": {
 		"description": {
 			"identifier": "amethyst:endstone_golem",
@@ -8,35 +8,9 @@
 			"is_summonable": true,
 			"is_experimental": false
 		},
-		"component_groups": {
-			"minecraft:player_created": {
-				"minecraft:behavior.hurt_by_target": {
-					"priority": 2,
-					"entity_types": {
-						"filters": {
-							"all_of": [
-								{
-									"test": "is_family",
-									"subject": "other",
-									"operator": "!=",
-									"value": "player"
-								},
-								{
-									"test": "is_family",
-									"subject": "other",
-									"operator": "!=",
-									"value": "end"
-								}
-							]
-						}
-					}
-				}
-			}
-			
-		},
 		"components": {
 			"minecraft:type_family": {
-				"family": ["enderman", "mob","monster","end"]
+				"family": ["enderman", "mob", "monster", "end"]
 			},
 			"minecraft:nameable": {},
 			"minecraft:collision_box": {
@@ -47,8 +21,8 @@
 				"table": "loot_tables/entities/endstone_golem.json"
 			},
 			"minecraft:health": {
-				"value": 80,
-				"max": 80
+				"value": 60,
+				"max": 60
 			},
 			"minecraft:hurt_on_condition": {
 				"damage_conditions": [
@@ -77,15 +51,21 @@
 			"minecraft:can_climb": {},
 			"minecraft:attack": {
 				"damage": {
-					"range_min": 4,
-					"range_max": 7.5
+					"range_min": 3,
+					"range_max": 6
+				},
+				"knockback": {
+					"horizontal_strength": 0.2,
+					"vertical_strength": 11.5
 				}
 			},
 			"minecraft:damage_sensor": {
-				"triggers": {
-					"cause": "fall",
-					"deals_damage": false
-				}
+				"triggers": [
+					{
+						"cause": "fall",
+						"deals_damage": false
+					}
+				]
 			},
 			"minecraft:knockback_resistance": {
 				"value": 1
@@ -98,7 +78,6 @@
 			"minecraft:balloonable": {
 				"mass": 2
 			},
-			
 			"minecraft:behavior.target_when_pushed": {
 				"priority": 1,
 				"percent_chance": 5,
@@ -131,66 +110,57 @@
 				"speed_multiplier": 0.9,
 				"within_radius": 32
 			},
-			
 			"minecraft:behavior.summon_entity": {
-        "priority": 1,
-
-        "summon_choices": [
-          {
-            "min_activation_range": 0.0,
-            "max_activation_range": 5.0,
-            "cooldown_time": 6.0,
-            "weight": 3,
-            "cast_duration": 0.5,
-            "particle_color": "#be00ef",
-            "start_sound_event": "cast.spell",
-            "sequence": [
-              {
-                "shape": "circle",
-                "target": "self",
-                "base_delay": 1.0,
-                "delay_per_summon": 0.0,
-                "num_entities_spawned": 8,
-                "entity_type": "minecraft:evocation_fang",
-                "size": 4,
-                "entity_lifespan": 2,
-                "sound_event": "prepare.attack"
-              },
-              {
-                "shape": "circle",
-                "target": "self",
-                "base_delay": 0.15,
-                "delay_per_summon": 0.0,
-                "num_entities_spawned": 8,
-                "entity_type": "minecraft:evocation_fang",
-                "size": 4,
-                "entity_lifespan": 2
-              }
-            ]
-          },
-          {
-            "min_activation_range": 10.0,
-            "weight": 3,
-            "cooldown_time": 5.0,
-            "cast_duration": 0.5,
-            "particle_color": "#be00ef",
-            "start_sound_event": "cast.spell",
-            "sequence": [
-              {
-                "shape": "line",
-                "target": "self",
-                "base_delay": 1.0,
-                "delay_per_summon": 0.05,
-                "num_entities_spawned": 16,
-                "entity_type": "minecraft:evocation_fang",
-                "size": 20,
-                "entity_lifespan": 2
-              }
-            ]
-          }
-        ]
-      } ,
-		
+				"priority": 1,
+				"summon_choices": [
+					{
+						"min_activation_range": 0.0,
+						"max_activation_range": 6.0,
+						"cooldown_time": 10.0,
+						"weight": 3,
+						"cast_duration": 1.0,
+						"particle_color": "#be00ef",
+						"start_sound_event": "cast.spell",
+						"sequence": [
+							{
+								"shape": "circle",
+								"target": "self",
+								"particle_type": "minecraft:portal",
+								"particle_color": "#be00ef",
+								"base_delay": 1.0,
+								"delay_per_summon": 0.0,
+								"num_entities_spawned": 6,
+								"entity_type": "minecraft:evocation_fang",
+								"size": 6,
+								"entity_lifespan": 2,
+								"sound_event": "prepare.attack"
+							}
+						]
+					},
+					{
+						"min_activation_range": 8.0,
+						"weight": 3,
+						"cooldown_time": 12.0,
+						"cast_duration": 1.0,
+						"particle_color": "#be00ef",
+						"start_sound_event": "cast.spell",
+						"sequence": [
+							{
+								"shape": "line",
+								"target": "self",
+								"particle_type": "minecraft:portal",
+								"particle_color": "#be00ef",
+								"base_delay": 1.0,
+								"delay_per_summon": 0.1,
+								"num_entities_spawned": 12,
+								"entity_type": "minecraft:evocation_fang",
+								"size": 10,
+								"entity_lifespan": 2
+							}
+						]
+					}
+				]
+			},
 			"minecraft:behavior.random_stroll": {
 				"priority": 6,
 				"speed_multiplier": 0.6,
@@ -217,36 +187,34 @@
 									"subject": "other",
 									"value": "player"
 								}
-							
 							]
 						},
-						"max_dist":16
+						"max_dist": 16
 					}
-					
-				
 				]
 			},
 			"minecraft:behavior.hurt_by_target": {
 				"priority": 2,
-				"entity_types": {
-					"filters": {
-						"all_of":[
-							{
-						"test": "is_family",
-						"subject": "other",
-						"operator": "!=",
-						"value": "dragon"
-					},
-					
+				"entity_types": [
 					{
-						"test": "is_family",
-						"subject": "other",
-						"operator": "!=",
-						"value": "end"
+						"filters": {
+							"all_of": [
+								{
+									"test": "is_family",
+									"subject": "other",
+									"operator": "!=",
+									"value": "dragon"
+								},
+								{
+									"test": "is_family",
+									"subject": "other",
+									"operator": "!=",
+									"value": "end"
+								}
+							]
+						}
 					}
-					]
-				}
-				}
+				]
 			},
 			"minecraft:persistent": {},
 			"minecraft:physics": {},
@@ -259,8 +227,6 @@
 			},
 			"minecraft:conditional_bandwidth_optimization": {}
 		},
-		"events": {
-			
-		}
+		"component_groups": {}
 	}
 }

@@ -24,6 +24,9 @@
 		},
 		"everthorn_e": {
 			"textures": "textures/blocks/everthorn_e.png"
+		},
+		"draconic_heart": {
+			"textures": "textures/blocks/draconic_heart.png"
 		}
 	}
 }

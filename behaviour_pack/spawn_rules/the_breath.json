@@ -1,0 +1,30 @@
+{
+  "format_version": "1.16.0",
+  "minecraft:spawn_rules": {
+    "description": {
+      "identifier": "amethyst:the_breath",
+      "population_control": "monster"
+    },
+    "conditions": [
+      {
+        "minecraft:spawns_on_surface": {},
+        "minecraft:biome_filter": {
+          "test": "has_biome_tag",
+          "operator": "==",
+          "value": "the_end"
+        },
+        "minecraft:spawns_above_ground": {},
+        "minecraft:difficulty_filter": {
+          "min": "easy"
+        },
+        "minecraft:weight": {
+          "default": 1
+        },
+        "minecraft:herd": {
+          "min_size": 2,
+          "max_size": 5
+        }
+      }
+    ]
+  }
+}

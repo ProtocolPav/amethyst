@@ -1,4 +1,10 @@
-import {BlockComponentPlayerDestroyEvent, BlockComponentRandomTickEvent, system, TicksPerSecond, world} from "@minecraft/server";
+import {
+    BlockComponentPlayerBreakEvent,
+    BlockComponentRandomTickEvent,
+    system,
+    TicksPerSecond,
+    world
+} from "@minecraft/server";
 import {MinecraftBlockTypes, MinecraftEffectTypes, MinecraftEntityTypes} from "@minecraft/vanilla-data";
 
 
@@ -16,7 +22,7 @@ export default function load_fungus_spreading_component() {
         }
     }
 
-    function fungus_destroy(event : BlockComponentPlayerDestroyEvent) {
+    function fungus_destroy(event : BlockComponentPlayerBreakEvent) {
         const random_choice = Math.random()
         const mobs = [
             MinecraftEntityTypes.CaveSpider,
@@ -69,7 +75,7 @@ export default function load_fungus_spreading_component() {
                 onRandomTick(event) {
                     fungus_spread(event)
                 },
-                onPlayerDestroy(event) {
+                onPlayerBreak(event) {
                     fungus_destroy(event)
                 }
             }

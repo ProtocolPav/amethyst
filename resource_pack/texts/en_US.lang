@@ -11,6 +11,3 @@ entity.amethyst:the_breath.name=The Breath
 item.spawn_egg.entity.amethyst:the_breath.name=Spawn The Breath
 entity.amethyst:endstone_golem.name=Endstone Golem
 item.spawn_egg.entity.amethyst:endstone_golem.name=Spawn Endstone Golem
-
-entity.amethyst:festival_trader.name=Maximus
-item.spawn_egg.entity.amethyst:festival_trader.name=Spawn Maximus
