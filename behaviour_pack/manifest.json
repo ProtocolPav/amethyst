@@ -11,7 +11,7 @@
 		"description": "Required pack for Amethyst's full functionality",
 		"min_engine_version": [ 1, 21, 70 ],
 		"uuid": "5f5ab0ea-79f8-4d1c-b283-0b7d05a538a9",
-		"version": [ 2, 6, 102 ]
+		"version": [ 2, 7, 555 ]
 	},
 	"modules": [
 		{
@@ -25,15 +25,15 @@
 	"dependencies": [
 		{
 			"uuid": "1ced0423-4bcf-4970-9749-b047e89d365c",
-			"version": [ 2, 6, 0 ]
+			"version": [ 2, 7, 555 ]
 		},
 		{
 			"module_name": "@minecraft/server",
-			"version": "2.0.0-beta"
+			"version": "2.1.0-beta"
 		},
 		{
 			"module_name": "@minecraft/server-ui",
-			"version": "2.0.0-beta"
+			"version": "2.1.0-beta"
 		}
 	]
 }
