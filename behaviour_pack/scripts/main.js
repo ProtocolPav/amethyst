@@ -1,5 +1,8 @@
 // behaviour_pack/scripts-dev/components/fungus_spread.ts
-import { system, TicksPerSecond } from "@minecraft/server";
+import {
+  system,
+  TicksPerSecond
+} from "@minecraft/server";
 
 // node_modules/@minecraft/vanilla-data/lib/index.js
 var MinecraftBiomeTypes = ((MinecraftBiomeTypes2) => {
@@ -237,7 +240,9 @@ var MinecraftBlockTypes = ((MinecraftBlockTypes2) => {
   MinecraftBlockTypes2["BubbleCoralFan"] = "minecraft:bubble_coral_fan";
   MinecraftBlockTypes2["BubbleCoralWallFan"] = "minecraft:bubble_coral_wall_fan";
   MinecraftBlockTypes2["BuddingAmethyst"] = "minecraft:budding_amethyst";
+  MinecraftBlockTypes2["Bush"] = "minecraft:bush";
   MinecraftBlockTypes2["Cactus"] = "minecraft:cactus";
+  MinecraftBlockTypes2["CactusFlower"] = "minecraft:cactus_flower";
   MinecraftBlockTypes2["Cake"] = "minecraft:cake";
   MinecraftBlockTypes2["Calcite"] = "minecraft:calcite";
   MinecraftBlockTypes2["CalibratedSculkSensor"] = "minecraft:calibrated_sculk_sensor";
@@ -447,6 +452,7 @@ var MinecraftBlockTypes = ((MinecraftBlockTypes2) => {
   MinecraftBlockTypes2["DoubleCutCopperSlab"] = "minecraft:double_cut_copper_slab";
   MinecraftBlockTypes2["DragonEgg"] = "minecraft:dragon_egg";
   MinecraftBlockTypes2["DragonHead"] = "minecraft:dragon_head";
+  MinecraftBlockTypes2["DriedGhast"] = "minecraft:dried_ghast";
   MinecraftBlockTypes2["DriedKelpBlock"] = "minecraft:dried_kelp_block";
   MinecraftBlockTypes2["DripstoneBlock"] = "minecraft:dripstone_block";
   MinecraftBlockTypes2["Dropper"] = "minecraft:dropper";
@@ -601,6 +607,7 @@ var MinecraftBlockTypes = ((MinecraftBlockTypes2) => {
   MinecraftBlockTypes2["FireCoralBlock"] = "minecraft:fire_coral_block";
   MinecraftBlockTypes2["FireCoralFan"] = "minecraft:fire_coral_fan";
   MinecraftBlockTypes2["FireCoralWallFan"] = "minecraft:fire_coral_wall_fan";
+  MinecraftBlockTypes2["FireflyBush"] = "minecraft:firefly_bush";
   MinecraftBlockTypes2["FletchingTable"] = "minecraft:fletching_table";
   MinecraftBlockTypes2["FlowerPot"] = "minecraft:flower_pot";
   MinecraftBlockTypes2["FloweringAzalea"] = "minecraft:flowering_azalea";
@@ -737,6 +744,7 @@ var MinecraftBlockTypes = ((MinecraftBlockTypes2) => {
   MinecraftBlockTypes2["LargeAmethystBud"] = "minecraft:large_amethyst_bud";
   MinecraftBlockTypes2["LargeFern"] = "minecraft:large_fern";
   MinecraftBlockTypes2["Lava"] = "minecraft:lava";
+  MinecraftBlockTypes2["LeafLitter"] = "minecraft:leaf_litter";
   MinecraftBlockTypes2["Lectern"] = "minecraft:lectern";
   MinecraftBlockTypes2["Lever"] = "minecraft:lever";
   MinecraftBlockTypes2["LightBlock0"] = "minecraft:light_block_0";
@@ -1092,6 +1100,7 @@ var MinecraftBlockTypes = ((MinecraftBlockTypes2) => {
   MinecraftBlockTypes2["SeaLantern"] = "minecraft:sea_lantern";
   MinecraftBlockTypes2["SeaPickle"] = "minecraft:sea_pickle";
   MinecraftBlockTypes2["Seagrass"] = "minecraft:seagrass";
+  MinecraftBlockTypes2["ShortDryGrass"] = "minecraft:short_dry_grass";
   MinecraftBlockTypes2["ShortGrass"] = "minecraft:short_grass";
   MinecraftBlockTypes2["Shroomlight"] = "minecraft:shroomlight";
   MinecraftBlockTypes2["SilverGlazedTerracotta"] = "minecraft:silver_glazed_terracotta";
@@ -1188,6 +1197,7 @@ var MinecraftBlockTypes = ((MinecraftBlockTypes2) => {
   MinecraftBlockTypes2["SuspiciousGravel"] = "minecraft:suspicious_gravel";
   MinecraftBlockTypes2["SuspiciousSand"] = "minecraft:suspicious_sand";
   MinecraftBlockTypes2["SweetBerryBush"] = "minecraft:sweet_berry_bush";
+  MinecraftBlockTypes2["TallDryGrass"] = "minecraft:tall_dry_grass";
   MinecraftBlockTypes2["TallGrass"] = "minecraft:tall_grass";
   MinecraftBlockTypes2["Target"] = "minecraft:target";
   MinecraftBlockTypes2["TintedGlass"] = "minecraft:tinted_glass";
@@ -1315,6 +1325,7 @@ var MinecraftBlockTypes = ((MinecraftBlockTypes2) => {
   MinecraftBlockTypes2["WhiteTerracotta"] = "minecraft:white_terracotta";
   MinecraftBlockTypes2["WhiteTulip"] = "minecraft:white_tulip";
   MinecraftBlockTypes2["WhiteWool"] = "minecraft:white_wool";
+  MinecraftBlockTypes2["Wildflowers"] = "minecraft:wildflowers";
   MinecraftBlockTypes2["WitherRose"] = "minecraft:wither_rose";
   MinecraftBlockTypes2["WitherSkeletonSkull"] = "minecraft:wither_skeleton_skull";
   MinecraftBlockTypes2["WoodenButton"] = "minecraft:wooden_button";
@@ -1335,6 +1346,7 @@ var MinecraftBlockTypes = ((MinecraftBlockTypes2) => {
   return MinecraftBlockTypes2;
 })(MinecraftBlockTypes || {});
 var MinecraftCameraPresetsTypes = ((MinecraftCameraPresetsTypes2) => {
+  MinecraftCameraPresetsTypes2["ControlSchemeCamera"] = "minecraft:control_scheme_camera";
   MinecraftCameraPresetsTypes2["FirstPerson"] = "minecraft:first_person";
   MinecraftCameraPresetsTypes2["FixedBoom"] = "minecraft:fixed_boom";
   MinecraftCameraPresetsTypes2["FollowOrbit"] = "minecraft:follow_orbit";
@@ -1357,44 +1369,44 @@ var MinecraftDimensionTypes = ((MinecraftDimensionTypes2) => {
   MinecraftDimensionTypes2["TheEnd"] = "minecraft:the_end";
   return MinecraftDimensionTypes2;
 })(MinecraftDimensionTypes || {});
-var MinecraftEffectTypes = ((MinecraftEffectTypes2) => {
-  MinecraftEffectTypes2["Absorption"] = "minecraft:absorption";
-  MinecraftEffectTypes2["BadOmen"] = "minecraft:bad_omen";
-  MinecraftEffectTypes2["Blindness"] = "minecraft:blindness";
-  MinecraftEffectTypes2["ConduitPower"] = "minecraft:conduit_power";
-  MinecraftEffectTypes2["Darkness"] = "minecraft:darkness";
-  MinecraftEffectTypes2["FatalPoison"] = "minecraft:fatal_poison";
-  MinecraftEffectTypes2["FireResistance"] = "minecraft:fire_resistance";
-  MinecraftEffectTypes2["Haste"] = "minecraft:haste";
-  MinecraftEffectTypes2["HealthBoost"] = "minecraft:health_boost";
-  MinecraftEffectTypes2["Hunger"] = "minecraft:hunger";
-  MinecraftEffectTypes2["Infested"] = "minecraft:infested";
-  MinecraftEffectTypes2["InstantDamage"] = "minecraft:instant_damage";
-  MinecraftEffectTypes2["InstantHealth"] = "minecraft:instant_health";
-  MinecraftEffectTypes2["Invisibility"] = "minecraft:invisibility";
-  MinecraftEffectTypes2["JumpBoost"] = "minecraft:jump_boost";
-  MinecraftEffectTypes2["Levitation"] = "minecraft:levitation";
-  MinecraftEffectTypes2["MiningFatigue"] = "minecraft:mining_fatigue";
-  MinecraftEffectTypes2["Nausea"] = "minecraft:nausea";
-  MinecraftEffectTypes2["NightVision"] = "minecraft:night_vision";
-  MinecraftEffectTypes2["Oozing"] = "minecraft:oozing";
-  MinecraftEffectTypes2["Poison"] = "minecraft:poison";
-  MinecraftEffectTypes2["RaidOmen"] = "minecraft:raid_omen";
-  MinecraftEffectTypes2["Regeneration"] = "minecraft:regeneration";
-  MinecraftEffectTypes2["Resistance"] = "minecraft:resistance";
-  MinecraftEffectTypes2["Saturation"] = "minecraft:saturation";
-  MinecraftEffectTypes2["SlowFalling"] = "minecraft:slow_falling";
-  MinecraftEffectTypes2["Slowness"] = "minecraft:slowness";
-  MinecraftEffectTypes2["Speed"] = "minecraft:speed";
-  MinecraftEffectTypes2["Strength"] = "minecraft:strength";
-  MinecraftEffectTypes2["TrialOmen"] = "minecraft:trial_omen";
-  MinecraftEffectTypes2["VillageHero"] = "minecraft:village_hero";
-  MinecraftEffectTypes2["WaterBreathing"] = "minecraft:water_breathing";
-  MinecraftEffectTypes2["Weakness"] = "minecraft:weakness";
-  MinecraftEffectTypes2["Weaving"] = "minecraft:weaving";
-  MinecraftEffectTypes2["WindCharged"] = "minecraft:wind_charged";
-  MinecraftEffectTypes2["Wither"] = "minecraft:wither";
-  return MinecraftEffectTypes2;
+var MinecraftEffectTypes = ((MinecraftEffectTypes22) => {
+  MinecraftEffectTypes22["Absorption"] = "minecraft:absorption";
+  MinecraftEffectTypes22["BadOmen"] = "minecraft:bad_omen";
+  MinecraftEffectTypes22["Blindness"] = "minecraft:blindness";
+  MinecraftEffectTypes22["ConduitPower"] = "minecraft:conduit_power";
+  MinecraftEffectTypes22["Darkness"] = "minecraft:darkness";
+  MinecraftEffectTypes22["FatalPoison"] = "minecraft:fatal_poison";
+  MinecraftEffectTypes22["FireResistance"] = "minecraft:fire_resistance";
+  MinecraftEffectTypes22["Haste"] = "minecraft:haste";
+  MinecraftEffectTypes22["HealthBoost"] = "minecraft:health_boost";
+  MinecraftEffectTypes22["Hunger"] = "minecraft:hunger";
+  MinecraftEffectTypes22["Infested"] = "minecraft:infested";
+  MinecraftEffectTypes22["InstantDamage"] = "minecraft:instant_damage";
+  MinecraftEffectTypes22["InstantHealth"] = "minecraft:instant_health";
+  MinecraftEffectTypes22["Invisibility"] = "minecraft:invisibility";
+  MinecraftEffectTypes22["JumpBoost"] = "minecraft:jump_boost";
+  MinecraftEffectTypes22["Levitation"] = "minecraft:levitation";
+  MinecraftEffectTypes22["MiningFatigue"] = "minecraft:mining_fatigue";
+  MinecraftEffectTypes22["Nausea"] = "minecraft:nausea";
+  MinecraftEffectTypes22["NightVision"] = "minecraft:night_vision";
+  MinecraftEffectTypes22["Oozing"] = "minecraft:oozing";
+  MinecraftEffectTypes22["Poison"] = "minecraft:poison";
+  MinecraftEffectTypes22["RaidOmen"] = "minecraft:raid_omen";
+  MinecraftEffectTypes22["Regeneration"] = "minecraft:regeneration";
+  MinecraftEffectTypes22["Resistance"] = "minecraft:resistance";
+  MinecraftEffectTypes22["Saturation"] = "minecraft:saturation";
+  MinecraftEffectTypes22["SlowFalling"] = "minecraft:slow_falling";
+  MinecraftEffectTypes22["Slowness"] = "minecraft:slowness";
+  MinecraftEffectTypes22["Speed"] = "minecraft:speed";
+  MinecraftEffectTypes22["Strength"] = "minecraft:strength";
+  MinecraftEffectTypes22["TrialOmen"] = "minecraft:trial_omen";
+  MinecraftEffectTypes22["VillageHero"] = "minecraft:village_hero";
+  MinecraftEffectTypes22["WaterBreathing"] = "minecraft:water_breathing";
+  MinecraftEffectTypes22["Weakness"] = "minecraft:weakness";
+  MinecraftEffectTypes22["Weaving"] = "minecraft:weaving";
+  MinecraftEffectTypes22["WindCharged"] = "minecraft:wind_charged";
+  MinecraftEffectTypes22["Wither"] = "minecraft:wither";
+  return MinecraftEffectTypes22;
 })(MinecraftEffectTypes || {});
 var MinecraftEnchantmentTypes = ((MinecraftEnchantmentTypes2) => {
   MinecraftEnchantmentTypes2["AquaAffinity"] = "minecraft:aqua_affinity";
@@ -1488,6 +1500,7 @@ var MinecraftEntityTypes = ((MinecraftEntityTypes2) => {
   MinecraftEntityTypes2["GlowSquid"] = "minecraft:glow_squid";
   MinecraftEntityTypes2["Goat"] = "minecraft:goat";
   MinecraftEntityTypes2["Guardian"] = "minecraft:guardian";
+  MinecraftEntityTypes2["HappyGhast"] = "minecraft:happy_ghast";
   MinecraftEntityTypes2["Hoglin"] = "minecraft:hoglin";
   MinecraftEntityTypes2["HopperMinecart"] = "minecraft:hopper_minecart";
   MinecraftEntityTypes2["Horse"] = "minecraft:horse";
@@ -1689,6 +1702,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["BlackConcretePowder"] = "minecraft:black_concrete_powder";
   MinecraftItemTypes2["BlackDye"] = "minecraft:black_dye";
   MinecraftItemTypes2["BlackGlazedTerracotta"] = "minecraft:black_glazed_terracotta";
+  MinecraftItemTypes2["BlackHarness"] = "minecraft:black_harness";
   MinecraftItemTypes2["BlackShulkerBox"] = "minecraft:black_shulker_box";
   MinecraftItemTypes2["BlackStainedGlass"] = "minecraft:black_stained_glass";
   MinecraftItemTypes2["BlackStainedGlassPane"] = "minecraft:black_stained_glass_pane";
@@ -1709,7 +1723,9 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["BlueConcrete"] = "minecraft:blue_concrete";
   MinecraftItemTypes2["BlueConcretePowder"] = "minecraft:blue_concrete_powder";
   MinecraftItemTypes2["BlueDye"] = "minecraft:blue_dye";
+  MinecraftItemTypes2["BlueEgg"] = "minecraft:blue_egg";
   MinecraftItemTypes2["BlueGlazedTerracotta"] = "minecraft:blue_glazed_terracotta";
+  MinecraftItemTypes2["BlueHarness"] = "minecraft:blue_harness";
   MinecraftItemTypes2["BlueIce"] = "minecraft:blue_ice";
   MinecraftItemTypes2["BlueOrchid"] = "minecraft:blue_orchid";
   MinecraftItemTypes2["BlueShulkerBox"] = "minecraft:blue_shulker_box";
@@ -1747,7 +1763,9 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["BrownConcrete"] = "minecraft:brown_concrete";
   MinecraftItemTypes2["BrownConcretePowder"] = "minecraft:brown_concrete_powder";
   MinecraftItemTypes2["BrownDye"] = "minecraft:brown_dye";
+  MinecraftItemTypes2["BrownEgg"] = "minecraft:brown_egg";
   MinecraftItemTypes2["BrownGlazedTerracotta"] = "minecraft:brown_glazed_terracotta";
+  MinecraftItemTypes2["BrownHarness"] = "minecraft:brown_harness";
   MinecraftItemTypes2["BrownMushroom"] = "minecraft:brown_mushroom";
   MinecraftItemTypes2["BrownMushroomBlock"] = "minecraft:brown_mushroom_block";
   MinecraftItemTypes2["BrownShulkerBox"] = "minecraft:brown_shulker_box";
@@ -1763,7 +1781,9 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["BuddingAmethyst"] = "minecraft:budding_amethyst";
   MinecraftItemTypes2["Bundle"] = "minecraft:bundle";
   MinecraftItemTypes2["BurnPotterySherd"] = "minecraft:burn_pottery_sherd";
+  MinecraftItemTypes2["Bush"] = "minecraft:bush";
   MinecraftItemTypes2["Cactus"] = "minecraft:cactus";
+  MinecraftItemTypes2["CactusFlower"] = "minecraft:cactus_flower";
   MinecraftItemTypes2["Cake"] = "minecraft:cake";
   MinecraftItemTypes2["Calcite"] = "minecraft:calcite";
   MinecraftItemTypes2["CalibratedSculkSensor"] = "minecraft:calibrated_sculk_sensor";
@@ -1908,6 +1928,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["CyanConcretePowder"] = "minecraft:cyan_concrete_powder";
   MinecraftItemTypes2["CyanDye"] = "minecraft:cyan_dye";
   MinecraftItemTypes2["CyanGlazedTerracotta"] = "minecraft:cyan_glazed_terracotta";
+  MinecraftItemTypes2["CyanHarness"] = "minecraft:cyan_harness";
   MinecraftItemTypes2["CyanShulkerBox"] = "minecraft:cyan_shulker_box";
   MinecraftItemTypes2["CyanStainedGlass"] = "minecraft:cyan_stained_glass";
   MinecraftItemTypes2["CyanStainedGlassPane"] = "minecraft:cyan_stained_glass_pane";
@@ -1999,6 +2020,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["DragonBreath"] = "minecraft:dragon_breath";
   MinecraftItemTypes2["DragonEgg"] = "minecraft:dragon_egg";
   MinecraftItemTypes2["DragonHead"] = "minecraft:dragon_head";
+  MinecraftItemTypes2["DriedGhast"] = "minecraft:dried_ghast";
   MinecraftItemTypes2["DriedKelp"] = "minecraft:dried_kelp";
   MinecraftItemTypes2["DriedKelpBlock"] = "minecraft:dried_kelp_block";
   MinecraftItemTypes2["DripstoneBlock"] = "minecraft:dripstone_block";
@@ -2054,6 +2076,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["FireCoral"] = "minecraft:fire_coral";
   MinecraftItemTypes2["FireCoralBlock"] = "minecraft:fire_coral_block";
   MinecraftItemTypes2["FireCoralFan"] = "minecraft:fire_coral_fan";
+  MinecraftItemTypes2["FireflyBush"] = "minecraft:firefly_bush";
   MinecraftItemTypes2["FireworkRocket"] = "minecraft:firework_rocket";
   MinecraftItemTypes2["FireworkStar"] = "minecraft:firework_star";
   MinecraftItemTypes2["FishingRod"] = "minecraft:fishing_rod";
@@ -2121,6 +2144,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["GrayConcretePowder"] = "minecraft:gray_concrete_powder";
   MinecraftItemTypes2["GrayDye"] = "minecraft:gray_dye";
   MinecraftItemTypes2["GrayGlazedTerracotta"] = "minecraft:gray_glazed_terracotta";
+  MinecraftItemTypes2["GrayHarness"] = "minecraft:gray_harness";
   MinecraftItemTypes2["GrayShulkerBox"] = "minecraft:gray_shulker_box";
   MinecraftItemTypes2["GrayStainedGlass"] = "minecraft:gray_stained_glass";
   MinecraftItemTypes2["GrayStainedGlassPane"] = "minecraft:gray_stained_glass_pane";
@@ -2133,6 +2157,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["GreenConcretePowder"] = "minecraft:green_concrete_powder";
   MinecraftItemTypes2["GreenDye"] = "minecraft:green_dye";
   MinecraftItemTypes2["GreenGlazedTerracotta"] = "minecraft:green_glazed_terracotta";
+  MinecraftItemTypes2["GreenHarness"] = "minecraft:green_harness";
   MinecraftItemTypes2["GreenShulkerBox"] = "minecraft:green_shulker_box";
   MinecraftItemTypes2["GreenStainedGlass"] = "minecraft:green_stained_glass";
   MinecraftItemTypes2["GreenStainedGlassPane"] = "minecraft:green_stained_glass_pane";
@@ -2144,6 +2169,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["GusterBannerPattern"] = "minecraft:guster_banner_pattern";
   MinecraftItemTypes2["GusterPotterySherd"] = "minecraft:guster_pottery_sherd";
   MinecraftItemTypes2["HangingRoots"] = "minecraft:hanging_roots";
+  MinecraftItemTypes2["HappyGhastSpawnEgg"] = "minecraft:happy_ghast_spawn_egg";
   MinecraftItemTypes2["HardenedClay"] = "minecraft:hardened_clay";
   MinecraftItemTypes2["HayBlock"] = "minecraft:hay_block";
   MinecraftItemTypes2["HeartOfTheSea"] = "minecraft:heart_of_the_sea";
@@ -2221,6 +2247,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["LargeFern"] = "minecraft:large_fern";
   MinecraftItemTypes2["LavaBucket"] = "minecraft:lava_bucket";
   MinecraftItemTypes2["Lead"] = "minecraft:lead";
+  MinecraftItemTypes2["LeafLitter"] = "minecraft:leaf_litter";
   MinecraftItemTypes2["Leather"] = "minecraft:leather";
   MinecraftItemTypes2["LeatherBoots"] = "minecraft:leather_boots";
   MinecraftItemTypes2["LeatherChestplate"] = "minecraft:leather_chestplate";
@@ -2252,6 +2279,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["LightBlueConcretePowder"] = "minecraft:light_blue_concrete_powder";
   MinecraftItemTypes2["LightBlueDye"] = "minecraft:light_blue_dye";
   MinecraftItemTypes2["LightBlueGlazedTerracotta"] = "minecraft:light_blue_glazed_terracotta";
+  MinecraftItemTypes2["LightBlueHarness"] = "minecraft:light_blue_harness";
   MinecraftItemTypes2["LightBlueShulkerBox"] = "minecraft:light_blue_shulker_box";
   MinecraftItemTypes2["LightBlueStainedGlass"] = "minecraft:light_blue_stained_glass";
   MinecraftItemTypes2["LightBlueStainedGlassPane"] = "minecraft:light_blue_stained_glass_pane";
@@ -2263,6 +2291,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["LightGrayConcrete"] = "minecraft:light_gray_concrete";
   MinecraftItemTypes2["LightGrayConcretePowder"] = "minecraft:light_gray_concrete_powder";
   MinecraftItemTypes2["LightGrayDye"] = "minecraft:light_gray_dye";
+  MinecraftItemTypes2["LightGrayHarness"] = "minecraft:light_gray_harness";
   MinecraftItemTypes2["LightGrayShulkerBox"] = "minecraft:light_gray_shulker_box";
   MinecraftItemTypes2["LightGrayStainedGlass"] = "minecraft:light_gray_stained_glass";
   MinecraftItemTypes2["LightGrayStainedGlassPane"] = "minecraft:light_gray_stained_glass_pane";
@@ -2279,6 +2308,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["LimeConcretePowder"] = "minecraft:lime_concrete_powder";
   MinecraftItemTypes2["LimeDye"] = "minecraft:lime_dye";
   MinecraftItemTypes2["LimeGlazedTerracotta"] = "minecraft:lime_glazed_terracotta";
+  MinecraftItemTypes2["LimeHarness"] = "minecraft:lime_harness";
   MinecraftItemTypes2["LimeShulkerBox"] = "minecraft:lime_shulker_box";
   MinecraftItemTypes2["LimeStainedGlass"] = "minecraft:lime_stained_glass";
   MinecraftItemTypes2["LimeStainedGlassPane"] = "minecraft:lime_stained_glass_pane";
@@ -2298,6 +2328,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["MagentaConcretePowder"] = "minecraft:magenta_concrete_powder";
   MinecraftItemTypes2["MagentaDye"] = "minecraft:magenta_dye";
   MinecraftItemTypes2["MagentaGlazedTerracotta"] = "minecraft:magenta_glazed_terracotta";
+  MinecraftItemTypes2["MagentaHarness"] = "minecraft:magenta_harness";
   MinecraftItemTypes2["MagentaShulkerBox"] = "minecraft:magenta_shulker_box";
   MinecraftItemTypes2["MagentaStainedGlass"] = "minecraft:magenta_stained_glass";
   MinecraftItemTypes2["MagentaStainedGlassPane"] = "minecraft:magenta_stained_glass_pane";
@@ -2371,6 +2402,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["MusicDiscRelic"] = "minecraft:music_disc_relic";
   MinecraftItemTypes2["MusicDiscStal"] = "minecraft:music_disc_stal";
   MinecraftItemTypes2["MusicDiscStrad"] = "minecraft:music_disc_strad";
+  MinecraftItemTypes2["MusicDiscTears"] = "minecraft:music_disc_tears";
   MinecraftItemTypes2["MusicDiscWait"] = "minecraft:music_disc_wait";
   MinecraftItemTypes2["MusicDiscWard"] = "minecraft:music_disc_ward";
   MinecraftItemTypes2["Mutton"] = "minecraft:mutton";
@@ -2431,6 +2463,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["OrangeConcretePowder"] = "minecraft:orange_concrete_powder";
   MinecraftItemTypes2["OrangeDye"] = "minecraft:orange_dye";
   MinecraftItemTypes2["OrangeGlazedTerracotta"] = "minecraft:orange_glazed_terracotta";
+  MinecraftItemTypes2["OrangeHarness"] = "minecraft:orange_harness";
   MinecraftItemTypes2["OrangeShulkerBox"] = "minecraft:orange_shulker_box";
   MinecraftItemTypes2["OrangeStainedGlass"] = "minecraft:orange_stained_glass";
   MinecraftItemTypes2["OrangeStainedGlassPane"] = "minecraft:orange_stained_glass_pane";
@@ -2491,6 +2524,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["PinkConcretePowder"] = "minecraft:pink_concrete_powder";
   MinecraftItemTypes2["PinkDye"] = "minecraft:pink_dye";
   MinecraftItemTypes2["PinkGlazedTerracotta"] = "minecraft:pink_glazed_terracotta";
+  MinecraftItemTypes2["PinkHarness"] = "minecraft:pink_harness";
   MinecraftItemTypes2["PinkPetals"] = "minecraft:pink_petals";
   MinecraftItemTypes2["PinkShulkerBox"] = "minecraft:pink_shulker_box";
   MinecraftItemTypes2["PinkStainedGlass"] = "minecraft:pink_stained_glass";
@@ -2564,6 +2598,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["PurpleConcretePowder"] = "minecraft:purple_concrete_powder";
   MinecraftItemTypes2["PurpleDye"] = "minecraft:purple_dye";
   MinecraftItemTypes2["PurpleGlazedTerracotta"] = "minecraft:purple_glazed_terracotta";
+  MinecraftItemTypes2["PurpleHarness"] = "minecraft:purple_harness";
   MinecraftItemTypes2["PurpleShulkerBox"] = "minecraft:purple_shulker_box";
   MinecraftItemTypes2["PurpleStainedGlass"] = "minecraft:purple_stained_glass";
   MinecraftItemTypes2["PurpleStainedGlassPane"] = "minecraft:purple_stained_glass_pane";
@@ -2602,6 +2637,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["RedConcretePowder"] = "minecraft:red_concrete_powder";
   MinecraftItemTypes2["RedDye"] = "minecraft:red_dye";
   MinecraftItemTypes2["RedGlazedTerracotta"] = "minecraft:red_glazed_terracotta";
+  MinecraftItemTypes2["RedHarness"] = "minecraft:red_harness";
   MinecraftItemTypes2["RedMushroom"] = "minecraft:red_mushroom";
   MinecraftItemTypes2["RedMushroomBlock"] = "minecraft:red_mushroom_block";
   MinecraftItemTypes2["RedNetherBrick"] = "minecraft:red_nether_brick";
@@ -2664,6 +2700,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["SheepSpawnEgg"] = "minecraft:sheep_spawn_egg";
   MinecraftItemTypes2["ShelterPotterySherd"] = "minecraft:shelter_pottery_sherd";
   MinecraftItemTypes2["Shield"] = "minecraft:shield";
+  MinecraftItemTypes2["ShortDryGrass"] = "minecraft:short_dry_grass";
   MinecraftItemTypes2["ShortGrass"] = "minecraft:short_grass";
   MinecraftItemTypes2["Shroomlight"] = "minecraft:shroomlight";
   MinecraftItemTypes2["ShulkerShell"] = "minecraft:shulker_shell";
@@ -2786,6 +2823,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["SweetBerries"] = "minecraft:sweet_berries";
   MinecraftItemTypes2["TadpoleBucket"] = "minecraft:tadpole_bucket";
   MinecraftItemTypes2["TadpoleSpawnEgg"] = "minecraft:tadpole_spawn_egg";
+  MinecraftItemTypes2["TallDryGrass"] = "minecraft:tall_dry_grass";
   MinecraftItemTypes2["TallGrass"] = "minecraft:tall_grass";
   MinecraftItemTypes2["Target"] = "minecraft:target";
   MinecraftItemTypes2["TideArmorTrimSmithingTemplate"] = "minecraft:tide_armor_trim_smithing_template";
@@ -2911,6 +2949,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["WhiteConcretePowder"] = "minecraft:white_concrete_powder";
   MinecraftItemTypes2["WhiteDye"] = "minecraft:white_dye";
   MinecraftItemTypes2["WhiteGlazedTerracotta"] = "minecraft:white_glazed_terracotta";
+  MinecraftItemTypes2["WhiteHarness"] = "minecraft:white_harness";
   MinecraftItemTypes2["WhiteShulkerBox"] = "minecraft:white_shulker_box";
   MinecraftItemTypes2["WhiteStainedGlass"] = "minecraft:white_stained_glass";
   MinecraftItemTypes2["WhiteStainedGlassPane"] = "minecraft:white_stained_glass_pane";
@@ -2918,6 +2957,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["WhiteTulip"] = "minecraft:white_tulip";
   MinecraftItemTypes2["WhiteWool"] = "minecraft:white_wool";
   MinecraftItemTypes2["WildArmorTrimSmithingTemplate"] = "minecraft:wild_armor_trim_smithing_template";
+  MinecraftItemTypes2["Wildflowers"] = "minecraft:wildflowers";
   MinecraftItemTypes2["WindCharge"] = "minecraft:wind_charge";
   MinecraftItemTypes2["WitchSpawnEgg"] = "minecraft:witch_spawn_egg";
   MinecraftItemTypes2["WitherRose"] = "minecraft:wither_rose";
@@ -2942,6 +2982,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["YellowConcretePowder"] = "minecraft:yellow_concrete_powder";
   MinecraftItemTypes2["YellowDye"] = "minecraft:yellow_dye";
   MinecraftItemTypes2["YellowGlazedTerracotta"] = "minecraft:yellow_glazed_terracotta";
+  MinecraftItemTypes2["YellowHarness"] = "minecraft:yellow_harness";
   MinecraftItemTypes2["YellowShulkerBox"] = "minecraft:yellow_shulker_box";
   MinecraftItemTypes2["YellowStainedGlass"] = "minecraft:yellow_stained_glass";
   MinecraftItemTypes2["YellowStainedGlassPane"] = "minecraft:yellow_stained_glass_pane";
@@ -3051,7 +3092,7 @@ function load_fungus_spreading_component() {
         onRandomTick(event) {
           fungus_spread(event);
         },
-        onPlayerDestroy(event) {
+        onPlayerBreak(event) {
           fungus_destroy(event);
         }
       }
@@ -3271,11 +3312,6 @@ var DeathMessage = class {
 var daysInYear = 365.2425;
 var maxTime = Math.pow(10, 8) * 24 * 60 * 60 * 1e3;
 var minTime = -maxTime;
-var millisecondsInWeek = 6048e5;
-var millisecondsInDay = 864e5;
-var millisecondsInMinute = 6e4;
-var millisecondsInHour = 36e5;
-var millisecondsInSecond = 1e3;
 var secondsInHour = 3600;
 var secondsInDay = secondsInHour * 24;
 var secondsInWeek = secondsInDay * 7;
@@ -3298,126 +3334,6 @@ function toDate(argument, context) {
   return constructFrom(context || argument, argument);
 }
 
-// node_modules/date-fns/addDays.js
-function addDays(date, amount, options) {
-  const _date = toDate(date, options?.in);
-  if (isNaN(amount)) return constructFrom(options?.in || date, NaN);
-  if (!amount) return _date;
-  _date.setDate(_date.getDate() + amount);
-  return _date;
-}
-
-// node_modules/date-fns/_lib/defaultOptions.js
-var defaultOptions = {};
-function getDefaultOptions() {
-  return defaultOptions;
-}
-
-// node_modules/date-fns/startOfWeek.js
-function startOfWeek(date, options) {
-  const defaultOptions2 = getDefaultOptions();
-  const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions2.weekStartsOn ?? defaultOptions2.locale?.options?.weekStartsOn ?? 0;
-  const _date = toDate(date, options?.in);
-  const day = _date.getDay();
-  const diff = (day < weekStartsOn ? 7 : 0) + day - weekStartsOn;
-  _date.setDate(_date.getDate() - diff);
-  _date.setHours(0, 0, 0, 0);
-  return _date;
-}
-
-// node_modules/date-fns/startOfISOWeek.js
-function startOfISOWeek(date, options) {
-  return startOfWeek(date, { ...options, weekStartsOn: 1 });
-}
-
-// node_modules/date-fns/getISOWeekYear.js
-function getISOWeekYear(date, options) {
-  const _date = toDate(date, options?.in);
-  const year = _date.getFullYear();
-  const fourthOfJanuaryOfNextYear = constructFrom(_date, 0);
-  fourthOfJanuaryOfNextYear.setFullYear(year + 1, 0, 4);
-  fourthOfJanuaryOfNextYear.setHours(0, 0, 0, 0);
-  const startOfNextYear = startOfISOWeek(fourthOfJanuaryOfNextYear);
-  const fourthOfJanuaryOfThisYear = constructFrom(_date, 0);
-  fourthOfJanuaryOfThisYear.setFullYear(year, 0, 4);
-  fourthOfJanuaryOfThisYear.setHours(0, 0, 0, 0);
-  const startOfThisYear = startOfISOWeek(fourthOfJanuaryOfThisYear);
-  if (_date.getTime() >= startOfNextYear.getTime()) {
-    return year + 1;
-  } else if (_date.getTime() >= startOfThisYear.getTime()) {
-    return year;
-  } else {
-    return year - 1;
-  }
-}
-
-// node_modules/date-fns/_lib/getTimezoneOffsetInMilliseconds.js
-function getTimezoneOffsetInMilliseconds(date) {
-  const _date = toDate(date);
-  const utcDate = new Date(
-    Date.UTC(
-      _date.getFullYear(),
-      _date.getMonth(),
-      _date.getDate(),
-      _date.getHours(),
-      _date.getMinutes(),
-      _date.getSeconds(),
-      _date.getMilliseconds()
-    )
-  );
-  utcDate.setUTCFullYear(_date.getFullYear());
-  return +date - +utcDate;
-}
-
-// node_modules/date-fns/_lib/normalizeDates.js
-function normalizeDates(context, ...dates) {
-  const normalize = constructFrom.bind(
-    null,
-    context || dates.find((date) => typeof date === "object")
-  );
-  return dates.map(normalize);
-}
-
-// node_modules/date-fns/startOfDay.js
-function startOfDay(date, options) {
-  const _date = toDate(date, options?.in);
-  _date.setHours(0, 0, 0, 0);
-  return _date;
-}
-
-// node_modules/date-fns/differenceInCalendarDays.js
-function differenceInCalendarDays(laterDate, earlierDate, options) {
-  const [laterDate_, earlierDate_] = normalizeDates(
-    options?.in,
-    laterDate,
-    earlierDate
-  );
-  const laterStartOfDay = startOfDay(laterDate_);
-  const earlierStartOfDay = startOfDay(earlierDate_);
-  const laterTimestamp = +laterStartOfDay - getTimezoneOffsetInMilliseconds(laterStartOfDay);
-  const earlierTimestamp = +earlierStartOfDay - getTimezoneOffsetInMilliseconds(earlierStartOfDay);
-  return Math.round((laterTimestamp - earlierTimestamp) / millisecondsInDay);
-}
-
-// node_modules/date-fns/startOfISOWeekYear.js
-function startOfISOWeekYear(date, options) {
-  const year = getISOWeekYear(date, options);
-  const fourthOfJanuary = constructFrom(options?.in || date, 0);
-  fourthOfJanuary.setFullYear(year, 0, 4);
-  fourthOfJanuary.setHours(0, 0, 0, 0);
-  return startOfISOWeek(fourthOfJanuary);
-}
-
-// node_modules/date-fns/isDate.js
-function isDate(value) {
-  return value instanceof Date || typeof value === "object" && Object.prototype.toString.call(value) === "[object Date]";
-}
-
-// node_modules/date-fns/isValid.js
-function isValid(date) {
-  return !(!isDate(date) && typeof date !== "number" || isNaN(+toDate(date)));
-}
-
 // node_modules/date-fns/_lib/getRoundingMethod.js
 function getRoundingMethod(method) {
   return (number) => {
@@ -3436,3062 +3352,6 @@ function differenceInMilliseconds(laterDate, earlierDate) {
 function differenceInSeconds(laterDate, earlierDate, options) {
   const diff = differenceInMilliseconds(laterDate, earlierDate) / 1e3;
   return getRoundingMethod(options?.roundingMethod)(diff);
-}
-
-// node_modules/date-fns/startOfYear.js
-function startOfYear(date, options) {
-  const date_ = toDate(date, options?.in);
-  date_.setFullYear(date_.getFullYear(), 0, 1);
-  date_.setHours(0, 0, 0, 0);
-  return date_;
-}
-
-// node_modules/date-fns/locale/en-US/_lib/formatDistance.js
-var formatDistanceLocale = {
-  lessThanXSeconds: {
-    one: "less than a second",
-    other: "less than {{count}} seconds"
-  },
-  xSeconds: {
-    one: "1 second",
-    other: "{{count}} seconds"
-  },
-  halfAMinute: "half a minute",
-  lessThanXMinutes: {
-    one: "less than a minute",
-    other: "less than {{count}} minutes"
-  },
-  xMinutes: {
-    one: "1 minute",
-    other: "{{count}} minutes"
-  },
-  aboutXHours: {
-    one: "about 1 hour",
-    other: "about {{count}} hours"
-  },
-  xHours: {
-    one: "1 hour",
-    other: "{{count}} hours"
-  },
-  xDays: {
-    one: "1 day",
-    other: "{{count}} days"
-  },
-  aboutXWeeks: {
-    one: "about 1 week",
-    other: "about {{count}} weeks"
-  },
-  xWeeks: {
-    one: "1 week",
-    other: "{{count}} weeks"
-  },
-  aboutXMonths: {
-    one: "about 1 month",
-    other: "about {{count}} months"
-  },
-  xMonths: {
-    one: "1 month",
-    other: "{{count}} months"
-  },
-  aboutXYears: {
-    one: "about 1 year",
-    other: "about {{count}} years"
-  },
-  xYears: {
-    one: "1 year",
-    other: "{{count}} years"
-  },
-  overXYears: {
-    one: "over 1 year",
-    other: "over {{count}} years"
-  },
-  almostXYears: {
-    one: "almost 1 year",
-    other: "almost {{count}} years"
-  }
-};
-var formatDistance = (token, count, options) => {
-  let result;
-  const tokenValue = formatDistanceLocale[token];
-  if (typeof tokenValue === "string") {
-    result = tokenValue;
-  } else if (count === 1) {
-    result = tokenValue.one;
-  } else {
-    result = tokenValue.other.replace("{{count}}", count.toString());
-  }
-  if (options?.addSuffix) {
-    if (options.comparison && options.comparison > 0) {
-      return "in " + result;
-    } else {
-      return result + " ago";
-    }
-  }
-  return result;
-};
-
-// node_modules/date-fns/locale/_lib/buildFormatLongFn.js
-function buildFormatLongFn(args) {
-  return (options = {}) => {
-    const width = options.width ? String(options.width) : args.defaultWidth;
-    const format2 = args.formats[width] || args.formats[args.defaultWidth];
-    return format2;
-  };
-}
-
-// node_modules/date-fns/locale/en-US/_lib/formatLong.js
-var dateFormats = {
-  full: "EEEE, MMMM do, y",
-  long: "MMMM do, y",
-  medium: "MMM d, y",
-  short: "MM/dd/yyyy"
-};
-var timeFormats = {
-  full: "h:mm:ss a zzzz",
-  long: "h:mm:ss a z",
-  medium: "h:mm:ss a",
-  short: "h:mm a"
-};
-var dateTimeFormats = {
-  full: "{{date}} 'at' {{time}}",
-  long: "{{date}} 'at' {{time}}",
-  medium: "{{date}}, {{time}}",
-  short: "{{date}}, {{time}}"
-};
-var formatLong = {
-  date: buildFormatLongFn({
-    formats: dateFormats,
-    defaultWidth: "full"
-  }),
-  time: buildFormatLongFn({
-    formats: timeFormats,
-    defaultWidth: "full"
-  }),
-  dateTime: buildFormatLongFn({
-    formats: dateTimeFormats,
-    defaultWidth: "full"
-  })
-};
-
-// node_modules/date-fns/locale/en-US/_lib/formatRelative.js
-var formatRelativeLocale = {
-  lastWeek: "'last' eeee 'at' p",
-  yesterday: "'yesterday at' p",
-  today: "'today at' p",
-  tomorrow: "'tomorrow at' p",
-  nextWeek: "eeee 'at' p",
-  other: "P"
-};
-var formatRelative = (token, _date, _baseDate, _options) => formatRelativeLocale[token];
-
-// node_modules/date-fns/locale/_lib/buildLocalizeFn.js
-function buildLocalizeFn(args) {
-  return (value, options) => {
-    const context = options?.context ? String(options.context) : "standalone";
-    let valuesArray;
-    if (context === "formatting" && args.formattingValues) {
-      const defaultWidth = args.defaultFormattingWidth || args.defaultWidth;
-      const width = options?.width ? String(options.width) : defaultWidth;
-      valuesArray = args.formattingValues[width] || args.formattingValues[defaultWidth];
-    } else {
-      const defaultWidth = args.defaultWidth;
-      const width = options?.width ? String(options.width) : args.defaultWidth;
-      valuesArray = args.values[width] || args.values[defaultWidth];
-    }
-    const index = args.argumentCallback ? args.argumentCallback(value) : value;
-    return valuesArray[index];
-  };
-}
-
-// node_modules/date-fns/locale/en-US/_lib/localize.js
-var eraValues = {
-  narrow: ["B", "A"],
-  abbreviated: ["BC", "AD"],
-  wide: ["Before Christ", "Anno Domini"]
-};
-var quarterValues = {
-  narrow: ["1", "2", "3", "4"],
-  abbreviated: ["Q1", "Q2", "Q3", "Q4"],
-  wide: ["1st quarter", "2nd quarter", "3rd quarter", "4th quarter"]
-};
-var monthValues = {
-  narrow: ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"],
-  abbreviated: [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec"
-  ],
-  wide: [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
-  ]
-};
-var dayValues = {
-  narrow: ["S", "M", "T", "W", "T", "F", "S"],
-  short: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
-  abbreviated: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-  wide: [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday"
-  ]
-};
-var dayPeriodValues = {
-  narrow: {
-    am: "a",
-    pm: "p",
-    midnight: "mi",
-    noon: "n",
-    morning: "morning",
-    afternoon: "afternoon",
-    evening: "evening",
-    night: "night"
-  },
-  abbreviated: {
-    am: "AM",
-    pm: "PM",
-    midnight: "midnight",
-    noon: "noon",
-    morning: "morning",
-    afternoon: "afternoon",
-    evening: "evening",
-    night: "night"
-  },
-  wide: {
-    am: "a.m.",
-    pm: "p.m.",
-    midnight: "midnight",
-    noon: "noon",
-    morning: "morning",
-    afternoon: "afternoon",
-    evening: "evening",
-    night: "night"
-  }
-};
-var formattingDayPeriodValues = {
-  narrow: {
-    am: "a",
-    pm: "p",
-    midnight: "mi",
-    noon: "n",
-    morning: "in the morning",
-    afternoon: "in the afternoon",
-    evening: "in the evening",
-    night: "at night"
-  },
-  abbreviated: {
-    am: "AM",
-    pm: "PM",
-    midnight: "midnight",
-    noon: "noon",
-    morning: "in the morning",
-    afternoon: "in the afternoon",
-    evening: "in the evening",
-    night: "at night"
-  },
-  wide: {
-    am: "a.m.",
-    pm: "p.m.",
-    midnight: "midnight",
-    noon: "noon",
-    morning: "in the morning",
-    afternoon: "in the afternoon",
-    evening: "in the evening",
-    night: "at night"
-  }
-};
-var ordinalNumber = (dirtyNumber, _options) => {
-  const number = Number(dirtyNumber);
-  const rem100 = number % 100;
-  if (rem100 > 20 || rem100 < 10) {
-    switch (rem100 % 10) {
-      case 1:
-        return number + "st";
-      case 2:
-        return number + "nd";
-      case 3:
-        return number + "rd";
-    }
-  }
-  return number + "th";
-};
-var localize = {
-  ordinalNumber,
-  era: buildLocalizeFn({
-    values: eraValues,
-    defaultWidth: "wide"
-  }),
-  quarter: buildLocalizeFn({
-    values: quarterValues,
-    defaultWidth: "wide",
-    argumentCallback: (quarter) => quarter - 1
-  }),
-  month: buildLocalizeFn({
-    values: monthValues,
-    defaultWidth: "wide"
-  }),
-  day: buildLocalizeFn({
-    values: dayValues,
-    defaultWidth: "wide"
-  }),
-  dayPeriod: buildLocalizeFn({
-    values: dayPeriodValues,
-    defaultWidth: "wide",
-    formattingValues: formattingDayPeriodValues,
-    defaultFormattingWidth: "wide"
-  })
-};
-
-// node_modules/date-fns/locale/_lib/buildMatchFn.js
-function buildMatchFn(args) {
-  return (string, options = {}) => {
-    const width = options.width;
-    const matchPattern = width && args.matchPatterns[width] || args.matchPatterns[args.defaultMatchWidth];
-    const matchResult = string.match(matchPattern);
-    if (!matchResult) {
-      return null;
-    }
-    const matchedString = matchResult[0];
-    const parsePatterns = width && args.parsePatterns[width] || args.parsePatterns[args.defaultParseWidth];
-    const key = Array.isArray(parsePatterns) ? findIndex(parsePatterns, (pattern) => pattern.test(matchedString)) : (
-      // [TODO] -- I challenge you to fix the type
-      findKey(parsePatterns, (pattern) => pattern.test(matchedString))
-    );
-    let value;
-    value = args.valueCallback ? args.valueCallback(key) : key;
-    value = options.valueCallback ? (
-      // [TODO] -- I challenge you to fix the type
-      options.valueCallback(value)
-    ) : value;
-    const rest = string.slice(matchedString.length);
-    return { value, rest };
-  };
-}
-function findKey(object, predicate) {
-  for (const key in object) {
-    if (Object.prototype.hasOwnProperty.call(object, key) && predicate(object[key])) {
-      return key;
-    }
-  }
-  return void 0;
-}
-function findIndex(array, predicate) {
-  for (let key = 0; key < array.length; key++) {
-    if (predicate(array[key])) {
-      return key;
-    }
-  }
-  return void 0;
-}
-
-// node_modules/date-fns/locale/_lib/buildMatchPatternFn.js
-function buildMatchPatternFn(args) {
-  return (string, options = {}) => {
-    const matchResult = string.match(args.matchPattern);
-    if (!matchResult) return null;
-    const matchedString = matchResult[0];
-    const parseResult = string.match(args.parsePattern);
-    if (!parseResult) return null;
-    let value = args.valueCallback ? args.valueCallback(parseResult[0]) : parseResult[0];
-    value = options.valueCallback ? options.valueCallback(value) : value;
-    const rest = string.slice(matchedString.length);
-    return { value, rest };
-  };
-}
-
-// node_modules/date-fns/locale/en-US/_lib/match.js
-var matchOrdinalNumberPattern = /^(\d+)(th|st|nd|rd)?/i;
-var parseOrdinalNumberPattern = /\d+/i;
-var matchEraPatterns = {
-  narrow: /^(b|a)/i,
-  abbreviated: /^(b\.?\s?c\.?|b\.?\s?c\.?\s?e\.?|a\.?\s?d\.?|c\.?\s?e\.?)/i,
-  wide: /^(before christ|before common era|anno domini|common era)/i
-};
-var parseEraPatterns = {
-  any: [/^b/i, /^(a|c)/i]
-};
-var matchQuarterPatterns = {
-  narrow: /^[1234]/i,
-  abbreviated: /^q[1234]/i,
-  wide: /^[1234](th|st|nd|rd)? quarter/i
-};
-var parseQuarterPatterns = {
-  any: [/1/i, /2/i, /3/i, /4/i]
-};
-var matchMonthPatterns = {
-  narrow: /^[jfmasond]/i,
-  abbreviated: /^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i,
-  wide: /^(january|february|march|april|may|june|july|august|september|october|november|december)/i
-};
-var parseMonthPatterns = {
-  narrow: [
-    /^j/i,
-    /^f/i,
-    /^m/i,
-    /^a/i,
-    /^m/i,
-    /^j/i,
-    /^j/i,
-    /^a/i,
-    /^s/i,
-    /^o/i,
-    /^n/i,
-    /^d/i
-  ],
-  any: [
-    /^ja/i,
-    /^f/i,
-    /^mar/i,
-    /^ap/i,
-    /^may/i,
-    /^jun/i,
-    /^jul/i,
-    /^au/i,
-    /^s/i,
-    /^o/i,
-    /^n/i,
-    /^d/i
-  ]
-};
-var matchDayPatterns = {
-  narrow: /^[smtwf]/i,
-  short: /^(su|mo|tu|we|th|fr|sa)/i,
-  abbreviated: /^(sun|mon|tue|wed|thu|fri|sat)/i,
-  wide: /^(sunday|monday|tuesday|wednesday|thursday|friday|saturday)/i
-};
-var parseDayPatterns = {
-  narrow: [/^s/i, /^m/i, /^t/i, /^w/i, /^t/i, /^f/i, /^s/i],
-  any: [/^su/i, /^m/i, /^tu/i, /^w/i, /^th/i, /^f/i, /^sa/i]
-};
-var matchDayPeriodPatterns = {
-  narrow: /^(a|p|mi|n|(in the|at) (morning|afternoon|evening|night))/i,
-  any: /^([ap]\.?\s?m\.?|midnight|noon|(in the|at) (morning|afternoon|evening|night))/i
-};
-var parseDayPeriodPatterns = {
-  any: {
-    am: /^a/i,
-    pm: /^p/i,
-    midnight: /^mi/i,
-    noon: /^no/i,
-    morning: /morning/i,
-    afternoon: /afternoon/i,
-    evening: /evening/i,
-    night: /night/i
-  }
-};
-var match = {
-  ordinalNumber: buildMatchPatternFn({
-    matchPattern: matchOrdinalNumberPattern,
-    parsePattern: parseOrdinalNumberPattern,
-    valueCallback: (value) => parseInt(value, 10)
-  }),
-  era: buildMatchFn({
-    matchPatterns: matchEraPatterns,
-    defaultMatchWidth: "wide",
-    parsePatterns: parseEraPatterns,
-    defaultParseWidth: "any"
-  }),
-  quarter: buildMatchFn({
-    matchPatterns: matchQuarterPatterns,
-    defaultMatchWidth: "wide",
-    parsePatterns: parseQuarterPatterns,
-    defaultParseWidth: "any",
-    valueCallback: (index) => index + 1
-  }),
-  month: buildMatchFn({
-    matchPatterns: matchMonthPatterns,
-    defaultMatchWidth: "wide",
-    parsePatterns: parseMonthPatterns,
-    defaultParseWidth: "any"
-  }),
-  day: buildMatchFn({
-    matchPatterns: matchDayPatterns,
-    defaultMatchWidth: "wide",
-    parsePatterns: parseDayPatterns,
-    defaultParseWidth: "any"
-  }),
-  dayPeriod: buildMatchFn({
-    matchPatterns: matchDayPeriodPatterns,
-    defaultMatchWidth: "any",
-    parsePatterns: parseDayPeriodPatterns,
-    defaultParseWidth: "any"
-  })
-};
-
-// node_modules/date-fns/locale/en-US.js
-var enUS = {
-  code: "en-US",
-  formatDistance,
-  formatLong,
-  formatRelative,
-  localize,
-  match,
-  options: {
-    weekStartsOn: 0,
-    firstWeekContainsDate: 1
-  }
-};
-
-// node_modules/date-fns/getDayOfYear.js
-function getDayOfYear(date, options) {
-  const _date = toDate(date, options?.in);
-  const diff = differenceInCalendarDays(_date, startOfYear(_date));
-  const dayOfYear = diff + 1;
-  return dayOfYear;
-}
-
-// node_modules/date-fns/getISOWeek.js
-function getISOWeek(date, options) {
-  const _date = toDate(date, options?.in);
-  const diff = +startOfISOWeek(_date) - +startOfISOWeekYear(_date);
-  return Math.round(diff / millisecondsInWeek) + 1;
-}
-
-// node_modules/date-fns/getWeekYear.js
-function getWeekYear(date, options) {
-  const _date = toDate(date, options?.in);
-  const year = _date.getFullYear();
-  const defaultOptions2 = getDefaultOptions();
-  const firstWeekContainsDate = options?.firstWeekContainsDate ?? options?.locale?.options?.firstWeekContainsDate ?? defaultOptions2.firstWeekContainsDate ?? defaultOptions2.locale?.options?.firstWeekContainsDate ?? 1;
-  const firstWeekOfNextYear = constructFrom(options?.in || date, 0);
-  firstWeekOfNextYear.setFullYear(year + 1, 0, firstWeekContainsDate);
-  firstWeekOfNextYear.setHours(0, 0, 0, 0);
-  const startOfNextYear = startOfWeek(firstWeekOfNextYear, options);
-  const firstWeekOfThisYear = constructFrom(options?.in || date, 0);
-  firstWeekOfThisYear.setFullYear(year, 0, firstWeekContainsDate);
-  firstWeekOfThisYear.setHours(0, 0, 0, 0);
-  const startOfThisYear = startOfWeek(firstWeekOfThisYear, options);
-  if (+_date >= +startOfNextYear) {
-    return year + 1;
-  } else if (+_date >= +startOfThisYear) {
-    return year;
-  } else {
-    return year - 1;
-  }
-}
-
-// node_modules/date-fns/startOfWeekYear.js
-function startOfWeekYear(date, options) {
-  const defaultOptions2 = getDefaultOptions();
-  const firstWeekContainsDate = options?.firstWeekContainsDate ?? options?.locale?.options?.firstWeekContainsDate ?? defaultOptions2.firstWeekContainsDate ?? defaultOptions2.locale?.options?.firstWeekContainsDate ?? 1;
-  const year = getWeekYear(date, options);
-  const firstWeek = constructFrom(options?.in || date, 0);
-  firstWeek.setFullYear(year, 0, firstWeekContainsDate);
-  firstWeek.setHours(0, 0, 0, 0);
-  const _date = startOfWeek(firstWeek, options);
-  return _date;
-}
-
-// node_modules/date-fns/getWeek.js
-function getWeek(date, options) {
-  const _date = toDate(date, options?.in);
-  const diff = +startOfWeek(_date, options) - +startOfWeekYear(_date, options);
-  return Math.round(diff / millisecondsInWeek) + 1;
-}
-
-// node_modules/date-fns/_lib/addLeadingZeros.js
-function addLeadingZeros(number, targetLength) {
-  const sign = number < 0 ? "-" : "";
-  const output = Math.abs(number).toString().padStart(targetLength, "0");
-  return sign + output;
-}
-
-// node_modules/date-fns/_lib/format/lightFormatters.js
-var lightFormatters = {
-  // Year
-  y(date, token) {
-    const signedYear = date.getFullYear();
-    const year = signedYear > 0 ? signedYear : 1 - signedYear;
-    return addLeadingZeros(token === "yy" ? year % 100 : year, token.length);
-  },
-  // Month
-  M(date, token) {
-    const month = date.getMonth();
-    return token === "M" ? String(month + 1) : addLeadingZeros(month + 1, 2);
-  },
-  // Day of the month
-  d(date, token) {
-    return addLeadingZeros(date.getDate(), token.length);
-  },
-  // AM or PM
-  a(date, token) {
-    const dayPeriodEnumValue = date.getHours() / 12 >= 1 ? "pm" : "am";
-    switch (token) {
-      case "a":
-      case "aa":
-        return dayPeriodEnumValue.toUpperCase();
-      case "aaa":
-        return dayPeriodEnumValue;
-      case "aaaaa":
-        return dayPeriodEnumValue[0];
-      case "aaaa":
-      default:
-        return dayPeriodEnumValue === "am" ? "a.m." : "p.m.";
-    }
-  },
-  // Hour [1-12]
-  h(date, token) {
-    return addLeadingZeros(date.getHours() % 12 || 12, token.length);
-  },
-  // Hour [0-23]
-  H(date, token) {
-    return addLeadingZeros(date.getHours(), token.length);
-  },
-  // Minute
-  m(date, token) {
-    return addLeadingZeros(date.getMinutes(), token.length);
-  },
-  // Second
-  s(date, token) {
-    return addLeadingZeros(date.getSeconds(), token.length);
-  },
-  // Fraction of second
-  S(date, token) {
-    const numberOfDigits = token.length;
-    const milliseconds = date.getMilliseconds();
-    const fractionalSeconds = Math.trunc(
-      milliseconds * Math.pow(10, numberOfDigits - 3)
-    );
-    return addLeadingZeros(fractionalSeconds, token.length);
-  }
-};
-
-// node_modules/date-fns/_lib/format/formatters.js
-var dayPeriodEnum = {
-  am: "am",
-  pm: "pm",
-  midnight: "midnight",
-  noon: "noon",
-  morning: "morning",
-  afternoon: "afternoon",
-  evening: "evening",
-  night: "night"
-};
-var formatters = {
-  // Era
-  G: function(date, token, localize2) {
-    const era = date.getFullYear() > 0 ? 1 : 0;
-    switch (token) {
-      case "G":
-      case "GG":
-      case "GGG":
-        return localize2.era(era, { width: "abbreviated" });
-      case "GGGGG":
-        return localize2.era(era, { width: "narrow" });
-      case "GGGG":
-      default:
-        return localize2.era(era, { width: "wide" });
-    }
-  },
-  // Year
-  y: function(date, token, localize2) {
-    if (token === "yo") {
-      const signedYear = date.getFullYear();
-      const year = signedYear > 0 ? signedYear : 1 - signedYear;
-      return localize2.ordinalNumber(year, { unit: "year" });
-    }
-    return lightFormatters.y(date, token);
-  },
-  // Local week-numbering year
-  Y: function(date, token, localize2, options) {
-    const signedWeekYear = getWeekYear(date, options);
-    const weekYear = signedWeekYear > 0 ? signedWeekYear : 1 - signedWeekYear;
-    if (token === "YY") {
-      const twoDigitYear = weekYear % 100;
-      return addLeadingZeros(twoDigitYear, 2);
-    }
-    if (token === "Yo") {
-      return localize2.ordinalNumber(weekYear, { unit: "year" });
-    }
-    return addLeadingZeros(weekYear, token.length);
-  },
-  // ISO week-numbering year
-  R: function(date, token) {
-    const isoWeekYear = getISOWeekYear(date);
-    return addLeadingZeros(isoWeekYear, token.length);
-  },
-  // Extended year. This is a single number designating the year of this calendar system.
-  // The main difference between `y` and `u` localizers are B.C. years:
-  // | Year | `y` | `u` |
-  // |------|-----|-----|
-  // | AC 1 |   1 |   1 |
-  // | BC 1 |   1 |   0 |
-  // | BC 2 |   2 |  -1 |
-  // Also `yy` always returns the last two digits of a year,
-  // while `uu` pads single digit years to 2 characters and returns other years unchanged.
-  u: function(date, token) {
-    const year = date.getFullYear();
-    return addLeadingZeros(year, token.length);
-  },
-  // Quarter
-  Q: function(date, token, localize2) {
-    const quarter = Math.ceil((date.getMonth() + 1) / 3);
-    switch (token) {
-      case "Q":
-        return String(quarter);
-      case "QQ":
-        return addLeadingZeros(quarter, 2);
-      case "Qo":
-        return localize2.ordinalNumber(quarter, { unit: "quarter" });
-      case "QQQ":
-        return localize2.quarter(quarter, {
-          width: "abbreviated",
-          context: "formatting"
-        });
-      case "QQQQQ":
-        return localize2.quarter(quarter, {
-          width: "narrow",
-          context: "formatting"
-        });
-      case "QQQQ":
-      default:
-        return localize2.quarter(quarter, {
-          width: "wide",
-          context: "formatting"
-        });
-    }
-  },
-  // Stand-alone quarter
-  q: function(date, token, localize2) {
-    const quarter = Math.ceil((date.getMonth() + 1) / 3);
-    switch (token) {
-      case "q":
-        return String(quarter);
-      case "qq":
-        return addLeadingZeros(quarter, 2);
-      case "qo":
-        return localize2.ordinalNumber(quarter, { unit: "quarter" });
-      case "qqq":
-        return localize2.quarter(quarter, {
-          width: "abbreviated",
-          context: "standalone"
-        });
-      case "qqqqq":
-        return localize2.quarter(quarter, {
-          width: "narrow",
-          context: "standalone"
-        });
-      case "qqqq":
-      default:
-        return localize2.quarter(quarter, {
-          width: "wide",
-          context: "standalone"
-        });
-    }
-  },
-  // Month
-  M: function(date, token, localize2) {
-    const month = date.getMonth();
-    switch (token) {
-      case "M":
-      case "MM":
-        return lightFormatters.M(date, token);
-      case "Mo":
-        return localize2.ordinalNumber(month + 1, { unit: "month" });
-      case "MMM":
-        return localize2.month(month, {
-          width: "abbreviated",
-          context: "formatting"
-        });
-      case "MMMMM":
-        return localize2.month(month, {
-          width: "narrow",
-          context: "formatting"
-        });
-      case "MMMM":
-      default:
-        return localize2.month(month, { width: "wide", context: "formatting" });
-    }
-  },
-  // Stand-alone month
-  L: function(date, token, localize2) {
-    const month = date.getMonth();
-    switch (token) {
-      case "L":
-        return String(month + 1);
-      case "LL":
-        return addLeadingZeros(month + 1, 2);
-      case "Lo":
-        return localize2.ordinalNumber(month + 1, { unit: "month" });
-      case "LLL":
-        return localize2.month(month, {
-          width: "abbreviated",
-          context: "standalone"
-        });
-      case "LLLLL":
-        return localize2.month(month, {
-          width: "narrow",
-          context: "standalone"
-        });
-      case "LLLL":
-      default:
-        return localize2.month(month, { width: "wide", context: "standalone" });
-    }
-  },
-  // Local week of year
-  w: function(date, token, localize2, options) {
-    const week = getWeek(date, options);
-    if (token === "wo") {
-      return localize2.ordinalNumber(week, { unit: "week" });
-    }
-    return addLeadingZeros(week, token.length);
-  },
-  // ISO week of year
-  I: function(date, token, localize2) {
-    const isoWeek = getISOWeek(date);
-    if (token === "Io") {
-      return localize2.ordinalNumber(isoWeek, { unit: "week" });
-    }
-    return addLeadingZeros(isoWeek, token.length);
-  },
-  // Day of the month
-  d: function(date, token, localize2) {
-    if (token === "do") {
-      return localize2.ordinalNumber(date.getDate(), { unit: "date" });
-    }
-    return lightFormatters.d(date, token);
-  },
-  // Day of year
-  D: function(date, token, localize2) {
-    const dayOfYear = getDayOfYear(date);
-    if (token === "Do") {
-      return localize2.ordinalNumber(dayOfYear, { unit: "dayOfYear" });
-    }
-    return addLeadingZeros(dayOfYear, token.length);
-  },
-  // Day of week
-  E: function(date, token, localize2) {
-    const dayOfWeek = date.getDay();
-    switch (token) {
-      case "E":
-      case "EE":
-      case "EEE":
-        return localize2.day(dayOfWeek, {
-          width: "abbreviated",
-          context: "formatting"
-        });
-      case "EEEEE":
-        return localize2.day(dayOfWeek, {
-          width: "narrow",
-          context: "formatting"
-        });
-      case "EEEEEE":
-        return localize2.day(dayOfWeek, {
-          width: "short",
-          context: "formatting"
-        });
-      case "EEEE":
-      default:
-        return localize2.day(dayOfWeek, {
-          width: "wide",
-          context: "formatting"
-        });
-    }
-  },
-  // Local day of week
-  e: function(date, token, localize2, options) {
-    const dayOfWeek = date.getDay();
-    const localDayOfWeek = (dayOfWeek - options.weekStartsOn + 8) % 7 || 7;
-    switch (token) {
-      case "e":
-        return String(localDayOfWeek);
-      case "ee":
-        return addLeadingZeros(localDayOfWeek, 2);
-      case "eo":
-        return localize2.ordinalNumber(localDayOfWeek, { unit: "day" });
-      case "eee":
-        return localize2.day(dayOfWeek, {
-          width: "abbreviated",
-          context: "formatting"
-        });
-      case "eeeee":
-        return localize2.day(dayOfWeek, {
-          width: "narrow",
-          context: "formatting"
-        });
-      case "eeeeee":
-        return localize2.day(dayOfWeek, {
-          width: "short",
-          context: "formatting"
-        });
-      case "eeee":
-      default:
-        return localize2.day(dayOfWeek, {
-          width: "wide",
-          context: "formatting"
-        });
-    }
-  },
-  // Stand-alone local day of week
-  c: function(date, token, localize2, options) {
-    const dayOfWeek = date.getDay();
-    const localDayOfWeek = (dayOfWeek - options.weekStartsOn + 8) % 7 || 7;
-    switch (token) {
-      case "c":
-        return String(localDayOfWeek);
-      case "cc":
-        return addLeadingZeros(localDayOfWeek, token.length);
-      case "co":
-        return localize2.ordinalNumber(localDayOfWeek, { unit: "day" });
-      case "ccc":
-        return localize2.day(dayOfWeek, {
-          width: "abbreviated",
-          context: "standalone"
-        });
-      case "ccccc":
-        return localize2.day(dayOfWeek, {
-          width: "narrow",
-          context: "standalone"
-        });
-      case "cccccc":
-        return localize2.day(dayOfWeek, {
-          width: "short",
-          context: "standalone"
-        });
-      case "cccc":
-      default:
-        return localize2.day(dayOfWeek, {
-          width: "wide",
-          context: "standalone"
-        });
-    }
-  },
-  // ISO day of week
-  i: function(date, token, localize2) {
-    const dayOfWeek = date.getDay();
-    const isoDayOfWeek = dayOfWeek === 0 ? 7 : dayOfWeek;
-    switch (token) {
-      case "i":
-        return String(isoDayOfWeek);
-      case "ii":
-        return addLeadingZeros(isoDayOfWeek, token.length);
-      case "io":
-        return localize2.ordinalNumber(isoDayOfWeek, { unit: "day" });
-      case "iii":
-        return localize2.day(dayOfWeek, {
-          width: "abbreviated",
-          context: "formatting"
-        });
-      case "iiiii":
-        return localize2.day(dayOfWeek, {
-          width: "narrow",
-          context: "formatting"
-        });
-      case "iiiiii":
-        return localize2.day(dayOfWeek, {
-          width: "short",
-          context: "formatting"
-        });
-      case "iiii":
-      default:
-        return localize2.day(dayOfWeek, {
-          width: "wide",
-          context: "formatting"
-        });
-    }
-  },
-  // AM or PM
-  a: function(date, token, localize2) {
-    const hours = date.getHours();
-    const dayPeriodEnumValue = hours / 12 >= 1 ? "pm" : "am";
-    switch (token) {
-      case "a":
-      case "aa":
-        return localize2.dayPeriod(dayPeriodEnumValue, {
-          width: "abbreviated",
-          context: "formatting"
-        });
-      case "aaa":
-        return localize2.dayPeriod(dayPeriodEnumValue, {
-          width: "abbreviated",
-          context: "formatting"
-        }).toLowerCase();
-      case "aaaaa":
-        return localize2.dayPeriod(dayPeriodEnumValue, {
-          width: "narrow",
-          context: "formatting"
-        });
-      case "aaaa":
-      default:
-        return localize2.dayPeriod(dayPeriodEnumValue, {
-          width: "wide",
-          context: "formatting"
-        });
-    }
-  },
-  // AM, PM, midnight, noon
-  b: function(date, token, localize2) {
-    const hours = date.getHours();
-    let dayPeriodEnumValue;
-    if (hours === 12) {
-      dayPeriodEnumValue = dayPeriodEnum.noon;
-    } else if (hours === 0) {
-      dayPeriodEnumValue = dayPeriodEnum.midnight;
-    } else {
-      dayPeriodEnumValue = hours / 12 >= 1 ? "pm" : "am";
-    }
-    switch (token) {
-      case "b":
-      case "bb":
-        return localize2.dayPeriod(dayPeriodEnumValue, {
-          width: "abbreviated",
-          context: "formatting"
-        });
-      case "bbb":
-        return localize2.dayPeriod(dayPeriodEnumValue, {
-          width: "abbreviated",
-          context: "formatting"
-        }).toLowerCase();
-      case "bbbbb":
-        return localize2.dayPeriod(dayPeriodEnumValue, {
-          width: "narrow",
-          context: "formatting"
-        });
-      case "bbbb":
-      default:
-        return localize2.dayPeriod(dayPeriodEnumValue, {
-          width: "wide",
-          context: "formatting"
-        });
-    }
-  },
-  // in the morning, in the afternoon, in the evening, at night
-  B: function(date, token, localize2) {
-    const hours = date.getHours();
-    let dayPeriodEnumValue;
-    if (hours >= 17) {
-      dayPeriodEnumValue = dayPeriodEnum.evening;
-    } else if (hours >= 12) {
-      dayPeriodEnumValue = dayPeriodEnum.afternoon;
-    } else if (hours >= 4) {
-      dayPeriodEnumValue = dayPeriodEnum.morning;
-    } else {
-      dayPeriodEnumValue = dayPeriodEnum.night;
-    }
-    switch (token) {
-      case "B":
-      case "BB":
-      case "BBB":
-        return localize2.dayPeriod(dayPeriodEnumValue, {
-          width: "abbreviated",
-          context: "formatting"
-        });
-      case "BBBBB":
-        return localize2.dayPeriod(dayPeriodEnumValue, {
-          width: "narrow",
-          context: "formatting"
-        });
-      case "BBBB":
-      default:
-        return localize2.dayPeriod(dayPeriodEnumValue, {
-          width: "wide",
-          context: "formatting"
-        });
-    }
-  },
-  // Hour [1-12]
-  h: function(date, token, localize2) {
-    if (token === "ho") {
-      let hours = date.getHours() % 12;
-      if (hours === 0) hours = 12;
-      return localize2.ordinalNumber(hours, { unit: "hour" });
-    }
-    return lightFormatters.h(date, token);
-  },
-  // Hour [0-23]
-  H: function(date, token, localize2) {
-    if (token === "Ho") {
-      return localize2.ordinalNumber(date.getHours(), { unit: "hour" });
-    }
-    return lightFormatters.H(date, token);
-  },
-  // Hour [0-11]
-  K: function(date, token, localize2) {
-    const hours = date.getHours() % 12;
-    if (token === "Ko") {
-      return localize2.ordinalNumber(hours, { unit: "hour" });
-    }
-    return addLeadingZeros(hours, token.length);
-  },
-  // Hour [1-24]
-  k: function(date, token, localize2) {
-    let hours = date.getHours();
-    if (hours === 0) hours = 24;
-    if (token === "ko") {
-      return localize2.ordinalNumber(hours, { unit: "hour" });
-    }
-    return addLeadingZeros(hours, token.length);
-  },
-  // Minute
-  m: function(date, token, localize2) {
-    if (token === "mo") {
-      return localize2.ordinalNumber(date.getMinutes(), { unit: "minute" });
-    }
-    return lightFormatters.m(date, token);
-  },
-  // Second
-  s: function(date, token, localize2) {
-    if (token === "so") {
-      return localize2.ordinalNumber(date.getSeconds(), { unit: "second" });
-    }
-    return lightFormatters.s(date, token);
-  },
-  // Fraction of second
-  S: function(date, token) {
-    return lightFormatters.S(date, token);
-  },
-  // Timezone (ISO-8601. If offset is 0, output is always `'Z'`)
-  X: function(date, token, _localize) {
-    const timezoneOffset = date.getTimezoneOffset();
-    if (timezoneOffset === 0) {
-      return "Z";
-    }
-    switch (token) {
-      case "X":
-        return formatTimezoneWithOptionalMinutes(timezoneOffset);
-      case "XXXX":
-      case "XX":
-        return formatTimezone(timezoneOffset);
-      case "XXXXX":
-      case "XXX":
-      default:
-        return formatTimezone(timezoneOffset, ":");
-    }
-  },
-  // Timezone (ISO-8601. If offset is 0, output is `'+00:00'` or equivalent)
-  x: function(date, token, _localize) {
-    const timezoneOffset = date.getTimezoneOffset();
-    switch (token) {
-      case "x":
-        return formatTimezoneWithOptionalMinutes(timezoneOffset);
-      case "xxxx":
-      case "xx":
-        return formatTimezone(timezoneOffset);
-      case "xxxxx":
-      case "xxx":
-      default:
-        return formatTimezone(timezoneOffset, ":");
-    }
-  },
-  // Timezone (GMT)
-  O: function(date, token, _localize) {
-    const timezoneOffset = date.getTimezoneOffset();
-    switch (token) {
-      case "O":
-      case "OO":
-      case "OOO":
-        return "GMT" + formatTimezoneShort(timezoneOffset, ":");
-      case "OOOO":
-      default:
-        return "GMT" + formatTimezone(timezoneOffset, ":");
-    }
-  },
-  // Timezone (specific non-location)
-  z: function(date, token, _localize) {
-    const timezoneOffset = date.getTimezoneOffset();
-    switch (token) {
-      case "z":
-      case "zz":
-      case "zzz":
-        return "GMT" + formatTimezoneShort(timezoneOffset, ":");
-      case "zzzz":
-      default:
-        return "GMT" + formatTimezone(timezoneOffset, ":");
-    }
-  },
-  // Seconds timestamp
-  t: function(date, token, _localize) {
-    const timestamp = Math.trunc(+date / 1e3);
-    return addLeadingZeros(timestamp, token.length);
-  },
-  // Milliseconds timestamp
-  T: function(date, token, _localize) {
-    return addLeadingZeros(+date, token.length);
-  }
-};
-function formatTimezoneShort(offset, delimiter = "") {
-  const sign = offset > 0 ? "-" : "+";
-  const absOffset = Math.abs(offset);
-  const hours = Math.trunc(absOffset / 60);
-  const minutes = absOffset % 60;
-  if (minutes === 0) {
-    return sign + String(hours);
-  }
-  return sign + String(hours) + delimiter + addLeadingZeros(minutes, 2);
-}
-function formatTimezoneWithOptionalMinutes(offset, delimiter) {
-  if (offset % 60 === 0) {
-    const sign = offset > 0 ? "-" : "+";
-    return sign + addLeadingZeros(Math.abs(offset) / 60, 2);
-  }
-  return formatTimezone(offset, delimiter);
-}
-function formatTimezone(offset, delimiter = "") {
-  const sign = offset > 0 ? "-" : "+";
-  const absOffset = Math.abs(offset);
-  const hours = addLeadingZeros(Math.trunc(absOffset / 60), 2);
-  const minutes = addLeadingZeros(absOffset % 60, 2);
-  return sign + hours + delimiter + minutes;
-}
-
-// node_modules/date-fns/_lib/format/longFormatters.js
-var dateLongFormatter = (pattern, formatLong2) => {
-  switch (pattern) {
-    case "P":
-      return formatLong2.date({ width: "short" });
-    case "PP":
-      return formatLong2.date({ width: "medium" });
-    case "PPP":
-      return formatLong2.date({ width: "long" });
-    case "PPPP":
-    default:
-      return formatLong2.date({ width: "full" });
-  }
-};
-var timeLongFormatter = (pattern, formatLong2) => {
-  switch (pattern) {
-    case "p":
-      return formatLong2.time({ width: "short" });
-    case "pp":
-      return formatLong2.time({ width: "medium" });
-    case "ppp":
-      return formatLong2.time({ width: "long" });
-    case "pppp":
-    default:
-      return formatLong2.time({ width: "full" });
-  }
-};
-var dateTimeLongFormatter = (pattern, formatLong2) => {
-  const matchResult = pattern.match(/(P+)(p+)?/) || [];
-  const datePattern = matchResult[1];
-  const timePattern = matchResult[2];
-  if (!timePattern) {
-    return dateLongFormatter(pattern, formatLong2);
-  }
-  let dateTimeFormat;
-  switch (datePattern) {
-    case "P":
-      dateTimeFormat = formatLong2.dateTime({ width: "short" });
-      break;
-    case "PP":
-      dateTimeFormat = formatLong2.dateTime({ width: "medium" });
-      break;
-    case "PPP":
-      dateTimeFormat = formatLong2.dateTime({ width: "long" });
-      break;
-    case "PPPP":
-    default:
-      dateTimeFormat = formatLong2.dateTime({ width: "full" });
-      break;
-  }
-  return dateTimeFormat.replace("{{date}}", dateLongFormatter(datePattern, formatLong2)).replace("{{time}}", timeLongFormatter(timePattern, formatLong2));
-};
-var longFormatters = {
-  p: timeLongFormatter,
-  P: dateTimeLongFormatter
-};
-
-// node_modules/date-fns/_lib/protectedTokens.js
-var dayOfYearTokenRE = /^D+$/;
-var weekYearTokenRE = /^Y+$/;
-var throwTokens = ["D", "DD", "YY", "YYYY"];
-function isProtectedDayOfYearToken(token) {
-  return dayOfYearTokenRE.test(token);
-}
-function isProtectedWeekYearToken(token) {
-  return weekYearTokenRE.test(token);
-}
-function warnOrThrowProtectedError(token, format2, input) {
-  const _message = message(token, format2, input);
-  console.warn(_message);
-  if (throwTokens.includes(token)) throw new RangeError(_message);
-}
-function message(token, format2, input) {
-  const subject = token[0] === "Y" ? "years" : "days of the month";
-  return `Use \`${token.toLowerCase()}\` instead of \`${token}\` (in \`${format2}\`) for formatting ${subject} to the input \`${input}\`; see: https://github.com/date-fns/date-fns/blob/master/docs/unicodeTokens.md`;
-}
-
-// node_modules/date-fns/format.js
-var formattingTokensRegExp = /[yYQqMLwIdDecihHKkms]o|(\w)\1*|''|'(''|[^'])+('|$)|./g;
-var longFormattingTokensRegExp = /P+p+|P+|p+|''|'(''|[^'])+('|$)|./g;
-var escapedStringRegExp = /^'([^]*?)'?$/;
-var doubleQuoteRegExp = /''/g;
-var unescapedLatinCharacterRegExp = /[a-zA-Z]/;
-function format(date, formatStr, options) {
-  const defaultOptions2 = getDefaultOptions();
-  const locale = options?.locale ?? defaultOptions2.locale ?? enUS;
-  const firstWeekContainsDate = options?.firstWeekContainsDate ?? options?.locale?.options?.firstWeekContainsDate ?? defaultOptions2.firstWeekContainsDate ?? defaultOptions2.locale?.options?.firstWeekContainsDate ?? 1;
-  const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions2.weekStartsOn ?? defaultOptions2.locale?.options?.weekStartsOn ?? 0;
-  const originalDate = toDate(date, options?.in);
-  if (!isValid(originalDate)) {
-    throw new RangeError("Invalid time value");
-  }
-  let parts = formatStr.match(longFormattingTokensRegExp).map((substring) => {
-    const firstCharacter = substring[0];
-    if (firstCharacter === "p" || firstCharacter === "P") {
-      const longFormatter = longFormatters[firstCharacter];
-      return longFormatter(substring, locale.formatLong);
-    }
-    return substring;
-  }).join("").match(formattingTokensRegExp).map((substring) => {
-    if (substring === "''") {
-      return { isToken: false, value: "'" };
-    }
-    const firstCharacter = substring[0];
-    if (firstCharacter === "'") {
-      return { isToken: false, value: cleanEscapedString(substring) };
-    }
-    if (formatters[firstCharacter]) {
-      return { isToken: true, value: substring };
-    }
-    if (firstCharacter.match(unescapedLatinCharacterRegExp)) {
-      throw new RangeError(
-        "Format string contains an unescaped latin alphabet character `" + firstCharacter + "`"
-      );
-    }
-    return { isToken: false, value: substring };
-  });
-  if (locale.localize.preprocessor) {
-    parts = locale.localize.preprocessor(originalDate, parts);
-  }
-  const formatterOptions = {
-    firstWeekContainsDate,
-    weekStartsOn,
-    locale
-  };
-  return parts.map((part) => {
-    if (!part.isToken) return part.value;
-    const token = part.value;
-    if (!options?.useAdditionalWeekYearTokens && isProtectedWeekYearToken(token) || !options?.useAdditionalDayOfYearTokens && isProtectedDayOfYearToken(token)) {
-      warnOrThrowProtectedError(token, formatStr, String(date));
-    }
-    const formatter = formatters[token[0]];
-    return formatter(originalDate, token, locale.localize, formatterOptions);
-  }).join("");
-}
-function cleanEscapedString(input) {
-  const matched = input.match(escapedStringRegExp);
-  if (!matched) {
-    return input;
-  }
-  return matched[1].replace(doubleQuoteRegExp, "'");
-}
-
-// node_modules/date-fns/getDefaultOptions.js
-function getDefaultOptions2() {
-  return Object.assign({}, getDefaultOptions());
-}
-
-// node_modules/date-fns/getISODay.js
-function getISODay(date, options) {
-  const day = toDate(date, options?.in).getDay();
-  return day === 0 ? 7 : day;
-}
-
-// node_modules/date-fns/transpose.js
-function transpose(date, constructor) {
-  const date_ = isConstructor(constructor) ? new constructor(0) : constructFrom(constructor, 0);
-  date_.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
-  date_.setHours(
-    date.getHours(),
-    date.getMinutes(),
-    date.getSeconds(),
-    date.getMilliseconds()
-  );
-  return date_;
-}
-function isConstructor(constructor) {
-  return typeof constructor === "function" && constructor.prototype?.constructor === constructor;
-}
-
-// node_modules/date-fns/parse/_lib/Setter.js
-var TIMEZONE_UNIT_PRIORITY = 10;
-var Setter = class {
-  subPriority = 0;
-  validate(_utcDate, _options) {
-    return true;
-  }
-};
-var ValueSetter = class extends Setter {
-  constructor(value, validateValue, setValue, priority, subPriority) {
-    super();
-    this.value = value;
-    this.validateValue = validateValue;
-    this.setValue = setValue;
-    this.priority = priority;
-    if (subPriority) {
-      this.subPriority = subPriority;
-    }
-  }
-  validate(date, options) {
-    return this.validateValue(date, this.value, options);
-  }
-  set(date, flags, options) {
-    return this.setValue(date, flags, this.value, options);
-  }
-};
-var DateTimezoneSetter = class extends Setter {
-  priority = TIMEZONE_UNIT_PRIORITY;
-  subPriority = -1;
-  constructor(context, reference) {
-    super();
-    this.context = context || ((date) => constructFrom(reference, date));
-  }
-  set(date, flags) {
-    if (flags.timestampIsSet) return date;
-    return constructFrom(date, transpose(date, this.context));
-  }
-};
-
-// node_modules/date-fns/parse/_lib/Parser.js
-var Parser = class {
-  run(dateString, token, match2, options) {
-    const result = this.parse(dateString, token, match2, options);
-    if (!result) {
-      return null;
-    }
-    return {
-      setter: new ValueSetter(
-        result.value,
-        this.validate,
-        this.set,
-        this.priority,
-        this.subPriority
-      ),
-      rest: result.rest
-    };
-  }
-  validate(_utcDate, _value, _options) {
-    return true;
-  }
-};
-
-// node_modules/date-fns/parse/_lib/parsers/EraParser.js
-var EraParser = class extends Parser {
-  priority = 140;
-  parse(dateString, token, match2) {
-    switch (token) {
-      case "G":
-      case "GG":
-      case "GGG":
-        return match2.era(dateString, { width: "abbreviated" }) || match2.era(dateString, { width: "narrow" });
-      case "GGGGG":
-        return match2.era(dateString, { width: "narrow" });
-      case "GGGG":
-      default:
-        return match2.era(dateString, { width: "wide" }) || match2.era(dateString, { width: "abbreviated" }) || match2.era(dateString, { width: "narrow" });
-    }
-  }
-  set(date, flags, value) {
-    flags.era = value;
-    date.setFullYear(value, 0, 1);
-    date.setHours(0, 0, 0, 0);
-    return date;
-  }
-  incompatibleTokens = ["R", "u", "t", "T"];
-};
-
-// node_modules/date-fns/parse/_lib/constants.js
-var numericPatterns = {
-  month: /^(1[0-2]|0?\d)/,
-  // 0 to 12
-  date: /^(3[0-1]|[0-2]?\d)/,
-  // 0 to 31
-  dayOfYear: /^(36[0-6]|3[0-5]\d|[0-2]?\d?\d)/,
-  // 0 to 366
-  week: /^(5[0-3]|[0-4]?\d)/,
-  // 0 to 53
-  hour23h: /^(2[0-3]|[0-1]?\d)/,
-  // 0 to 23
-  hour24h: /^(2[0-4]|[0-1]?\d)/,
-  // 0 to 24
-  hour11h: /^(1[0-1]|0?\d)/,
-  // 0 to 11
-  hour12h: /^(1[0-2]|0?\d)/,
-  // 0 to 12
-  minute: /^[0-5]?\d/,
-  // 0 to 59
-  second: /^[0-5]?\d/,
-  // 0 to 59
-  singleDigit: /^\d/,
-  // 0 to 9
-  twoDigits: /^\d{1,2}/,
-  // 0 to 99
-  threeDigits: /^\d{1,3}/,
-  // 0 to 999
-  fourDigits: /^\d{1,4}/,
-  // 0 to 9999
-  anyDigitsSigned: /^-?\d+/,
-  singleDigitSigned: /^-?\d/,
-  // 0 to 9, -0 to -9
-  twoDigitsSigned: /^-?\d{1,2}/,
-  // 0 to 99, -0 to -99
-  threeDigitsSigned: /^-?\d{1,3}/,
-  // 0 to 999, -0 to -999
-  fourDigitsSigned: /^-?\d{1,4}/
-  // 0 to 9999, -0 to -9999
-};
-var timezonePatterns = {
-  basicOptionalMinutes: /^([+-])(\d{2})(\d{2})?|Z/,
-  basic: /^([+-])(\d{2})(\d{2})|Z/,
-  basicOptionalSeconds: /^([+-])(\d{2})(\d{2})((\d{2}))?|Z/,
-  extended: /^([+-])(\d{2}):(\d{2})|Z/,
-  extendedOptionalSeconds: /^([+-])(\d{2}):(\d{2})(:(\d{2}))?|Z/
-};
-
-// node_modules/date-fns/parse/_lib/utils.js
-function mapValue(parseFnResult, mapFn) {
-  if (!parseFnResult) {
-    return parseFnResult;
-  }
-  return {
-    value: mapFn(parseFnResult.value),
-    rest: parseFnResult.rest
-  };
-}
-function parseNumericPattern(pattern, dateString) {
-  const matchResult = dateString.match(pattern);
-  if (!matchResult) {
-    return null;
-  }
-  return {
-    value: parseInt(matchResult[0], 10),
-    rest: dateString.slice(matchResult[0].length)
-  };
-}
-function parseTimezonePattern(pattern, dateString) {
-  const matchResult = dateString.match(pattern);
-  if (!matchResult) {
-    return null;
-  }
-  if (matchResult[0] === "Z") {
-    return {
-      value: 0,
-      rest: dateString.slice(1)
-    };
-  }
-  const sign = matchResult[1] === "+" ? 1 : -1;
-  const hours = matchResult[2] ? parseInt(matchResult[2], 10) : 0;
-  const minutes = matchResult[3] ? parseInt(matchResult[3], 10) : 0;
-  const seconds = matchResult[5] ? parseInt(matchResult[5], 10) : 0;
-  return {
-    value: sign * (hours * millisecondsInHour + minutes * millisecondsInMinute + seconds * millisecondsInSecond),
-    rest: dateString.slice(matchResult[0].length)
-  };
-}
-function parseAnyDigitsSigned(dateString) {
-  return parseNumericPattern(numericPatterns.anyDigitsSigned, dateString);
-}
-function parseNDigits(n, dateString) {
-  switch (n) {
-    case 1:
-      return parseNumericPattern(numericPatterns.singleDigit, dateString);
-    case 2:
-      return parseNumericPattern(numericPatterns.twoDigits, dateString);
-    case 3:
-      return parseNumericPattern(numericPatterns.threeDigits, dateString);
-    case 4:
-      return parseNumericPattern(numericPatterns.fourDigits, dateString);
-    default:
-      return parseNumericPattern(new RegExp("^\\d{1," + n + "}"), dateString);
-  }
-}
-function parseNDigitsSigned(n, dateString) {
-  switch (n) {
-    case 1:
-      return parseNumericPattern(numericPatterns.singleDigitSigned, dateString);
-    case 2:
-      return parseNumericPattern(numericPatterns.twoDigitsSigned, dateString);
-    case 3:
-      return parseNumericPattern(numericPatterns.threeDigitsSigned, dateString);
-    case 4:
-      return parseNumericPattern(numericPatterns.fourDigitsSigned, dateString);
-    default:
-      return parseNumericPattern(new RegExp("^-?\\d{1," + n + "}"), dateString);
-  }
-}
-function dayPeriodEnumToHours(dayPeriod) {
-  switch (dayPeriod) {
-    case "morning":
-      return 4;
-    case "evening":
-      return 17;
-    case "pm":
-    case "noon":
-    case "afternoon":
-      return 12;
-    case "am":
-    case "midnight":
-    case "night":
-    default:
-      return 0;
-  }
-}
-function normalizeTwoDigitYear(twoDigitYear, currentYear) {
-  const isCommonEra = currentYear > 0;
-  const absCurrentYear = isCommonEra ? currentYear : 1 - currentYear;
-  let result;
-  if (absCurrentYear <= 50) {
-    result = twoDigitYear || 100;
-  } else {
-    const rangeEnd = absCurrentYear + 50;
-    const rangeEndCentury = Math.trunc(rangeEnd / 100) * 100;
-    const isPreviousCentury = twoDigitYear >= rangeEnd % 100;
-    result = twoDigitYear + rangeEndCentury - (isPreviousCentury ? 100 : 0);
-  }
-  return isCommonEra ? result : 1 - result;
-}
-function isLeapYearIndex(year) {
-  return year % 400 === 0 || year % 4 === 0 && year % 100 !== 0;
-}
-
-// node_modules/date-fns/parse/_lib/parsers/YearParser.js
-var YearParser = class extends Parser {
-  priority = 130;
-  incompatibleTokens = ["Y", "R", "u", "w", "I", "i", "e", "c", "t", "T"];
-  parse(dateString, token, match2) {
-    const valueCallback = (year) => ({
-      year,
-      isTwoDigitYear: token === "yy"
-    });
-    switch (token) {
-      case "y":
-        return mapValue(parseNDigits(4, dateString), valueCallback);
-      case "yo":
-        return mapValue(
-          match2.ordinalNumber(dateString, {
-            unit: "year"
-          }),
-          valueCallback
-        );
-      default:
-        return mapValue(parseNDigits(token.length, dateString), valueCallback);
-    }
-  }
-  validate(_date, value) {
-    return value.isTwoDigitYear || value.year > 0;
-  }
-  set(date, flags, value) {
-    const currentYear = date.getFullYear();
-    if (value.isTwoDigitYear) {
-      const normalizedTwoDigitYear = normalizeTwoDigitYear(
-        value.year,
-        currentYear
-      );
-      date.setFullYear(normalizedTwoDigitYear, 0, 1);
-      date.setHours(0, 0, 0, 0);
-      return date;
-    }
-    const year = !("era" in flags) || flags.era === 1 ? value.year : 1 - value.year;
-    date.setFullYear(year, 0, 1);
-    date.setHours(0, 0, 0, 0);
-    return date;
-  }
-};
-
-// node_modules/date-fns/parse/_lib/parsers/LocalWeekYearParser.js
-var LocalWeekYearParser = class extends Parser {
-  priority = 130;
-  parse(dateString, token, match2) {
-    const valueCallback = (year) => ({
-      year,
-      isTwoDigitYear: token === "YY"
-    });
-    switch (token) {
-      case "Y":
-        return mapValue(parseNDigits(4, dateString), valueCallback);
-      case "Yo":
-        return mapValue(
-          match2.ordinalNumber(dateString, {
-            unit: "year"
-          }),
-          valueCallback
-        );
-      default:
-        return mapValue(parseNDigits(token.length, dateString), valueCallback);
-    }
-  }
-  validate(_date, value) {
-    return value.isTwoDigitYear || value.year > 0;
-  }
-  set(date, flags, value, options) {
-    const currentYear = getWeekYear(date, options);
-    if (value.isTwoDigitYear) {
-      const normalizedTwoDigitYear = normalizeTwoDigitYear(
-        value.year,
-        currentYear
-      );
-      date.setFullYear(
-        normalizedTwoDigitYear,
-        0,
-        options.firstWeekContainsDate
-      );
-      date.setHours(0, 0, 0, 0);
-      return startOfWeek(date, options);
-    }
-    const year = !("era" in flags) || flags.era === 1 ? value.year : 1 - value.year;
-    date.setFullYear(year, 0, options.firstWeekContainsDate);
-    date.setHours(0, 0, 0, 0);
-    return startOfWeek(date, options);
-  }
-  incompatibleTokens = [
-    "y",
-    "R",
-    "u",
-    "Q",
-    "q",
-    "M",
-    "L",
-    "I",
-    "d",
-    "D",
-    "i",
-    "t",
-    "T"
-  ];
-};
-
-// node_modules/date-fns/parse/_lib/parsers/ISOWeekYearParser.js
-var ISOWeekYearParser = class extends Parser {
-  priority = 130;
-  parse(dateString, token) {
-    if (token === "R") {
-      return parseNDigitsSigned(4, dateString);
-    }
-    return parseNDigitsSigned(token.length, dateString);
-  }
-  set(date, _flags, value) {
-    const firstWeekOfYear = constructFrom(date, 0);
-    firstWeekOfYear.setFullYear(value, 0, 4);
-    firstWeekOfYear.setHours(0, 0, 0, 0);
-    return startOfISOWeek(firstWeekOfYear);
-  }
-  incompatibleTokens = [
-    "G",
-    "y",
-    "Y",
-    "u",
-    "Q",
-    "q",
-    "M",
-    "L",
-    "w",
-    "d",
-    "D",
-    "e",
-    "c",
-    "t",
-    "T"
-  ];
-};
-
-// node_modules/date-fns/parse/_lib/parsers/ExtendedYearParser.js
-var ExtendedYearParser = class extends Parser {
-  priority = 130;
-  parse(dateString, token) {
-    if (token === "u") {
-      return parseNDigitsSigned(4, dateString);
-    }
-    return parseNDigitsSigned(token.length, dateString);
-  }
-  set(date, _flags, value) {
-    date.setFullYear(value, 0, 1);
-    date.setHours(0, 0, 0, 0);
-    return date;
-  }
-  incompatibleTokens = ["G", "y", "Y", "R", "w", "I", "i", "e", "c", "t", "T"];
-};
-
-// node_modules/date-fns/parse/_lib/parsers/QuarterParser.js
-var QuarterParser = class extends Parser {
-  priority = 120;
-  parse(dateString, token, match2) {
-    switch (token) {
-      case "Q":
-      case "QQ":
-        return parseNDigits(token.length, dateString);
-      case "Qo":
-        return match2.ordinalNumber(dateString, { unit: "quarter" });
-      case "QQQ":
-        return match2.quarter(dateString, {
-          width: "abbreviated",
-          context: "formatting"
-        }) || match2.quarter(dateString, {
-          width: "narrow",
-          context: "formatting"
-        });
-      case "QQQQQ":
-        return match2.quarter(dateString, {
-          width: "narrow",
-          context: "formatting"
-        });
-      case "QQQQ":
-      default:
-        return match2.quarter(dateString, {
-          width: "wide",
-          context: "formatting"
-        }) || match2.quarter(dateString, {
-          width: "abbreviated",
-          context: "formatting"
-        }) || match2.quarter(dateString, {
-          width: "narrow",
-          context: "formatting"
-        });
-    }
-  }
-  validate(_date, value) {
-    return value >= 1 && value <= 4;
-  }
-  set(date, _flags, value) {
-    date.setMonth((value - 1) * 3, 1);
-    date.setHours(0, 0, 0, 0);
-    return date;
-  }
-  incompatibleTokens = [
-    "Y",
-    "R",
-    "q",
-    "M",
-    "L",
-    "w",
-    "I",
-    "d",
-    "D",
-    "i",
-    "e",
-    "c",
-    "t",
-    "T"
-  ];
-};
-
-// node_modules/date-fns/parse/_lib/parsers/StandAloneQuarterParser.js
-var StandAloneQuarterParser = class extends Parser {
-  priority = 120;
-  parse(dateString, token, match2) {
-    switch (token) {
-      case "q":
-      case "qq":
-        return parseNDigits(token.length, dateString);
-      case "qo":
-        return match2.ordinalNumber(dateString, { unit: "quarter" });
-      case "qqq":
-        return match2.quarter(dateString, {
-          width: "abbreviated",
-          context: "standalone"
-        }) || match2.quarter(dateString, {
-          width: "narrow",
-          context: "standalone"
-        });
-      case "qqqqq":
-        return match2.quarter(dateString, {
-          width: "narrow",
-          context: "standalone"
-        });
-      case "qqqq":
-      default:
-        return match2.quarter(dateString, {
-          width: "wide",
-          context: "standalone"
-        }) || match2.quarter(dateString, {
-          width: "abbreviated",
-          context: "standalone"
-        }) || match2.quarter(dateString, {
-          width: "narrow",
-          context: "standalone"
-        });
-    }
-  }
-  validate(_date, value) {
-    return value >= 1 && value <= 4;
-  }
-  set(date, _flags, value) {
-    date.setMonth((value - 1) * 3, 1);
-    date.setHours(0, 0, 0, 0);
-    return date;
-  }
-  incompatibleTokens = [
-    "Y",
-    "R",
-    "Q",
-    "M",
-    "L",
-    "w",
-    "I",
-    "d",
-    "D",
-    "i",
-    "e",
-    "c",
-    "t",
-    "T"
-  ];
-};
-
-// node_modules/date-fns/parse/_lib/parsers/MonthParser.js
-var MonthParser = class extends Parser {
-  incompatibleTokens = [
-    "Y",
-    "R",
-    "q",
-    "Q",
-    "L",
-    "w",
-    "I",
-    "D",
-    "i",
-    "e",
-    "c",
-    "t",
-    "T"
-  ];
-  priority = 110;
-  parse(dateString, token, match2) {
-    const valueCallback = (value) => value - 1;
-    switch (token) {
-      case "M":
-        return mapValue(
-          parseNumericPattern(numericPatterns.month, dateString),
-          valueCallback
-        );
-      case "MM":
-        return mapValue(parseNDigits(2, dateString), valueCallback);
-      case "Mo":
-        return mapValue(
-          match2.ordinalNumber(dateString, {
-            unit: "month"
-          }),
-          valueCallback
-        );
-      case "MMM":
-        return match2.month(dateString, {
-          width: "abbreviated",
-          context: "formatting"
-        }) || match2.month(dateString, { width: "narrow", context: "formatting" });
-      case "MMMMM":
-        return match2.month(dateString, {
-          width: "narrow",
-          context: "formatting"
-        });
-      case "MMMM":
-      default:
-        return match2.month(dateString, { width: "wide", context: "formatting" }) || match2.month(dateString, {
-          width: "abbreviated",
-          context: "formatting"
-        }) || match2.month(dateString, { width: "narrow", context: "formatting" });
-    }
-  }
-  validate(_date, value) {
-    return value >= 0 && value <= 11;
-  }
-  set(date, _flags, value) {
-    date.setMonth(value, 1);
-    date.setHours(0, 0, 0, 0);
-    return date;
-  }
-};
-
-// node_modules/date-fns/parse/_lib/parsers/StandAloneMonthParser.js
-var StandAloneMonthParser = class extends Parser {
-  priority = 110;
-  parse(dateString, token, match2) {
-    const valueCallback = (value) => value - 1;
-    switch (token) {
-      case "L":
-        return mapValue(
-          parseNumericPattern(numericPatterns.month, dateString),
-          valueCallback
-        );
-      case "LL":
-        return mapValue(parseNDigits(2, dateString), valueCallback);
-      case "Lo":
-        return mapValue(
-          match2.ordinalNumber(dateString, {
-            unit: "month"
-          }),
-          valueCallback
-        );
-      case "LLL":
-        return match2.month(dateString, {
-          width: "abbreviated",
-          context: "standalone"
-        }) || match2.month(dateString, { width: "narrow", context: "standalone" });
-      case "LLLLL":
-        return match2.month(dateString, {
-          width: "narrow",
-          context: "standalone"
-        });
-      case "LLLL":
-      default:
-        return match2.month(dateString, { width: "wide", context: "standalone" }) || match2.month(dateString, {
-          width: "abbreviated",
-          context: "standalone"
-        }) || match2.month(dateString, { width: "narrow", context: "standalone" });
-    }
-  }
-  validate(_date, value) {
-    return value >= 0 && value <= 11;
-  }
-  set(date, _flags, value) {
-    date.setMonth(value, 1);
-    date.setHours(0, 0, 0, 0);
-    return date;
-  }
-  incompatibleTokens = [
-    "Y",
-    "R",
-    "q",
-    "Q",
-    "M",
-    "w",
-    "I",
-    "D",
-    "i",
-    "e",
-    "c",
-    "t",
-    "T"
-  ];
-};
-
-// node_modules/date-fns/setWeek.js
-function setWeek(date, week, options) {
-  const date_ = toDate(date, options?.in);
-  const diff = getWeek(date_, options) - week;
-  date_.setDate(date_.getDate() - diff * 7);
-  return toDate(date_, options?.in);
-}
-
-// node_modules/date-fns/parse/_lib/parsers/LocalWeekParser.js
-var LocalWeekParser = class extends Parser {
-  priority = 100;
-  parse(dateString, token, match2) {
-    switch (token) {
-      case "w":
-        return parseNumericPattern(numericPatterns.week, dateString);
-      case "wo":
-        return match2.ordinalNumber(dateString, { unit: "week" });
-      default:
-        return parseNDigits(token.length, dateString);
-    }
-  }
-  validate(_date, value) {
-    return value >= 1 && value <= 53;
-  }
-  set(date, _flags, value, options) {
-    return startOfWeek(setWeek(date, value, options), options);
-  }
-  incompatibleTokens = [
-    "y",
-    "R",
-    "u",
-    "q",
-    "Q",
-    "M",
-    "L",
-    "I",
-    "d",
-    "D",
-    "i",
-    "t",
-    "T"
-  ];
-};
-
-// node_modules/date-fns/setISOWeek.js
-function setISOWeek(date, week, options) {
-  const _date = toDate(date, options?.in);
-  const diff = getISOWeek(_date, options) - week;
-  _date.setDate(_date.getDate() - diff * 7);
-  return _date;
-}
-
-// node_modules/date-fns/parse/_lib/parsers/ISOWeekParser.js
-var ISOWeekParser = class extends Parser {
-  priority = 100;
-  parse(dateString, token, match2) {
-    switch (token) {
-      case "I":
-        return parseNumericPattern(numericPatterns.week, dateString);
-      case "Io":
-        return match2.ordinalNumber(dateString, { unit: "week" });
-      default:
-        return parseNDigits(token.length, dateString);
-    }
-  }
-  validate(_date, value) {
-    return value >= 1 && value <= 53;
-  }
-  set(date, _flags, value) {
-    return startOfISOWeek(setISOWeek(date, value));
-  }
-  incompatibleTokens = [
-    "y",
-    "Y",
-    "u",
-    "q",
-    "Q",
-    "M",
-    "L",
-    "w",
-    "d",
-    "D",
-    "e",
-    "c",
-    "t",
-    "T"
-  ];
-};
-
-// node_modules/date-fns/parse/_lib/parsers/DateParser.js
-var DAYS_IN_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-var DAYS_IN_MONTH_LEAP_YEAR = [
-  31,
-  29,
-  31,
-  30,
-  31,
-  30,
-  31,
-  31,
-  30,
-  31,
-  30,
-  31
-];
-var DateParser = class extends Parser {
-  priority = 90;
-  subPriority = 1;
-  parse(dateString, token, match2) {
-    switch (token) {
-      case "d":
-        return parseNumericPattern(numericPatterns.date, dateString);
-      case "do":
-        return match2.ordinalNumber(dateString, { unit: "date" });
-      default:
-        return parseNDigits(token.length, dateString);
-    }
-  }
-  validate(date, value) {
-    const year = date.getFullYear();
-    const isLeapYear = isLeapYearIndex(year);
-    const month = date.getMonth();
-    if (isLeapYear) {
-      return value >= 1 && value <= DAYS_IN_MONTH_LEAP_YEAR[month];
-    } else {
-      return value >= 1 && value <= DAYS_IN_MONTH[month];
-    }
-  }
-  set(date, _flags, value) {
-    date.setDate(value);
-    date.setHours(0, 0, 0, 0);
-    return date;
-  }
-  incompatibleTokens = [
-    "Y",
-    "R",
-    "q",
-    "Q",
-    "w",
-    "I",
-    "D",
-    "i",
-    "e",
-    "c",
-    "t",
-    "T"
-  ];
-};
-
-// node_modules/date-fns/parse/_lib/parsers/DayOfYearParser.js
-var DayOfYearParser = class extends Parser {
-  priority = 90;
-  subpriority = 1;
-  parse(dateString, token, match2) {
-    switch (token) {
-      case "D":
-      case "DD":
-        return parseNumericPattern(numericPatterns.dayOfYear, dateString);
-      case "Do":
-        return match2.ordinalNumber(dateString, { unit: "date" });
-      default:
-        return parseNDigits(token.length, dateString);
-    }
-  }
-  validate(date, value) {
-    const year = date.getFullYear();
-    const isLeapYear = isLeapYearIndex(year);
-    if (isLeapYear) {
-      return value >= 1 && value <= 366;
-    } else {
-      return value >= 1 && value <= 365;
-    }
-  }
-  set(date, _flags, value) {
-    date.setMonth(0, value);
-    date.setHours(0, 0, 0, 0);
-    return date;
-  }
-  incompatibleTokens = [
-    "Y",
-    "R",
-    "q",
-    "Q",
-    "M",
-    "L",
-    "w",
-    "I",
-    "d",
-    "E",
-    "i",
-    "e",
-    "c",
-    "t",
-    "T"
-  ];
-};
-
-// node_modules/date-fns/setDay.js
-function setDay(date, day, options) {
-  const defaultOptions2 = getDefaultOptions();
-  const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions2.weekStartsOn ?? defaultOptions2.locale?.options?.weekStartsOn ?? 0;
-  const date_ = toDate(date, options?.in);
-  const currentDay = date_.getDay();
-  const remainder = day % 7;
-  const dayIndex = (remainder + 7) % 7;
-  const delta = 7 - weekStartsOn;
-  const diff = day < 0 || day > 6 ? day - (currentDay + delta) % 7 : (dayIndex + delta) % 7 - (currentDay + delta) % 7;
-  return addDays(date_, diff, options);
-}
-
-// node_modules/date-fns/parse/_lib/parsers/DayParser.js
-var DayParser = class extends Parser {
-  priority = 90;
-  parse(dateString, token, match2) {
-    switch (token) {
-      case "E":
-      case "EE":
-      case "EEE":
-        return match2.day(dateString, {
-          width: "abbreviated",
-          context: "formatting"
-        }) || match2.day(dateString, { width: "short", context: "formatting" }) || match2.day(dateString, { width: "narrow", context: "formatting" });
-      case "EEEEE":
-        return match2.day(dateString, {
-          width: "narrow",
-          context: "formatting"
-        });
-      case "EEEEEE":
-        return match2.day(dateString, { width: "short", context: "formatting" }) || match2.day(dateString, { width: "narrow", context: "formatting" });
-      case "EEEE":
-      default:
-        return match2.day(dateString, { width: "wide", context: "formatting" }) || match2.day(dateString, {
-          width: "abbreviated",
-          context: "formatting"
-        }) || match2.day(dateString, { width: "short", context: "formatting" }) || match2.day(dateString, { width: "narrow", context: "formatting" });
-    }
-  }
-  validate(_date, value) {
-    return value >= 0 && value <= 6;
-  }
-  set(date, _flags, value, options) {
-    date = setDay(date, value, options);
-    date.setHours(0, 0, 0, 0);
-    return date;
-  }
-  incompatibleTokens = ["D", "i", "e", "c", "t", "T"];
-};
-
-// node_modules/date-fns/parse/_lib/parsers/LocalDayParser.js
-var LocalDayParser = class extends Parser {
-  priority = 90;
-  parse(dateString, token, match2, options) {
-    const valueCallback = (value) => {
-      const wholeWeekDays = Math.floor((value - 1) / 7) * 7;
-      return (value + options.weekStartsOn + 6) % 7 + wholeWeekDays;
-    };
-    switch (token) {
-      case "e":
-      case "ee":
-        return mapValue(parseNDigits(token.length, dateString), valueCallback);
-      case "eo":
-        return mapValue(
-          match2.ordinalNumber(dateString, {
-            unit: "day"
-          }),
-          valueCallback
-        );
-      case "eee":
-        return match2.day(dateString, {
-          width: "abbreviated",
-          context: "formatting"
-        }) || match2.day(dateString, { width: "short", context: "formatting" }) || match2.day(dateString, { width: "narrow", context: "formatting" });
-      case "eeeee":
-        return match2.day(dateString, {
-          width: "narrow",
-          context: "formatting"
-        });
-      case "eeeeee":
-        return match2.day(dateString, { width: "short", context: "formatting" }) || match2.day(dateString, { width: "narrow", context: "formatting" });
-      case "eeee":
-      default:
-        return match2.day(dateString, { width: "wide", context: "formatting" }) || match2.day(dateString, {
-          width: "abbreviated",
-          context: "formatting"
-        }) || match2.day(dateString, { width: "short", context: "formatting" }) || match2.day(dateString, { width: "narrow", context: "formatting" });
-    }
-  }
-  validate(_date, value) {
-    return value >= 0 && value <= 6;
-  }
-  set(date, _flags, value, options) {
-    date = setDay(date, value, options);
-    date.setHours(0, 0, 0, 0);
-    return date;
-  }
-  incompatibleTokens = [
-    "y",
-    "R",
-    "u",
-    "q",
-    "Q",
-    "M",
-    "L",
-    "I",
-    "d",
-    "D",
-    "E",
-    "i",
-    "c",
-    "t",
-    "T"
-  ];
-};
-
-// node_modules/date-fns/parse/_lib/parsers/StandAloneLocalDayParser.js
-var StandAloneLocalDayParser = class extends Parser {
-  priority = 90;
-  parse(dateString, token, match2, options) {
-    const valueCallback = (value) => {
-      const wholeWeekDays = Math.floor((value - 1) / 7) * 7;
-      return (value + options.weekStartsOn + 6) % 7 + wholeWeekDays;
-    };
-    switch (token) {
-      case "c":
-      case "cc":
-        return mapValue(parseNDigits(token.length, dateString), valueCallback);
-      case "co":
-        return mapValue(
-          match2.ordinalNumber(dateString, {
-            unit: "day"
-          }),
-          valueCallback
-        );
-      case "ccc":
-        return match2.day(dateString, {
-          width: "abbreviated",
-          context: "standalone"
-        }) || match2.day(dateString, { width: "short", context: "standalone" }) || match2.day(dateString, { width: "narrow", context: "standalone" });
-      case "ccccc":
-        return match2.day(dateString, {
-          width: "narrow",
-          context: "standalone"
-        });
-      case "cccccc":
-        return match2.day(dateString, { width: "short", context: "standalone" }) || match2.day(dateString, { width: "narrow", context: "standalone" });
-      case "cccc":
-      default:
-        return match2.day(dateString, { width: "wide", context: "standalone" }) || match2.day(dateString, {
-          width: "abbreviated",
-          context: "standalone"
-        }) || match2.day(dateString, { width: "short", context: "standalone" }) || match2.day(dateString, { width: "narrow", context: "standalone" });
-    }
-  }
-  validate(_date, value) {
-    return value >= 0 && value <= 6;
-  }
-  set(date, _flags, value, options) {
-    date = setDay(date, value, options);
-    date.setHours(0, 0, 0, 0);
-    return date;
-  }
-  incompatibleTokens = [
-    "y",
-    "R",
-    "u",
-    "q",
-    "Q",
-    "M",
-    "L",
-    "I",
-    "d",
-    "D",
-    "E",
-    "i",
-    "e",
-    "t",
-    "T"
-  ];
-};
-
-// node_modules/date-fns/setISODay.js
-function setISODay(date, day, options) {
-  const date_ = toDate(date, options?.in);
-  const currentDay = getISODay(date_, options);
-  const diff = day - currentDay;
-  return addDays(date_, diff, options);
-}
-
-// node_modules/date-fns/parse/_lib/parsers/ISODayParser.js
-var ISODayParser = class extends Parser {
-  priority = 90;
-  parse(dateString, token, match2) {
-    const valueCallback = (value) => {
-      if (value === 0) {
-        return 7;
-      }
-      return value;
-    };
-    switch (token) {
-      case "i":
-      case "ii":
-        return parseNDigits(token.length, dateString);
-      case "io":
-        return match2.ordinalNumber(dateString, { unit: "day" });
-      case "iii":
-        return mapValue(
-          match2.day(dateString, {
-            width: "abbreviated",
-            context: "formatting"
-          }) || match2.day(dateString, {
-            width: "short",
-            context: "formatting"
-          }) || match2.day(dateString, {
-            width: "narrow",
-            context: "formatting"
-          }),
-          valueCallback
-        );
-      case "iiiii":
-        return mapValue(
-          match2.day(dateString, {
-            width: "narrow",
-            context: "formatting"
-          }),
-          valueCallback
-        );
-      case "iiiiii":
-        return mapValue(
-          match2.day(dateString, {
-            width: "short",
-            context: "formatting"
-          }) || match2.day(dateString, {
-            width: "narrow",
-            context: "formatting"
-          }),
-          valueCallback
-        );
-      case "iiii":
-      default:
-        return mapValue(
-          match2.day(dateString, {
-            width: "wide",
-            context: "formatting"
-          }) || match2.day(dateString, {
-            width: "abbreviated",
-            context: "formatting"
-          }) || match2.day(dateString, {
-            width: "short",
-            context: "formatting"
-          }) || match2.day(dateString, {
-            width: "narrow",
-            context: "formatting"
-          }),
-          valueCallback
-        );
-    }
-  }
-  validate(_date, value) {
-    return value >= 1 && value <= 7;
-  }
-  set(date, _flags, value) {
-    date = setISODay(date, value);
-    date.setHours(0, 0, 0, 0);
-    return date;
-  }
-  incompatibleTokens = [
-    "y",
-    "Y",
-    "u",
-    "q",
-    "Q",
-    "M",
-    "L",
-    "w",
-    "d",
-    "D",
-    "E",
-    "e",
-    "c",
-    "t",
-    "T"
-  ];
-};
-
-// node_modules/date-fns/parse/_lib/parsers/AMPMParser.js
-var AMPMParser = class extends Parser {
-  priority = 80;
-  parse(dateString, token, match2) {
-    switch (token) {
-      case "a":
-      case "aa":
-      case "aaa":
-        return match2.dayPeriod(dateString, {
-          width: "abbreviated",
-          context: "formatting"
-        }) || match2.dayPeriod(dateString, {
-          width: "narrow",
-          context: "formatting"
-        });
-      case "aaaaa":
-        return match2.dayPeriod(dateString, {
-          width: "narrow",
-          context: "formatting"
-        });
-      case "aaaa":
-      default:
-        return match2.dayPeriod(dateString, {
-          width: "wide",
-          context: "formatting"
-        }) || match2.dayPeriod(dateString, {
-          width: "abbreviated",
-          context: "formatting"
-        }) || match2.dayPeriod(dateString, {
-          width: "narrow",
-          context: "formatting"
-        });
-    }
-  }
-  set(date, _flags, value) {
-    date.setHours(dayPeriodEnumToHours(value), 0, 0, 0);
-    return date;
-  }
-  incompatibleTokens = ["b", "B", "H", "k", "t", "T"];
-};
-
-// node_modules/date-fns/parse/_lib/parsers/AMPMMidnightParser.js
-var AMPMMidnightParser = class extends Parser {
-  priority = 80;
-  parse(dateString, token, match2) {
-    switch (token) {
-      case "b":
-      case "bb":
-      case "bbb":
-        return match2.dayPeriod(dateString, {
-          width: "abbreviated",
-          context: "formatting"
-        }) || match2.dayPeriod(dateString, {
-          width: "narrow",
-          context: "formatting"
-        });
-      case "bbbbb":
-        return match2.dayPeriod(dateString, {
-          width: "narrow",
-          context: "formatting"
-        });
-      case "bbbb":
-      default:
-        return match2.dayPeriod(dateString, {
-          width: "wide",
-          context: "formatting"
-        }) || match2.dayPeriod(dateString, {
-          width: "abbreviated",
-          context: "formatting"
-        }) || match2.dayPeriod(dateString, {
-          width: "narrow",
-          context: "formatting"
-        });
-    }
-  }
-  set(date, _flags, value) {
-    date.setHours(dayPeriodEnumToHours(value), 0, 0, 0);
-    return date;
-  }
-  incompatibleTokens = ["a", "B", "H", "k", "t", "T"];
-};
-
-// node_modules/date-fns/parse/_lib/parsers/DayPeriodParser.js
-var DayPeriodParser = class extends Parser {
-  priority = 80;
-  parse(dateString, token, match2) {
-    switch (token) {
-      case "B":
-      case "BB":
-      case "BBB":
-        return match2.dayPeriod(dateString, {
-          width: "abbreviated",
-          context: "formatting"
-        }) || match2.dayPeriod(dateString, {
-          width: "narrow",
-          context: "formatting"
-        });
-      case "BBBBB":
-        return match2.dayPeriod(dateString, {
-          width: "narrow",
-          context: "formatting"
-        });
-      case "BBBB":
-      default:
-        return match2.dayPeriod(dateString, {
-          width: "wide",
-          context: "formatting"
-        }) || match2.dayPeriod(dateString, {
-          width: "abbreviated",
-          context: "formatting"
-        }) || match2.dayPeriod(dateString, {
-          width: "narrow",
-          context: "formatting"
-        });
-    }
-  }
-  set(date, _flags, value) {
-    date.setHours(dayPeriodEnumToHours(value), 0, 0, 0);
-    return date;
-  }
-  incompatibleTokens = ["a", "b", "t", "T"];
-};
-
-// node_modules/date-fns/parse/_lib/parsers/Hour1to12Parser.js
-var Hour1to12Parser = class extends Parser {
-  priority = 70;
-  parse(dateString, token, match2) {
-    switch (token) {
-      case "h":
-        return parseNumericPattern(numericPatterns.hour12h, dateString);
-      case "ho":
-        return match2.ordinalNumber(dateString, { unit: "hour" });
-      default:
-        return parseNDigits(token.length, dateString);
-    }
-  }
-  validate(_date, value) {
-    return value >= 1 && value <= 12;
-  }
-  set(date, _flags, value) {
-    const isPM = date.getHours() >= 12;
-    if (isPM && value < 12) {
-      date.setHours(value + 12, 0, 0, 0);
-    } else if (!isPM && value === 12) {
-      date.setHours(0, 0, 0, 0);
-    } else {
-      date.setHours(value, 0, 0, 0);
-    }
-    return date;
-  }
-  incompatibleTokens = ["H", "K", "k", "t", "T"];
-};
-
-// node_modules/date-fns/parse/_lib/parsers/Hour0to23Parser.js
-var Hour0to23Parser = class extends Parser {
-  priority = 70;
-  parse(dateString, token, match2) {
-    switch (token) {
-      case "H":
-        return parseNumericPattern(numericPatterns.hour23h, dateString);
-      case "Ho":
-        return match2.ordinalNumber(dateString, { unit: "hour" });
-      default:
-        return parseNDigits(token.length, dateString);
-    }
-  }
-  validate(_date, value) {
-    return value >= 0 && value <= 23;
-  }
-  set(date, _flags, value) {
-    date.setHours(value, 0, 0, 0);
-    return date;
-  }
-  incompatibleTokens = ["a", "b", "h", "K", "k", "t", "T"];
-};
-
-// node_modules/date-fns/parse/_lib/parsers/Hour0To11Parser.js
-var Hour0To11Parser = class extends Parser {
-  priority = 70;
-  parse(dateString, token, match2) {
-    switch (token) {
-      case "K":
-        return parseNumericPattern(numericPatterns.hour11h, dateString);
-      case "Ko":
-        return match2.ordinalNumber(dateString, { unit: "hour" });
-      default:
-        return parseNDigits(token.length, dateString);
-    }
-  }
-  validate(_date, value) {
-    return value >= 0 && value <= 11;
-  }
-  set(date, _flags, value) {
-    const isPM = date.getHours() >= 12;
-    if (isPM && value < 12) {
-      date.setHours(value + 12, 0, 0, 0);
-    } else {
-      date.setHours(value, 0, 0, 0);
-    }
-    return date;
-  }
-  incompatibleTokens = ["h", "H", "k", "t", "T"];
-};
-
-// node_modules/date-fns/parse/_lib/parsers/Hour1To24Parser.js
-var Hour1To24Parser = class extends Parser {
-  priority = 70;
-  parse(dateString, token, match2) {
-    switch (token) {
-      case "k":
-        return parseNumericPattern(numericPatterns.hour24h, dateString);
-      case "ko":
-        return match2.ordinalNumber(dateString, { unit: "hour" });
-      default:
-        return parseNDigits(token.length, dateString);
-    }
-  }
-  validate(_date, value) {
-    return value >= 1 && value <= 24;
-  }
-  set(date, _flags, value) {
-    const hours = value <= 24 ? value % 24 : value;
-    date.setHours(hours, 0, 0, 0);
-    return date;
-  }
-  incompatibleTokens = ["a", "b", "h", "H", "K", "t", "T"];
-};
-
-// node_modules/date-fns/parse/_lib/parsers/MinuteParser.js
-var MinuteParser = class extends Parser {
-  priority = 60;
-  parse(dateString, token, match2) {
-    switch (token) {
-      case "m":
-        return parseNumericPattern(numericPatterns.minute, dateString);
-      case "mo":
-        return match2.ordinalNumber(dateString, { unit: "minute" });
-      default:
-        return parseNDigits(token.length, dateString);
-    }
-  }
-  validate(_date, value) {
-    return value >= 0 && value <= 59;
-  }
-  set(date, _flags, value) {
-    date.setMinutes(value, 0, 0);
-    return date;
-  }
-  incompatibleTokens = ["t", "T"];
-};
-
-// node_modules/date-fns/parse/_lib/parsers/SecondParser.js
-var SecondParser = class extends Parser {
-  priority = 50;
-  parse(dateString, token, match2) {
-    switch (token) {
-      case "s":
-        return parseNumericPattern(numericPatterns.second, dateString);
-      case "so":
-        return match2.ordinalNumber(dateString, { unit: "second" });
-      default:
-        return parseNDigits(token.length, dateString);
-    }
-  }
-  validate(_date, value) {
-    return value >= 0 && value <= 59;
-  }
-  set(date, _flags, value) {
-    date.setSeconds(value, 0);
-    return date;
-  }
-  incompatibleTokens = ["t", "T"];
-};
-
-// node_modules/date-fns/parse/_lib/parsers/FractionOfSecondParser.js
-var FractionOfSecondParser = class extends Parser {
-  priority = 30;
-  parse(dateString, token) {
-    const valueCallback = (value) => Math.trunc(value * Math.pow(10, -token.length + 3));
-    return mapValue(parseNDigits(token.length, dateString), valueCallback);
-  }
-  set(date, _flags, value) {
-    date.setMilliseconds(value);
-    return date;
-  }
-  incompatibleTokens = ["t", "T"];
-};
-
-// node_modules/date-fns/parse/_lib/parsers/ISOTimezoneWithZParser.js
-var ISOTimezoneWithZParser = class extends Parser {
-  priority = 10;
-  parse(dateString, token) {
-    switch (token) {
-      case "X":
-        return parseTimezonePattern(
-          timezonePatterns.basicOptionalMinutes,
-          dateString
-        );
-      case "XX":
-        return parseTimezonePattern(timezonePatterns.basic, dateString);
-      case "XXXX":
-        return parseTimezonePattern(
-          timezonePatterns.basicOptionalSeconds,
-          dateString
-        );
-      case "XXXXX":
-        return parseTimezonePattern(
-          timezonePatterns.extendedOptionalSeconds,
-          dateString
-        );
-      case "XXX":
-      default:
-        return parseTimezonePattern(timezonePatterns.extended, dateString);
-    }
-  }
-  set(date, flags, value) {
-    if (flags.timestampIsSet) return date;
-    return constructFrom(
-      date,
-      date.getTime() - getTimezoneOffsetInMilliseconds(date) - value
-    );
-  }
-  incompatibleTokens = ["t", "T", "x"];
-};
-
-// node_modules/date-fns/parse/_lib/parsers/ISOTimezoneParser.js
-var ISOTimezoneParser = class extends Parser {
-  priority = 10;
-  parse(dateString, token) {
-    switch (token) {
-      case "x":
-        return parseTimezonePattern(
-          timezonePatterns.basicOptionalMinutes,
-          dateString
-        );
-      case "xx":
-        return parseTimezonePattern(timezonePatterns.basic, dateString);
-      case "xxxx":
-        return parseTimezonePattern(
-          timezonePatterns.basicOptionalSeconds,
-          dateString
-        );
-      case "xxxxx":
-        return parseTimezonePattern(
-          timezonePatterns.extendedOptionalSeconds,
-          dateString
-        );
-      case "xxx":
-      default:
-        return parseTimezonePattern(timezonePatterns.extended, dateString);
-    }
-  }
-  set(date, flags, value) {
-    if (flags.timestampIsSet) return date;
-    return constructFrom(
-      date,
-      date.getTime() - getTimezoneOffsetInMilliseconds(date) - value
-    );
-  }
-  incompatibleTokens = ["t", "T", "X"];
-};
-
-// node_modules/date-fns/parse/_lib/parsers/TimestampSecondsParser.js
-var TimestampSecondsParser = class extends Parser {
-  priority = 40;
-  parse(dateString) {
-    return parseAnyDigitsSigned(dateString);
-  }
-  set(date, _flags, value) {
-    return [constructFrom(date, value * 1e3), { timestampIsSet: true }];
-  }
-  incompatibleTokens = "*";
-};
-
-// node_modules/date-fns/parse/_lib/parsers/TimestampMillisecondsParser.js
-var TimestampMillisecondsParser = class extends Parser {
-  priority = 20;
-  parse(dateString) {
-    return parseAnyDigitsSigned(dateString);
-  }
-  set(date, _flags, value) {
-    return [constructFrom(date, value), { timestampIsSet: true }];
-  }
-  incompatibleTokens = "*";
-};
-
-// node_modules/date-fns/parse/_lib/parsers.js
-var parsers = {
-  G: new EraParser(),
-  y: new YearParser(),
-  Y: new LocalWeekYearParser(),
-  R: new ISOWeekYearParser(),
-  u: new ExtendedYearParser(),
-  Q: new QuarterParser(),
-  q: new StandAloneQuarterParser(),
-  M: new MonthParser(),
-  L: new StandAloneMonthParser(),
-  w: new LocalWeekParser(),
-  I: new ISOWeekParser(),
-  d: new DateParser(),
-  D: new DayOfYearParser(),
-  E: new DayParser(),
-  e: new LocalDayParser(),
-  c: new StandAloneLocalDayParser(),
-  i: new ISODayParser(),
-  a: new AMPMParser(),
-  b: new AMPMMidnightParser(),
-  B: new DayPeriodParser(),
-  h: new Hour1to12Parser(),
-  H: new Hour0to23Parser(),
-  K: new Hour0To11Parser(),
-  k: new Hour1To24Parser(),
-  m: new MinuteParser(),
-  s: new SecondParser(),
-  S: new FractionOfSecondParser(),
-  X: new ISOTimezoneWithZParser(),
-  x: new ISOTimezoneParser(),
-  t: new TimestampSecondsParser(),
-  T: new TimestampMillisecondsParser()
-};
-
-// node_modules/date-fns/parse.js
-var formattingTokensRegExp2 = /[yYQqMLwIdDecihHKkms]o|(\w)\1*|''|'(''|[^'])+('|$)|./g;
-var longFormattingTokensRegExp2 = /P+p+|P+|p+|''|'(''|[^'])+('|$)|./g;
-var escapedStringRegExp2 = /^'([^]*?)'?$/;
-var doubleQuoteRegExp2 = /''/g;
-var notWhitespaceRegExp = /\S/;
-var unescapedLatinCharacterRegExp2 = /[a-zA-Z]/;
-function parse(dateStr, formatStr, referenceDate, options) {
-  const invalidDate = () => constructFrom(options?.in || referenceDate, NaN);
-  const defaultOptions2 = getDefaultOptions2();
-  const locale = options?.locale ?? defaultOptions2.locale ?? enUS;
-  const firstWeekContainsDate = options?.firstWeekContainsDate ?? options?.locale?.options?.firstWeekContainsDate ?? defaultOptions2.firstWeekContainsDate ?? defaultOptions2.locale?.options?.firstWeekContainsDate ?? 1;
-  const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions2.weekStartsOn ?? defaultOptions2.locale?.options?.weekStartsOn ?? 0;
-  if (!formatStr)
-    return dateStr ? invalidDate() : toDate(referenceDate, options?.in);
-  const subFnOptions = {
-    firstWeekContainsDate,
-    weekStartsOn,
-    locale
-  };
-  const setters = [new DateTimezoneSetter(options?.in, referenceDate)];
-  const tokens = formatStr.match(longFormattingTokensRegExp2).map((substring) => {
-    const firstCharacter = substring[0];
-    if (firstCharacter in longFormatters) {
-      const longFormatter = longFormatters[firstCharacter];
-      return longFormatter(substring, locale.formatLong);
-    }
-    return substring;
-  }).join("").match(formattingTokensRegExp2);
-  const usedTokens = [];
-  for (let token of tokens) {
-    if (!options?.useAdditionalWeekYearTokens && isProtectedWeekYearToken(token)) {
-      warnOrThrowProtectedError(token, formatStr, dateStr);
-    }
-    if (!options?.useAdditionalDayOfYearTokens && isProtectedDayOfYearToken(token)) {
-      warnOrThrowProtectedError(token, formatStr, dateStr);
-    }
-    const firstCharacter = token[0];
-    const parser = parsers[firstCharacter];
-    if (parser) {
-      const { incompatibleTokens } = parser;
-      if (Array.isArray(incompatibleTokens)) {
-        const incompatibleToken = usedTokens.find(
-          (usedToken) => incompatibleTokens.includes(usedToken.token) || usedToken.token === firstCharacter
-        );
-        if (incompatibleToken) {
-          throw new RangeError(
-            `The format string mustn't contain \`${incompatibleToken.fullToken}\` and \`${token}\` at the same time`
-          );
-        }
-      } else if (parser.incompatibleTokens === "*" && usedTokens.length > 0) {
-        throw new RangeError(
-          `The format string mustn't contain \`${token}\` and any other token at the same time`
-        );
-      }
-      usedTokens.push({ token: firstCharacter, fullToken: token });
-      const parseResult = parser.run(
-        dateStr,
-        token,
-        locale.match,
-        subFnOptions
-      );
-      if (!parseResult) {
-        return invalidDate();
-      }
-      setters.push(parseResult.setter);
-      dateStr = parseResult.rest;
-    } else {
-      if (firstCharacter.match(unescapedLatinCharacterRegExp2)) {
-        throw new RangeError(
-          "Format string contains an unescaped latin alphabet character `" + firstCharacter + "`"
-        );
-      }
-      if (token === "''") {
-        token = "'";
-      } else if (firstCharacter === "'") {
-        token = cleanEscapedString2(token);
-      }
-      if (dateStr.indexOf(token) === 0) {
-        dateStr = dateStr.slice(token.length);
-      } else {
-        return invalidDate();
-      }
-    }
-  }
-  if (dateStr.length > 0 && notWhitespaceRegExp.test(dateStr)) {
-    return invalidDate();
-  }
-  const uniquePrioritySetters = setters.map((setter) => setter.priority).sort((a, b) => b - a).filter((priority, index, array) => array.indexOf(priority) === index).map(
-    (priority) => setters.filter((setter) => setter.priority === priority).sort((a, b) => b.subPriority - a.subPriority)
-  ).map((setterArray) => setterArray[0]);
-  let date = toDate(referenceDate, options?.in);
-  if (isNaN(+date)) return invalidDate();
-  const flags = {};
-  for (const setter of uniquePrioritySetters) {
-    if (!setter.validate(date, subFnOptions)) {
-      return invalidDate();
-    }
-    const result = setter.set(date, flags, subFnOptions);
-    if (Array.isArray(result)) {
-      date = result[0];
-      Object.assign(flags, result[1]);
-    } else {
-      date = result;
-    }
-  }
-  return date;
-}
-function cleanEscapedString2(input) {
-  return input.match(escapedStringRegExp2)[1].replace(doubleQuoteRegExp2, "'");
 }
 
 // behaviour_pack/scripts-dev/utils/checks.ts
@@ -6535,8 +3395,8 @@ import {
   TicksPerSecond as TicksPerSecond2,
   world as world3
 } from "@minecraft/server";
-function send_message(dimension, target, message2) {
-  const msg = { "rawtext": [{ "text": message2 }] };
+function send_message(dimension, target, message) {
+  const msg = { "rawtext": [{ "text": message }] };
   if (!target.startsWith("@")) {
     target = `"${target}"`;
   }
@@ -6575,8 +3435,8 @@ function play_quest_fail_sound(gamertag) {
     { volume: 100, location: player.location }
   );
 }
-function send_title(dimension, target, type, message2) {
-  world3.getDimension(dimension).runCommand(`title "${target}" ${type} ${message2}`);
+function send_title(dimension, target, type, message) {
+  world3.getDimension(dimension).runCommand(`title "${target}" ${type} ${message}`);
 }
 function add_or_spawn_item(player, item) {
   const player_container = player.getComponent(EntityComponentTypes.Inventory)?.container;
@@ -6643,7 +3503,9 @@ function vision_entity_glitch(player) {
     MinecraftEntityTypes.Breeze,
     MinecraftEntityTypes.Camel,
     MinecraftEntityTypes.Sheep,
-    MinecraftEntityTypes.Stray
+    MinecraftEntityTypes.Stray,
+    "amethyst:the_breath",
+    "amethyst:endstone_golem"
   ];
   const entity = entities[Math.floor(Math.random() * entities.length)];
   let location = player.location;
@@ -6704,6 +3566,17 @@ function effect_glitch(player) {
     }
   );
 }
+function place_glitch_block(player) {
+  const block = "amethyst:glitch_block";
+  let location = player.location;
+  let facing = player.getViewDirection();
+  location.x += facing.x * 2;
+  location.z += facing.z * 2;
+  let random_block = player.dimension.getBlock(location);
+  if (random_block?.typeId === MinecraftBlockTypes.Air && player.dimension.getEntitiesAtBlockLocation(location).length === 0) {
+    random_block.setType(block);
+  }
+}
 var commands = {
   send_message,
   play_quest_complete_sound,
@@ -6715,7 +3588,8 @@ var commands = {
   noise_glitch,
   vision_block_glitch,
   vision_entity_glitch,
-  effect_glitch
+  effect_glitch,
+  place_glitch_block
 };
 var commands_default = commands;
 
@@ -6882,10 +3756,88 @@ var AltarMessage = class {
   }
 };
 
+// behaviour_pack/scripts-dev/utils/dragon_messages.ts
+import { world as world4 } from "@minecraft/server";
+var DragonHeartMessage = class {
+  static heart_mined(heartsMined) {
+    const heartMessages = {
+      1: `\xA7l\xA75The Ancient Dragon's roar echoes across dimensions...
+\xA7r"NO! You dare shatter my essence? My remaining \xA7l5 Hearts\xA7r beat frantically across the Relic Islands. Each one you destroy weakens my immortal form... I must stop you before it's too late!"`,
+      2: `\xA7l\xA75The Dragon's voice cracks with growing desperation...
+\xA7r"My power... it's draining away! \xA7l4 Hearts\xA7r still pulse on distant islands, but I can feel my strength ebbing. You don't understand - without them, I become... vulnerable. MORTAL."`,
+      3: `\xA7l\xA75Panic seeps into the Dragon's ancient voice...
+\xA7r"Three of my Hearts destroyed! Only \xA7l3 remain\xA7r to sustain my immortality! My scales grow brittle, my fire dims... If you take the rest, I'll be nothing more than flesh and bone. Please... reconsider this madness!"`,
+      4: `\xA7l\xA75The Dragon's terror becomes palpable...
+\xA7r"I BEG YOU, STOP! With only \xA7l2 Hearts\xA7r left, my ancient body begins to fail! My wings tremble, my breath grows weak... Soon I'll be defenseless against mortal weapons. You are not victorious, you are VICIOUS!"`,
+      5: `\xA7l\xA75The Dragon's voice breaks into desperate whispers...
+\xA7r"One... only \xA7l1 Heart\xA7r remains between me and certain death. I can feel mortality creeping through my veins like poison. When it's gone, any blade can pierce my hide, any arrow can find my heart. You've doomed me to die like... like the rest of them."`,
+      6: `\xA7l\xA75The Dragon's final scream pierces reality itself...
+\xA7r"IT IS FINISHED! All \xA7l6 Hearts\xA7r lie shattered! My immortality bleeds away like water through sand! I am... I am just flesh now. Mortal. Killable. The hunt begins, and I... I am the prey."`
+    };
+    return heartMessages[heartsMined] || "\xA7cError: Invalid heart count";
+  }
+  static health_stage_message(stage) {
+    if (stage === 1) {
+      const stage1Messages = [
+        `\xA7l\xA75The Ancient Dragon roars with fury...
+\xA7r"You think destroying my Hearts makes me weak? I am still DEATH INCARNATE! My minions will feast on your bones!"`,
+        `\xA7l\xA75Draconic power surges through the battlefield...
+\xA7r"Mortal fools! Even weakened, I command legions! Rise, my servants! Show them the price of defiance!"`,
+        `\xA7l\xA75The Dragon's eyes blaze with ancient hatred...
+\xA7r"You may have made me vulnerable, but I am FAR from defeated! Behold the armies that serve the Dragon Lord!"`,
+        `\xA7l\xA75Wings beat like thunder across the End...
+\xA7r"My immortality may be gone, but my RAGE remains eternal! Come forth, children of darkness! Defend your master!"`,
+        `\xA7l\xA75The battlefield trembles with draconic might...
+\xA7r"You celebrate too early, mortals! Even a mortal dragon commands respect! My minions will drown you in shadow!"`
+      ];
+      return stage1Messages[Math.floor(Math.random() * stage1Messages.length)];
+    } else if (stage === 2) {
+      const stage2Messages = [
+        `\xA7l\xA75The Dragon's voice cracks with desperation...
+\xA7r"No... NO! This cannot be! My loyal servants, protect me! I refuse to die like some common beast!"`,
+        `\xA7l\xA75Blood drips from ancient scales...
+\xA7r"I am the ANCIENT DRAGON! I will not fall to mortals! Rise, my champions! Give your lives for your master!"`,
+        `\xA7l\xA75The Dragon's roar becomes a pained shriek...
+\xA7r"My strength fades... but my will remains! Every creature in the End, come to my aid! I WILL NOT DIE ALONE!"`,
+        `\xA7l\xA75Panic seeps into the Dragon's ancient voice...
+\xA7r"This is impossible! I have ruled for millennia! My minions, my faithful servants... save me from this humiliation!"`,
+        `\xA7l\xA75The Dragon's breathing grows labored...
+\xA7r"I can feel death approaching... but I will take you all with me! My final army, emerge from the shadows! We die together!"`
+      ];
+      return stage2Messages[Math.floor(Math.random() * stage2Messages.length)];
+    }
+    return `\xA75The Ancient Dragon speaks... \xA7r"Unknown stage of battle reached..."`;
+  }
+  static summon_minions() {
+    const mob_counts = {
+      "amethyst:endstone_golem": 2.2,
+      "amethyst:the_breath": 1.4
+    };
+    const radius = 30;
+    const dimension = world4.getDimension(MinecraftDimensionTypes.TheEnd);
+    const player_count = dimension.getPlayers().length;
+    const totalMobs = Object.values(mob_counts).reduce((sum, count) => sum + count * player_count, 0);
+    const angleIncrement = 2 * Math.PI / totalMobs;
+    let mobIndex = 0;
+    for (const [mobType, countPerPlayer] of Object.entries(mob_counts)) {
+      const totalCount = countPerPlayer * player_count;
+      for (let i = 0; i < totalCount; i++) {
+        const angle = angleIncrement * mobIndex;
+        const x = radius * Math.cos(angle);
+        const z = radius * Math.sin(angle);
+        const groundY = dimension.getTopmostBlock({ x, z })?.y || 70;
+        dimension.spawnEntity(mobType, { x, y: groundY + 1, z });
+        mobIndex++;
+      }
+    }
+  }
+};
+
 // behaviour_pack/scripts-dev/utils/index.ts
 var utils = {
   DeathMessage,
   AltarMessage,
+  DragonHeartMessage,
   send_motd,
   checks: checks_default,
   commands: commands_default,
@@ -6900,7 +3852,7 @@ function load_glitch_component() {
   function glitch(event) {
     if (Math.random() < 0.07 && event.block.isValid) {
       const location = event.block.location;
-      const radius = 20;
+      const radius = 18;
       const glitches_type = [
         utils_default.commands.noise_glitch,
         utils_default.commands.vision_block_glitch,
@@ -6908,9 +3860,14 @@ function load_glitch_component() {
         utils_default.commands.effect_glitch
       ];
       const glitch2 = glitches_type[Math.floor(Math.random() * glitches_type.length)];
-      event.block.dimension.getPlayers({ location, maxDistance: radius }).forEach((player) => {
-        glitch2(player);
-      });
+      const players = event.block.dimension.getPlayers({ location, maxDistance: radius });
+      if (players.length === 0) {
+        event.block.setType("minecraft:air");
+      } else {
+        players.forEach((player) => {
+          glitch2(player);
+        });
+      }
     }
   }
   function glitch_particles(event) {
@@ -6945,651 +3902,8 @@ import {
   system as system4,
   EntityComponentTypes as EntityComponentTypes2,
   EquipmentSlot,
-  TicksPerSecond as TicksPerSecond3,
-  ItemComponentTypes
+  TicksPerSecond as TicksPerSecond3
 } from "@minecraft/server";
-
-// behaviour_pack/scripts-dev/api/user.ts
-import { HttpRequest, HttpHeader, HttpRequestMethod, http } from "@minecraft/server-net";
-var ThornyUser = class _ThornyUser {
-  static {
-    this.thorny_user_map = {};
-  }
-  static {
-    this.thorny_id_map = {};
-  }
-  constructor(api_data) {
-    this.thorny_id = api_data.thorny_id;
-    this.user_id = api_data.user_id;
-    this.guild_id = api_data.guild_id;
-    this.username = api_data.username;
-    this.join_date = api_data.join_date;
-    this.birthday = api_data.birthday;
-    this.balance = api_data.balance;
-    this.active = api_data.active;
-    this.role = api_data.role;
-    this.patron = api_data.patron;
-    this.level = api_data.level;
-    this.xp = api_data.xp;
-    this.required_xp = api_data.required_xp;
-    this.last_message = api_data.last_message;
-    this.gamertag = api_data.gamertag;
-    this.whitelist = api_data.whitelist;
-    this.profile = api_data.profile;
-  }
-  static async get_user_from_api(guild_id2, gamertag) {
-    const response = await http.get(`http://nexuscore:8000/api/v0.2/users/guild/${guild_id2}/${gamertag.replace(" ", "%20")}`);
-    const thorny_user = new _ThornyUser(JSON.parse(response.body));
-    _ThornyUser.thorny_user_map[gamertag] = thorny_user;
-    _ThornyUser.thorny_id_map[thorny_user.thorny_id] = thorny_user;
-    thorny_user.gamertag = gamertag;
-    return thorny_user;
-  }
-  static fetch_user(gamertag) {
-    return _ThornyUser.thorny_user_map[gamertag];
-  }
-  static fetch_user_by_id(thorny_id) {
-    return _ThornyUser.thorny_id_map[thorny_id];
-  }
-  /**
-   * Update this user in NexusCore.
-   * Currently only updates balance.
-   */
-  async update() {
-    const request = new HttpRequest(`http://nexuscore:8000/api/v0.2/users/${this.thorny_id}`);
-    request.method = HttpRequestMethod.Put;
-    request.body = JSON.stringify({
-      "balance": this.balance
-    });
-    request.headers = [
-      new HttpHeader("Content-Type", "application/json"),
-      new HttpHeader("auth", "my-auth-token")
-    ];
-    await http.request(request);
-  }
-  /**
-   * Send a connection event to NexusCore, either
-   * connect or disconnect
-   */
-  send_connect_event(event_type) {
-    const request = new HttpRequest(`http://nexuscore:8000/api/v0.2/events/connection`);
-    request.method = HttpRequestMethod.Post;
-    request.headers = [
-      new HttpHeader("Content-Type", "application/json"),
-      new HttpHeader("auth", "my-auth-token")
-    ];
-    request.body = JSON.stringify({ "type": event_type, "thorny_id": this.thorny_id, "ignored": false });
-    console.log(`[CONNECTION] Sending ${event_type} to NexusCore for ThornyID ${this.thorny_id} (${this.whitelist} / ${this.gamertag})`);
-    http.request(request);
-  }
-  /**
-   * Returns a decorated role string for chat decoration
-   */
-  get_role_display() {
-    let role = this.role;
-    let colour = "\xA7b";
-    if (this.patron) {
-      role = "Patron";
-      colour = "\xA7c";
-    }
-    if (this.role == "Community Manager") {
-      role = "Manager";
-      colour = "\xA7e";
-    }
-    if (this.role == "Owner") {
-      colour = "\xA7l\xA7a";
-    }
-    return colour + role;
-  }
-};
-
-// behaviour_pack/scripts-dev/api/relay.ts
-import { HttpRequest as HttpRequest2, HttpHeader as HttpHeader2, HttpRequestMethod as HttpRequestMethod2, http as http2 } from "@minecraft/server-net";
-var Relay = class {
-  static message(nametag, content) {
-    const request = new HttpRequest2("http://nexuscore:8000/api/v0.2/events/relay");
-    request.method = HttpRequestMethod2.Post;
-    request.body = JSON.stringify({
-      "type": "message",
-      "content": content,
-      "embed_title": "",
-      "embed_content": "",
-      "name": nametag
-    });
-    request.headers = [
-      new HttpHeader2("Content-Type", "application/json"),
-      new HttpHeader2("auth", "my-auth-token")
-    ];
-    http2.request(request);
-  }
-  static event(title, content, event_type) {
-    const request = new HttpRequest2("http://nexuscore:8000/api/v0.2/events/relay");
-    request.method = HttpRequestMethod2.Post;
-    request.body = JSON.stringify({
-      "type": event_type,
-      "content": "",
-      "embed_title": title,
-      "embed_content": content,
-      "name": "Server"
-    });
-    request.headers = [
-      new HttpHeader2("Content-Type", "application/json"),
-      new HttpHeader2("auth", "my-auth-token")
-    ];
-    http2.request(request);
-  }
-  static location(locations) {
-    const request = new HttpRequest2("http://nexuscore:8000/api/v0.2/server/players");
-    request.method = HttpRequestMethod2.Post;
-    request.body = JSON.stringify(locations.map((location) => ({
-      "gamertag": location.gamertag,
-      "location": location.location,
-      "hidden": location.hidden
-    })));
-    request.headers = [
-      new HttpHeader2("Content-Type", "application/json"),
-      new HttpHeader2("auth", "my-auth-token")
-    ];
-    http2.request(request);
-  }
-};
-
-// behaviour_pack/scripts-dev/api/interaction.ts
-import { HttpRequest as HttpRequest3, HttpHeader as HttpHeader3, HttpRequestMethod as HttpRequestMethod3, http as http3 } from "@minecraft/server-net";
-var Interaction = class _Interaction {
-  static {
-    this.queue = [];
-  }
-  static {
-    this.processing = false;
-  }
-  constructor(data) {
-    this.thorny_id = data.thorny_id;
-    this.type = data.type;
-    this.coordinates = [Math.round(data.coordinates[0]), Math.round(data.coordinates[1]), Math.round(data.coordinates[2])];
-    this.reference = data.reference;
-    this.mainhand = data.mainhand;
-    this.dimension = data.dimension;
-    this.time = /* @__PURE__ */ new Date();
-  }
-  /**
-   * Post interaction to NexusCore
-   */
-  async post_interaction() {
-    const request = new HttpRequest3(`http://nexuscore:8000/api/v0.2/events/interaction`);
-    request.method = HttpRequestMethod3.Post;
-    request.body = JSON.stringify(this);
-    request.headers = [
-      new HttpHeader3("Content-Type", "application/json"),
-      new HttpHeader3("auth", "my-auth-token")
-    ];
-    await http3.request(request);
-  }
-  static set_processing(value) {
-    _Interaction.processing = value;
-  }
-  static is_processing() {
-    return _Interaction.processing;
-  }
-  static enqueue(interaction) {
-    _Interaction.queue.push(interaction);
-  }
-  static dequeue() {
-    return _Interaction.queue.shift();
-  }
-};
-
-// behaviour_pack/scripts-dev/api/quest.ts
-import { http as http4 } from "@minecraft/server-net";
-var Reward = class {
-  constructor(data) {
-    this.display_name = data.display_name;
-    this.balance = data.balance;
-    this.item = data.item;
-    this.count = data.count;
-  }
-  async give_reward(interaction, thorny_user) {
-    if (this.balance) {
-      thorny_user.balance += this.balance;
-      utils_default.commands.send_message(
-        interaction.dimension,
-        thorny_user.gamertag,
-        `\xA7l[\xA7aQuests\xA7f]\xA7r You have received ${this.balance} Nugs!`
-      );
-    } else if (this.item) {
-      utils_default.commands.give_item(thorny_user.gamertag, this.item, this.count);
-      utils_default.commands.send_message(
-        interaction.dimension,
-        thorny_user.gamertag,
-        `\xA7l[\xA7aQuests\xA7f]\xA7r You have received ${this.count} ${utils_default.clean_id(this.item)}!`
-      );
-    }
-  }
-};
-var Objective = class {
-  constructor(data) {
-    this.objective_id = data.objective_id;
-    this.objective = data.objective;
-    this.order = data.order;
-    this.description = data.description;
-    this.display = data.display;
-    this.objective_count = data.objective_count;
-    this.objective_type = data.objective_type;
-    this.natural_block = data.natural_block;
-    this.objective_timer = data.objective_timer;
-    this.required_mainhand = data.required_mainhand;
-    this.required_location = data.required_location;
-    this.location_radius = data.location_radius;
-    this.rewards = [];
-    for (let reward of data.rewards) {
-      this.rewards.push(new Reward(reward));
-    }
-  }
-  get_clean_rewards() {
-    let rewards = [];
-    for (let reward of this.rewards) {
-      if (reward.display_name) {
-        rewards.push(`\xA77${reward.display_name}\xA7r`);
-      } else if (reward.item) {
-        rewards.push(`${reward.count} \xA77${utils_default.clean_id(reward.item)}\xA7r`);
-      } else if (reward.balance) {
-        rewards.push(`\xA7p${reward.balance} Nugs\xA7r`);
-      }
-    }
-    return rewards.join(", ");
-  }
-  get_clean_requirements() {
-    let requirements = [];
-    if (this.natural_block && this.objective_type == "mine") {
-      requirements.push(`- ${utils_default.clean_id(this.objective)} must be naturally found`);
-    }
-    if (this.required_mainhand) {
-      requirements.push(`- Using ${utils_default.clean_id(this.required_mainhand)}`);
-    }
-    if (this.required_location) {
-      requirements.push(`- Around ${this.required_location} (Radius ${this.location_radius})`);
-    }
-    if (this.objective_timer) {
-      requirements.push(`- Within ${utils_default.convert_seconds_to_hms(this.objective_timer)}`);
-    }
-    return requirements.join("\n");
-  }
-  generate_objective_string(objective_index, total_objectives, quest_title) {
-    const task_type = this.objective_type.replace(/\b\w/g, (char) => char.toUpperCase());
-    const title = `\xA7a+=+=+=+=+ ${quest_title} +=+=+=+=+\xA7r
-Quest Progress: ${objective_index}/${total_objectives}
-`;
-    const description = `\xA77${this.description}\xA7r
-
-`;
-    let full_task = `Your Task: \xA7b${task_type} \xA7l${this.objective_count} ${utils_default.clean_id(this.objective)}\xA7r
-`;
-    if (this.display) {
-      full_task = `Your Task: \xA7b${this.display}\xA7r
-`;
-    }
-    const rewards = `Rewards: ${this.get_clean_rewards()}
-`;
-    let requirements = "";
-    if (this.get_clean_requirements()) {
-      requirements = `\xA7u+=+=+=+=+ Requirements +=+=+=+=+\xA7r
-${this.get_clean_requirements()}
-`;
-    }
-    const final_line = `\xA7a+=+=+=+=+=+=+=+=+=+=+=+=+=+=+\xA7r`;
-    return `${title}${description}${full_task}${rewards}${requirements}${final_line}`;
-  }
-  async check_requirements(interaction, start_time) {
-    if (interaction.reference !== this.objective) {
-      return { check: false, fail_objective: false };
-    }
-    if (this.required_mainhand && this.required_mainhand !== interaction.mainhand) {
-      return { check: false, fail_objective: false };
-    }
-    const interaction_location = [interaction.coordinates[0], interaction.coordinates[2]];
-    if (this.required_location && !utils_default.checks.distance_check(interaction_location, this.required_location, this.location_radius)) {
-      return { check: false, fail_objective: false };
-    }
-    if (this.objective_timer && !utils_default.checks.timer_check(interaction.time, start_time, this.objective_timer)) {
-      return { check: false, fail_objective: true };
-    }
-    if (this.objective_type == "mine" && this.natural_block) {
-      return {
-        check: !await this.check_if_natural(interaction.coordinates[0], interaction.coordinates[1], interaction.coordinates[2]),
-        fail_objective: false
-      };
-    }
-    return { check: true, fail_objective: false };
-  }
-  async check_if_natural(x, y, z) {
-    const response = await http4.get(`http://nexuscore:8000/api/v0.2/events/interaction?x=${x}&y=${y}&z=${z}`);
-    if (response.status !== 200) {
-      return false;
-    }
-    return JSON.parse(response.body).length > 1;
-  }
-  async give_rewards(interation, thorny_user) {
-    for (let reward of this.rewards) {
-      await reward.give_reward(interation, thorny_user);
-    }
-  }
-};
-var Quest = class _Quest {
-  constructor(data) {
-    this.quest_id = data.quest_id;
-    this.start_time = parse(data.start_time, "yyyy-MM-dd HH:mm:ss.SSSSSS", /* @__PURE__ */ new Date());
-    this.end_time = parse(data.end_time, "yyyy-MM-dd HH:mm:ss.SSSSSS", /* @__PURE__ */ new Date());
-    this.title = data.title;
-    this.description = data.description;
-    this.objectives = [];
-    for (let objective of data.objectives) {
-      this.objectives.push(new Objective(objective));
-    }
-  }
-  static async get_quest(quest_id) {
-    try {
-      const quest_response = await http4.get(`http://nexuscore:8000/api/v0.2/quests/${quest_id}`);
-      const quest_data = JSON.parse(quest_response.body);
-      return new _Quest(quest_data);
-    } catch (error) {
-      console.error("Error fetching quest:", error);
-      throw error;
-    }
-  }
-};
-
-// behaviour_pack/scripts-dev/api/quest_with_progress.ts
-import { http as http5, HttpHeader as HttpHeader4, HttpRequest as HttpRequest4, HttpRequestMethod as HttpRequestMethod4 } from "@minecraft/server-net";
-function normalizeDateString(datetime) {
-  if (!datetime.includes(".")) {
-    return `${datetime}.000000`;
-  }
-  return datetime.replace(/\.(\d{1,6})\d*/, (_, digits) => {
-    return `.${digits.padEnd(6, "0")}`;
-  });
-}
-var ObjectiveWithProgress = class extends Objective {
-  constructor(data, thorny_user) {
-    super(data);
-    this.thorny_user = thorny_user;
-    this.start = data.start ? parse(normalizeDateString(data.start), "yyyy-MM-dd HH:mm:ss.SSSSSS", /* @__PURE__ */ new Date()) : null;
-    this.end = data.end ? parse(normalizeDateString(data.end), "yyyy-MM-dd HH:mm:ss.SSSSSS", /* @__PURE__ */ new Date()) : null;
-    this.completion = data.completion;
-    this.status = data.status;
-  }
-  async complete_objective(interaction, quest) {
-    const index = quest.objectives.indexOf(this);
-    utils_default.commands.play_objective_complete_sound(this.thorny_user.gamertag);
-    utils_default.commands.send_title(
-      interaction.dimension,
-      this.thorny_user.gamertag,
-      "actionbar",
-      `\xA7l\xA7a${quest.title} Progress:\xA7r \xA77${index + 1}\xA7r/${quest.objectives.length}`
-    );
-    utils_default.commands.send_message(
-      interaction.dimension,
-      this.thorny_user.gamertag,
-      quest.objectives[index + 1].generate_objective_string(index + 1, quest.objectives.length, quest.title)
-    );
-  }
-  async update_user_objective(quest) {
-    const request = new HttpRequest4(`http://nexuscore:8000/api/v0.2/users/${this.thorny_user.thorny_id}/quest/${quest.quest_id}/${this.objective_id}`);
-    request.method = HttpRequestMethod4.Put;
-    request.body = JSON.stringify({
-      "start": this.start ? format(this.start, "yyyy-MM-dd HH:mm:ss.SSSSSS") : null,
-      "end": this.end ? format(this.end, "yyyy-MM-dd HH:mm:ss.SSSSSS") : null,
-      "completion": this.completion,
-      "status": this.status
-    });
-    request.headers = [
-      new HttpHeader4("Content-Type", "application/json"),
-      new HttpHeader4("auth", "my-auth-token")
-    ];
-    await http5.request(request);
-  }
-  /**
-   * @returns a Boolean representing if completion was incremented
-   */
-  async increment_completion(interaction, quest) {
-    const requirement_check = await this.check_requirements(interaction, this.start ?? /* @__PURE__ */ new Date());
-    if (requirement_check.check) {
-      this.completion++;
-      utils_default.commands.play_quest_progress_sound(this.thorny_user.gamertag);
-      utils_default.commands.send_title(
-        interaction.dimension,
-        this.thorny_user.gamertag,
-        "actionbar",
-        `\xA7l\xA7s${utils_default.clean_id(this.objective)}:\xA7r \xA77${this.completion}\xA7r/${this.objective_count}`
-      );
-      if (this.completion === this.objective_count) {
-        this.status = "completed";
-        this.end = /* @__PURE__ */ new Date();
-        const index = quest.objectives.indexOf(this);
-        if (index < quest.objectives.length - 1) {
-          await this.complete_objective(interaction, quest);
-        }
-        await this.give_rewards(interaction, this.thorny_user);
-      }
-      return true;
-    } else if (requirement_check.fail_objective) {
-      this.status = "failed";
-      this.end = /* @__PURE__ */ new Date();
-      await quest.fail_quest(interaction.thorny_id);
-      utils_default.commands.play_quest_fail_sound(this.thorny_user.gamertag);
-      return false;
-    }
-    return false;
-  }
-};
-var QuestWithProgress = class _QuestWithProgress extends Quest {
-  static {
-    this.quest_cache = {};
-  }
-  constructor(data, thorny_user) {
-    super(data);
-    this.thorny_user = thorny_user;
-    this.accepted_on = parse(normalizeDateString(data.accepted_on), "yyyy-MM-dd HH:mm:ss.SSSSSSS", /* @__PURE__ */ new Date());
-    this.started_on = data.started_on ? parse(normalizeDateString(data.started_on), "yyyy-MM-dd HH:mm:ss.SSSSSS", /* @__PURE__ */ new Date()) : null;
-    this.status = data.status;
-    this.objectives = [];
-    for (let objective of data.objectives) {
-      this.objectives.push(new ObjectiveWithProgress(objective, thorny_user));
-    }
-  }
-  static clear_cache(thorny_user) {
-    delete this.quest_cache[thorny_user.thorny_id];
-  }
-  static async get_active_quest(thorny_user) {
-    try {
-      const active_quest = await http5.get(`http://nexuscore:8000/api/v0.2/users/${thorny_user.thorny_id}/quest/active`);
-      if (active_quest.status === 200) {
-        const active_quest_data = JSON.parse(active_quest.body);
-        const quest_id = active_quest_data["quest_id"];
-        if (this.quest_cache[thorny_user.thorny_id] && this.quest_cache[thorny_user.thorny_id].quest_id === quest_id) {
-          return this.quest_cache[thorny_user.thorny_id];
-        }
-        const quest_response = await http5.get(`http://nexuscore:8000/api/v0.2/quests/${quest_id}`);
-        const quest_json = JSON.parse(quest_response.body);
-        const quest_data = {
-          ...quest_json,
-          ...active_quest_data,
-          objectives: utils_default.combine(quest_json.objectives, active_quest_data["objectives"], "objective_id")
-        };
-        const quest_object = new _QuestWithProgress(quest_data, thorny_user);
-        this.quest_cache[thorny_user.thorny_id] = quest_object;
-        return quest_object;
-      } else {
-        return null;
-      }
-    } catch (error) {
-      console.error("Error fetching quest:", error);
-      throw error;
-    }
-  }
-  get_active_objective() {
-    return this.objectives.find((objective) => objective.status === "in_progress") ?? null;
-  }
-  async update_user_quest() {
-    const request = new HttpRequest4(`http://nexuscore:8000/api/v0.2/users/${this.thorny_user.thorny_id}/quest/${this.quest_id}`);
-    request.method = HttpRequestMethod4.Put;
-    request.body = JSON.stringify({
-      "accepted_on": null,
-      "started_on": this.started_on ? format(this.started_on, "yyyy-MM-dd HH:mm:ss.SSSSSS") : null,
-      "status": this.status == "completed" ? this.status : null
-    });
-    request.headers = [
-      new HttpHeader4("Content-Type", "application/json"),
-      new HttpHeader4("auth", "my-auth-token")
-    ];
-    await http5.request(request);
-    for (let objective of this.objectives) {
-      await objective.update_user_objective(this);
-    }
-  }
-  async fail_quest(thorny_id) {
-    this.status = "failed";
-    const request = new HttpRequest4(`http://nexuscore:8000/api/v0.2/users/${thorny_id}/quest/active`);
-    request.method = HttpRequestMethod4.Delete;
-    request.body = JSON.stringify({});
-    request.headers = [
-      new HttpHeader4("Content-Type", "application/json"),
-      new HttpHeader4("auth", "my-auth-token")
-    ];
-    await http5.request(request);
-  }
-  /**
-   * @returns
-   * A boolean representing if the objective has been incremented or not
-   */
-  async increment_active_objective(interaction) {
-    const active_objective = this.get_active_objective();
-    if (active_objective) {
-      if (active_objective.completion == 0 && this.objectives.indexOf(active_objective) == 0) {
-        this.started_on = /* @__PURE__ */ new Date();
-        active_objective.start = /* @__PURE__ */ new Date();
-      }
-      const incremented = await active_objective.increment_completion(interaction, this);
-      const next_objective = this.get_active_objective();
-      if (!next_objective && active_objective.status === "completed") {
-        this.status = "completed";
-        this.end_time = /* @__PURE__ */ new Date();
-        utils_default.commands.play_quest_complete_sound(this.thorny_user.gamertag);
-        utils_default.commands.send_title(
-          interaction.dimension,
-          this.thorny_user.gamertag,
-          "title",
-          `\xA7l\xA7eQ\xA7du\xA7se\xA7as\xA7tt \xA7uC\xA7io\xA7mm\xA7pp\xA79l\xA7ee\xA7nt\xA7be!`
-        );
-        utils_default.commands.send_message(
-          interaction.dimension,
-          "@a",
-          `\xA7a+=+=+=+=+=+=+ Quest Completed! +=+=+=+=+=+=+\xA7r
-${this.thorny_user.gamertag} has just completed \xA7l\xA7n${this.title}\xA7r!
-Run \xA75/quests view\xA7r on Discord to start it!`
-        );
-      } else if (next_objective && next_objective.objective_id !== active_objective.objective_id) {
-        next_objective.start = /* @__PURE__ */ new Date();
-      } else if (active_objective.status === "failed") {
-        this.status = "failed";
-        this.end_time = /* @__PURE__ */ new Date();
-        utils_default.commands.send_title(
-          interaction.dimension,
-          this.thorny_user.gamertag,
-          "title",
-          `\xA7lQuest Failed :(`
-        );
-      }
-      return incremented;
-    }
-    return false;
-  }
-};
-
-// behaviour_pack/scripts-dev/api/sacrifice.ts
-import { http as http6, HttpHeader as HttpHeader5, HttpRequest as HttpRequest5, HttpRequestMethod as HttpRequestMethod5 } from "@minecraft/server-net";
-var Item = class _Item {
-  constructor(data) {
-    this.item_id = data.item_id;
-    this.value = data.value;
-    this.max_uses = data.max_uses;
-    this.depreciation = data.depreciation;
-    this.current_uses = data.current_uses;
-  }
-  static async get_item(item_id) {
-    try {
-      const item_response = await http6.get(`http://nexuscore:8000/api/v0.2/server/items/${item_id}`);
-      const item_data = JSON.parse(item_response.body);
-      return new _Item(item_data);
-    } catch (error) {
-      console.error("Error fetching item:", error);
-      throw error;
-    }
-  }
-  async update_item() {
-    const request = new HttpRequest5(`http://nexuscore:8000/api/v0.2/server/items/${this.item_id}`);
-    request.method = HttpRequestMethod5.Put;
-    request.headers = [
-      new HttpHeader5("Content-Type", "application/json"),
-      new HttpHeader5("auth", "my-auth-token")
-    ];
-    request.body = JSON.stringify({
-      current_uses: this.current_uses
-    });
-    await http6.request(request);
-  }
-};
-var World = class _World {
-  constructor(data) {
-    this.guild_id = data.guild_id;
-    this.overworld_border = data.overworld_border;
-    this.nether_border = data.nether_border;
-    this.end_border = data.end_border;
-  }
-  static async get_world(guild_id2) {
-    try {
-      const world_response = await http6.get(`http://nexuscore:8000/api/v0.2/server/world/${guild_id2}`);
-      const world_data = JSON.parse(world_response.body);
-      world_data.guild_id = guild_id2;
-      return new _World(world_data);
-    } catch (error) {
-      console.error("Error fetching world:", error);
-      throw error;
-    }
-  }
-  async update_world() {
-    const request = new HttpRequest5(`http://nexuscore:8000/api/v0.2/server/world/${this.guild_id}`);
-    request.method = HttpRequestMethod5.Put;
-    request.headers = [
-      new HttpHeader5("Content-Type", "application/json"),
-      new HttpHeader5("auth", "my-auth-token")
-    ];
-    request.body = JSON.stringify({
-      overworld_border: this.overworld_border,
-      nether_border: this.nether_border,
-      end_border: this.end_border
-    });
-    await http6.request(request);
-  }
-};
-var WorldCache = class _WorldCache {
-  static async load_world(guild_id2) {
-    _WorldCache.world = await World.get_world(guild_id2);
-  }
-};
-
-// behaviour_pack/scripts-dev/api/index.ts
-var api = {
-  ThornyUser,
-  Relay,
-  Interaction,
-  Quest,
-  QuestWithProgress,
-  Item,
-  World
-};
-var api_default = api;
-
-// behaviour_pack/scripts-dev/components/sacrifice.ts
 function load_altar_component(guild_id2) {
   const sacrificeTimers = /* @__PURE__ */ new Map();
   const sacrificeTotals = /* @__PURE__ */ new Map();
@@ -7605,7 +3919,6 @@ function load_altar_component(guild_id2) {
     if (event.player) {
       const playerName = event.player.name;
       const mainhand = event.player.getComponent(EntityComponentTypes2.Equippable)?.getEquipment(EquipmentSlot.Mainhand);
-      const border = WorldCache.world;
       if (mainhand && !banned_gamertags.includes(playerName)) {
         if (mainhand.amount == 1) {
           event.player.getComponent(EntityComponentTypes2.Equippable)?.setEquipment(EquipmentSlot.Mainhand);
@@ -7615,35 +3928,14 @@ function load_altar_component(guild_id2) {
         }
         event.dimension.playSound("random.pop", event.player.location, { volume: 0.5 });
         try {
-          const sacrificial_item = await api_default.Item.get_item(mainhand.typeId);
-          sacrificial_item.current_uses += 1;
           let modifier = 0;
-          let enchantment_levels = 0;
-          let enchantments = 0;
-          mainhand.getComponent(ItemComponentTypes.Enchantable)?.getEnchantments().forEach((enchantment) => {
-            enchantment_levels += enchantment.level;
-            enchantments += 1;
-          });
-          modifier += enchantment_levels * enchantments * 0.3 / 100 + (mainhand.nameTag ? 0.1 : 0);
-          const durability = mainhand.getComponent(ItemComponentTypes.Durability);
-          if (durability) {
-            modifier -= durability.damage / durability.maxDurability;
-          }
-          const original_block_value = sacrificial_item.value * (1 + modifier);
-          const log = Math.exp(-sacrificial_item.depreciation * 0.5 * Math.log(sacrificial_item.current_uses));
-          const weight = sacrificial_item.current_uses / sacrificial_item.max_uses;
-          const linear = 1 - weight;
-          const block_value = original_block_value * ((1 - weight) * log + weight * linear);
-          await sacrificial_item.update_item();
-          border.end_border += block_value;
-          await border.update_world();
-          await WorldCache.load_world(border.guild_id);
+          const block_value = 10;
           const total_value = sacrificeTotals.get(playerName)?.val;
           const total_original_value = sacrificeTotals.get(playerName)?.orig;
           if (total_value && total_original_value) {
-            sacrificeTotals.set(playerName, { val: block_value + total_value, orig: original_block_value + total_original_value });
+            sacrificeTotals.set(playerName, { val: block_value + total_value, orig: 10 });
           } else {
-            sacrificeTotals.set(playerName, { val: block_value, orig: original_block_value });
+            sacrificeTotals.set(playerName, { val: block_value, orig: 10 });
           }
           if (sacrificeTimers.has(playerName)) {
             system4.clearRun(sacrificeTimers.get(playerName));
@@ -7653,11 +3945,11 @@ function load_altar_component(guild_id2) {
             event.dimension.playSound("altar.sacrifice", event.block.center(), { volume: 8 });
             const total_value2 = Math.round(sacrificeTotals.get(playerName)?.val);
             const total_original = Math.round(sacrificeTotals.get(playerName)?.orig);
-            const message2 = utils_default.AltarMessage.random_sacrifice(total_value2, total_original);
+            const message = utils_default.AltarMessage.random_sacrifice(total_value2, total_original);
             utils_default.commands.send_message(
               event.dimension.id,
               playerName,
-              `[\xA7l\xA7aAltar\xA7r] ${message2}`
+              `[\xA7l\xA7aAltar\xA7r] ${message}`
             );
             const valueRemaining = total_value2 / total_original;
             if (valueRemaining < 0.3) {
@@ -7673,20 +3965,20 @@ function load_altar_component(guild_id2) {
           const spawned_location = event.block.center();
           spawned_location.y += 0.7;
           event.dimension.spawnItem(spawned_item, spawned_location);
-          const message2 = utils_default.AltarMessage.random_not_sacrificial();
+          const message = utils_default.AltarMessage.random_not_sacrificial();
           utils_default.commands.send_message(
             event.dimension.id,
             playerName,
-            `[\xA7l\xA7aAltar\xA7r] ${message2}`
+            `[\xA7l\xA7aAltar\xA7r] ${message}`
           );
         }
       } else {
         ambient(event);
-        const message2 = utils_default.AltarMessage.random_info(Math.round(border.end_border));
+        const message = utils_default.AltarMessage.random_info(1434);
         utils_default.commands.send_message(
           event.dimension.id,
           playerName,
-          `[\xA7l\xA7aAltar\xA7r] ${message2}`
+          `[\xA7l\xA7aAltar\xA7r] ${message}`
         );
       }
     }
@@ -7801,6 +4093,59 @@ function load_reactor_activate_component() {
   });
 }
 
+// behaviour_pack/scripts-dev/components/heal_dragon.ts
+import {
+  system as system7,
+  EntityComponentTypes as EntityComponentTypes4
+} from "@minecraft/server";
+function load_heal_dragon_component() {
+  let mined_blocks = 0;
+  function heal_dragon(event) {
+    if (event.block.isValid) {
+      const dragon = event.block.dimension.getEntities({ type: MinecraftEntityTypes.EnderDragon })[0];
+      if (dragon && dragon.isValid) {
+        dragon.getComponent(EntityComponentTypes4.Health)?.resetToMaxValue();
+      }
+      event.dimension.playSound("mob.warden.heartbeat", event.block.location);
+    }
+  }
+  function heart_destroy(event) {
+    mined_blocks++;
+    event.dimension.spawnEntity(
+      "amethyst:the_breath",
+      event.block.location
+    );
+    event.dimension.spawnEntity(
+      "amethyst:the_breath",
+      event.block.location
+    );
+    event.dimension.spawnEntity(
+      "amethyst:endstone_golem",
+      event.block.location
+    );
+    event.dimension.playSound("mob.enderdragon.growl", event.block.location);
+    const message = utils_default.DragonHeartMessage.heart_mined(mined_blocks);
+    utils_default.commands.send_message(
+      event.dimension.id,
+      "@a",
+      message
+    );
+  }
+  system7.beforeEvents.startup.subscribe((initEvent) => {
+    initEvent.blockComponentRegistry.registerCustomComponent(
+      "amethyst:heal_dragon",
+      {
+        onTick(event) {
+          heal_dragon(event);
+        },
+        onPlayerBreak(event) {
+          heart_destroy(event);
+        }
+      }
+    );
+  });
+}
+
 // behaviour_pack/scripts-dev/components/index.ts
 function load_custom_components(guild_id2) {
   load_fungus_spreading_component();
@@ -7808,12 +4153,13 @@ function load_custom_components(guild_id2) {
   load_whoop_component();
   load_altar_component(guild_id2);
   load_reactor_activate_component();
+  load_heal_dragon_component();
 }
 
 // behaviour_pack/scripts-dev/loops/elytra_no_mending.ts
-import { EquipmentSlot as EquipmentSlot3, world as world7, system as system7, EntityComponentTypes as EntityComponentTypes4, ItemComponentTypes as ItemComponentTypes2, EnchantmentType } from "@minecraft/server";
+import { EquipmentSlot as EquipmentSlot3, world as world7, system as system8, EntityComponentTypes as EntityComponentTypes5, ItemComponentTypes as ItemComponentTypes2, EnchantmentType } from "@minecraft/server";
 function elytraCheck(player) {
-  const player_equipment = player.getComponent(EntityComponentTypes4.Equippable);
+  const player_equipment = player.getComponent(EntityComponentTypes5.Equippable);
   const item = player_equipment?.getEquipment(EquipmentSlot3.Chest);
   if (item) {
     const enchantments = item?.getComponent(ItemComponentTypes2.Enchantable);
@@ -7841,7 +4187,7 @@ function elytraCheck(player) {
   }
 }
 function load_elytra_mending_checker() {
-  system7.runInterval(() => {
+  system8.runInterval(() => {
     let playerlist = world7.getPlayers();
     playerlist.forEach((player) => {
       elytraCheck(player);
@@ -7851,7 +4197,7 @@ function load_elytra_mending_checker() {
 }
 
 // behaviour_pack/scripts-dev/loops/glitches.ts
-import { system as system8, world as world8, TicksPerSecond as TicksPerSecond4 } from "@minecraft/server";
+import { system as system9, world as world8, TicksPerSecond as TicksPerSecond5 } from "@minecraft/server";
 function do_glitch() {
   const random = Math.random();
   const glitches_type = [
@@ -7860,28 +4206,30 @@ function do_glitch() {
     utils_default.commands.noise_glitch,
     utils_default.commands.effect_glitch
   ];
-  if (random <= 0.2) {
+  if (random <= 0.27) {
     const glitch = glitches_type[Math.floor(Math.random() * glitches_type.length)];
-    console.log(`[Loops] Doing Glitches: ${glitch}`);
     for (const player of world8.getAllPlayers()) {
       glitch(player);
-      player.sendMessage("\xA7oWhat was that?");
+      player.sendMessage("[You whisper to yourself] \xA7oWhat was that?");
+      if (Math.random() < 0.4) {
+        utils_default.commands.place_glitch_block(player);
+      }
     }
   }
 }
 function load_glitch_loop() {
-  system8.runInterval(() => {
+  system9.runInterval(() => {
     do_glitch();
-  }, TicksPerSecond4 * 60 * 30);
+  }, TicksPerSecond5 * 60 * 30);
   console.log("[Loops] Loaded Glitches Loop");
 }
 
 // behaviour_pack/scripts-dev/loops/totem_of_togetherness.ts
-import { EntityComponentTypes as EntityComponentTypes6, EquipmentSlot as EquipmentSlot4, system as system9, world as world9 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes7, EquipmentSlot as EquipmentSlot4, system as system10, world as world9 } from "@minecraft/server";
 var healthboost = MinecraftEffectTypes.HealthBoost;
 function togetherness(player) {
   const position = player.location;
-  const equippable = player.getComponent(EntityComponentTypes6.Equippable);
+  const equippable = player.getComponent(EntityComponentTypes7.Equippable);
   const offhand = equippable?.getEquipment(EquipmentSlot4.Offhand);
   const mainhand = equippable?.getEquipment(EquipmentSlot4.Mainhand);
   if (offhand?.hasTag("amethyst:togetherness") || mainhand?.hasTag("amethyst:togetherness")) {
@@ -7904,7 +4252,7 @@ function togetherness(player) {
   }
 }
 function load_totem_o_togetherness() {
-  system9.runInterval(() => {
+  system10.runInterval(() => {
     let playerlist = world9.getPlayers();
     playerlist.forEach((player) => {
       togetherness(player);
@@ -7914,12 +4262,12 @@ function load_totem_o_togetherness() {
 }
 
 // behaviour_pack/scripts-dev/loops/champion_set.ts
-import { EntityComponentTypes as EntityComponentTypes7, EquipmentSlot as EquipmentSlot5, MolangVariableMap, system as system10, world as world10 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes8, EquipmentSlot as EquipmentSlot5, MolangVariableMap, system as system11, world as world10 } from "@minecraft/server";
 function champion(player) {
   const molang = new MolangVariableMap();
   molang.setColorRGB("variable.color", { red: 1, green: 0.913, blue: 0.576 });
   const position = player.location;
-  const equippable = player.getComponent(EntityComponentTypes7.Equippable);
+  const equippable = player.getComponent(EntityComponentTypes8.Equippable);
   let equipped = 0;
   equippable?.getEquipment(EquipmentSlot5.Head)?.hasTag("amethyst:champion") ? equipped++ : null;
   equippable?.getEquipment(EquipmentSlot5.Chest)?.hasTag("amethyst:champion") ? equipped++ : null;
@@ -7936,7 +4284,7 @@ function champion(player) {
   }
 }
 function load_champion_set() {
-  system10.runInterval(() => {
+  system11.runInterval(() => {
     let playerlist = world10.getPlayers();
     playerlist.forEach((player) => {
       champion(player);
@@ -7955,6 +4303,5 @@ function load_loops() {
 
 // behaviour_pack/scripts-dev/main.ts
 var guild_id = "1213827104945471538";
-WorldCache.load_world(guild_id).then();
 load_loops();
 load_custom_components(guild_id);
