@@ -19,6 +19,9 @@ interface IThornyUser {
     gamertag: string
     whitelist: string
     profile: object
+    location: number[] | null
+    dimension: string | null
+    hidden: boolean
 }
 
 export default class ThornyUser implements IThornyUser {
@@ -42,6 +45,9 @@ export default class ThornyUser implements IThornyUser {
     gamertag: string
     whitelist: string
     profile: object
+    location: number[] | null
+    dimension: string | null
+    hidden: boolean
 
     constructor(api_data: IThornyUser) {
         this.thorny_id = api_data.thorny_id
@@ -61,6 +67,9 @@ export default class ThornyUser implements IThornyUser {
         this.gamertag = api_data.gamertag
         this.whitelist = api_data.whitelist
         this.profile = api_data.profile
+        this.location = api_data.location
+        this.dimension = api_data.dimension
+        this.hidden = api_data.hidden
     }
 
     public static async get_user_from_api(guild_id: string, gamertag: string): Promise<ThornyUser> {
@@ -92,7 +101,10 @@ export default class ThornyUser implements IThornyUser {
         request.method = HttpRequestMethod.Put;
         request.body = JSON.stringify({
             "balance": this.balance,
-            "whitelist": this.whitelist || this.gamertag
+            "whitelist": this.whitelist || this.gamertag,
+            "location": this.location,
+            "dimension": this.dimension,
+            "hidden": this.hidden
         })
         request.headers = [
             new HttpHeader("Content-Type", "application/json"),

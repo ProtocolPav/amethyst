@@ -20,19 +20,24 @@ function location_log(player: Player) {
 
     const location = [Math.round(player.location.x), Math.round(player.location.y), Math.round(player.location.z)];
 
-    return {'gamertag': player.name, 'location': location, 'hidden': hidden, dimension: player.dimension.id}
+    const thorny_user = api.ThornyUser.fetch_user(player.name)
+
+    if (thorny_user) {
+        thorny_user.location = location
+        thorny_user.dimension = player.dimension.id
+        thorny_user.hidden = hidden
+
+        thorny_user.update().then()
+    }
 }
 
 export default function load_location_logger() {
     system.runInterval(() => {
         let playerlist = world.getPlayers();
-        let log: {gamertag: string, location: number[], hidden: boolean, dimension: string}[] = []
 
         playerlist.forEach((player) => {
-            log.push(location_log(player))
+            location_log(player)
         });
-
-        api.Relay.location(log)
     }, TicksPerSecond*5)
 
     console.log('[Loops] Loaded Location Loop')

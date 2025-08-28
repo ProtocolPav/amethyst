@@ -7482,6 +7482,9 @@ var ThornyUser = class _ThornyUser {
     this.gamertag = api_data.gamertag;
     this.whitelist = api_data.whitelist;
     this.profile = api_data.profile;
+    this.location = api_data.location;
+    this.dimension = api_data.dimension;
+    this.hidden = api_data.hidden;
   }
   static async get_user_from_api(guild_id2, gamertag) {
     const response = await http.get(`http://nexuscore:8000/api/v0.2/users/guild/${guild_id2}/${gamertag.replace(" ", "%20")}`);
@@ -7506,7 +7509,10 @@ var ThornyUser = class _ThornyUser {
     request.method = HttpRequestMethod.Put;
     request.body = JSON.stringify({
       "balance": this.balance,
-      "whitelist": this.whitelist || this.gamertag
+      "whitelist": this.whitelist || this.gamertag,
+      "location": this.location,
+      "dimension": this.dimension,
+      "hidden": this.hidden
     });
     request.headers = [
       new HttpHeader("Content-Type", "application/json"),
@@ -7602,20 +7608,6 @@ var Relay = class {
       "embed_content": content,
       "name": "Server"
     });
-    request.headers = [
-      new HttpHeader2("Content-Type", "application/json"),
-      new HttpHeader2("auth", "my-auth-token")
-    ];
-    http2.request(request);
-  }
-  static location(locations) {
-    const request = new HttpRequest2("http://nexuscore:8000/api/v0.2/server/players");
-    request.method = HttpRequestMethod2.Post;
-    request.body = JSON.stringify(locations.map((location) => ({
-      "gamertag": location.gamertag,
-      "location": location.location,
-      "hidden": location.hidden
-    })));
     request.headers = [
       new HttpHeader2("Content-Type", "application/json"),
       new HttpHeader2("auth", "my-auth-token")
@@ -8651,16 +8643,20 @@ function location_log(player) {
   let hidden = false;
   hidden = head_gear?.typeId ? check_list.includes(head_gear.typeId) : false;
   const location = [Math.round(player.location.x), Math.round(player.location.y), Math.round(player.location.z)];
-  return { "gamertag": player.name, "location": location, "hidden": hidden, dimension: player.dimension.id };
+  const thorny_user = api_default.ThornyUser.fetch_user(player.name);
+  if (thorny_user) {
+    thorny_user.location = location;
+    thorny_user.dimension = player.dimension.id;
+    thorny_user.hidden = hidden;
+    thorny_user.update().then();
+  }
 }
 function load_location_logger() {
   system13.runInterval(() => {
     let playerlist = world12.getPlayers();
-    let log = [];
     playerlist.forEach((player) => {
-      log.push(location_log(player));
+      location_log(player);
     });
-    api_default.Relay.location(log);
   }, TicksPerSecond7 * 5);
   console.log("[Loops] Loaded Location Loop");
 }
