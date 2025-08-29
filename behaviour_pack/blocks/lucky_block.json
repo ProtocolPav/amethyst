@@ -2,7 +2,6 @@
     "format_version": "1.21.40",
     "minecraft:block": {
         "description": {
-            "runtime_identifier": "minecraft:stone",
             "identifier": "amethyst:lucky_block",
             "menu_category": {
                 "category": "construction",
@@ -10,13 +9,15 @@
             }
         },
         "components": {
+            "tag:minecraft:is_pickaxe_item_destructible": {},
             "minecraft:destructible_by_mining": {
-                "seconds_to_destroy": 2
+                "seconds_to_destroy": 1.2
             },
             "minecraft:display_name": "Lucky Block",
             "minecraft:custom_components": [
-                "amethyst:luck_block"
-            ]
+                "amethyst:lucky"
+            ],
+            "minecraft:loot": "loot_tables/empty.json"
         }
     }
 }
