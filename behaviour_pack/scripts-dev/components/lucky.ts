@@ -1,7 +1,7 @@
 import {
     BlockComponentPlayerBreakEvent,
     EntityComponentTypes,
-    EquipmentSlot, ItemComponentTypes,
+    EquipmentSlot, ItemComponentTypes, LootTable, LootTableManager,
     system,
     TicksPerSecond,
     world
