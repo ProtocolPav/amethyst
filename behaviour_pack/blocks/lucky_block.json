@@ -17,7 +17,7 @@
             "minecraft:custom_components": [
                 "amethyst:lucky"
             ],
-            "minecraft:loot": "loot_tables/lucky_block.json"
+            "minecraft:loot": "loot_tables/lucky_drops/lucky_drop.json"
         }
     }
 }
