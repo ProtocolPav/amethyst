@@ -43,6 +43,32 @@
           ]
         },
         {
+          "type": "item",
+          "name": "minecraft:cooked_chicken",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 6,
+                "max": 9
+              }
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "name": "minecraft:golden_carrot",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 2,
+                "max": 6
+              }
+            }
+          ]
+        },
+        {
           "type": "loot_table",
           "name": "loot_tables/lucky_drops/sub_tables/anvil_drop.json"
         },
