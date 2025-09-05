@@ -1,0 +1,42 @@
+{
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "minecraft:cocoa_beans",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 2,
+                "max": 5
+              }
+            },
+            {
+              "function": "set_name",
+              "name": "Poop (Ew)"
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "name": "minecraft:stone_button",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": 1728
+            }
+          ]
+        },
+        {
+          "type": "empty"
+        },
+        {
+          "type": "empty"
+        }
+      ]
+    }
+  ]
+}

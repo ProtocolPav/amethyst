@@ -13,6 +13,10 @@
                 "min": 2,
                 "max": 6
               }
+            },
+            {
+              "function": "set_lore",
+              "lore": ["Can be transported"]
             }
           ]
         }
@@ -31,6 +35,10 @@
                 "min": 20,
                 "max": 43
               }
+            },
+            {
+              "function": "set_lore",
+              "lore": ["Can be transported"]
             }
           ]
         }

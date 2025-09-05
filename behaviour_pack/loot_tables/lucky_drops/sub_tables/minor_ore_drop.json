@@ -8,15 +8,15 @@
           "name": "minecraft:raw_iron",
           "functions": [
             {
-              "function": "set_lore",
-              "lore": ["Can be transported"]
-            },
-            {
               "function": "set_count",
               "count": {
                 "min": 5,
                 "max": 10
               }
+            },
+            {
+              "function": "set_lore",
+              "lore": ["Can be transported"]
             }
           ]
         },
@@ -25,15 +25,15 @@
           "name": "minecraft:coal",
           "functions": [
             {
-              "function": "set_lore",
-              "lore": ["Can be transported"]
-            },
-            {
               "function": "set_count",
               "count": {
                 "min": 5,
                 "max": 10
               }
+            },
+            {
+              "function": "set_lore",
+              "lore": ["Can be transported"]
             }
           ]
         },
@@ -42,15 +42,15 @@
           "name": "minecraft:lapis_lazuli",
           "functions": [
             {
-              "function": "set_lore",
-              "lore": ["Can be transported"]
-            },
-            {
               "function": "set_count",
               "count": {
                 "min": 5,
                 "max": 10
               }
+            },
+            {
+              "function": "set_lore",
+              "lore": ["Can be transported"]
             }
           ]
         },
@@ -59,15 +59,15 @@
           "name": "minecraft:raw_copper",
           "functions": [
             {
-              "function": "set_lore",
-              "lore": ["Can be transported"]
-            },
-            {
               "function": "set_count",
               "count": {
                 "min": 5,
                 "max": 10
               }
+            },
+            {
+              "function": "set_lore",
+              "lore": ["Can be transported"]
             }
           ]
         }
