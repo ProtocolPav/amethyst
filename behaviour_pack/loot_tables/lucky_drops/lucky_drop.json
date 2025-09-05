@@ -37,22 +37,22 @@
             {
               "function": "set_lore",
               "lore": [
-                "Redeem 2 Vouchers, get 1 Nug"
+                "Redeem 5 Vouchers, get 1 Nug"
               ]
             }
           ]
         },
         {
           "type": "loot_table",
-          "name": "loot_tables/lucky_drops/anvil_drop.json"
+          "name": "loot_tables/lucky_drops/sub_tables/anvil_drop.json"
         },
         {
           "type": "loot_table",
-          "name": "loot_tables/lucky_drops/iron_gear_drop.json"
+          "name": "loot_tables/lucky_drops/sub_tables/iron_gear_drop.json"
         },
         {
           "type": "loot_table",
-          "name": "loot_tables/lucky_drops/ore_drop.json"
+          "name": "loot_tables/lucky_drops/sub_tables/ore_drop.json"
         }
       ]
     }

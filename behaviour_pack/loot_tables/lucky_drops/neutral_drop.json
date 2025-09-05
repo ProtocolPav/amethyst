@@ -1,0 +1,42 @@
+{
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "amethyst:everthorn_e"
+        },
+        {
+          "type": "item",
+          "name": "minecraft:shield"
+        },
+        {
+          "type": "item",
+          "name": "amethyst:whoopee_cushion"
+        },
+        {
+          "type": "item",
+          "name": "amethyst:apple",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 2,
+                "max": 6
+              }
+            }
+          ]
+        },
+        {
+          "type": "loot_table",
+          "name": "loot_tables/lucky_drops/sub_tables/minor_ore_drop.json"
+        },
+        {
+          "type": "loot_table",
+          "name": "loot_tables/lucky_drops/sub_tables/gold_gear_drop.json"
+        }
+      ]
+    }
+  ]
+}

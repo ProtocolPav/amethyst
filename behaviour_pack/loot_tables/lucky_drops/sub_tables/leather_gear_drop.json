@@ -1,0 +1,45 @@
+{
+  "pools": [
+    {
+      "rolls": 3,
+      "entries": [
+        {
+          "type": "item",
+          "name": "minecraft:wooden_sword"
+        },
+        {
+          "type": "item",
+          "name": "minecraft:wooden_pickaxe"
+        },
+        {
+          "type": "item",
+          "name": "minecraft:wooden_axe"
+        },
+        {
+          "type": "item",
+          "name": "minecraft:wooden_shovel"
+        },
+        {
+          "type": "item",
+          "name": "minecraft:wooden_hoe"
+        },
+        {
+          "type": "item",
+          "name": "minecraft:leather_helmet"
+        },
+        {
+          "type": "item",
+          "name": "minecraft:leather_chestplate"
+        },
+        {
+          "type": "item",
+          "name": "minecraft:leather_leggings"
+        },
+        {
+          "type": "item",
+          "name": "minecraft:leather_boots"
+        }
+      ]
+    }
+  ]
+}
