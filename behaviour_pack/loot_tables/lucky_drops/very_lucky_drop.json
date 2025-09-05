@@ -18,7 +18,7 @@
         },
         {
           "type": "item",
-          "name": "minecraft:monster_spawner",
+          "name": "minecraft:mob_spawner",
           "functions": [
             {
               "function": "set_lore",
