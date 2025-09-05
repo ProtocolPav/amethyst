@@ -6,7 +6,7 @@
         {
           "type": "loot_table",
           "name": "loot_tables/lucky_drops/neutral_drop.json",
-          "weight": 30
+          "weight": 28
         },
         {
           "type": "loot_table",
@@ -21,12 +21,12 @@
         {
           "type": "loot_table",
           "name": "loot_tables/lucky_drops/very_lucky_drop.json",
-          "weight": 5
+          "weight": 6
         },
         {
           "type": "loot_table",
           "name": "loot_tables/lucky_drops/very_unlucky_drop.json",
-          "weight": 5
+          "weight": 6
         }
       ]
     }
