@@ -6899,7 +6899,13 @@ function load_lucky_component() {
   function lucky_block_break(event) {
     const mainhand = event.player?.getComponent(EntityComponentTypes3.Equippable)?.getEquipment(EquipmentSlot2.Mainhand);
     if (!mainhand?.getComponent(ItemComponentTypes.Enchantable)?.hasEnchantment(MinecraftEnchantmentTypes.SilkTouch)) {
-      world6.sendMessage("Lucky Drop!");
+      const scarecrow = world6.structureManager.get("trap_cage");
+      const spawn_location = {
+        x: Math.round(event.player?.location.x - scarecrow?.size.x / 2),
+        y: event.player?.location.y - 1,
+        z: Math.round(event.player?.location.z - scarecrow?.size.z / 2)
+      };
+      world6.structureManager.place(scarecrow, event.dimension, spawn_location);
     }
   }
   system6.beforeEvents.startup.subscribe((initEvent) => {
