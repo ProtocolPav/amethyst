@@ -17,13 +17,28 @@ import {
 export default function load_lucky_component() {
     function lucky_block_break(event : BlockComponentPlayerBreakEvent) {
         const mainhand = event.player?.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
+
         if (!mainhand?.getComponent(ItemComponentTypes.Enchantable)?.hasEnchantment(MinecraftEnchantmentTypes.SilkTouch)) {
-            spawn_cage(event)
+            const loot_table = world.getLootTableManager().getLootTable('lucky_block')
+
+            const lucky_drop = world.getLootTableManager().generateLootFromTable(loot_table)
+
+            if (Math.random() < Math.random()) {
+                world.sendMessage('TEST. Item Drop')
+
+                lucky_drop?.forEach((item) => {
+                    event.dimension.spawnItem(item, event.block.location)
+                })
+            } else {
+                world.sendMessage('TEST. Structure Drop')
+
+                spawn_cage(event)
+            }
         }
     }
 
     function spawn_cage(event : BlockComponentPlayerBreakEvent) {
-        const scarecrow = world.structureManager.get('trap_cage')
+        const scarecrow = world.structureManager.get('player_centered/trap_cage')
         const spawn_location = {
             x: Math.round(event.player?.location.x - (scarecrow?.size.x / 2)),
             y: event.player?.location.y - 1,

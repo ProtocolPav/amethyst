@@ -6899,7 +6899,17 @@ function load_lucky_component() {
   function lucky_block_break(event) {
     const mainhand = event.player?.getComponent(EntityComponentTypes3.Equippable)?.getEquipment(EquipmentSlot2.Mainhand);
     if (!mainhand?.getComponent(ItemComponentTypes.Enchantable)?.hasEnchantment(MinecraftEnchantmentTypes.SilkTouch)) {
-      spawn_cage(event);
+      const loot_table = world6.getLootTableManager().getLootTable("lucky_block");
+      const lucky_drop = world6.getLootTableManager().generateLootFromTable(loot_table);
+      if (Math.random() < Math.random()) {
+        world6.sendMessage("TEST. Item Drop");
+        lucky_drop?.forEach((item) => {
+          event.dimension.spawnItem(item, event.block.location);
+        });
+      } else {
+        world6.sendMessage("TEST. Structure Drop");
+        spawn_cage(event);
+      }
     }
   }
   function spawn_cage(event) {
@@ -8198,7 +8208,7 @@ function load_world_event_handlers(guild_id2) {
 }
 
 // behaviour_pack/scripts-dev/main.ts
-var guild_id = "1213827104945471538";
+var guild_id = "611008530077712395";
 load_loops();
 load_custom_components();
 load_world_event_handlers(guild_id);
