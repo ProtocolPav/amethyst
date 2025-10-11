@@ -12,6 +12,7 @@ import {
     MinecraftEnchantmentTypes,
     MinecraftEntityTypes
 } from "@minecraft/vanilla-data";
+import {UnluckyStructures} from "../utils/lucky-structures";
 
 
 export default function load_lucky_component() {
@@ -32,26 +33,11 @@ export default function load_lucky_component() {
             } else {
                 world.sendMessage('TEST. Structure Drop')
 
-                spawn_cage(event)
+                const structure_function = UnluckyStructures[Math.floor(Math.random() * UnluckyStructures.length)];
+
+                structure_function(event)
             }
         }
-    }
-
-    function spawn_cage(event : BlockComponentPlayerBreakEvent) {
-        const scarecrow = world.structureManager.get('player_centered/trap_cage')
-        const spawn_location = {
-            x: Math.round(event.player?.location.x - (scarecrow?.size.x / 2)),
-            y: event.player?.location.y - 1,
-            z: Math.round(event.player?.location.z - (scarecrow?.size.z / 2))
-        }
-        world.structureManager.place(scarecrow, event.dimension, spawn_location)
-
-        const anvil_location = {
-            x: event.player?.location.x,
-            y: event.player?.location.y + 30,
-            z: event.player?.location.z
-        }
-        event.dimension.setBlockType(anvil_location, MinecraftBlockTypes.Anvil)
     }
     
     system.beforeEvents.startup.subscribe(initEvent => {

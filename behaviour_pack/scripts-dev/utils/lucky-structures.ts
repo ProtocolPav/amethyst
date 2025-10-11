@@ -2,22 +2,26 @@ import {BlockComponentPlayerBreakEvent, Structure, world} from "@minecraft/serve
 import {MinecraftBlockTypes} from "@minecraft/vanilla-data";
 
 
-function place_centered_on_player(event : BlockComponentPlayerBreakEvent, structure: Structure, y_offset: number = 1) {
-    if (event.player?.location) {
+function place_centered_on_player(event : BlockComponentPlayerBreakEvent, structure_name: string, y_offset: number = -1) {
+    const structure = world.structureManager.get(structure_name)
+
+    if (event.player?.location && structure) {
         const spawn_location = {
             x: Math.round(event.player.location.x - (structure?.size.x / 2)),
-            y: event.player.location.y - y_offset,
+            y: event.player.location.y + y_offset,
             z: Math.round(event.player.location.z - (structure?.size.z / 2))
         }
         world.structureManager.place(structure, event.dimension, spawn_location)
     }
 }
 
-function place_centered_on_block(event : BlockComponentPlayerBreakEvent, structure: Structure, y_offset: number = 1) {
-    if (event.block?.location) {
+function place_centered_on_block(event : BlockComponentPlayerBreakEvent, structure_name: string, y_offset: number = -1) {
+    const structure = world.structureManager.get(structure_name)
+
+    if (event.block?.location && structure) {
         const spawn_location = {
             x: Math.round(event.block.location.x - (structure?.size.x / 2)),
-            y: event.block.location.y - y_offset,
+            y: event.block.location.y + y_offset,
             z: Math.round(event.block.location.z - (structure?.size.z / 2))
         }
 
@@ -25,28 +29,21 @@ function place_centered_on_block(event : BlockComponentPlayerBreakEvent, structu
     }
 }
 
-export let Structures = [
+export let UnluckyStructures = [
     function anvil_cage(event : BlockComponentPlayerBreakEvent) {
-        const cage = world.structureManager.get('player_centered/trap_cage')
-
-        if (cage) {
-            place_centered_on_player(event, cage)
-
-            // Make separate structure file for anvil
-            const anvil_location = {
-                x: event.player?.location.x,
-                y: event.player?.location.y + 30,
-                z: event.player?.location.z
-            }
-            event.dimension.setBlockType(anvil_location, MinecraftBlockTypes.Anvil)
-        }
+        place_centered_on_player(event, 'player_centered/trap_cage')
+        place_centered_on_player(event, 'player_centered/anvil', 30)
     },
 
     function tnt_trap(event : BlockComponentPlayerBreakEvent) {
-        const structure = world.structureManager.get('player_centered/tnt_trap')
+        place_centered_on_player(event, 'player_centered/tnt_trap', -2)
+    },
 
-        if (structure) {
-            place_centered_on_player(event, structure)
-        }
+    function trap_chest(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_player(event, 'player_centered/trap_chest', -3)
+    },
+
+    function creeper_house(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_player(event, 'player_centered/house')
     }
 ]
