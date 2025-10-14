@@ -1,0 +1,20 @@
+{
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        { "type": "item", "name": "minecraft:sentry_armor_trim_smithing_template", "weight": 25 },
+        { "type": "item", "name": "minecraft:dune_armor_trim_smithing_template", "weight": 20 },
+        { "type": "item", "name": "minecraft:coast_armor_trim_smithing_template", "weight": 15 },
+        { "type": "item", "name": "minecraft:wild_armor_trim_smithing_template", "weight": 10 },
+        { "type": "item", "name": "minecraft:tide_armor_trim_smithing_template", "weight": 10 },
+        { "type": "item", "name": "minecraft:ward_armor_trim_smithing_template", "weight": 7 },
+        { "type": "item", "name": "minecraft:vex_armor_trim_smithing_template", "weight": 4 },
+        { "type": "item", "name": "minecraft:ribs_armor_trim_smithing_template", "weight": 4 },
+        { "type": "item", "name": "minecraft:snout_armor_trim_smithing_template", "weight": 3 },
+        { "type": "item", "name": "minecraft:eye_armor_trim_smithing_template", "weight": 2 },
+        { "type": "item", "name": "minecraft:spire_armor_trim_smithing_template", "weight": 1 }
+      ]
+    }
+  ]
+}

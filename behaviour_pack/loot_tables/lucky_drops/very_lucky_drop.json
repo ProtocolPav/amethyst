@@ -67,6 +67,14 @@
         {
           "type": "loot_table",
           "name": "loot_tables/lucky_drops/sub_tables/very_lucky_gear_drop.json"
+        },
+        {
+          "type": "loot_table",
+          "name": "loot_tables/lucky_drops/sub_tables/banners.json"
+        },
+        {
+          "type": "loot_table",
+          "name": "loot_tables/lucky_drops/sub_tables/armour_trims.json"
         }
       ]
     }

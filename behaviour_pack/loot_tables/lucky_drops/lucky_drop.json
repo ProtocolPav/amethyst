@@ -83,6 +83,10 @@
         {
           "type": "loot_table",
           "name": "loot_tables/lucky_drops/sub_tables/lucky_gear_drop.json"
+        },
+        {
+          "type": "loot_table",
+          "name": "loot_tables/lucky_drops/sub_tables/pottery.json"
         }
       ]
     }
