@@ -45,5 +45,9 @@ export let UnluckyStructures = [
 
     function creeper_house(event : BlockComponentPlayerBreakEvent) {
         place_centered_on_player(event, 'player_centered/house')
+    },
+
+    function obsidian_box(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_player(event, 'player_centered/obsidian_box', -5)
     }
 ]
