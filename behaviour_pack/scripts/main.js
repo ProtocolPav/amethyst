@@ -6909,6 +6909,43 @@ function place_centered_on_player(event, structure_name, y_offset = -1) {
     world6.structureManager.place(structure, event.dimension, spawn_location);
   }
 }
+function place_centered_on_block(event, structure_name, y_offset = -1) {
+  const structure = world6.structureManager.get(structure_name);
+  if (event.block?.location && structure) {
+    const spawn_location = {
+      x: Math.round(event.block.location.x - structure?.size.x / 2),
+      y: event.block.location.y + y_offset,
+      z: Math.round(event.block.location.z - structure?.size.z / 2)
+    };
+    world6.structureManager.place(structure, event.dimension, spawn_location);
+  }
+}
+function weightedRandom(items, weights) {
+  if (items.length !== weights.length) {
+    throw new Error("Items and weights must have the same length.");
+  }
+  const cumulativeWeights = [...weights];
+  for (let i = 1; i < cumulativeWeights.length; i++) {
+    cumulativeWeights[i] += cumulativeWeights[i - 1];
+  }
+  const random = Math.random() * cumulativeWeights[cumulativeWeights.length - 1];
+  for (let i = 0; i < cumulativeWeights.length; i++) {
+    if (random < cumulativeWeights[i]) {
+      return items[i];
+    }
+  }
+  return items[items.length - 1];
+}
+function get_lucky_block_structure() {
+  const structures = weightedRandom(
+    [VeryLuckyStructures, LuckyStructures, NeutralStructures, UnluckyStructures, VeryUnluckyStructures],
+    [0.06, 0.3, 0.28, 0.3, 0.06]
+  );
+  return structures[Math.floor(Math.random() * structures.length)];
+}
+var VeryLuckyStructures = [];
+var LuckyStructures = [];
+var NeutralStructures = [];
 var UnluckyStructures = [
   function anvil_cage(event) {
     place_centered_on_player(event, "player_centered/trap_cage");
@@ -6922,6 +6959,20 @@ var UnluckyStructures = [
   },
   function creeper_house(event) {
     place_centered_on_player(event, "player_centered/house");
+  },
+  function obsidian_box(event) {
+    place_centered_on_player(event, "player_centered/obsidian_box", -5);
+  },
+  function death_button(event) {
+    place_centered_on_block(event, "block_centered/death_button", -1);
+  },
+  function tp_plate(event) {
+    place_centered_on_player(event, "player_centered/tp_plate", -1);
+  }
+];
+var VeryUnluckyStructures = [
+  function skeleton_pit(event) {
+    place_centered_on_player(event, "player_centered/skeleton_pit", -15);
   }
 ];
 
@@ -6933,13 +6984,11 @@ function load_lucky_component() {
       const loot_table = world7.getLootTableManager().getLootTable("lucky_block");
       const lucky_drop = world7.getLootTableManager().generateLootFromTable(loot_table);
       if (Math.random() < Math.random()) {
-        world7.sendMessage("TEST. Item Drop");
         lucky_drop?.forEach((item) => {
           event.dimension.spawnItem(item, event.block.location);
         });
       } else {
-        world7.sendMessage("TEST. Structure Drop");
-        const structure_function = UnluckyStructures[Math.floor(Math.random() * UnluckyStructures.length)];
+        const structure_function = get_lucky_block_structure();
         structure_function(event);
       }
     }

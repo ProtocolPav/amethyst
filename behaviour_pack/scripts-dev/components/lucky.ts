@@ -12,7 +12,7 @@ import {
     MinecraftEnchantmentTypes,
     MinecraftEntityTypes
 } from "@minecraft/vanilla-data";
-import {UnluckyStructures} from "../utils/lucky-structures";
+import {get_lucky_block_structure, UnluckyStructures} from "../utils/lucky-structures";
 
 
 export default function load_lucky_component() {
@@ -25,15 +25,11 @@ export default function load_lucky_component() {
             const lucky_drop = world.getLootTableManager().generateLootFromTable(loot_table)
 
             if (Math.random() < Math.random()) {
-                world.sendMessage('TEST. Item Drop')
-
                 lucky_drop?.forEach((item) => {
                     event.dimension.spawnItem(item, event.block.location)
                 })
             } else {
-                world.sendMessage('TEST. Structure Drop')
-
-                const structure_function = UnluckyStructures[Math.floor(Math.random() * UnluckyStructures.length)];
+                const structure_function = get_lucky_block_structure()
 
                 structure_function(event)
             }
