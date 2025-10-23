@@ -1,29 +1,35 @@
 {
-	"num_mip_levels": 4,
-	"padding": 8,
-	"resource_pack_name": "Amethyst Connect",
-	"texture_name": "atlas.terrain",
-	"texture_data": {
-		"fungus_block": {
-			"textures": "textures/blocks/fungus_block.png"
-		},
-		"glitch_block": {
-			"textures": "textures/blocks/glitch_block.png"
-		},
-		"whoopee_cushion": {
-			"textures": "textures/blocks/whoopee_cushion.png"
-		},
-		"reactor_inactive": {
-			"textures": "textures/blocks/reactor_2.png"
-		},
-		"reactor_active": {
-			"textures": "textures/blocks/reactor_active.png"
-		},
-		"everthorn_e": {
-			"textures": "textures/blocks/everthorn_e.png"
-		},
-		"lucky_block": {
-			"textures": "textures/blocks/lucky_block.png"
-		}
-	}
+  "num_mip_levels": 4,
+  "padding": 8,
+  "resource_pack_name": "Amethyst Connect",
+  "texture_name": "atlas.terrain",
+  "texture_data": {
+    "fungus_block": {
+      "textures": "textures/blocks/fungus_block.png"
+    },
+    "glitch_block": {
+      "textures": "textures/blocks/glitch_block.png"
+    },
+    "whoopee_cushion": {
+      "textures": "textures/blocks/whoopee_cushion.png"
+    },
+    "reactor_inactive": {
+      "textures": "textures/blocks/reactor_2.png"
+    },
+    "reactor_active": {
+      "textures": "textures/blocks/reactor_active.png"
+    },
+    "everthorn_e": {
+      "textures": "textures/blocks/everthorn_e.png"
+    },
+    "lucky_block": {
+      "textures": "textures/blocks/lucky_block.png"
+    },
+    "kinda_lucky_block": {
+      "textures": "textures/blocks/kinda_lucky_block.png"
+    },
+    "super_lucky_block": {
+      "textures": "textures/blocks/super_lucky_block.png"
+    }
+  }
 }

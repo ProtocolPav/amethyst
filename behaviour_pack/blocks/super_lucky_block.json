@@ -1,0 +1,23 @@
+{
+    "format_version": "1.21.40",
+    "minecraft:block": {
+        "description": {
+            "identifier": "amethyst:super_lucky_block",
+            "menu_category": {
+                "category": "construction",
+                "is_hidden_in_commands": false
+            }
+        },
+        "components": {
+            "tag:minecraft:is_pickaxe_item_destructible": {},
+            "minecraft:destructible_by_mining": {
+                "seconds_to_destroy": 1.2
+            },
+            "minecraft:display_name": "Super Lucky Block",
+            "minecraft:custom_components": [
+                "amethyst:lucky"
+            ],
+            "minecraft:loot": "loot_tables/empty.json"
+        }
+    }
+}

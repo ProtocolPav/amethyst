@@ -1,0 +1,24 @@
+{
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "loot_table",
+          "name": "loot_tables/lucky_drops/neutral_drop.json",
+          "weight": 30
+        },
+        {
+          "type": "loot_table",
+          "name": "loot_tables/lucky_drops/lucky_drop.json",
+          "weight": 35
+        },
+        {
+          "type": "loot_table",
+          "name": "loot_tables/lucky_drops/unlucky_drop.json",
+          "weight": 35
+        }
+      ]
+    }
+  ]
+}

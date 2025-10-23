@@ -1,0 +1,34 @@
+{
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "loot_table",
+          "name": "loot_tables/lucky_drops/neutral_drop.json",
+          "weight": 6
+        },
+        {
+          "type": "loot_table",
+          "name": "loot_tables/lucky_drops/lucky_drop.json",
+          "weight": 27
+        },
+        {
+          "type": "loot_table",
+          "name": "loot_tables/lucky_drops/unlucky_drop.json",
+          "weight": 27
+        },
+        {
+          "type": "loot_table",
+          "name": "loot_tables/lucky_drops/very_lucky_drop.json",
+          "weight": 20
+        },
+        {
+          "type": "loot_table",
+          "name": "loot_tables/lucky_drops/very_unlucky_drop.json",
+          "weight": 20
+        }
+      ]
+    }
+  ]
+}

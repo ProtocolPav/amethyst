@@ -59,12 +59,12 @@ export function get_structure(lucky_block_type: string) {
 
     const super_lucky_structures = weightedRandom(
         [VeryLuckyStructures, LuckyStructures, NeutralStructures, UnluckyStructures, VeryUnluckyStructures],
-        [0.06, 0.3, 0.28, 0.3, 0.06]
+        [0.2, 0.27, 0.06, 0.27, 0.2]
     )
 
     const kinda_lucky_structures = weightedRandom(
-        [VeryLuckyStructures, LuckyStructures, NeutralStructures, UnluckyStructures, VeryUnluckyStructures],
-        [0.06, 0.3, 0.28, 0.3, 0.06]
+        [LuckyStructures, NeutralStructures, UnluckyStructures],
+        [0.35, 0.3, 0.35]
     )
 
     const structures: {[key: string]: Function[]} = {
