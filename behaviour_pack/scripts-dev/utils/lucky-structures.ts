@@ -51,13 +51,31 @@ function weightedRandom<T>(items: T[], weights: number[]): T {
 }
 
 
-export function get_lucky_block_structure() {
-    const structures = weightedRandom(
+export function get_structure(lucky_block_type: string) {
+    const lucky_structures = weightedRandom(
         [VeryLuckyStructures, LuckyStructures, NeutralStructures, UnluckyStructures, VeryUnluckyStructures],
         [0.06, 0.3, 0.28, 0.3, 0.06]
     )
 
-    return structures[Math.floor(Math.random() * structures.length)];
+    const super_lucky_structures = weightedRandom(
+        [VeryLuckyStructures, LuckyStructures, NeutralStructures, UnluckyStructures, VeryUnluckyStructures],
+        [0.06, 0.3, 0.28, 0.3, 0.06]
+    )
+
+    const kinda_lucky_structures = weightedRandom(
+        [VeryLuckyStructures, LuckyStructures, NeutralStructures, UnluckyStructures, VeryUnluckyStructures],
+        [0.06, 0.3, 0.28, 0.3, 0.06]
+    )
+
+    const structures: {[key: string]: Function[]} = {
+        "lucky_block": lucky_structures,
+        "super_lucky_block": super_lucky_structures,
+        "kinda_lucky_block": kinda_lucky_structures
+    }
+
+    const selected_weights = structures[lucky_block_type]
+
+    return selected_weights[Math.floor(Math.random() * selected_weights.length)];
 }
 
 export let VeryLuckyStructures = [

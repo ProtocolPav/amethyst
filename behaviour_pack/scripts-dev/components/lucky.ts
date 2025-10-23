@@ -12,24 +12,25 @@ import {
     MinecraftEnchantmentTypes,
     MinecraftEntityTypes
 } from "@minecraft/vanilla-data";
-import {get_lucky_block_structure, UnluckyStructures} from "../utils/lucky-structures";
+import {get_structure} from "../utils/lucky-structures";
 
 
 export default function load_lucky_component() {
     function lucky_block_break(event : BlockComponentPlayerBreakEvent) {
         const mainhand = event.player?.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
+        const lucky_block_type = event.block.typeId.replace('amethyst:', '')
 
         if (!mainhand?.getComponent(ItemComponentTypes.Enchantable)?.hasEnchantment(MinecraftEnchantmentTypes.SilkTouch)) {
-            const loot_table = world.getLootTableManager().getLootTable('lucky_block')
+            const loot_table = world.getLootTableManager().getLootTable(lucky_block_type)!
 
-            const lucky_drop = world.getLootTableManager().generateLootFromTable(loot_table)
+            const item_drop = world.getLootTableManager().generateLootFromTable(loot_table)
 
             if (Math.random() < Math.random()) {
-                lucky_drop?.forEach((item) => {
+                item_drop?.forEach((item) => {
                     event.dimension.spawnItem(item, event.block.location)
                 })
             } else {
-                const structure_function = get_lucky_block_structure()
+                const structure_function = get_structure(lucky_block_type)
 
                 structure_function(event)
             }
