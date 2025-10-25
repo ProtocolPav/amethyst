@@ -6889,7 +6889,7 @@ function load_reactor_activate_component() {
 
 // behaviour_pack/scripts-dev/components/lucky.ts
 import {
-  EntityComponentTypes as EntityComponentTypes3,
+  EntityComponentTypes as EntityComponentTypes4,
   EquipmentSlot as EquipmentSlot2,
   ItemComponentTypes,
   system as system6,
@@ -6897,7 +6897,7 @@ import {
 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/utils/lucky-structures.ts
-import { world as world6 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes3, world as world6 } from "@minecraft/server";
 function place_centered_on_player(event, structure_name, y_offset = -1) {
   const structure = world6.structureManager.get(structure_name);
   if (event.player?.location && structure) {
@@ -6992,13 +6992,86 @@ var UnluckyStructures = [
 var VeryUnluckyStructures = [
   function skeleton_pit(event) {
     place_centered_on_player(event, "player_centered/skeleton_pit", -13);
+  },
+  function unlucky_pyramid(event) {
+    place_centered_on_block(event, "block_centered/unlucky_pyramid", -1);
+  },
+  function chests_room(event) {
+    place_centered_on_player(event, "player_centered/chests_room");
+  },
+  function lava_cage(event) {
+    place_centered_on_player(event, "player_centered/lava_cage", -1);
+    place_centered_on_player(event, "player_centered/lava", 5);
+  },
+  function creeper_house2(event) {
+    place_centered_on_player(event, "player_centered/tnt_house", -1);
+  },
+  function insta_kill(event) {
+    event.player?.kill();
+  },
+  function spawn_tnt(event) {
+    const player = event.player;
+    if (!player) return;
+    const dimension = player.dimension;
+    const playerPos = player.location;
+    for (let i = 0; i < 20; i++) {
+      const offset = {
+        x: playerPos.x + (Math.random() - 0.5) * 10,
+        y: playerPos.y,
+        z: playerPos.z + (Math.random() - 0.5) * 10
+      };
+      const tnt = dimension.spawnEntity(MinecraftEntityTypes.Tnt, offset);
+    }
+  },
+  function inventory_clear(event) {
+    const player = event.player;
+    const inventory = player.getComponent(EntityComponentTypes3.Inventory);
+    const container = inventory.container;
+    const size = container.size;
+    const protectedItemIds = [
+      "minecraft:shulker_box",
+      "minecraft:white_shulker_box",
+      "minecraft:orange_shulker_box",
+      "minecraft:magenta_shulker_box",
+      "minecraft:light_blue_shulker_box",
+      "minecraft:yellow_shulker_box",
+      "minecraft:lime_shulker_box",
+      "minecraft:pink_shulker_box",
+      "minecraft:gray_shulker_box",
+      "minecraft:light_gray_shulker_box",
+      "minecraft:cyan_shulker_box",
+      "minecraft:purple_shulker_box",
+      "minecraft:blue_shulker_box",
+      "minecraft:brown_shulker_box",
+      "minecraft:green_shulker_box",
+      "minecraft:red_shulker_box",
+      "minecraft:black_shulker_box",
+      "amethyst:lucky_block",
+      "amethyst:kinda_lucky_block",
+      "amethyst:super_lucky_block"
+    ];
+    const clearableSlots = [];
+    for (let i = 0; i < size; i++) {
+      const item = container.getItem(i);
+      if (!item) continue;
+      if (protectedItemIds.includes(item.typeId)) continue;
+      clearableSlots.push(i);
+    }
+    for (let i = clearableSlots.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [clearableSlots[i], clearableSlots[j]] = [clearableSlots[j], clearableSlots[i]];
+    }
+    const toClear = Math.floor(clearableSlots.length / 2);
+    for (let i = 0; i < toClear; i++) {
+      container.setItem(clearableSlots[i], void 0);
+    }
   }
 ];
 
 // behaviour_pack/scripts-dev/components/lucky.ts
 function load_lucky_component() {
   function lucky_block_break(event) {
-    const mainhand = event.player?.getComponent(EntityComponentTypes3.Equippable)?.getEquipment(EquipmentSlot2.Mainhand);
+    const mainhand = event.player?.getComponent(EntityComponentTypes4.Equippable)?.getEquipment(EquipmentSlot2.Mainhand);
     const lucky_block_type = event.brokenBlockPermutation.type.id.replace("amethyst:", "");
     world7.sendMessage(lucky_block_type);
     if (!mainhand?.getComponent(ItemComponentTypes.Enchantable)?.hasEnchantment(MinecraftEnchantmentTypes.SilkTouch)) {
@@ -7036,9 +7109,9 @@ function load_custom_components() {
 }
 
 // behaviour_pack/scripts-dev/loops/elytra_no_mending.ts
-import { EquipmentSlot as EquipmentSlot3, world as world8, system as system7, EntityComponentTypes as EntityComponentTypes4, ItemComponentTypes as ItemComponentTypes2, EnchantmentType } from "@minecraft/server";
+import { EquipmentSlot as EquipmentSlot3, world as world8, system as system7, EntityComponentTypes as EntityComponentTypes5, ItemComponentTypes as ItemComponentTypes2, EnchantmentType } from "@minecraft/server";
 function elytraCheck(player) {
-  const player_equipment = player.getComponent(EntityComponentTypes4.Equippable);
+  const player_equipment = player.getComponent(EntityComponentTypes5.Equippable);
   const item = player_equipment?.getEquipment(EquipmentSlot3.Chest);
   if (item) {
     const enchantments = item?.getComponent(ItemComponentTypes2.Enchantable);
@@ -7783,11 +7856,11 @@ function load_glitch_loop() {
 }
 
 // behaviour_pack/scripts-dev/loops/totem_of_togetherness.ts
-import { EntityComponentTypes as EntityComponentTypes6, EquipmentSlot as EquipmentSlot4, system as system11, world as world12 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes7, EquipmentSlot as EquipmentSlot4, system as system11, world as world12 } from "@minecraft/server";
 var healthboost = MinecraftEffectTypes.HealthBoost;
 function togetherness(player) {
   const position = player.location;
-  const equippable = player.getComponent(EntityComponentTypes6.Equippable);
+  const equippable = player.getComponent(EntityComponentTypes7.Equippable);
   const offhand = equippable?.getEquipment(EquipmentSlot4.Offhand);
   const mainhand = equippable?.getEquipment(EquipmentSlot4.Mainhand);
   if (offhand?.hasTag("amethyst:togetherness") || mainhand?.hasTag("amethyst:togetherness")) {
@@ -7820,9 +7893,9 @@ function load_totem_o_togetherness() {
 }
 
 // behaviour_pack/scripts-dev/loops/location.ts
-import { EntityComponentTypes as EntityComponentTypes7, EquipmentSlot as EquipmentSlot5, system as system12, world as world13, TicksPerSecond as TicksPerSecond5 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes8, EquipmentSlot as EquipmentSlot5, system as system12, world as world13, TicksPerSecond as TicksPerSecond5 } from "@minecraft/server";
 function location_log(player) {
-  const head_gear = player.getComponent(EntityComponentTypes7.Equippable)?.getEquipment(EquipmentSlot5.Head);
+  const head_gear = player.getComponent(EntityComponentTypes8.Equippable)?.getEquipment(EquipmentSlot5.Head);
   const check_list = [
     MinecraftItemTypes.SkeletonSkull,
     MinecraftItemTypes.WitherSkeletonSkull,
@@ -7851,12 +7924,12 @@ function load_location_logger() {
 }
 
 // behaviour_pack/scripts-dev/loops/champion_set.ts
-import { EntityComponentTypes as EntityComponentTypes8, EquipmentSlot as EquipmentSlot6, MolangVariableMap, system as system13, world as world14 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes9, EquipmentSlot as EquipmentSlot6, MolangVariableMap, system as system13, world as world14 } from "@minecraft/server";
 function champion(player) {
   const molang = new MolangVariableMap();
   molang.setColorRGB("variable.color", { red: 1, green: 0.913, blue: 0.576 });
   const position = player.location;
-  const equippable = player.getComponent(EntityComponentTypes8.Equippable);
+  const equippable = player.getComponent(EntityComponentTypes9.Equippable);
   let equipped = 0;
   equippable?.getEquipment(EquipmentSlot6.Head)?.hasTag("amethyst:champion") ? equipped++ : null;
   equippable?.getEquipment(EquipmentSlot6.Chest)?.hasTag("amethyst:champion") ? equipped++ : null;
@@ -7895,13 +7968,13 @@ function load_loops() {
 
 // behaviour_pack/scripts-dev/events/blocks.ts
 import { world as world15, system as system14 } from "@minecraft/server";
-import { EntityComponentTypes as EntityComponentTypes9, EquipmentSlot as EquipmentSlot7 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes10, EquipmentSlot as EquipmentSlot7 } from "@minecraft/server";
 function load_block_event_handler() {
   world15.beforeEvents.playerBreakBlock.subscribe((event) => {
     const block_id = event.block.typeId;
     const block_location = [event.block.x, event.block.y, event.block.z];
     const dimension = event.player.dimension;
-    const mainhand = event.player.getComponent(EntityComponentTypes9.Equippable)?.getEquipment(EquipmentSlot7.Mainhand);
+    const mainhand = event.player.getComponent(EntityComponentTypes10.Equippable)?.getEquipment(EquipmentSlot7.Mainhand);
     system14.run(() => {
       const interaction = new api_default.Interaction(
         {
@@ -7923,7 +7996,7 @@ function load_block_event_handler() {
     const block_id = event.block.typeId;
     const block_location = [event.block.x, event.block.y, event.block.z];
     const dimension = event.player.dimension;
-    const mainhand = event.player.getComponent(EntityComponentTypes9.Equippable)?.getEquipment(EquipmentSlot7.Mainhand);
+    const mainhand = event.player.getComponent(EntityComponentTypes10.Equippable)?.getEquipment(EquipmentSlot7.Mainhand);
     system14.run(() => {
       const interaction = new api_default.Interaction(
         {
@@ -7944,7 +8017,7 @@ function load_block_event_handler() {
     const block_id = event.block.typeId;
     const block_location = [event.block.x, event.block.y, event.block.z];
     const dimension = event.player.dimension;
-    const mainhand = event.player.getComponent(EntityComponentTypes9.Equippable)?.getEquipment(EquipmentSlot7.Mainhand);
+    const mainhand = event.player.getComponent(EntityComponentTypes10.Equippable)?.getEquipment(EquipmentSlot7.Mainhand);
     const all_blocks = [
       // Containers
       MinecraftBlockTypes.Chest,
@@ -8074,13 +8147,13 @@ function load_block_event_handler() {
 }
 
 // behaviour_pack/scripts-dev/events/chat.ts
-import { EntityComponentTypes as EntityComponentTypes10, EquipmentSlot as EquipmentSlot8, system as system15, world as world16 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes11, EquipmentSlot as EquipmentSlot8, system as system15, world as world16 } from "@minecraft/server";
 function load_chat_handler() {
   world16.beforeEvents.chatSend.subscribe((chat_event) => {
     const gamertag = chat_event.sender.name;
     const thorny_user = api_default.ThornyUser.fetch_user(gamertag);
     if (chat_event.message.startsWith("!lore")) {
-      const equippable = chat_event.sender.getComponent(EntityComponentTypes10.Equippable);
+      const equippable = chat_event.sender.getComponent(EntityComponentTypes11.Equippable);
       const mainhand = equippable?.getEquipment(EquipmentSlot8.Mainhand);
       system15.run(() => {
         switch (chat_event.message.split(" ")[1].toLowerCase()) {
@@ -8148,13 +8221,13 @@ function load_connections_handler(guild_id2) {
 
 // behaviour_pack/scripts-dev/events/entities.ts
 import { system as system16, world as world18 } from "@minecraft/server";
-import { EntityComponentTypes as EntityComponentTypes11, EquipmentSlot as EquipmentSlot9, Player as Player11 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes12, EquipmentSlot as EquipmentSlot9, Player as Player11 } from "@minecraft/server";
 function load_entity_event_handler() {
   world18.afterEvents.entityDie.subscribe((event) => {
     if (event.damageSource.damagingEntity instanceof Player11) {
       const player = event.damageSource.damagingEntity;
       const dimension = player.dimension;
-      const mainhand = player.getComponent(EntityComponentTypes11.Equippable)?.getEquipment(EquipmentSlot9.Mainhand);
+      const mainhand = player.getComponent(EntityComponentTypes12.Equippable)?.getEquipment(EquipmentSlot9.Mainhand);
       const interaction = new api_default.Interaction(
         {
           thorny_id: api_default.ThornyUser.fetch_user(player.name)?.thorny_id ?? 0,
@@ -8169,7 +8242,7 @@ function load_entity_event_handler() {
       );
       if (event.deadEntity instanceof Player11) {
         const dead_player = event.deadEntity;
-        const dead_mainhand = dead_player.getComponent(EntityComponentTypes11.Equippable)?.getEquipment(EquipmentSlot9.Mainhand);
+        const dead_mainhand = dead_player.getComponent(EntityComponentTypes12.Equippable)?.getEquipment(EquipmentSlot9.Mainhand);
         interaction.reference = dead_player.name;
         const death_interaction = new api_default.Interaction(
           {
@@ -8195,7 +8268,7 @@ function load_entity_event_handler() {
       const killer = event.damageSource.damagingEntity;
       const player = event.deadEntity;
       const dimension = player.dimension;
-      const mainhand = player.getComponent(EntityComponentTypes11.Equippable)?.getEquipment(EquipmentSlot9.Mainhand);
+      const mainhand = player.getComponent(EntityComponentTypes12.Equippable)?.getEquipment(EquipmentSlot9.Mainhand);
       const death_interaction = new api_default.Interaction(
         {
           thorny_id: api_default.ThornyUser.fetch_user(player.name)?.thorny_id ?? 0,
@@ -8213,7 +8286,7 @@ function load_entity_event_handler() {
     } else if (event.deadEntity instanceof Player11 && !event.damageSource.damagingEntity) {
       const player = event.deadEntity;
       const dimension = player.dimension;
-      const mainhand = player.getComponent(EntityComponentTypes11.Equippable)?.getEquipment(EquipmentSlot9.Mainhand);
+      const mainhand = player.getComponent(EntityComponentTypes12.Equippable)?.getEquipment(EquipmentSlot9.Mainhand);
       const death_interaction = new api_default.Interaction(
         {
           thorny_id: api_default.ThornyUser.fetch_user(player.name)?.thorny_id ?? 0,
@@ -8234,7 +8307,7 @@ function load_entity_event_handler() {
     const entity_id = event.target.typeId;
     const entity_location = [event.target.location.x, event.target.location.y, event.target.location.z];
     const dimension = event.player.dimension;
-    const mainhand = event.player.getComponent(EntityComponentTypes11.Equippable)?.getEquipment(EquipmentSlot9.Mainhand);
+    const mainhand = event.player.getComponent(EntityComponentTypes12.Equippable)?.getEquipment(EquipmentSlot9.Mainhand);
     const all_entities = [
       // Villagers
       MinecraftEntityTypes.Villager,
