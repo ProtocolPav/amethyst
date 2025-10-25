@@ -18,7 +18,9 @@ import {get_structure} from "../utils/lucky-structures";
 export default function load_lucky_component() {
     function lucky_block_break(event : BlockComponentPlayerBreakEvent) {
         const mainhand = event.player?.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
-        const lucky_block_type = event.block.typeId.replace('amethyst:', '')
+        const lucky_block_type = event.brokenBlockPermutation.type.id.replace('amethyst:', '')
+
+        world.sendMessage(lucky_block_type)
 
         if (!mainhand?.getComponent(ItemComponentTypes.Enchantable)?.hasEnchantment(MinecraftEnchantmentTypes.SilkTouch)) {
             const loot_table = world.getLootTableManager().getLootTable(lucky_block_type)!

@@ -43,9 +43,6 @@
           ]
         },
         {
-          "type": "empty"
-        },
-        {
           "type": "loot_table",
           "name": "loot_tables/lucky_drops/sub_tables/leather_gear_drop.json"
         }

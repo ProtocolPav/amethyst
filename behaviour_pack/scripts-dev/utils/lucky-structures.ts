@@ -1,5 +1,5 @@
-import {BlockComponentPlayerBreakEvent, Structure, world} from "@minecraft/server";
-import {MinecraftBlockTypes} from "@minecraft/vanilla-data";
+import {BlockComponentPlayerBreakEvent, EntityComponentTypes, Structure, Vector3, world} from "@minecraft/server";
+import {MinecraftBlockTypes, MinecraftEntityTypes} from "@minecraft/vanilla-data";
 
 
 function place_centered_on_player(event : BlockComponentPlayerBreakEvent, structure_name: string, y_offset: number = -1) {
@@ -67,8 +67,14 @@ export function get_structure(lucky_block_type: string) {
         [0.35, 0.3, 0.35]
     )
 
+    const unlucky_structures = weightedRandom(
+        [NeutralStructures, UnluckyStructures, VeryUnluckyStructures],
+        [0.02, 0.49, 0.49]
+    )
+
     const structures: {[key: string]: Function[]} = {
         "lucky_block": lucky_structures,
+        "unlucky_block": unlucky_structures,
         "super_lucky_block": super_lucky_structures,
         "kinda_lucky_block": kinda_lucky_structures
     }
@@ -123,6 +129,100 @@ export let UnluckyStructures = [
 
 export let VeryUnluckyStructures = [
     function skeleton_pit(event : BlockComponentPlayerBreakEvent) {
-        place_centered_on_player(event, 'player_centered/skeleton_pit', -15)
+        place_centered_on_player(event, 'player_centered/skeleton_pit', -13)
     },
+
+    function unlucky_pyramid(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_block(event, 'block_centered/unlucky_pyramid', -1)
+    },
+
+    function chests_room(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_player(event, 'player_centered/chests_room')
+    },
+
+    function lava_cage(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_player(event, 'player_centered/lava_cage', -1)
+        place_centered_on_player(event, 'player_centered/lava', 5)
+    },
+
+    function creeper_house(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_player(event, 'player_centered/tnt_house', -1)
+    },
+
+    function insta_kill(event : BlockComponentPlayerBreakEvent) {
+        event.player?.kill()
+    },
+
+    function spawn_tnt(event: BlockComponentPlayerBreakEvent) {
+        const player = event.player;
+        if (!player) return;
+
+        const dimension = player.dimension;
+        const playerPos = player.location;
+
+        for (let i = 0; i < 20; i++) {
+            const offset: Vector3 = {
+                x: playerPos.x + (Math.random() - 0.5) * 10,
+                y: playerPos.y,
+                z: playerPos.z + (Math.random() - 0.5) * 10
+            };
+
+            const tnt = dimension.spawnEntity(MinecraftEntityTypes.Tnt, offset);
+        }
+    },
+
+    function inventory_clear(event: BlockComponentPlayerBreakEvent) {
+        const player = event.player!
+
+        const inventory = player.getComponent(EntityComponentTypes.Inventory)!
+
+        const container = inventory.container;
+        const size = container.size;
+
+        const protectedItemIds = [
+            "minecraft:shulker_box",
+            "minecraft:white_shulker_box",
+            "minecraft:orange_shulker_box",
+            "minecraft:magenta_shulker_box",
+            "minecraft:light_blue_shulker_box",
+            "minecraft:yellow_shulker_box",
+            "minecraft:lime_shulker_box",
+            "minecraft:pink_shulker_box",
+            "minecraft:gray_shulker_box",
+            "minecraft:light_gray_shulker_box",
+            "minecraft:cyan_shulker_box",
+            "minecraft:purple_shulker_box",
+            "minecraft:blue_shulker_box",
+            "minecraft:brown_shulker_box",
+            "minecraft:green_shulker_box",
+            "minecraft:red_shulker_box",
+            "minecraft:black_shulker_box",
+            "amethyst:lucky_block",
+            "amethyst:kinda_lucky_block",
+            "amethyst:super_lucky_block",
+        ];
+
+        // Collect all slot indices that can be cleared
+        const clearableSlots: number[] = [];
+        for (let i = 0; i < size; i++) {
+            const item = container.getItem(i);
+            if (!item) continue;
+            if (protectedItemIds.includes(item.typeId)) continue;
+            clearableSlots.push(i);
+        }
+
+        // Shuffle the list to make it random
+        for (let i = clearableSlots.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [clearableSlots[i], clearableSlots[j]] = [clearableSlots[j], clearableSlots[i]];
+        }
+
+        // Determine number of slots to clear (50%)
+        const toClear = Math.floor(clearableSlots.length / 2);
+
+        // Clear the first half
+        for (let i = 0; i < toClear; i++) {
+            container.setItem(clearableSlots[i], undefined);
+        }
+    }
 ]

@@ -1,27 +1,39 @@
 {
-	"format_version": "1.21.70",
-	"amethyst:fungus_block": {
-		"textures": "fungus_block",
-		"sound": "glass"
-	},
-	"amethyst:glitch_block": {
-		"textures": "glitch_block",
-		"sound": "obsidian"
-	},
-	"amethyst:reactor": {
-		"textures": "reactor_inactive",
-		"sound": "obsidian"
-	},
-	"amethyst:whoopee_cushion": {
-		"textures": "whoopee_cushion",
-		"sound": "wool"
-	},
-	"amethyst:everthorn_e": {
-		"textures": "everthorn_e",
-		"sound": "amethyst"
-	},
-	"amethyst:lucky_block": {
-		"textures": "lucky_block",
-		"sound": "stone"
-	}
+  "format_version": "1.21.70",
+  "amethyst:fungus_block": {
+    "textures": "fungus_block",
+    "sound": "glass"
+  },
+  "amethyst:glitch_block": {
+    "textures": "glitch_block",
+    "sound": "obsidian"
+  },
+  "amethyst:reactor": {
+    "textures": "reactor_inactive",
+    "sound": "obsidian"
+  },
+  "amethyst:whoopee_cushion": {
+    "textures": "whoopee_cushion",
+    "sound": "wool"
+  },
+  "amethyst:everthorn_e": {
+    "textures": "everthorn_e",
+    "sound": "amethyst"
+  },
+  "amethyst:lucky_block": {
+    "textures": "lucky_block",
+    "sound": "stone"
+  },
+  "amethyst:unlucky_block": {
+    "textures": "lucky_block",
+    "sound": "stone"
+  },
+  "amethyst:kinda_lucky_block": {
+    "textures": "kinda_lucky_block",
+    "sound": "wood"
+  },
+  "amethyst:super_lucky_block": {
+    "textures": "super_lucky_block",
+    "sound": "amethyst"
+  }
 }

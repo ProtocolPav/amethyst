@@ -6936,12 +6936,31 @@ function weightedRandom(items, weights) {
   }
   return items[items.length - 1];
 }
-function get_lucky_block_structure() {
-  const structures = weightedRandom(
+function get_structure(lucky_block_type) {
+  const lucky_structures = weightedRandom(
     [VeryLuckyStructures, LuckyStructures, NeutralStructures, UnluckyStructures, VeryUnluckyStructures],
     [0.06, 0.3, 0.28, 0.3, 0.06]
   );
-  return structures[Math.floor(Math.random() * structures.length)];
+  const super_lucky_structures = weightedRandom(
+    [VeryLuckyStructures, LuckyStructures, NeutralStructures, UnluckyStructures, VeryUnluckyStructures],
+    [0.2, 0.27, 0.06, 0.27, 0.2]
+  );
+  const kinda_lucky_structures = weightedRandom(
+    [LuckyStructures, NeutralStructures, UnluckyStructures],
+    [0.35, 0.3, 0.35]
+  );
+  const unlucky_structures = weightedRandom(
+    [NeutralStructures, UnluckyStructures, VeryUnluckyStructures],
+    [0.02, 0.49, 0.49]
+  );
+  const structures = {
+    "lucky_block": lucky_structures,
+    "unlucky_block": unlucky_structures,
+    "super_lucky_block": super_lucky_structures,
+    "kinda_lucky_block": kinda_lucky_structures
+  };
+  const selected_weights = structures[lucky_block_type];
+  return selected_weights[Math.floor(Math.random() * selected_weights.length)];
 }
 var VeryLuckyStructures = [];
 var LuckyStructures = [];
@@ -6972,7 +6991,7 @@ var UnluckyStructures = [
 ];
 var VeryUnluckyStructures = [
   function skeleton_pit(event) {
-    place_centered_on_player(event, "player_centered/skeleton_pit", -15);
+    place_centered_on_player(event, "player_centered/skeleton_pit", -13);
   }
 ];
 
@@ -6980,15 +6999,17 @@ var VeryUnluckyStructures = [
 function load_lucky_component() {
   function lucky_block_break(event) {
     const mainhand = event.player?.getComponent(EntityComponentTypes3.Equippable)?.getEquipment(EquipmentSlot2.Mainhand);
+    const lucky_block_type = event.brokenBlockPermutation.type.id.replace("amethyst:", "");
+    world7.sendMessage(lucky_block_type);
     if (!mainhand?.getComponent(ItemComponentTypes.Enchantable)?.hasEnchantment(MinecraftEnchantmentTypes.SilkTouch)) {
-      const loot_table = world7.getLootTableManager().getLootTable("lucky_block");
-      const lucky_drop = world7.getLootTableManager().generateLootFromTable(loot_table);
+      const loot_table = world7.getLootTableManager().getLootTable(lucky_block_type);
+      const item_drop = world7.getLootTableManager().generateLootFromTable(loot_table);
       if (Math.random() < Math.random()) {
-        lucky_drop?.forEach((item) => {
+        item_drop?.forEach((item) => {
           event.dimension.spawnItem(item, event.block.location);
         });
       } else {
-        const structure_function = get_lucky_block_structure();
+        const structure_function = get_structure(lucky_block_type);
         structure_function(event);
       }
     }
