@@ -6971,7 +6971,26 @@ var VeryLuckyStructures = [
   }
 ];
 var LuckyStructures = [];
-var NeutralStructures = [];
+var NeutralStructures = [
+  function fish(event) {
+    place_centered_on_player(event, "player_centered/fish");
+  },
+  function maze(event) {
+    place_centered_on_player(event, "player_centered/maze");
+  },
+  function sand(event) {
+    place_centered_on_player(event, "player_centered/sand", 10);
+  },
+  function fart_tower(event) {
+    place_centered_on_block(event, "block_centered/fart_tower", -7);
+  },
+  function lucky_choice(event) {
+    place_centered_on_block(event, "block_centered/lucky_choice");
+  },
+  function nothing_button(event) {
+    place_centered_on_block(event, "block_centered/nothing_button");
+  }
+];
 var UnluckyStructures = [
   function anvil_cage(event) {
     place_centered_on_player(event, "player_centered/trap_cage");

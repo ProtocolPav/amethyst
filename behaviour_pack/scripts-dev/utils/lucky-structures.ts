@@ -89,7 +89,7 @@ export let VeryLuckyStructures = [
         place_centered_on_block(event, 'block_centered/liberty_statue')
     },
     function balloon(event : BlockComponentPlayerBreakEvent) {
-        place_centered_on_block(event, 'block_centered/balloon')
+        place_centered_on_block(event, 'block_centered/balloon', 30)
     },
 ]
 
@@ -101,18 +101,23 @@ export let NeutralStructures = [
     function fish(event : BlockComponentPlayerBreakEvent) {
         place_centered_on_player(event, 'player_centered/fish')
     },
+
     function maze(event : BlockComponentPlayerBreakEvent) {
         place_centered_on_player(event, 'player_centered/maze')
     },
+
     function sand(event : BlockComponentPlayerBreakEvent) {
         place_centered_on_player(event, 'player_centered/sand', 10)
     },
+
     function fart_tower(event : BlockComponentPlayerBreakEvent) {
         place_centered_on_block(event, 'block_centered/fart_tower', -7)
     },
+
     function lucky_choice(event : BlockComponentPlayerBreakEvent) {
-        place_centered_on_block(event, 'block_centered/lucky_choice')
+        place_centered_on_block(event, 'block_centered/lucky_choice', 1)
     },
+
     function nothing_button(event : BlockComponentPlayerBreakEvent) {
         place_centered_on_block(event, 'block_centered/nothing_button')
     },
@@ -167,8 +172,8 @@ export let VeryUnluckyStructures = [
         place_centered_on_player(event, 'player_centered/lava', 5)
     },
 
-    function creeper_house(event : BlockComponentPlayerBreakEvent) {
-        place_centered_on_player(event, 'player_centered/tnt_house', -1)
+    function tnt_house(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_player(event, 'player_centered/tnt_house', -2)
     },
 
     function insta_kill(event : BlockComponentPlayerBreakEvent) {
