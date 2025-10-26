@@ -6962,7 +6962,14 @@ function get_structure(lucky_block_type) {
   const selected_weights = structures[lucky_block_type];
   return selected_weights[Math.floor(Math.random() * selected_weights.length)];
 }
-var VeryLuckyStructures = [];
+var VeryLuckyStructures = [
+  function statue_of_liberty(event) {
+    place_centered_on_block(event, "block_centered/liberty_statue");
+  },
+  function balloon(event) {
+    place_centered_on_block(event, "block_centered/balloon");
+  }
+];
 var LuckyStructures = [];
 var NeutralStructures = [];
 var UnluckyStructures = [
@@ -8368,7 +8375,7 @@ function load_world_event_handlers(guild_id2) {
 }
 
 // behaviour_pack/scripts-dev/main.ts
-var guild_id = "611008530077712395";
+var guild_id = "1213827104945471538";
 load_loops();
 load_custom_components();
 load_world_event_handlers(guild_id);

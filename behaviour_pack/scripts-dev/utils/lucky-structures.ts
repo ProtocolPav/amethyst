@@ -85,7 +85,12 @@ export function get_structure(lucky_block_type: string) {
 }
 
 export let VeryLuckyStructures = [
-
+    function statue_of_liberty(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_block(event, 'block_centered/liberty_statue')
+    },
+    function balloon(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_block(event, 'block_centered/balloon')
+    },
 ]
 
 export let LuckyStructures = [
@@ -93,7 +98,24 @@ export let LuckyStructures = [
 ]
 
 export let NeutralStructures = [
-
+    function fish(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_player(event, 'player_centered/fish')
+    },
+    function maze(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_player(event, 'player_centered/maze')
+    },
+    function sand(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_player(event, 'player_centered/sand', 10)
+    },
+    function fart_tower(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_block(event, 'block_centered/fart_tower', -7)
+    },
+    function lucky_choice(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_block(event, 'block_centered/lucky_choice')
+    },
+    function nothing_button(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_block(event, 'block_centered/nothing_button')
+    },
 ]
 
 export let UnluckyStructures = [
