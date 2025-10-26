@@ -75,6 +75,10 @@
         {
           "type": "loot_table",
           "name": "loot_tables/lucky_drops/sub_tables/armour_trims.json"
+        },
+        {
+          "type": "loot_table",
+          "name": "loot_tables/lucky_drops/sub_tables/music_discs.json"
         }
       ]
     }

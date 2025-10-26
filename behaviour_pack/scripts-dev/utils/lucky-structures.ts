@@ -88,6 +88,7 @@ export let VeryLuckyStructures = [
     function statue_of_liberty(event : BlockComponentPlayerBreakEvent) {
         place_centered_on_block(event, 'block_centered/liberty_statue')
     },
+
     function balloon(event : BlockComponentPlayerBreakEvent) {
         place_centered_on_block(event, 'block_centered/balloon', 30)
     },
@@ -121,6 +122,18 @@ export let NeutralStructures = [
     function nothing_button(event : BlockComponentPlayerBreakEvent) {
         place_centered_on_block(event, 'block_centered/nothing_button')
     },
+
+    function time_set_night(event: BlockComponentPlayerBreakEvent) {
+        world.setTimeOfDay(18000)
+    },
+
+    function cms_think_youre_cool(event: BlockComponentPlayerBreakEvent) {
+        world.sendMessage("The CMs Think You Cool!")
+    },
+
+    function cms_think_youre_uncool(event: BlockComponentPlayerBreakEvent) {
+        world.sendMessage("The CMs Think You Uncool :(")
+    },
 ]
 
 export let UnluckyStructures = [
@@ -151,7 +164,44 @@ export let UnluckyStructures = [
 
     function tp_plate(event : BlockComponentPlayerBreakEvent) {
         place_centered_on_player(event, 'player_centered/tp_plate', -1)
-    }
+    },
+
+    function spawn_zombies(event: BlockComponentPlayerBreakEvent) {
+        const player = event.player;
+        if (!player) return;
+
+        const dimension = player.dimension;
+        const playerPos = player.location;
+
+        for (let i = 0; i < 10; i++) {
+            const offset: Vector3 = {
+                x: playerPos.x + (Math.random() - 0.5) * 10,
+                y: playerPos.y,
+                z: playerPos.z + (Math.random() - 0.5) * 10
+            };
+
+            dimension.spawnEntity(MinecraftEntityTypes.Zombie, offset);
+            dimension.spawnEntity(MinecraftEntityTypes.Phantom, offset);
+        }
+    },
+
+    function spawn_ghasts(event: BlockComponentPlayerBreakEvent) {
+        const player = event.player;
+        if (!player) return;
+
+        const dimension = player.dimension;
+        const playerPos = player.location;
+
+        for (let i = 0; i < 15; i++) {
+            const offset: Vector3 = {
+                x: playerPos.x + (Math.random() - 0.5) * 10,
+                y: playerPos.y,
+                z: playerPos.z + (Math.random() - 0.5) * 10
+            };
+
+            dimension.spawnEntity(MinecraftEntityTypes.Ghast, offset);
+        }
+    },
 ]
 
 export let VeryUnluckyStructures = [
@@ -194,7 +244,7 @@ export let VeryUnluckyStructures = [
                 z: playerPos.z + (Math.random() - 0.5) * 10
             };
 
-            const tnt = dimension.spawnEntity(MinecraftEntityTypes.Tnt, offset);
+            dimension.spawnEntity(MinecraftEntityTypes.Tnt, offset);
         }
     },
 

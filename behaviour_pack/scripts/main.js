@@ -6967,7 +6967,7 @@ var VeryLuckyStructures = [
     place_centered_on_block(event, "block_centered/liberty_statue");
   },
   function balloon(event) {
-    place_centered_on_block(event, "block_centered/balloon");
+    place_centered_on_block(event, "block_centered/balloon", 30);
   }
 ];
 var LuckyStructures = [];
@@ -6985,7 +6985,7 @@ var NeutralStructures = [
     place_centered_on_block(event, "block_centered/fart_tower", -7);
   },
   function lucky_choice(event) {
-    place_centered_on_block(event, "block_centered/lucky_choice");
+    place_centered_on_block(event, "block_centered/lucky_choice", 1);
   },
   function nothing_button(event) {
     place_centered_on_block(event, "block_centered/nothing_button");
@@ -7029,8 +7029,8 @@ var VeryUnluckyStructures = [
     place_centered_on_player(event, "player_centered/lava_cage", -1);
     place_centered_on_player(event, "player_centered/lava", 5);
   },
-  function creeper_house2(event) {
-    place_centered_on_player(event, "player_centered/tnt_house", -1);
+  function tnt_house(event) {
+    place_centered_on_player(event, "player_centered/tnt_house", -2);
   },
   function insta_kill(event) {
     event.player?.kill();
