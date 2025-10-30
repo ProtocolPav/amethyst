@@ -6970,7 +6970,23 @@ var VeryLuckyStructures = [
     place_centered_on_block(event, "block_centered/balloon", 30);
   }
 ];
-var LuckyStructures = [];
+var LuckyStructures = [
+  function sheep_tower(event) {
+    place_centered_on_player(event, "player_centered/sheep_tower");
+  },
+  function farm(event) {
+    place_centered_on_block(event, "block_centered/farm");
+  },
+  function health_button(event) {
+    place_centered_on_block(event, "block_centered/health_button");
+  },
+  function parkour(event) {
+    place_centered_on_block(event, "block_centered/parkour");
+  },
+  function trail_ruins(event) {
+    place_centered_on_block(event, "trail_ruins");
+  }
+];
 var NeutralStructures = [
   function fish(event) {
     place_centered_on_player(event, "player_centered/fish");
@@ -6989,6 +7005,15 @@ var NeutralStructures = [
   },
   function nothing_button(event) {
     place_centered_on_block(event, "block_centered/nothing_button");
+  },
+  function time_set_night(event) {
+    world6.setTimeOfDay(18e3);
+  },
+  function cms_think_youre_cool(event) {
+    world6.sendMessage("The CMs Think You Cool!");
+  },
+  function cms_think_youre_uncool(event) {
+    world6.sendMessage("The CMs Think You Uncool :(");
   }
 ];
 var UnluckyStructures = [
@@ -7013,6 +7038,35 @@ var UnluckyStructures = [
   },
   function tp_plate(event) {
     place_centered_on_player(event, "player_centered/tp_plate", -1);
+  },
+  function spawn_zombies(event) {
+    const player = event.player;
+    if (!player) return;
+    const dimension = player.dimension;
+    const playerPos = player.location;
+    for (let i = 0; i < 10; i++) {
+      const offset = {
+        x: playerPos.x + (Math.random() - 0.5) * 10,
+        y: playerPos.y,
+        z: playerPos.z + (Math.random() - 0.5) * 10
+      };
+      dimension.spawnEntity(MinecraftEntityTypes.Zombie, offset);
+      dimension.spawnEntity(MinecraftEntityTypes.Phantom, offset);
+    }
+  },
+  function spawn_ghasts(event) {
+    const player = event.player;
+    if (!player) return;
+    const dimension = player.dimension;
+    const playerPos = player.location;
+    for (let i = 0; i < 15; i++) {
+      const offset = {
+        x: playerPos.x + (Math.random() - 0.5) * 10,
+        y: playerPos.y,
+        z: playerPos.z + (Math.random() - 0.5) * 10
+      };
+      dimension.spawnEntity(MinecraftEntityTypes.Ghast, offset);
+    }
   }
 ];
 var VeryUnluckyStructures = [
@@ -7046,7 +7100,7 @@ var VeryUnluckyStructures = [
         y: playerPos.y,
         z: playerPos.z + (Math.random() - 0.5) * 10
       };
-      const tnt = dimension.spawnEntity(MinecraftEntityTypes.Tnt, offset);
+      dimension.spawnEntity(MinecraftEntityTypes.Tnt, offset);
     }
   },
   function inventory_clear(event) {

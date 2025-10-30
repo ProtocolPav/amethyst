@@ -95,7 +95,25 @@ export let VeryLuckyStructures = [
 ]
 
 export let LuckyStructures = [
+    function sheep_tower(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_player(event, 'player_centered/sheep_tower')
+    },
 
+    function farm(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_block(event, 'block_centered/farm')
+    },
+
+    function health_button(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_block(event, 'block_centered/health_button')
+    },
+
+    function parkour(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_block(event, 'block_centered/parkour')
+    },
+
+    function trail_ruins(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_block(event, 'trail_ruins')
+    },
 ]
 
 export let NeutralStructures = [
