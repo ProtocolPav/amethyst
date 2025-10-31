@@ -1,5 +1,5 @@
 import {BlockComponentPlayerBreakEvent, EntityComponentTypes, Structure, Vector3, world} from "@minecraft/server";
-import {MinecraftBlockTypes, MinecraftEntityTypes} from "@minecraft/vanilla-data";
+import {MinecraftBlockTypes, MinecraftEffectTypes, MinecraftEntityTypes} from "@minecraft/vanilla-data";
 
 
 function place_centered_on_player(event : BlockComponentPlayerBreakEvent, structure_name: string, y_offset: number = -1) {
@@ -86,17 +86,42 @@ export function get_structure(lucky_block_type: string) {
 
 export let VeryLuckyStructures = [
     function statue_of_liberty(event : BlockComponentPlayerBreakEvent) {
-        place_centered_on_block(event, 'block_centered/liberty_statue')
+        place_centered_on_block(event, 'block_centered/liberty_statue', -1)
     },
 
     function balloon(event : BlockComponentPlayerBreakEvent) {
         place_centered_on_block(event, 'block_centered/balloon', 30)
+    },
+
+    function lucky_pyramid(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_block(event, 'block_centered/lucky_pyramid', -1)
+    },
+
+    function lucky_super_block(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_player(event, 'player_centered/lucky_block_super', 28)
+    },
+
+    function beacon(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_block(event, 'block_centered/beacon')
+    },
+
+    function pav(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_block(event, 'block_centered/pav')
+    },
+
+    function resistance(event : BlockComponentPlayerBreakEvent) {
+        event.player?.addEffect(MinecraftEffectTypes.Resistance, 30, {amplifier: 20})
     },
 ]
 
 export let LuckyStructures = [
     function sheep_tower(event : BlockComponentPlayerBreakEvent) {
         place_centered_on_player(event, 'player_centered/sheep_tower', -13)
+    },
+
+    function lucky_cage(event : BlockComponentPlayerBreakEvent) {
+        place_centered_on_player(event, 'player_centered/trap_cage')
+        place_centered_on_player(event, 'player_centered/lucky_block', 7)
     },
 
     function farm(event : BlockComponentPlayerBreakEvent) {
@@ -113,6 +138,10 @@ export let LuckyStructures = [
 
     function trail_ruins(event : BlockComponentPlayerBreakEvent) {
         place_centered_on_block(event, 'trail_ruins')
+    },
+
+    function regeneration(event : BlockComponentPlayerBreakEvent) {
+        event.player?.addEffect(MinecraftEffectTypes.Regeneration, 10, {amplifier: 2})
     },
 ]
 
