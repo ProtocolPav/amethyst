@@ -10,7 +10,7 @@
         { "type": "item", "name": "minecraft:piglin_banner_pattern" },
         { "type": "item", "name": "minecraft:globe_banner_pattern" },
         { "type": "item", "name": "minecraft:field_masoned_banner_pattern" },
-        { "type": "item", "name": "minecraft:bordure_banner_pattern" },
+        { "type": "item", "name": "minecraft:bordure_indented_banner_pattern" },
         { "type": "item", "name": "minecraft:flow_banner_pattern" },
         { "type": "item", "name": "minecraft:guster_banner_pattern" }
       ]

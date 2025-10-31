@@ -6964,15 +6964,34 @@ function get_structure(lucky_block_type) {
 }
 var VeryLuckyStructures = [
   function statue_of_liberty(event) {
-    place_centered_on_block(event, "block_centered/liberty_statue");
+    place_centered_on_block(event, "block_centered/liberty_statue", -1);
   },
   function balloon(event) {
     place_centered_on_block(event, "block_centered/balloon", 30);
+  },
+  function lucky_pyramid(event) {
+    place_centered_on_block(event, "block_centered/lucky_pyramid", -1);
+  },
+  function lucky_super_block(event) {
+    place_centered_on_player(event, "player_centered/lucky_block_super", 28);
+  },
+  function beacon(event) {
+    place_centered_on_block(event, "block_centered/beacon");
+  },
+  function pav(event) {
+    place_centered_on_block(event, "block_centered/pav");
+  },
+  function resistance(event) {
+    event.player?.addEffect(MinecraftEffectTypes.Resistance, 30, { amplifier: 20 });
   }
 ];
 var LuckyStructures = [
   function sheep_tower(event) {
-    place_centered_on_player(event, "player_centered/sheep_tower");
+    place_centered_on_player(event, "player_centered/sheep_tower", -13);
+  },
+  function lucky_cage(event) {
+    place_centered_on_player(event, "player_centered/trap_cage");
+    place_centered_on_player(event, "player_centered/lucky_block", 7);
   },
   function farm(event) {
     place_centered_on_block(event, "block_centered/farm");
@@ -6981,15 +7000,18 @@ var LuckyStructures = [
     place_centered_on_block(event, "block_centered/health_button");
   },
   function parkour(event) {
-    place_centered_on_block(event, "block_centered/parkour");
+    place_centered_on_block(event, "block_centered/parkour", 1);
   },
   function trail_ruins(event) {
     place_centered_on_block(event, "trail_ruins");
+  },
+  function regeneration(event) {
+    event.player?.addEffect(MinecraftEffectTypes.Regeneration, 10, { amplifier: 2 });
   }
 ];
 var NeutralStructures = [
   function fish(event) {
-    place_centered_on_player(event, "player_centered/fish");
+    place_centered_on_player(event, "player_centered/fish", 1);
   },
   function maze(event) {
     place_centered_on_player(event, "player_centered/maze");
@@ -7001,7 +7023,7 @@ var NeutralStructures = [
     place_centered_on_block(event, "block_centered/fart_tower", -7);
   },
   function lucky_choice(event) {
-    place_centered_on_block(event, "block_centered/lucky_choice", 1);
+    place_centered_on_block(event, "block_centered/lucky_choice");
   },
   function nothing_button(event) {
     place_centered_on_block(event, "block_centered/nothing_button");
@@ -8448,7 +8470,7 @@ function load_world_event_handlers(guild_id2) {
 }
 
 // behaviour_pack/scripts-dev/main.ts
-var guild_id = "1213827104945471538";
+var guild_id = "611008530077712395";
 load_loops();
 load_custom_components();
 load_world_event_handlers(guild_id);

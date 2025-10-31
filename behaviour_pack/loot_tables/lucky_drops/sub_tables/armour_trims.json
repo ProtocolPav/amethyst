@@ -9,8 +9,12 @@
         { "type": "item", "name": "minecraft:wild_armor_trim_smithing_template", "weight": 10 },
         { "type": "item", "name": "minecraft:tide_armor_trim_smithing_template", "weight": 10 },
         { "type": "item", "name": "minecraft:ward_armor_trim_smithing_template", "weight": 7 },
+        { "type": "item", "name": "minecraft:bolt_armor_trim_smithing_template", "weight": 7 },
+        { "type": "item", "name": "minecraft:raiser_armor_trim_smithing_template", "weight": 7 },
+        { "type": "item", "name": "minecraft:shaper_armor_trim_smithing_template", "weight": 7 },
+        { "type": "item", "name": "minecraft:wayfinder_armor_trim_smithing_template", "weight": 7 },
         { "type": "item", "name": "minecraft:vex_armor_trim_smithing_template", "weight": 4 },
-        { "type": "item", "name": "minecraft:ribs_armor_trim_smithing_template", "weight": 4 },
+        { "type": "item", "name": "minecraft:rib_armor_trim_smithing_template", "weight": 4 },
         { "type": "item", "name": "minecraft:snout_armor_trim_smithing_template", "weight": 3 },
         { "type": "item", "name": "minecraft:eye_armor_trim_smithing_template", "weight": 2 },
         { "type": "item", "name": "minecraft:spire_armor_trim_smithing_template", "weight": 1 }
