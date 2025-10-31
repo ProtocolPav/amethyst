@@ -96,7 +96,7 @@ export let VeryLuckyStructures = [
 
 export let LuckyStructures = [
     function sheep_tower(event : BlockComponentPlayerBreakEvent) {
-        place_centered_on_player(event, 'player_centered/sheep_tower')
+        place_centered_on_player(event, 'player_centered/sheep_tower', -13)
     },
 
     function farm(event : BlockComponentPlayerBreakEvent) {
@@ -108,7 +108,7 @@ export let LuckyStructures = [
     },
 
     function parkour(event : BlockComponentPlayerBreakEvent) {
-        place_centered_on_block(event, 'block_centered/parkour')
+        place_centered_on_block(event, 'block_centered/parkour', 1)
     },
 
     function trail_ruins(event : BlockComponentPlayerBreakEvent) {
@@ -118,7 +118,7 @@ export let LuckyStructures = [
 
 export let NeutralStructures = [
     function fish(event : BlockComponentPlayerBreakEvent) {
-        place_centered_on_player(event, 'player_centered/fish')
+        place_centered_on_player(event, 'player_centered/fish', 1)
     },
 
     function maze(event : BlockComponentPlayerBreakEvent) {
@@ -134,7 +134,7 @@ export let NeutralStructures = [
     },
 
     function lucky_choice(event : BlockComponentPlayerBreakEvent) {
-        place_centered_on_block(event, 'block_centered/lucky_choice', 1)
+        place_centered_on_block(event, 'block_centered/lucky_choice')
     },
 
     function nothing_button(event : BlockComponentPlayerBreakEvent) {

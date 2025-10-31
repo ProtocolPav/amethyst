@@ -5,7 +5,7 @@
       "entries": [
         {
           "type": "item",
-          "name": "amethyst:champions_helmet",
+          "name": "amethyst:champions_crown",
           "functions": [
             {
               "function": "set_lore",
@@ -17,7 +17,7 @@
         },
         {
           "type": "item",
-          "name": "amethyst:champions_chestplatw",
+          "name": "amethyst:champions_chestplate",
           "functions": [
             {
               "function": "set_lore",
