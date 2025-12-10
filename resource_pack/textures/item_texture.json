@@ -34,7 +34,9 @@
 		},
 		"diamond_nugget": {
 			"textures": "textures/items/diamond_nugget.png"
-		}
-		
+		},
+        "beer": {
+          "textures": "textures/items/beer.png"
+        }
 	}
 }
