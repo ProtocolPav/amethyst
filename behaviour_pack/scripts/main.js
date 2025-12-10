@@ -9099,8 +9099,8 @@ function drunk(player) {
         { item: "fart", weight: 2 },
         { item: "blink", weight: 3 },
         { item: "nausea", weight: 2 },
-        { item: "burp", weight: 3 },
-        { item: "slowness", weight: 2 },
+        { item: "burp", weight: 4 },
+        { item: "slowness", weight: 1 },
         { item: "none", weight: 3 }
       ];
     } else if (drunk_data.type === "amethyst:wine") {
@@ -9108,16 +9108,16 @@ function drunk(player) {
         { item: "blink", weight: 3 },
         { item: "nausea", weight: 1 },
         { item: "slowness", weight: 2 },
-        { item: "laugh", weight: 3 }
+        { item: "laugh", weight: 4 }
       ];
     } else if (drunk_data.type === "amethyst:glow_wine") {
       effect_choices = [
         { item: "blink", weight: 3 },
         { item: "nausea", weight: 1 },
         { item: "burp", weight: 1 },
-        { item: "laugh", weight: 3 },
+        { item: "laugh", weight: 5 },
         { item: "night_vision", weight: 4 },
-        { item: "speed", weight: 1 }
+        { item: "speed", weight: 2 }
       ];
     }
     drunk_data = drunk_effects(player, drunk_data, effect_choices);
@@ -9128,7 +9128,6 @@ function drunk(player) {
     } else {
       player.setDynamicProperty("amethyst:drunk_data", JSON.stringify(drunk_data));
     }
-    player.onScreenDisplay.setActionBar(`${drunk_data.type} ${drunk_data.drinks} ${drunk_data.fov_level}`);
   }
 }
 function drunk_effects(player, drunk_data, effect_choices) {
@@ -9153,7 +9152,7 @@ function drunk_effects(player, drunk_data, effect_choices) {
       particle_location.y += 2;
       dimension.spawnParticle("minecraft:explosion_particle", particle_location);
     } else if (chosen_effect === "laugh") {
-      dimension.playSound("laugh", location, { volume: 1, pitch: Math.max(0.9, Math.random() * 1.2) });
+      dimension.playSound("laugh", location, { volume: 1, pitch: Math.max(0.83, Math.random() * 1.7) });
     } else if (chosen_effect === "blink") {
       player.camera.fade({ fadeTime: { fadeInTime: 0.5, holdTime: 0.1, fadeOutTime: 0.25 } });
     } else if (chosen_effect === "nausea") {

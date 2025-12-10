@@ -50,8 +50,8 @@ function drunk(player: Player): void {
                 { item: 'fart', weight: 2 },
                 { item: 'blink', weight: 3 },
                 { item: 'nausea', weight: 2 },
-                { item: 'burp', weight: 3 },
-                { item: 'slowness', weight: 2 },
+                { item: 'burp', weight: 4 },
+                { item: 'slowness', weight: 1 },
                 { item: 'none', weight: 3 },
             ]
         } else if (drunk_data.type === 'amethyst:wine') {
@@ -59,16 +59,16 @@ function drunk(player: Player): void {
                 { item: 'blink', weight: 3 },
                 { item: 'nausea', weight: 1 },
                 { item: 'slowness', weight: 2 },
-                { item: 'laugh', weight: 3 },
+                { item: 'laugh', weight: 4 },
             ]
         } else if (drunk_data.type === 'amethyst:glow_wine') {
             effect_choices = [
                 { item: 'blink', weight: 3 },
                 { item: 'nausea', weight: 1 },
                 { item: 'burp', weight: 1 },
-                { item: 'laugh', weight: 3 },
+                { item: 'laugh', weight: 5 },
                 { item: 'night_vision', weight: 4 },
-                { item: 'speed', weight: 1 },
+                { item: 'speed', weight: 2 },
             ]
         }
 
