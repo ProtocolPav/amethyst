@@ -12,7 +12,7 @@ interface DrunkPlayer {
 
 function sober_up(drunk_data: DrunkPlayer): DrunkPlayer {
     // 5% chance per second to lose 1 drink level
-    const sober_chance = 0.05
+    const sober_chance = 0.06
 
     if (Math.random() < sober_chance) {
         drunk_data.drinks -= 1
@@ -23,7 +23,7 @@ function sober_up(drunk_data: DrunkPlayer): DrunkPlayer {
     const drunk_up_chance = 0.005 * drunk_data.drinks
 
     if (Math.random() < drunk_up_chance) {
-        drunk_data.drinks += 2
+        drunk_data.drinks += 1
     }
 
     return drunk_data
