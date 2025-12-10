@@ -81,8 +81,6 @@ function drunk(player: Player): void {
         } else {
             player.setDynamicProperty('amethyst:drunk_data', JSON.stringify(drunk_data))
         }
-
-        player.onScreenDisplay.setActionBar(`${drunk_data.type} ${drunk_data.drinks} ${drunk_data.fov_level}`)
     }
 }
 
