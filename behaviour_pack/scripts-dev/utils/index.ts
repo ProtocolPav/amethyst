@@ -43,6 +43,26 @@ function normalizeDateString(datetime: string): string {
     });
 }
 
+function getWeightedChoice<T>(choices: Array<{item: T, weight: number}>): T {
+    // Calculate total weight
+    const total_weight = choices.reduce((sum, choice) => sum + choice.weight, 0)
+
+    // Pick random value between 0 and total weight
+    const random_value = Math.random() * total_weight
+
+    // Find which item was selected
+    let cumulative_weight = 0
+    for (const choice of choices) {
+        cumulative_weight += choice.weight
+        if (random_value < cumulative_weight) {
+            return choice.item
+        }
+    }
+
+    // Fallback (should never happen)
+    return choices[0].item
+}
+
 const emojis = {
     EVERTHORN: '',
     NUGS: '',
@@ -77,6 +97,7 @@ const utils = {
     Glitches,
     normalizeDateString,
     emojis,
+    getWeightedChoice
 }
 
 export default utils

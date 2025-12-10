@@ -4,7 +4,7 @@ import load_altar_component from "./sacrifice";
 import load_whoop_component from "./whoop";
 import load_reactor_activate_component from "./reactor_activate";
 import load_heal_dragon_component from "./heal_dragon";
-import load_beer_component from "./beer";
+import load_alcohol_component from "./alcohol";
 
 export default function load_custom_components(guild_id: string) {
     // Block Components
@@ -16,5 +16,5 @@ export default function load_custom_components(guild_id: string) {
     load_heal_dragon_component()
 
     // Item Components
-    load_beer_component()
+    load_alcohol_component()
 }

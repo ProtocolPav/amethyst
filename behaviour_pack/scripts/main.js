@@ -7702,6 +7702,18 @@ function normalizeDateString(datetime) {
     return `.${digits.padEnd(6, "0")}`;
   });
 }
+function getWeightedChoice(choices) {
+  const total_weight = choices.reduce((sum, choice) => sum + choice.weight, 0);
+  const random_value = Math.random() * total_weight;
+  let cumulative_weight = 0;
+  for (const choice of choices) {
+    cumulative_weight += choice.weight;
+    if (random_value < cumulative_weight) {
+      return choice.item;
+    }
+  }
+  return choices[0].item;
+}
 var emojis = {
   EVERTHORN: "\uE600",
   NUGS: "\uE601",
@@ -7734,7 +7746,8 @@ var utils = {
   EvilActs,
   Glitches,
   normalizeDateString,
-  emojis
+  emojis,
+  getWeightedChoice
 };
 var utils_default = utils;
 
@@ -8756,19 +8769,20 @@ function load_heal_dragon_component() {
   });
 }
 
-// behaviour_pack/scripts-dev/components/beer.ts
+// behaviour_pack/scripts-dev/components/alcohol.ts
 import {
   system as system9
 } from "@minecraft/server";
-function load_beer_component() {
+function load_alcohol_component() {
   async function on_drink(event) {
     const player = event.source;
     const drunk_data_string = player.getDynamicProperty("amethyst:drunk_data");
     if (!drunk_data_string) {
-      player.setDynamicProperty("amethyst:drunk_data", JSON.stringify({ type: "beer", drinks: 1 }));
+      player.setDynamicProperty("amethyst:drunk_data", JSON.stringify({ type: event.itemStack.typeId, drinks: 1 }));
     } else {
       let drunk_data = JSON.parse(drunk_data_string);
       drunk_data.drinks += 1;
+      drunk_data.type = event.itemStack.typeId;
       player.setDynamicProperty("amethyst:drunk_data", JSON.stringify(drunk_data));
     }
   }
@@ -8792,7 +8806,7 @@ function load_custom_components(guild_id2) {
   load_altar_component(guild_id2);
   load_reactor_activate_component();
   load_heal_dragon_component();
-  load_beer_component();
+  load_alcohol_component();
 }
 
 // behaviour_pack/scripts-dev/loops/elytra_no_mending.ts
@@ -9055,58 +9069,102 @@ function load_champion_set() {
 
 // behaviour_pack/scripts-dev/loops/drunk.ts
 import { system as system16, TicksPerSecond as TicksPerSecond9, world as world14 } from "@minecraft/server";
-var healthboost2 = MinecraftEffectTypes.HealthBoost;
+function sober_up(drunk_data) {
+  const sober_chance = 0.08;
+  if (Math.random() < sober_chance) {
+    drunk_data.drinks -= 1;
+  }
+  return drunk_data;
+}
+function cumulative_drunk_effects(player, drunk_data) {
+  player.addEffect(MinecraftEffectTypes.Oozing, TicksPerSecond9 * 2);
+  if (drunk_data.drinks > 4) {
+    player.addEffect(MinecraftEffectTypes.Hunger, TicksPerSecond9 * drunk_data.drinks);
+  }
+  if (drunk_data.drinks > 18) {
+    player.addEffect(MinecraftEffectTypes.Slowness, TicksPerSecond9 * 2, { amplifier: 3 });
+  }
+  if (drunk_data.drinks > 20) {
+    player.addEffect(MinecraftEffectTypes.FatalPoison, TicksPerSecond9 * 2);
+  }
+}
 function drunk(player) {
   const drunk_data_string = player.getDynamicProperty("amethyst:drunk_data");
   if (drunk_data_string) {
     let drunk_data = JSON.parse(drunk_data_string);
-    if (drunk_data.drinks <= 0) {
-      player.setDynamicProperty("amethyst:drunk_data", void 0);
-    } else if (drunk_data.type === "beer") {
-      drunk_data = beer_drunk(player, drunk_data);
-    } else if (drunk_data.type === "wine") {
-    } else if (drunk_data.type === "glow") {
+    let effect_choices = [];
+    cumulative_drunk_effects(player, drunk_data);
+    if (drunk_data.type === "amethyst:beer") {
+      effect_choices = [
+        { item: "fart", weight: 2 },
+        { item: "blink", weight: 3 },
+        { item: "nausea", weight: 2 },
+        { item: "burp", weight: 3 },
+        { item: "slowness", weight: 2 },
+        { item: "none", weight: 3 }
+      ];
+    } else if (drunk_data.type === "amethyst:wine") {
+      effect_choices = [
+        { item: "blink", weight: 3 },
+        { item: "nausea", weight: 1 },
+        { item: "slowness", weight: 2 },
+        { item: "laugh", weight: 3 }
+      ];
+    } else if (drunk_data.type === "amethyst:glow_wine") {
+      effect_choices = [
+        { item: "blink", weight: 3 },
+        { item: "nausea", weight: 1 },
+        { item: "burp", weight: 1 },
+        { item: "laugh", weight: 3 },
+        { item: "night_vision", weight: 4 },
+        { item: "speed", weight: 1 }
+      ];
     }
-    player.setDynamicProperty("amethyst:drunk_data", JSON.stringify(drunk_data));
+    drunk_data = drunk_effects(player, drunk_data, effect_choices);
+    drunk_data = sober_up(drunk_data);
+    if (drunk_data.drinks <= 0) {
+      player.camera.setFov({ easeOptions: { easeTime: 2.5 } });
+      player.setDynamicProperty("amethyst:drunk_data", void 0);
+    } else {
+      player.setDynamicProperty("amethyst:drunk_data", JSON.stringify(drunk_data));
+    }
     player.onScreenDisplay.setActionBar(`${drunk_data.type} ${drunk_data.drinks} ${drunk_data.fov_level}`);
   }
 }
-function beer_drunk(player, drunk_data) {
+function drunk_effects(player, drunk_data, effect_choices) {
   const dimension = player.dimension;
   const location = player.location;
-  const target_fov_level = Math.max(45, 75 - drunk_data.drinks * 2);
+  const target_fov_level = Math.max(45, 73 - drunk_data.drinks * 2);
   if (drunk_data.fov_level !== target_fov_level) {
     drunk_data.fov_level = target_fov_level;
     player.camera.setFov({ fov: drunk_data.fov_level, easeOptions: { easeTime: 4 } });
   }
-  const effect_choices = ["fart", "blink", "nausea", "look_away"];
-  const effect_chance = 0.05 + drunk_data.drinks * 0.025;
+  const effect_chance = 0.11 + drunk_data.drinks * 0.04;
   if (Math.random() < effect_chance) {
-    const chosen_effect = effect_choices[Math.floor(Math.random() * effect_choices.length)];
+    const chosen_effect = utils_default.getWeightedChoice(effect_choices);
     if (chosen_effect === "fart") {
       dimension.playSound("fart", location, { volume: 1, pitch: Math.max(0.45, Math.random() * 1.5) });
       const particle_location = { ...location };
       particle_location.y += 1;
       dimension.spawnParticle("minecraft:explosion_particle", particle_location);
+    } else if (chosen_effect === "burp") {
+      dimension.playSound("burp", location, { volume: 1, pitch: Math.max(0.7, Math.random() * 1.5) });
+      const particle_location = { ...location };
+      particle_location.y += 2;
+      dimension.spawnParticle("minecraft:explosion_particle", particle_location);
+    } else if (chosen_effect === "laugh") {
+      dimension.playSound("laugh", location, { volume: 1, pitch: Math.max(0.9, Math.random() * 1.2) });
     } else if (chosen_effect === "blink") {
       player.camera.fade({ fadeTime: { fadeInTime: 0.5, holdTime: 0.1, fadeOutTime: 0.25 } });
     } else if (chosen_effect === "nausea") {
-      player.addEffect(MinecraftEffectTypes.Nausea, TicksPerSecond9 * 5);
-    } else if (chosen_effect === "look_away") {
-      const facing = player.getViewDirection();
-      const offset_x = (Math.random() - 0.5) * 0.4;
-      const offset_z = (Math.random() - 0.5) * 0.4;
-      const offset_facing = {
-        x: facing.x + offset_x,
-        y: facing.y,
-        z: facing.z + offset_z
-      };
-      player.camera.setCamera("minecraft:first_person", { facingLocation: offset_facing });
+      player.addEffect(MinecraftEffectTypes.Nausea, 5 + TicksPerSecond9 * drunk_data.drinks);
+    } else if (chosen_effect === "slowness") {
+      player.addEffect(MinecraftEffectTypes.Slowness, TicksPerSecond9 * drunk_data.drinks);
+    } else if (chosen_effect === "night_vision") {
+      player.addEffect(MinecraftEffectTypes.NightVision, TicksPerSecond9 * drunk_data.drinks);
+    } else if (chosen_effect === "speed") {
+      player.addEffect(MinecraftEffectTypes.Speed, TicksPerSecond9 * drunk_data.drinks);
     }
-  }
-  const sober_chance = 0.08;
-  if (Math.random() < sober_chance) {
-    drunk_data.drinks -= 1;
   }
   return drunk_data;
 }
