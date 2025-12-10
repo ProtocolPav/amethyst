@@ -14,15 +14,12 @@ function sober_up(drunk_data: DrunkPlayer): DrunkPlayer {
     // 5% chance per second to lose 1 drink level
     const sober_chance = 0.06
 
-    if (Math.random() < sober_chance) {
-        drunk_data.drinks -= 1
-    }
-
-    // The more drunk you are, the higher the chance you get
-    // even more drunk
+    // The more drunk you are, the drunker you can get
     const drunk_up_chance = 0.005 * drunk_data.drinks
 
-    if (Math.random() < drunk_up_chance) {
+    if (Math.random() < sober_chance) {
+        drunk_data.drinks -= 1
+    } else if (Math.random() < drunk_up_chance) {
         drunk_data.drinks += 1
     }
 

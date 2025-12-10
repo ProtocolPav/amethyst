@@ -9070,13 +9070,13 @@ function load_champion_set() {
 // behaviour_pack/scripts-dev/loops/drunk.ts
 import { system as system16, TicksPerSecond as TicksPerSecond9, world as world14 } from "@minecraft/server";
 function sober_up(drunk_data) {
-  const sober_chance = 0.05;
+  const sober_chance = 0.06;
   if (Math.random() < sober_chance) {
     drunk_data.drinks -= 1;
   }
   const drunk_up_chance = 5e-3 * drunk_data.drinks;
   if (Math.random() < drunk_up_chance) {
-    drunk_data.drinks += 2;
+    drunk_data.drinks += 1;
   }
   return drunk_data;
 }
@@ -9160,7 +9160,7 @@ function drunk_effects(player, drunk_data, effect_choices) {
     } else if (chosen_effect === "blink") {
       player.camera.fade({ fadeTime: { fadeInTime: 0.5, holdTime: 0.1, fadeOutTime: 0.25 } });
     } else if (chosen_effect === "nausea") {
-      player.addEffect(MinecraftEffectTypes.Nausea, 5 + TicksPerSecond9 * drunk_data.drinks);
+      player.addEffect(MinecraftEffectTypes.Nausea, TicksPerSecond9 * drunk_data.drinks * 2.5);
     } else if (chosen_effect === "slowness") {
       player.addEffect(MinecraftEffectTypes.Slowness, TicksPerSecond9 * drunk_data.drinks);
     } else if (chosen_effect === "night_vision") {
@@ -9181,6 +9181,7 @@ function load_drunk() {
   world14.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
     let player = spawn_event.player;
     if (player.getDynamicProperty("amethyst:drunk_data")) {
+      player.camera.setFov();
       player.setDynamicProperty("amethyst:drunk_data", void 0);
     }
   });
