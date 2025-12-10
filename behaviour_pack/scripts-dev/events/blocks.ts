@@ -2,20 +2,24 @@ import { world, system } from "@minecraft/server"
 import api from "../api"
 import { EntityComponentTypes, EquipmentSlot } from "@minecraft/server"
 import { MinecraftBlockTypes } from "@minecraft/vanilla-data"
+import {interaction_preprocess} from "../utils/interaction_preprocess";
 
 export default function load_block_event_handler() {
 
     // Handle Block Break Event
-    world.beforeEvents.playerBreakBlock.subscribe((event) => {
+    world.beforeEvents.playerBreakBlock.subscribe(async (event) => {
         const block_id = event.block.typeId
         const block_location = [event.block.x, event.block.y, event.block.z]
         const dimension = event.player.dimension
         const mainhand = event.player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
 
+        const thorny_user = api.ThornyUser.fetch_user(event.player.name)!
+        const active_quest = await api.QuestWithProgress.get_active_quest(thorny_user)
+
         system.run(() => {
             const interaction = new api.Interaction(
                 {
-                    thorny_id: api.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
+                    thorny_id: thorny_user?.thorny_id ?? 0,
                     type: 'mine',
                     coordinates: block_location,
                     reference: block_id,
@@ -27,7 +31,9 @@ export default function load_block_event_handler() {
             
             interaction.post_interaction()
 
-            api.Interaction.enqueue(interaction)
+            if (interaction_preprocess(interaction, active_quest)) {
+                api.Interaction.enqueue(interaction)
+            }
         })
     })
     
