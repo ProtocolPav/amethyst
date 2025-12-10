@@ -3,10 +3,11 @@ import api from "../api"
 import utils from "../utils"
 import { EntityComponentTypes, EquipmentSlot, Player } from "@minecraft/server"
 import {MinecraftBlockTypes, MinecraftEntityTypes} from "@minecraft/vanilla-data"
+import {interaction_preprocess} from "../utils/interaction_preprocess";
 
 export default function load_entity_event_handler() {
     // Handle Entity Die/Kill event
-    world.afterEvents.entityDie.subscribe((event) => {
+    world.afterEvents.entityDie.subscribe(async (event) => {
 
         // Player kills Something
         if (event.damageSource.damagingEntity instanceof Player) {
@@ -14,9 +15,12 @@ export default function load_entity_event_handler() {
             const dimension = player.dimension
             const mainhand = player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
 
+            const killer_thorny_user = api.ThornyUser.fetch_user(player.name)!
+            const killer_active_quest = await api.QuestWithProgress.get_active_quest(killer_thorny_user)
+
             const interaction = new api.Interaction(
                 {
-                    thorny_id: api.ThornyUser.fetch_user(player.name)?.thorny_id ?? 0,
+                    thorny_id: killer_thorny_user?.thorny_id ?? 0,
                     type: 'kill',
                     coordinates: [event.deadEntity.location.x, event.deadEntity.location.y, event.deadEntity.location.z],
                     reference: event.deadEntity.typeId,
@@ -31,13 +35,15 @@ export default function load_entity_event_handler() {
             if (event.deadEntity instanceof Player) {
                 const dead_player = event.deadEntity
                 const dead_mainhand = dead_player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
+
+                const dead_thorny_user = api.ThornyUser.fetch_user(dead_player.name)!
                 
                 // Replace Interaction Ref with dead players name
                 interaction.reference = dead_player.name
 
                 const death_interaction = new api.Interaction(
                     {
-                        thorny_id: api.ThornyUser.fetch_user(dead_player.name)?.thorny_id ?? 0,
+                        thorny_id: dead_thorny_user?.thorny_id ?? 0,
                         type: 'die',
                         coordinates: [dead_player.location.x, dead_player.location.y, dead_player.location.z],
                         reference: player.name,
@@ -54,7 +60,7 @@ export default function load_entity_event_handler() {
                 // Log kill interaction
                 interaction.post_interaction()
 
-                // Log death interaction
+                // Log death interaction. Don't pre-process as this is fine
                 death_interaction.post_interaction()
                 api.Interaction.enqueue(death_interaction)
 
@@ -65,7 +71,9 @@ export default function load_entity_event_handler() {
                 interaction.post_interaction()
             }
 
-            api.Interaction.enqueue(interaction)
+            if (interaction_preprocess(interaction, killer_active_quest)) {
+                api.Interaction.enqueue(interaction)
+            }
         }
 
         // Entity Kills Player
@@ -76,9 +84,12 @@ export default function load_entity_event_handler() {
             const dimension = player.dimension
             const mainhand = player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
 
+            const thorny_user = api.ThornyUser.fetch_user(player.name)!
+            const active_quest = await api.QuestWithProgress.get_active_quest(thorny_user)
+
             const death_interaction = new api.Interaction(
                 {
-                    thorny_id: api.ThornyUser.fetch_user(player.name)?.thorny_id ?? 0,
+                    thorny_id: thorny_user?.thorny_id ?? 0,
                     type: 'die',
                     coordinates: [player.location.x, player.location.y, player.location.z],
                     reference: killer.typeId,
@@ -90,7 +101,10 @@ export default function load_entity_event_handler() {
 
             // Log death interaction
             death_interaction.post_interaction()
-            api.Interaction.enqueue(death_interaction)
+
+            if (interaction_preprocess(death_interaction, active_quest)) {
+                api.Interaction.enqueue(death_interaction)
+            }
 
             // Relay death
             api.Relay.event(utils.DeathMessage.random_pve(player.name, killer.typeId), '', 'other')
@@ -103,9 +117,12 @@ export default function load_entity_event_handler() {
             const dimension = player.dimension
             const mainhand = player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
 
+            const thorny_user = api.ThornyUser.fetch_user(player.name)!
+            const active_quest = await api.QuestWithProgress.get_active_quest(thorny_user)
+
             const death_interaction = new api.Interaction(
                 {
-                    thorny_id: api.ThornyUser.fetch_user(player.name)?.thorny_id ?? 0,
+                    thorny_id: thorny_user?.thorny_id ?? 0,
                     type: 'die',
                     coordinates: [player.location.x, player.location.y, player.location.z],
                     reference: event.damageSource.cause,
@@ -117,7 +134,10 @@ export default function load_entity_event_handler() {
 
             // Log death interaction
             death_interaction.post_interaction()
-            api.Interaction.enqueue(death_interaction)
+
+            if (interaction_preprocess(death_interaction, active_quest)) {
+                api.Interaction.enqueue(death_interaction)
+            }
 
             // Relay death
             api.Relay.event(utils.DeathMessage.random_suicide(player.name, event.damageSource.cause), '', 'other')
