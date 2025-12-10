@@ -9070,9 +9070,13 @@ function load_champion_set() {
 // behaviour_pack/scripts-dev/loops/drunk.ts
 import { system as system16, TicksPerSecond as TicksPerSecond9, world as world14 } from "@minecraft/server";
 function sober_up(drunk_data) {
-  const sober_chance = 0.08;
+  const sober_chance = 0.05;
   if (Math.random() < sober_chance) {
     drunk_data.drinks -= 1;
+  }
+  const drunk_up_chance = 5e-3 * drunk_data.drinks;
+  if (Math.random() < drunk_up_chance) {
+    drunk_data.drinks += 2;
   }
   return drunk_data;
 }

@@ -136,7 +136,7 @@ function drunk_effects(
             player.camera.fade({fadeTime: {fadeInTime: 0.5, holdTime: 0.1, fadeOutTime: 0.25}})
         }
         else if (chosen_effect === 'nausea') {
-            player.addEffect(MinecraftEffectTypes.Nausea, 5 + TicksPerSecond * drunk_data.drinks)
+            player.addEffect(MinecraftEffectTypes.Nausea, TicksPerSecond * drunk_data.drinks * 2.5)
         }
         else if (chosen_effect === 'slowness') {
             player.addEffect(MinecraftEffectTypes.Slowness, TicksPerSecond * drunk_data.drinks)
@@ -166,6 +166,7 @@ export default function load_drunk() {
         let player = spawn_event.player
 
         if (player.getDynamicProperty('amethyst:drunk_data')) {
+            player.camera.setFov()
             player.setDynamicProperty('amethyst:drunk_data', undefined)
         }
     })
