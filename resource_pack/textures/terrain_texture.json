@@ -22,9 +22,12 @@
 		"reactor_active": {
 			"textures": "textures/blocks/reactor_active.png"
 		},
-		"everthorn_e": {
-			"textures": "textures/blocks/everthorn_e.png"
+		"thornite_e": {
+			"textures": "textures/blocks/thornite_e.png"
 		},
+        "prism_e": {
+            "textures": "textures/blocks/prism_e.png"
+        },
 		"draconic_heart": {
 			"textures": "textures/blocks/draconic_heart.png"
 		}
