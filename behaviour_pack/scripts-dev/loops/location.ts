@@ -14,9 +14,8 @@ function location_log(player: Player) {
         MinecraftItemTypes.ZombieHead,
         MinecraftItemTypes.DragonHead
     ]
-    let hidden = false
 
-    hidden = head_gear?.typeId ? check_list.includes(head_gear.typeId) : false
+    let hidden = (head_gear?.typeId ? check_list.includes(head_gear.typeId) : false) || player.isSneaking
 
     const location = [Math.round(player.location.x), Math.round(player.location.y), Math.round(player.location.z)];
 
