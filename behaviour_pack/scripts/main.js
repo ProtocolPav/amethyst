@@ -9103,6 +9103,14 @@ function load_block_event_handler() {
       MinecraftBlockTypes.Barrel,
       MinecraftBlockTypes.EnderChest,
       MinecraftBlockTypes.TrappedChest,
+      MinecraftBlockTypes.CopperChest,
+      MinecraftBlockTypes.ExposedCopperChest,
+      MinecraftBlockTypes.WeatheredCopperChest,
+      MinecraftBlockTypes.OxidizedCopperChest,
+      MinecraftBlockTypes.WaxedCopperChest,
+      MinecraftBlockTypes.WaxedExposedCopperChest,
+      MinecraftBlockTypes.WaxedOxidizedCopperChest,
+      MinecraftBlockTypes.WaxedWeatheredCopperChest,
       // Shulkers
       MinecraftBlockTypes.RedShulkerBox,
       MinecraftBlockTypes.LightGrayShulkerBox,
@@ -9144,6 +9152,7 @@ function load_block_event_handler() {
       MinecraftBlockTypes.SmithingTable,
       MinecraftBlockTypes.StonecutterBlock,
       MinecraftBlockTypes.ChiseledBookshelf,
+      MinecraftBlockTypes.Jukebox,
       // Buttons
       MinecraftBlockTypes.Lever,
       MinecraftBlockTypes.WoodenButton,
@@ -9205,10 +9214,7 @@ function load_block_event_handler() {
       MinecraftBlockTypes.WaxedOxidizedCopperTrapdoor,
       MinecraftBlockTypes.WaxedWeatheredCopperTrapdoor
     ];
-    if (
-      // all_blocks.includes(block_id) &&
-      !(event.beforeItemStack?.typeId === block_id && event.itemStack?.amount !== event.beforeItemStack?.amount)
-    ) {
+    if (all_blocks.includes(block_id) && !(event.beforeItemStack?.typeId === block_id && event.itemStack?.amount !== event.beforeItemStack?.amount)) {
       system15.run(() => {
         const interaction = new api_default.Interaction(
           {
@@ -9466,7 +9472,7 @@ function load_world_event_handlers(guild_id2) {
 
 // behaviour_pack/scripts-dev/main.ts
 import { system as system19 } from "@minecraft/server";
-var guild_id = "1213827104945471538";
+var guild_id = "611008530077712395";
 WorldCache.load_world(guild_id).then();
 load_loops();
 load_custom_components(guild_id);
