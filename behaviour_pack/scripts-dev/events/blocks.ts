@@ -74,6 +74,10 @@ export default function load_block_event_handler() {
             // Containers
             MinecraftBlockTypes.Chest, MinecraftBlockTypes.Barrel, MinecraftBlockTypes.EnderChest,
             MinecraftBlockTypes.TrappedChest,
+            MinecraftBlockTypes.CopperChest, MinecraftBlockTypes.ExposedCopperChest, MinecraftBlockTypes.WeatheredCopperChest,
+            MinecraftBlockTypes.OxidizedCopperChest,
+            MinecraftBlockTypes.WaxedCopperChest, MinecraftBlockTypes.WaxedExposedCopperChest,
+            MinecraftBlockTypes.WaxedOxidizedCopperChest, MinecraftBlockTypes.WaxedWeatheredCopperChest,
 
             // Shulkers
             MinecraftBlockTypes.RedShulkerBox, MinecraftBlockTypes.LightGrayShulkerBox, MinecraftBlockTypes.LightBlueShulkerBox,
@@ -91,7 +95,7 @@ export default function load_block_event_handler() {
             MinecraftBlockTypes.DamagedAnvil, MinecraftBlockTypes.BrewingStand,
             MinecraftBlockTypes.Beacon, MinecraftBlockTypes.CartographyTable, MinecraftBlockTypes.Grindstone,
             MinecraftBlockTypes.Lectern, MinecraftBlockTypes.Loom, MinecraftBlockTypes.SmithingTable,
-            MinecraftBlockTypes.StonecutterBlock, MinecraftBlockTypes.ChiseledBookshelf,
+            MinecraftBlockTypes.StonecutterBlock, MinecraftBlockTypes.ChiseledBookshelf, MinecraftBlockTypes.Jukebox,
 
             // Buttons
             MinecraftBlockTypes.Lever,

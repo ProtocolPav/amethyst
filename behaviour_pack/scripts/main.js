@@ -8862,7 +8862,6 @@ async function check_quests() {
       api_default.Interaction.set_processing(true);
       let interaction = api_default.Interaction.dequeue();
       while (interaction) {
-        console.log(interaction.reference, interaction.type);
         let thorny_user = api_default.ThornyUser.fetch_user_by_id(interaction.thorny_id);
         let quest = await api_default.QuestWithProgress.get_active_quest(thorny_user);
         if (quest && await quest.increment_active_objective(interaction)) {
@@ -9206,7 +9205,10 @@ function load_block_event_handler() {
       MinecraftBlockTypes.WaxedOxidizedCopperTrapdoor,
       MinecraftBlockTypes.WaxedWeatheredCopperTrapdoor
     ];
-    if (all_blocks.includes(block_id) && !(event.beforeItemStack?.typeId === block_id && event.itemStack?.amount !== event.beforeItemStack?.amount)) {
+    if (
+      // all_blocks.includes(block_id) &&
+      !(event.beforeItemStack?.typeId === block_id && event.itemStack?.amount !== event.beforeItemStack?.amount)
+    ) {
       system15.run(() => {
         const interaction = new api_default.Interaction(
           {
