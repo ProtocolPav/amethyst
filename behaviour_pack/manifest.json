@@ -11,7 +11,7 @@
 		"description": "Required pack for Amethyst's full functionality",
 		"min_engine_version": [ 1, 21, 70 ],
 		"uuid": "5f5ab0ea-79f8-4d1c-b283-0b7d05a538a9",
-		"version": [ 2, 13, 0 ]
+		"version": [ 2, 14, 0 ]
 	},
 	"modules": [
 		{
@@ -19,7 +19,7 @@
 			"language": "javascript",
 			"uuid": "c2758c76-c27c-4f04-add5-93951a2c32b8",
 			"entry": "scripts/main.js",
-			"version": [ 2, 13, 0 ]
+			"version": [ 2, 14, 0 ]
 		}
 	],
 	"dependencies": [

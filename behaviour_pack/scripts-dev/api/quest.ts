@@ -250,8 +250,8 @@ export default class Quest {
 
     constructor(data: IQuest) {
         this.quest_id = data.quest_id
-        this.start_time = parse(data.start_time, 'yyyy-MM-dd HH:mm:ss.SSSSSS', new Date())
-        this.end_time = parse(data.end_time, 'yyyy-MM-dd HH:mm:ss.SSSSSS', new Date())
+        this.start_time = new Date(data.start_time)
+        this.end_time = new Date(data.end_time)
         this.title = data.title
         this.description = data.description
         this.created_by = data.created_by
