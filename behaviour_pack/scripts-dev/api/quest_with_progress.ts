@@ -31,8 +31,8 @@ class ObjectiveWithProgress extends Objective {
     constructor(data: IObjectiveWithProgress, thorny_user: ThornyUser) {
         super(data)
         this.thorny_user = thorny_user
-        this.start = data.start ? parse(utils.normalizeDateString(data.start), 'yyyy-MM-dd HH:mm:ss.SSSSSS', new Date()) : null
-        this.end = data.end ? parse(utils.normalizeDateString(data.end), 'yyyy-MM-dd HH:mm:ss.SSSSSS', new Date()) : null
+        this.start = data.start ? new Date(data.start) : null
+        this.end = data.end ? new Date(data.end) : null
         this.completion = data.completion
         this.status = data.status
         this.deaths = 0
@@ -65,8 +65,8 @@ class ObjectiveWithProgress extends Objective {
         const request = new HttpRequest(`http://nexuscore:8000/api/v0.2/users/${this.thorny_user.thorny_id}/quest/${quest.quest_id}/${this.objective_id}`);
         request.method = HttpRequestMethod.Put;
         request.body = JSON.stringify({
-            "start": this.start ? format(this.start, 'yyyy-MM-dd HH:mm:ss.SSSSSS') : null,
-            "end": this.end ? format(this.end, 'yyyy-MM-dd HH:mm:ss.SSSSSS') : null,
+            "start": this.start ? this.start.toISOString() : null,
+            "end": this.end ? this.end.toISOString() : null,
             "completion": this.completion,
             "status": this.status
         })
@@ -159,8 +159,8 @@ export default class QuestWithProgress extends Quest {
     constructor(data: IQuestWithProgress, thorny_user: ThornyUser) {
         super(data)
         this.thorny_user = thorny_user
-        this.accepted_on = parse(utils.normalizeDateString(data.accepted_on), 'yyyy-MM-dd HH:mm:ss.SSSSSSS', new Date())
-        this.started_on = data.started_on ? parse(utils.normalizeDateString(data.started_on), 'yyyy-MM-dd HH:mm:ss.SSSSSS', new Date()) : null
+        this.accepted_on = new Date(data.accepted_on)
+        this.started_on = data.started_on ? new Date(data.started_on) : null
         this.status = data.status
 
         this.objectives = []
@@ -217,7 +217,7 @@ export default class QuestWithProgress extends Quest {
         request.method = HttpRequestMethod.Put;
         request.body = JSON.stringify({
             "accepted_on": null,
-            "started_on": this.started_on ? format(this.started_on, 'yyyy-MM-dd HH:mm:ss.SSSSSS') : null,
+            "started_on": this.started_on ? this.started_on.toISOString() : null,
             "status": this.status == 'completed' ? this.status : null
         })
         request.headers = [
