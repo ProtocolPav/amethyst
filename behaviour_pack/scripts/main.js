@@ -6176,7 +6176,7 @@ function load_world_event_handlers(guild_id2) {
 
 // behaviour_pack/scripts-dev/main.ts
 import { system as system19 } from "@minecraft/server";
-var guild_id = "1213827104945471538";
+var guild_id = "611008530077712395";
 WorldCache.load_world(guild_id).then();
 load_loops();
 load_custom_components(guild_id);
