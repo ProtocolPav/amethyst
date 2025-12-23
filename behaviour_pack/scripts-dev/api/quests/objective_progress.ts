@@ -138,6 +138,12 @@ export class ObjectiveProgress {
         return {increment_progress: true, end_objective: false, fail_objective: false};
     }
 
+    /**
+     * Increments the Target Progress.
+     *
+     * If the increment will be larger than the max count, it will not increment,
+     * unless the Objective has a Target Count, which overrides the individual counts.
+     */
     private increment_target(interaction: Interaction) {
         const targets = this.objective.get_target(interaction)
 
