@@ -5,12 +5,6 @@ import Interaction from "../interaction";
 import {http} from "@minecraft/server-net";
 import ThornyUser from "../user";
 
-interface RequirementCheck {
-    increment_progress: boolean;
-    end_objective: boolean;
-    fail_objective: boolean;
-}
-
 export class Objective implements IObjective {
     quest_id!: number
     objective_id!: number
@@ -29,7 +23,7 @@ export class Objective implements IObjective {
         this.rewards = data.rewards.map(r => new Reward(r))
     }
 
-    protected get_rewards_string() {
+    public get_rewards_string() {
         let rewards = []
 
         for (let reward of this.rewards) {
@@ -45,7 +39,7 @@ export class Objective implements IObjective {
         return rewards.join(', ')
     }
 
-    protected get_requirements_string() {
+    public get_requirements_string() {
         let requirements = []
 
         if (this.customizations.natural_block && this.objective_type === 'mine') {
@@ -68,14 +62,14 @@ export class Objective implements IObjective {
             requirements.push(`- Die no more than ${this.customizations.maximum_deaths.deaths} times`)
         }
 
-        if (this.customizations.timer?.fail || this.customizations.maximum_deaths?.fail) {
+        if (this.fail_quest_on_objective_fail()) {
             requirements.push(`- Failing this objective will fail the entire quest`)
         }
 
         return requirements.join('\n')
     }
 
-    protected get_task_string(): string {
+    public get_task_string(): string {
         let task: string
 
         if (this.display) {
@@ -125,7 +119,7 @@ export class Objective implements IObjective {
         return task
     }
 
-    protected generate_objective_string(objective_index: number, total_objectives: number, quest_title: string) {
+    public generate_objective_string(objective_index: number, total_objectives: number, quest_title: string) {
         const title = `§a+=+=+=+=+ ${quest_title} +=+=+=+=+§r\nQuest Progress: ${objective_index}/${total_objectives}\n`
         const description = `§7${this.description}§r\n\n`
 
@@ -139,7 +133,7 @@ export class Objective implements IObjective {
         return `${title}${description}${full_task}${rewards}${requirements}${final_line}`
     }
 
-    protected async check_if_natural(coordinates: [number, number, number]): Promise<Boolean> {
+    public async check_if_natural(coordinates: [number, number, number]): Promise<Boolean> {
         const x = coordinates[0]
         const y = coordinates[1]
         const z = coordinates[2]
@@ -153,55 +147,48 @@ export class Objective implements IObjective {
         return JSON.parse(response.body).length > 1
     }
 
-    protected async check_requirements(interaction: Interaction, start_time: Date): Promise<RequirementCheck> {
-
-        // Check if the type is correct
-        if (interaction.type !== this.objective_type) {
-            return {increment_progress: false, end_objective: false, fail_objective: false};
-        }
-
-        // Check Mainhand
-        if (this.customizations.mainhand && this.customizations.mainhand.item !== interaction.mainhand) {
-            return {increment_progress: false, end_objective: false, fail_objective: false};
-        }
-
-        // Check location
-        if (
-            this.customizations.location &&
-            !utils.checks.distance_check(
-                interaction.coordinates as [number, number, number],
-                this.customizations.location.coordinates,
-                this.customizations.location.horizontal_radius,
-                this.customizations.location.vertical_radius
-            )
-        ) {
-            return {increment_progress: false, end_objective: false, fail_objective: false};
-        }
-
-        // Check timer
-        if (
-            this.customizations.timer &&
-            !utils.checks.timer_check(interaction.time, start_time, this.customizations.timer.seconds)
-        ) {
-            return {increment_progress: false, end_objective: true, fail_objective: this.customizations.timer.fail};
-        }
-
-        // Check natural block
-        if (this.objective_type == 'mine' && this.customizations.natural_block) {
-            return {
-                increment_progress: !(await this.check_if_natural(interaction.coordinates as [number, number, number])),
-                end_objective: false,
-                fail_objective: false
-            }
-        }
-
-        return {increment_progress: true, end_objective: false, fail_objective: false};
-    }
-
-    protected async give_rewards(interation: Interaction, thorny_user: ThornyUser) {
+    public async give_rewards(interation: Interaction, thorny_user: ThornyUser) {
         for (let reward of this.rewards) {
             await reward.give_reward(interation, thorny_user)
         }
+    }
+
+    public get_total_count(): number {
+        if (this.target_count && this.logic === 'or') {
+            return this.target_count;
+        } else {
+            return this.targets.reduce(
+                (previousValue, currentValue) => previousValue + currentValue.count,
+                0);
+        }
+    }
+
+    public get_target(interaction: Interaction): ITarget[] {
+        const interaction_map: Partial<Record<Interaction['type'], ObjectiveTypes>> = {
+            mine: 'mine',
+            kill: 'kill',
+            scriptevent: 'encounter',
+        }
+
+        const targetType = interaction_map[interaction.type]
+        if (!targetType) return []
+
+        return this.targets.filter(t => {
+            if (t.target_type !== targetType) return false
+
+            switch (t.target_type) {
+                case 'mine':
+                    return t.block === interaction.reference
+                case 'kill':
+                    return t.entity === interaction.reference
+                case 'encounter':
+                    return t.script_id === interaction.reference
+            }
+        })
+    }
+
+    public fail_quest_on_objective_fail() {
+        return this.customizations.timer?.fail || this.customizations.maximum_deaths?.fail
     }
 
 }
