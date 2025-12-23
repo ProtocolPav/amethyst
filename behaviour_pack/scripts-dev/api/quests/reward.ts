@@ -56,7 +56,7 @@ export class Reward implements IReward {
                     const durability = item_stack.getComponent(ItemComponentTypes.Durability)
                     const max_damage = durability?.maxDurability ?? 0
 
-                    if (durability?.damage) {
+                    if (durability) {
                         durability.damage = max_damage * data.damage_percentage
                     }
                     break;

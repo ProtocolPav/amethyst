@@ -4816,7 +4816,7 @@ var Reward = class {
         case "damage":
           const durability = item_stack.getComponent(ItemComponentTypes2.Durability);
           const max_damage = durability?.maxDurability ?? 0;
-          if (durability?.damage) {
+          if (durability) {
             durability.damage = max_damage * data.damage_percentage;
           }
           break;
@@ -5090,6 +5090,12 @@ var ObjectiveProgress = class {
     }
     return { increment_progress: true, end_objective: false, fail_objective: false };
   }
+  /**
+   * Increments the Target Progress.
+   *
+   * If the increment will be larger than the max count, it will not increment,
+   * unless the Objective has a Target Count, which overrides the individual counts.
+   */
   increment_target(interaction) {
     const targets = this.objective.get_target(interaction);
     for (const blueprint of targets) {
