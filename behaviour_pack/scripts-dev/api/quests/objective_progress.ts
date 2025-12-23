@@ -237,6 +237,9 @@ export class ObjectiveProgress {
                 this.status = 'failed'
                 this.end_time = new Date()
             }
+
+            // Update objective for now.
+            await this.update_user_objective()
         }
 
         if ( this.status === 'failed' && !this.objective.fail_quest_on_objective_fail() ) {

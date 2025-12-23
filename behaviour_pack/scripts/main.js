@@ -5166,6 +5166,7 @@ var ObjectiveProgress = class {
         this.status = "failed";
         this.end_time = /* @__PURE__ */ new Date();
       }
+      await this.update_user_objective();
     }
     if (this.status === "failed" && !this.objective.fail_quest_on_objective_fail()) {
       const index = quest.objectives.indexOf(this);
@@ -6219,9 +6220,7 @@ function load_entity_event_handler() {
         }
       );
       death_interaction.post_interaction();
-      if (interaction_preprocess(death_interaction, active_quest)) {
-        api_default.Interaction.enqueue(death_interaction);
-      }
+      api_default.Interaction.enqueue(death_interaction);
       api_default.Relay.event(utils_default.DeathMessage.random_pve(player.name, killer.typeId), "", "other");
     } else if (event.deadEntity instanceof Player12 && !event.damageSource.damagingEntity) {
       const player = event.deadEntity;
@@ -6240,9 +6239,7 @@ function load_entity_event_handler() {
         }
       );
       death_interaction.post_interaction();
-      if (interaction_preprocess(death_interaction, active_quest)) {
-        api_default.Interaction.enqueue(death_interaction);
-      }
+      api_default.Interaction.enqueue(death_interaction);
       api_default.Relay.event(utils_default.DeathMessage.random_suicide(player.name, event.damageSource.cause), "", "other");
     }
   });
