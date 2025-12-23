@@ -147,7 +147,7 @@ export class ObjectiveProgress {
             )
             if (!progress) continue
 
-            if (progress.count < blueprint.count) {
+            if (progress.count < blueprint.count || this.objective.target_count) {
                 progress.count += 1
             }
         }

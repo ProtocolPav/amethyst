@@ -5097,9 +5097,7 @@ var ObjectiveProgress = class {
         (p) => p.target_uuid === blueprint.target_uuid
       );
       if (!progress) continue;
-      if (progress.count < blueprint.count) {
-        progress.count += 1;
-      }
+      progress.count += 1;
     }
     return targets;
   }
