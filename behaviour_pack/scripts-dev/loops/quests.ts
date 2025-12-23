@@ -10,28 +10,28 @@ async function check_quests() {
 
             while (interaction) {
                 let thorny_user = api.ThornyUser.fetch_user_by_id(interaction.thorny_id)
-                let quest = await api.QuestWithProgress.get_active_quest(thorny_user)
+                let quest_progress = await api.QuestProgress.get_quest_progress(thorny_user)
 
-                if (quest && await quest.increment_active_objective(interaction)) {
-                    await quest.update_user_quest()
+                if (quest_progress && await quest_progress.increment_active_objective(interaction)) {
+                    await quest_progress.update_user_quest()
                     await thorny_user.update()
 
-                    if (quest.status == 'completed') {
+                    if (quest_progress.status == 'completed') {
                         api.Relay.event(
-                            `${thorny_user.gamertag} has completed *${quest.title}!*`,
+                            `${thorny_user.gamertag} has completed *${quest_progress.quest.title}!*`,
                             'Run `/quests view` to start it and reap the rewards!',
                             'other')
 
-                        api.QuestWithProgress.clear_cache(thorny_user)
+                        api.QuestProgress.clear_cache(thorny_user)
                     }
-                } else if (quest && quest.status == 'failed') {
+                } else if (quest_progress && quest_progress.status == 'failed') {
                     api.Relay.event(
-                        `${thorny_user.gamertag} has failed *${quest.title}!*`,
+                        `${thorny_user.gamertag} has failed *${quest_progress.quest.title}!*`,
                         'Better luck next time!',
                         'other')
 
-                    await quest.fail_quest(thorny_user.thorny_id)
-                    api.QuestWithProgress.clear_cache(thorny_user)
+                    await quest_progress.fail_quest(thorny_user.thorny_id)
+                    api.QuestProgress.clear_cache(thorny_user)
                 }
 
                 interaction = api.Interaction.dequeue()
@@ -47,13 +47,19 @@ async function check_quests() {
 }
 
 async function display_timer() {
-    for (let questCacheKey in api.QuestWithProgress.quest_cache) {
-        let active_objective = api.QuestWithProgress.quest_cache[questCacheKey].get_active_objective()
+    for (let questCacheKey in api.QuestProgress.quest_cache) {
+        let active_objective = api.QuestProgress.quest_cache[questCacheKey].get_active_objective()
 
-        if (active_objective && active_objective.start && active_objective.objective_timer) {
-            let elapsed_seconds = Math.floor((new Date().getTime() - active_objective.start.getTime()) / 1000);
+        if (
+            active_objective &&
+            active_objective.start_time &&
+            active_objective.objective.customizations.timer
+        ) {
+            let elapsed_seconds = Math.floor((new Date().getTime() - active_objective.start_time.getTime()) / 1000);
 
-            let remaining_seconds = Math.max(0, active_objective.objective_timer - elapsed_seconds);
+            const timer_seconds = active_objective.objective.customizations.timer.seconds
+
+            let remaining_seconds = Math.max(0, timer_seconds - elapsed_seconds);
 
             let minutes = Math.floor(remaining_seconds / 60);
             let seconds = remaining_seconds % 60;
@@ -63,7 +69,7 @@ async function display_timer() {
                 player.dimension.id,
                 player.name,
                 "actionbar",
-                `§l§sObjective ${active_objective.order+1}§r | ${minutes.toString().padStart(2, '0')}m${seconds.toString().padStart(2, '0')}s`
+                `§l§sObjective ${active_objective.objective.order_index+1}§r | ${minutes.toString().padStart(2, '0')}m${seconds.toString().padStart(2, '0')}s`
                 )
         }
     }
