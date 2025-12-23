@@ -101,10 +101,7 @@ export default function load_entity_event_handler() {
 
             // Log death interaction
             death_interaction.post_interaction()
-
-            if (interaction_preprocess(death_interaction, active_quest)) {
-                api.Interaction.enqueue(death_interaction)
-            }
+            api.Interaction.enqueue(death_interaction)
 
             // Relay death
             api.Relay.event(utils.DeathMessage.random_pve(player.name, killer.typeId), '', 'other')
@@ -134,10 +131,7 @@ export default function load_entity_event_handler() {
 
             // Log death interaction
             death_interaction.post_interaction()
-
-            if (interaction_preprocess(death_interaction, active_quest)) {
-                api.Interaction.enqueue(death_interaction)
-            }
+            api.Interaction.enqueue(death_interaction)
 
             // Relay death
             api.Relay.event(utils.DeathMessage.random_suicide(player.name, event.damageSource.cause), '', 'other')
