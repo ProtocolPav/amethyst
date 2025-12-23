@@ -16,7 +16,7 @@ export default function load_entity_event_handler() {
             const mainhand = player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
 
             const killer_thorny_user = api.ThornyUser.fetch_user(player.name)!
-            const killer_active_quest = await api.QuestWithProgress.get_active_quest(killer_thorny_user)
+            const killer_active_quest = await api.QuestProgress.get_quest_progress(killer_thorny_user)
 
             const interaction = new api.Interaction(
                 {
@@ -85,7 +85,7 @@ export default function load_entity_event_handler() {
             const mainhand = player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
 
             const thorny_user = api.ThornyUser.fetch_user(player.name)!
-            const active_quest = await api.QuestWithProgress.get_active_quest(thorny_user)
+            const active_quest = await api.QuestProgress.get_quest_progress(thorny_user)
 
             const death_interaction = new api.Interaction(
                 {
@@ -118,7 +118,7 @@ export default function load_entity_event_handler() {
             const mainhand = player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
 
             const thorny_user = api.ThornyUser.fetch_user(player.name)!
-            const active_quest = await api.QuestWithProgress.get_active_quest(thorny_user)
+            const active_quest = await api.QuestProgress.get_quest_progress(thorny_user)
 
             const death_interaction = new api.Interaction(
                 {
