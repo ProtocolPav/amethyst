@@ -2,7 +2,7 @@ import {IReward} from "./reward";
 import {MinecraftBlockTypes, MinecraftEntityTypes, MinecraftItemTypes} from "@minecraft/vanilla-data";
 
 
-export type ObjectiveTypes = 'kill' | 'mine' | 'encounter'
+export type ObjectiveTypes = 'kill' | 'mine' | 'scriptevent'
 
 export interface IObjective {
     quest_id: number
@@ -36,13 +36,13 @@ export interface KillTarget extends TargetBase {
     count: number
 }
 
-export interface EncounterTarget extends TargetBase {
-    target_type: 'encounter'
+export interface ScriptEventTarget extends TargetBase {
+    target_type: 'scriptevent'
     script_id: string
     count: number
 }
 
-export type ITarget = MineTarget | KillTarget | EncounterTarget
+export type ITarget = MineTarget | KillTarget | ScriptEventTarget
 
 export interface MainhandCustomization {
     item: MinecraftItemTypes | string

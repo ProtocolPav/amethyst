@@ -167,7 +167,7 @@ export class Objective implements IObjective {
         const interaction_map: Partial<Record<Interaction['type'], ObjectiveTypes>> = {
             mine: 'mine',
             kill: 'kill',
-            scriptevent: 'encounter',
+            scriptevent: 'scriptevent',
         }
 
         const targetType = interaction_map[interaction.type]
@@ -181,7 +181,7 @@ export class Objective implements IObjective {
                     return t.block === interaction.reference
                 case 'kill':
                     return t.entity === interaction.reference
-                case 'encounter':
+                case 'scriptevent':
                     return t.script_id === interaction.reference
             }
         })
