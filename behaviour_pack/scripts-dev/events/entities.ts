@@ -16,7 +16,7 @@ export default function load_entity_event_handler() {
             const mainhand = player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
 
             const killer_thorny_user = api.ThornyUser.fetch_user(player.name)!
-            const killer_active_quest = await api.QuestWithProgress.get_active_quest(killer_thorny_user)
+            const killer_active_quest = await api.QuestProgress.get_quest_progress(killer_thorny_user)
 
             const interaction = new api.Interaction(
                 {
@@ -85,7 +85,7 @@ export default function load_entity_event_handler() {
             const mainhand = player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
 
             const thorny_user = api.ThornyUser.fetch_user(player.name)!
-            const active_quest = await api.QuestWithProgress.get_active_quest(thorny_user)
+            const active_quest = await api.QuestProgress.get_quest_progress(thorny_user)
 
             const death_interaction = new api.Interaction(
                 {
@@ -101,10 +101,7 @@ export default function load_entity_event_handler() {
 
             // Log death interaction
             death_interaction.post_interaction()
-
-            if (interaction_preprocess(death_interaction, active_quest)) {
-                api.Interaction.enqueue(death_interaction)
-            }
+            api.Interaction.enqueue(death_interaction)
 
             // Relay death
             api.Relay.event(utils.DeathMessage.random_pve(player.name, killer.typeId), '', 'other')
@@ -118,7 +115,7 @@ export default function load_entity_event_handler() {
             const mainhand = player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
 
             const thorny_user = api.ThornyUser.fetch_user(player.name)!
-            const active_quest = await api.QuestWithProgress.get_active_quest(thorny_user)
+            const active_quest = await api.QuestProgress.get_quest_progress(thorny_user)
 
             const death_interaction = new api.Interaction(
                 {
@@ -134,10 +131,7 @@ export default function load_entity_event_handler() {
 
             // Log death interaction
             death_interaction.post_interaction()
-
-            if (interaction_preprocess(death_interaction, active_quest)) {
-                api.Interaction.enqueue(death_interaction)
-            }
+            api.Interaction.enqueue(death_interaction)
 
             // Relay death
             api.Relay.event(utils.DeathMessage.random_suicide(player.name, event.damageSource.cause), '', 'other')

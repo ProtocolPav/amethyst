@@ -14,7 +14,7 @@ export default function load_block_event_handler() {
         const mainhand = event.player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
 
         const thorny_user = api.ThornyUser.fetch_user(event.player.name)!
-        const active_quest = await api.QuestWithProgress.get_active_quest(thorny_user)
+        const active_quest = await api.QuestProgress.get_quest_progress(thorny_user)
 
         system.run(() => {
             const interaction = new api.Interaction(

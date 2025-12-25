@@ -1,14 +1,15 @@
 import {
     Container,
-    EntityComponentTypes,
+    EntityComponentTypes, ItemComponentTypes,
     ItemStack,
     Player,
     PlayerSoundOptions,
     system,
-    TicksPerSecond,
+    TicksPerSecond, VanillaEntityIdentifier,
     world
 } from '@minecraft/server';
 import {MinecraftBlockTypes, MinecraftEffectTypes, MinecraftEntityTypes} from "@minecraft/vanilla-data";
+import {IMetadata, IReward} from "../types/reward";
 
 
 function send_message(dimension: string, target: string, message: string) {
@@ -80,9 +81,10 @@ function add_or_spawn_item(player: Player, item: ItemStack) {
     }
 }
 
-function give_item(gamertag: string, item: string, amount: number) {
-    const item_stack = new ItemStack(item, 1)
-    let stack_amount = Math.trunc(amount/item_stack.maxAmount)
+function give_item(gamertag: string, count: number, item: ItemStack) {
+    const item_stack = item
+    let stack_amount = Math.trunc(count / item_stack.maxAmount)
+    let amount = count
 
     const player = world.getPlayers({name: gamertag})[0]
 
@@ -155,7 +157,7 @@ function vision_entity_glitch(player: Player) {
     location.x -= facing.x * 2
     location.z -= facing.z * 2
 
-    let current_entity = player.dimension.spawnEntity(entity, location)
+    let current_entity = player.dimension.spawnEntity(entity as VanillaEntityIdentifier, location)
 
     let sysid = system.runInterval(() => {
         if (current_entity.isValid) {
