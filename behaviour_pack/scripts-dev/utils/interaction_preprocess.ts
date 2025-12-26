@@ -1,16 +1,21 @@
 import Interaction from "../api/interaction";
-import QuestWithProgress from "../api/quest_with_progress";
+import QuestProgress from "../api/quests/quest_progress";
 
 /**
- * @returns a Boolean representing if this interaction is valid for further quest checking
+ * @returns a boolean representing if this interaction is valid for further quest checking
  */
-export function interaction_preprocess(interaction: Interaction, quest: QuestWithProgress | null) {
-    if (!quest) return false;
+export function interaction_preprocess(
+    interaction: Interaction,
+    quest: QuestProgress | null,
+): boolean {
+    if (!quest) return false
 
-    const objective = quest.get_active_objective()
+    const objectiveProgress = quest.get_active_objective()
+    if (!objectiveProgress) return false
 
-    const type_check = interaction.type == objective?.objective_type
-    const reference_check = interaction.reference == objective?.objective
+    const { objective } = objectiveProgress
 
-    return type_check && reference_check;
+    const matchingTargets = objective.get_target(interaction)
+
+    return matchingTargets.length > 0
 }
