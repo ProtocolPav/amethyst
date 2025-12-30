@@ -1,0 +1,20 @@
+{
+	"format_version": "1.20.50",
+	"minecraft:item": {
+		"description": {
+			"identifier": "amethyst:northern_chomper",
+			"menu_category": {
+				"category": "items"
+			}
+		},
+		"components": {
+			"minecraft:max_stack_size": 64,
+			"minecraft:icon": {
+				"texture": "northern_chomper"
+			},
+			"minecraft:display_name": {
+				"value": "Northern Chomper"
+			}
+		}
+	}
+}

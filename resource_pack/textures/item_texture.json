@@ -34,7 +34,43 @@
 		},
 		"diamond_nugget": {
 			"textures": "textures/items/diamond_nugget.png"
-		}
-		
-	}
+		},
+
+        "blue_dwarf_fish": {
+            "textures": "textures/items/fish/blue_dwarf_fish.png"
+        },
+        "cheeky_fish": {
+            "textures": "textures/items/fish/cheeky_fish.png"
+        },
+        "dwarf_fish": {
+            "textures": "textures/items/fish/dwarf_fish.png"
+        },
+        "ember_minnow": {
+            "textures": "textures/items/fish/ember_minnow.png"
+        },
+        "ever_fish": {
+            "textures": "textures/items/fish/ever_fish.png"
+        },
+        "nemo": {
+            "textures": "textures/items/fish/nemo.png"
+        },
+        "night_fish": {
+            "textures": "textures/items/fish/night_fish.png"
+        },
+        "northern_chomper": {
+            "textures": "textures/items/fish/northern_chomper.png"
+        },
+        "slime_fish": {
+            "textures": "textures/items/fish/slime_fish.png"
+        },
+        "thorn_fish": {
+            "textures": "textures/items/fish/thorn_fish.png"
+        },
+        "tuff_fish": {
+            "textures": "textures/items/fish/tuff_fish.png"
+        },
+        "void_fish": {
+            "textures": "textures/items/fish/void_fish.png"
+        }
+    }
 }

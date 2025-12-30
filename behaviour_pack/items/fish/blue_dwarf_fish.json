@@ -1,0 +1,20 @@
+{
+	"format_version": "1.20.50",
+	"minecraft:item": {
+		"description": {
+			"identifier": "amethyst:blue_dwarf_fish",
+			"menu_category": {
+				"category": "items"
+			}
+		},
+		"components": {
+			"minecraft:max_stack_size": 64,
+			"minecraft:icon": {
+				"texture": "blue_dwarf_fish"
+			},
+			"minecraft:display_name": {
+				"value": "Blue Dwarf Fish"
+			}
+		}
+	}
+}
