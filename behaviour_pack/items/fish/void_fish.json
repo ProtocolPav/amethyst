@@ -4,7 +4,8 @@
 		"description": {
 			"identifier": "amethyst:void_fish",
 			"menu_category": {
-				"category": "items"
+				"category": "items",
+                "group": "itemGroup.name.fishing"
 			}
 		},
 		"components": {

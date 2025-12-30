@@ -4,7 +4,8 @@
 		"description": {
 			"identifier": "amethyst:ember_minnow",
 			"menu_category": {
-				"category": "items"
+				"category": "items",
+                "group": "itemGroup.name.fishing"
 			}
 		},
 		"components": {
