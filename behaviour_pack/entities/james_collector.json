@@ -13,7 +13,7 @@
         "components": {
             "minecraft:economy_trade_table": {
                 "display_name": "James",
-                "table": "trading/fisherman_trades.json",
+                "table": "trading/james_trades.json",
                 "new_screen": true,
                 "persist_trades": true
             },

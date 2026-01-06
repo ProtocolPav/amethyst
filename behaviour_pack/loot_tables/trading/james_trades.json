@@ -1,0 +1,371 @@
+{
+    "tiers": [
+        {
+            "total_exp_required": 0,
+            "trades": [
+                        {
+                            "wants": [
+                                {
+                                    "item": "amethyst:sea_urchin",
+                                    "quantity": 3
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "minecraft:sand",
+                                    "quantity": 16
+                                }
+                            ],
+                            "max_uses": 16,
+                            "reward_exp": true,
+                            "trader_exp": 2
+                        },
+                        {
+                            "wants": [
+                                {
+                                    "item": "amethyst:sea_urchin",
+                                    "quantity": 1
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "minecraft:wheat",
+                                    "quantity": 5
+                                }
+                            ],
+                            "max_uses": 16,
+                            "reward_exp": true,
+                            "trader_exp": 2
+                        },
+                        {
+                            "wants": [
+                                {
+                                    "item": "amethyst:sea_urchin",
+                                    "quantity": 1
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "minecraft:brick_block",
+                                    "quantity": 4
+                                }
+                            ],
+                            "max_uses": 12,
+                            "reward_exp": true,
+                            "trader_exp": 2
+                        },
+                        {
+                            "wants": [
+                                {
+                                    "item": "amethyst:sea_urchin",
+                                    "quantity": 6
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "minecraft:copper_ingot",
+                                    "quantity": 5
+                                }
+                            ],
+                            "max_uses": 12,
+                            "reward_exp": true,
+                            "trader_exp": 4
+                        },
+                        {
+                            "wants": [
+                                {
+                                    "item": "amethyst:sea_urchin",
+                                    "quantity": 2
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "minecraft:candle",
+                                    "quantity": 3
+                                }
+                            ],
+                            "max_uses": 12,
+                            "reward_exp": true,
+                            "trader_exp": 2
+                        },
+                        {
+                            "wants": [
+                                {
+                                    "item": "amethyst:sea_urchin",
+                                    "quantity": 2
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "minecraft:leaf_litter",
+                                    "quantity": 20
+                                }
+                            ],
+                            "max_uses": 12,
+                            "reward_exp": true,
+                            "trader_exp": 2
+                        },
+                        {
+                            "wants": [
+                                {
+                                    "item": "amethyst:sea_urchin",
+                                    "quantity": 14
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "minecraft:totem_of_undying",
+                                    "quantity": 1
+                                }
+                            ],
+                            "max_uses": 3,
+                            "reward_exp": true,
+                            "trader_exp": 10
+                        }
+                    ]
+        },
+        {
+            "total_exp_required": 20,
+            "trades": [
+                        {
+                            "wants": [
+                                {
+                                    "item": "amethyst:diamond_nugget",
+                                    "quantity": 4
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "minecraft:mud",
+                                    "quantity": 20
+                                }
+                            ],
+                            "max_uses": 12,
+                            "reward_exp": true,
+                            "trader_exp": 5
+                        },
+                        {
+                            "wants": [
+                                {
+                                    "item": "amethyst:diamond_nugget",
+                                    "quantity": 3
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "minecraft:iron_nautilus_armor",
+                                    "quantity": 1
+                                }
+                            ],
+                            "max_uses": 8,
+                            "reward_exp": true,
+                            "trader_exp": 10
+                        },
+                        {
+                            "wants": [
+                                {
+                                    "item": "amethyst:diamond_nugget",
+                                    "quantity": 8
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "minecraft:golden_carrot",
+                                    "quantity": 20
+                                }
+                            ],
+                            "max_uses": 12,
+                            "reward_exp": true,
+                            "trader_exp": 5
+                        },
+                        {
+                            "wants": [
+                                {
+                                    "item": "amethyst:diamond_nugget",
+                                    "quantity": 12
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "minecraft:enchanted_book",
+                                    "quantity": 1,
+                                    "functions": [
+                                        {
+                                            "function": "specific_enchants",
+                                            "enchants": [
+                                                {
+                                                    "id": "mending",
+                                                    "level": 1
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ],
+                            "max_uses": 5,
+                            "reward_exp": true,
+                            "trader_exp": 15
+                        },
+                        {
+                            "wants": [
+                                {
+                                    "item": "amethyst:diamond_nugget",
+                                    "quantity": 6
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "minecraft:iron_ingot",
+                                    "quantity": 12
+                                }
+                            ],
+                            "max_uses": 12,
+                            "reward_exp": true,
+                            "trader_exp": 5
+                        },
+                        {
+                            "wants": [
+                                {
+                                    "item": "amethyst:diamond_nugget",
+                                    "quantity": 15
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "minecraft:prismarine_shard",
+                                    "quantity": 32
+                                }
+                            ],
+                            "max_uses": 10,
+                            "reward_exp": true,
+                            "trader_exp": 5
+                        }
+                    ]
+        },
+        {
+            "total_exp_required": 70,
+            "trades": [
+                        {
+                            "wants": [
+                                {
+                                    "item": "amethyst:rainbow_shell",
+                                    "quantity": 1
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "minecraft:heavy_core",
+                                    "quantity": 1
+                                }
+                            ],
+                            "max_uses": 3,
+                            "reward_exp": true,
+                            "trader_exp": 20
+                        },
+                        {
+                            "wants": [
+                                {
+                                    "item": "amethyst:rainbow_shell",
+                                    "quantity": 1
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "minecraft:conduit",
+                                    "quantity": 1
+                                }
+                            ],
+                            "max_uses": 3,
+                            "reward_exp": true,
+                            "trader_exp": 20
+                        },
+                        {
+                            "wants": [
+                                {
+                                    "item": "amethyst:rainbow_shell",
+                                    "quantity": 1
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "minecraft:beacon",
+                                    "quantity": 1
+                                }
+                            ],
+                            "max_uses": 3,
+                            "reward_exp": true,
+                            "trader_exp": 20
+                        },
+                        {
+                            "wants": [
+                                {
+                                    "item": "amethyst:rainbow_shell",
+                                    "quantity": 1
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "minecraft:music_disc_pigstep",
+                                    "quantity": 1
+                                }
+                            ],
+                            "max_uses": 3,
+                            "reward_exp": true,
+                            "trader_exp": 20
+                        },
+                        {
+                            "wants": [
+                                {
+                                    "item": "amethyst:rainbow_shell",
+                                    "quantity": 1
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "minecraft:netherite_block",
+                                    "quantity": 1
+                                }
+                            ],
+                            "max_uses": 3,
+                            "reward_exp": true,
+                            "trader_exp": 20
+                        },
+                        {
+                            "wants": [
+                                {
+                                    "item": "amethyst:rainbow_shell",
+                                    "quantity": 1
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "amethyst:totem_of_togetherness",
+                                    "quantity": 1
+                                }
+                            ],
+                            "max_uses": 3,
+                            "reward_exp": true,
+                            "trader_exp": 20
+                        },
+                        {
+                            "wants": [
+                                {
+                                    "item": "amethyst:rainbow_shell",
+                                    "quantity": 1
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "minecraft:goat_horn",
+                                    "quantity": 1,
+                                    "data": 7
+                                }
+                            ],
+                            "max_uses": 3,
+                            "reward_exp": true,
+                            "trader_exp": 20
+                        }
+                    ]
+        }
+    ]
+}

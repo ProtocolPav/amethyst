@@ -74,6 +74,9 @@
         },
         "sea_urchin": {
             "textures": "textures/items/fish/sea_urchin.png"
+        },
+        "rainbow_shell": {
+            "textures": "textures/items/fish/rainbow_shell.png"
         }
     }
 }
