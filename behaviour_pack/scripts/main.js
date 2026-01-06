@@ -6337,6 +6337,11 @@ function load_script_event_handler() {
 
 // behaviour_pack/scripts-dev/events/eliana_trade.ts
 import { EntityComponentTypes as EntityComponentTypes13, EquipmentSlot as EquipmentSlot10, system as system19, world as world19 } from "@minecraft/server";
+function trade_fish(eliana, player, item) {
+  const size = Number(item.getLore()[0].split(" ")[1].split("cm")[0]);
+  item.amount -= 1;
+  player.sendMessage(`${item.nameTag} ${size}`);
+}
 function load_eliana_handler() {
   let speaking_to = [];
   world19.afterEvents.playerInteractWithEntity.subscribe(async (event) => {
@@ -6360,6 +6365,7 @@ function load_eliana_handler() {
       "amethyst:void_fish"
     ];
     if (mainhand && acceptable_mainhand.includes(mainhand.typeId)) {
+      trade_fish(event.target, event.player, mainhand);
       system19.run(() => {
         const interaction = new api_default.Interaction(
           {

@@ -1,6 +1,21 @@
-import {EntityComponentTypes, EquipmentSlot, system, world} from "@minecraft/server";
-import {MinecraftEntityTypes} from "@minecraft/vanilla-data";
+import {
+    Entity,
+    EntityComponentTypes,
+    EquipmentSlot,
+    ItemComponentTypes,
+    ItemStack,
+    Player,
+    system,
+    world
+} from "@minecraft/server";
 import api from "../api";
+
+function trade_fish(eliana: Entity, player: Player, item: ItemStack) {
+    const size: number = Number(item.getLore()[0].split(" ")[1].split("cm")[0])
+
+    item.amount -= 1
+    player.sendMessage(`${item.typeId} ${size}`)
+}
 
 export default function load_eliana_handler() {
     let speaking_to: string[] = []
@@ -21,6 +36,8 @@ export default function load_eliana_handler() {
         ]
 
         if (mainhand && acceptable_mainhand.includes(mainhand.typeId)) {
+            trade_fish(event.target, event.player, mainhand)
+
             system.run(() => {
                 const interaction = new api.Interaction(
                     {
