@@ -6265,7 +6265,9 @@ function load_entity_event_handler() {
       // Entity Containers
       MinecraftEntityTypes.ChestBoat,
       MinecraftEntityTypes.ChestMinecart,
-      MinecraftEntityTypes.HopperMinecart
+      MinecraftEntityTypes.HopperMinecart,
+      "amethyst:eliana_fisherman",
+      "amethyst:james_collector"
     ];
     if (all_entities.includes(entity_id)) {
       system17.run(() => {

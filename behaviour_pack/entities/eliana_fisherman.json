@@ -1,5 +1,5 @@
 {
-    "format_version": "1.19.30",
+    "format_version": "1.21.130",
     "minecraft:entity": {
         "description": {
             "identifier": "amethyst:eliana_fisherman",
@@ -11,19 +11,26 @@
         },
 
         "components": {
+            "minecraft:interact": {
+                "interactions": [
+                    {
+                        "interact_text": "Trade Fish"
+                    }
+                ]
+            },
             "minecraft:equipment": {
                 "table": "loot_tables/entities/trader_fishing_rod.json"
             },
             "minecraft:damage_sensor": {
                 "triggers": {
                     "cause": "all",
-                    "deals_damage": false
+                    "deals_damage": "yes"
                 }
             },
             "minecraft:type_family": {
                 "family": [ "npc", "mob" ]
             },
-            "minecraft:fire_immune": true,
+            "minecraft:fire_immune": {},
             "minecraft:movement": {
                 "value": 0.5
             },
@@ -45,8 +52,7 @@
                 "always_show": true,
                 "allow_name_tag_renaming": false
             },
-            "minecraft:physics": {
-            }
+            "minecraft:physics": {}
         }
     }
 }

@@ -156,7 +156,9 @@ export default function load_entity_event_handler() {
             MinecraftEntityTypes.Strider, MinecraftEntityTypes.Pig, MinecraftEntityTypes.Boat, MinecraftEntityTypes.Camel,
 
             // Entity Containers
-            MinecraftEntityTypes.ChestBoat, MinecraftEntityTypes.ChestMinecart, MinecraftEntityTypes.HopperMinecart
+            MinecraftEntityTypes.ChestBoat, MinecraftEntityTypes.ChestMinecart, MinecraftEntityTypes.HopperMinecart,
+
+            "amethyst:eliana_fisherman", "amethyst:james_collector"
         ]
 
         if (
