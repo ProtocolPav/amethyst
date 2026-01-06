@@ -6336,11 +6336,44 @@ function load_script_event_handler() {
 }
 
 // behaviour_pack/scripts-dev/events/eliana_trade.ts
-import { EntityComponentTypes as EntityComponentTypes13, EquipmentSlot as EquipmentSlot10, system as system19, world as world19 } from "@minecraft/server";
+import {
+  EntityComponentTypes as EntityComponentTypes13,
+  EquipmentSlot as EquipmentSlot10,
+  ItemStack as ItemStack3,
+  system as system19,
+  world as world19
+} from "@minecraft/server";
+var fishing_trades = {
+  "amethyst:dwarf_fish": {
+    name: "Dwarf Fish",
+    sizes: {
+      "8cm": { count: 9, item: "amethyst:diamond_nugget" },
+      "11cm": { count: 2, item: "amethyst:diamond_nugget" },
+      "14cm": { count: 5, item: "amethyst:sea_urchin" },
+      "20cm": { count: 3, item: "amethyst:sea_urchin" }
+    }
+  },
+  "amethyst:blue_dwarf_fish": {
+    name: "Blue Dwarf Fish",
+    sizes: {
+      "8cm": { count: 15, item: "amethyst:diamond_nugget" },
+      "10cm": { count: 7, item: "amethyst:diamond_nugget" },
+      "13cm": { count: 5, item: "amethyst:diamond_nugget" }
+    }
+  }
+};
 function trade_fish(eliana, player, item) {
-  const size = Number(item.getLore()[0].split(" ")[1].split("cm")[0]);
-  item.amount -= 1;
-  player.sendMessage(`${item.nameTag} ${size}`);
+  const size = item.getLore()[0].split(" ")[1];
+  const item_count = fishing_trades[item.typeId].sizes[size].count;
+  const item_stack = new ItemStack3(fishing_trades[item.typeId].sizes[size].item);
+  utils_default.commands.give_item(player.name, item_count, item_stack);
+  if (item.amount === 1) {
+    player.getComponent(EntityComponentTypes13.Equippable)?.setEquipment(EquipmentSlot10.Mainhand, void 0);
+  } else {
+    item.amount -= 1;
+    player.getComponent(EntityComponentTypes13.Equippable)?.setEquipment(EquipmentSlot10.Mainhand, item);
+  }
+  player.playSound("mob.villager.yes", { location: eliana.location });
 }
 function load_eliana_handler() {
   let speaking_to = [];
@@ -6350,21 +6383,7 @@ function load_eliana_handler() {
     const entity_location = [event.target.location.x, event.target.location.y, event.target.location.z];
     const dimension = event.player.dimension;
     const mainhand = event.player.getComponent(EntityComponentTypes13.Equippable)?.getEquipment(EquipmentSlot10.Mainhand);
-    const acceptable_mainhand = [
-      "amethyst:blue_dwarf_fish",
-      "amethyst:cheeky_fish",
-      "amethyst:dwarf_fish",
-      "amethyst:ember_minnow",
-      "amethyst:ever_fish",
-      "amethyst:nemo",
-      "amethyst:night_fish",
-      "amethyst:northern_chomper",
-      "amethyst:slime_fish",
-      "amethyst:thorn_fish",
-      "amethyst:tuff_fish",
-      "amethyst:void_fish"
-    ];
-    if (mainhand && acceptable_mainhand.includes(mainhand.typeId)) {
+    if (mainhand && mainhand.getLore().length === 1 && Object.keys(fishing_trades).includes(mainhand.typeId)) {
       trade_fish(event.target, event.player, mainhand);
       system19.run(() => {
         const interaction = new api_default.Interaction(

@@ -9,12 +9,55 @@ import {
     world
 } from "@minecraft/server";
 import api from "../api";
+import utils from "../utils";
+import {MinecraftEntityTypes} from "@minecraft/vanilla-data";
+
+type TradeItem = {
+    count: number;
+    item: string;
+};
+
+type FishTrade = {
+    name: string;
+    sizes: Record<string, TradeItem>;
+};
+
+const fishing_trades: Record<string, FishTrade> = {
+    "amethyst:dwarf_fish": {
+        name: "Dwarf Fish",
+        sizes: {
+            "8cm": {count: 9, item: "amethyst:diamond_nugget"},
+            "11cm": {count: 2, item: "amethyst:diamond_nugget"},
+            "14cm": {count: 5, item: "amethyst:sea_urchin"},
+            "20cm": {count: 3, item: "amethyst:sea_urchin"},
+        }
+    },
+    "amethyst:blue_dwarf_fish": {
+        name: "Blue Dwarf Fish",
+        sizes: {
+            "8cm": {count: 15, item: "amethyst:diamond_nugget"},
+            "10cm": {count: 7, item: "amethyst:diamond_nugget"},
+            "13cm": {count: 5, item: "amethyst:diamond_nugget"},
+        }
+    },
+}
 
 function trade_fish(eliana: Entity, player: Player, item: ItemStack) {
-    const size: number = Number(item.getLore()[0].split(" ")[1].split("cm")[0])
+    const size: string = item.getLore()[0].split(" ")[1]
 
-    item.amount -= 1
-    player.sendMessage(`${item.typeId} ${size}`)
+    const item_count = fishing_trades[item.typeId].sizes[size].count
+    const item_stack = new ItemStack(fishing_trades[item.typeId].sizes[size].item)
+
+    utils.commands.give_item(player.name, item_count, item_stack)
+
+    if (item.amount === 1) {
+        player.getComponent(EntityComponentTypes.Equippable)?.setEquipment(EquipmentSlot.Mainhand, undefined)
+    } else {
+        item.amount -= 1
+        player.getComponent(EntityComponentTypes.Equippable)?.setEquipment(EquipmentSlot.Mainhand, item)
+    }
+
+    player.playSound("mob.villager.yes", {location: eliana.location})
 }
 
 export default function load_eliana_handler() {
@@ -29,13 +72,7 @@ export default function load_eliana_handler() {
         const dimension = event.player.dimension
         const mainhand = event.player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
 
-        const acceptable_mainhand: string[] = [
-            "amethyst:blue_dwarf_fish", "amethyst:cheeky_fish", "amethyst:dwarf_fish", "amethyst:ember_minnow",
-            "amethyst:ever_fish", "amethyst:nemo", "amethyst:night_fish", "amethyst:northern_chomper",
-            "amethyst:slime_fish", "amethyst:thorn_fish", "amethyst:tuff_fish", "amethyst:void_fish"
-        ]
-
-        if (mainhand && acceptable_mainhand.includes(mainhand.typeId)) {
+        if (mainhand && mainhand.getLore().length === 1 && Object.keys(fishing_trades).includes(mainhand.typeId)) {
             trade_fish(event.target, event.player, mainhand)
 
             system.run(() => {

@@ -8,7 +8,7 @@
                     "name": "amethyst:dwarf_fish",
                     "weight": 2,
                     "functions": [
-                        { "function": "set_lore", "lore": [ "§r§7Size: 10cm" ] }
+                        { "function": "set_lore", "lore": [ "§r§7Size: 8cm" ] }
                     ]
                 },
                 {
@@ -16,7 +16,7 @@
                     "name": "amethyst:dwarf_fish",
                     "weight": 5,
                     "functions": [
-                        { "function": "set_lore", "lore": [ "§r§7Size: 14cm" ] }
+                        { "function": "set_lore", "lore": [ "§r§7Size: 11cm" ] }
                     ]
                 },
                 {
@@ -24,7 +24,7 @@
                     "name": "amethyst:dwarf_fish",
                     "weight": 10,
                     "functions": [
-                        { "function": "set_lore", "lore": [ "§r§7Size: 18cm" ] }
+                        { "function": "set_lore", "lore": [ "§r§7Size: 14cm" ] }
                     ]
                 },
                 {
@@ -32,13 +32,21 @@
                     "name": "amethyst:dwarf_fish",
                     "weight": 20,
                     "functions": [
-                        { "function": "set_lore", "lore": [ "§r§7Size: 24cm" ] }
+                        { "function": "set_lore", "lore": [ "§r§7Size: 20cm" ] }
                     ]
                 },
                 {
                     "type": "item",
                     "name": "amethyst:blue_dwarf_fish",
                     "weight": 1,
+                    "functions": [
+                        { "function": "set_lore", "lore": [ "§r§7Size: 8cm" ] }
+                    ]
+                },
+                {
+                    "type": "item",
+                    "name": "amethyst:blue_dwarf_fish",
+                    "weight": 2,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 10cm" ] }
                     ]
@@ -48,7 +56,7 @@
                     "name": "amethyst:blue_dwarf_fish",
                     "weight": 3,
                     "functions": [
-                        { "function": "set_lore", "lore": [ "§r§7Size: 18cm" ] }
+                        { "function": "set_lore", "lore": [ "§r§7Size: 13cm" ] }
                     ]
                 }
             ]

@@ -71,6 +71,9 @@
         },
         "void_fish": {
             "textures": "textures/items/fish/void_fish.png"
+        },
+        "sea_urchin": {
+            "textures": "textures/items/fish/sea_urchin.png"
         }
     }
 }
