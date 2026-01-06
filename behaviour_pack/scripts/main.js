@@ -6266,7 +6266,6 @@ function load_entity_event_handler() {
       MinecraftEntityTypes.ChestBoat,
       MinecraftEntityTypes.ChestMinecart,
       MinecraftEntityTypes.HopperMinecart,
-      "amethyst:eliana_fisherman",
       "amethyst:james_collector"
     ];
     if (all_entities.includes(entity_id)) {
@@ -6336,6 +6335,66 @@ function load_script_event_handler() {
   });
 }
 
+// behaviour_pack/scripts-dev/events/eliana_trade.ts
+import { EntityComponentTypes as EntityComponentTypes13, EquipmentSlot as EquipmentSlot10, system as system19, world as world19 } from "@minecraft/server";
+function load_eliana_handler() {
+  let speaking_to = [];
+  world19.afterEvents.playerInteractWithEntity.subscribe(async (event) => {
+    const entity_id = event.target.typeId;
+    if (entity_id !== "amethyst:eliana_fisherman") return;
+    const entity_location = [event.target.location.x, event.target.location.y, event.target.location.z];
+    const dimension = event.player.dimension;
+    const mainhand = event.player.getComponent(EntityComponentTypes13.Equippable)?.getEquipment(EquipmentSlot10.Mainhand);
+    const acceptable_mainhand = [
+      "amethyst:blue_dwarf_fish",
+      "amethyst:cheeky_fish",
+      "amethyst:dwarf_fish",
+      "amethyst:ember_minnow",
+      "amethyst:ever_fish",
+      "amethyst:nemo",
+      "amethyst:night_fish",
+      "amethyst:northern_chomper",
+      "amethyst:slime_fish",
+      "amethyst:thorn_fish",
+      "amethyst:tuff_fish",
+      "amethyst:void_fish"
+    ];
+    if (mainhand && acceptable_mainhand.includes(mainhand.typeId)) {
+      system19.run(() => {
+        const interaction = new api_default.Interaction(
+          {
+            thorny_id: api_default.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
+            type: "use",
+            coordinates: entity_location,
+            reference: entity_id,
+            mainhand: mainhand.typeId,
+            dimension: dimension.id
+          }
+        );
+        interaction.post_interaction();
+      });
+    } else if (!speaking_to.includes(event.player.name)) {
+      speaking_to.push(event.player.name);
+      event.player.playSound("mob.villager.haggle", { location: event.target.location });
+      event.player.sendMessage(
+        `\xA7l\xA78[\xA7eEliana\xA78]\xA7r Hey, ${event.player.name}! I'm Eliana. I \xA7lloove\xA7r collecting fishes!`
+      );
+      await system19.waitTicks(40);
+      event.player.playSound("mob.villager.yes", { location: event.target.location });
+      event.player.sendMessage(
+        `\xA7l\xA78[\xA7eEliana\xA78]\xA7r Believe it or not, it's currently \xA7efish migration season\xA7r! It happens once every 10 years, and you're able to catch some totally rare fish during this period!`
+      );
+      await system19.waitTicks(100);
+      event.player.playSound("mob.villager.haggle", { location: event.target.location });
+      event.player.sendMessage(
+        `\xA7l\xA78[\xA7eEliana\xA78]\xA7r Let me know if you catch any, cause I'll buy them off of ya!`
+      );
+      await system19.waitTicks(30);
+      delete speaking_to[speaking_to.indexOf(event.player.name)];
+    }
+  });
+}
+
 // behaviour_pack/scripts-dev/events/index.ts
 function load_world_event_handlers(guild_id2) {
   load_block_event_handler();
@@ -6343,17 +6402,18 @@ function load_world_event_handlers(guild_id2) {
   load_connections_handler(guild_id2);
   load_entity_event_handler();
   load_script_event_handler();
+  load_eliana_handler();
 }
 
 // behaviour_pack/scripts-dev/main.ts
-import { system as system19 } from "@minecraft/server";
+import { system as system20 } from "@minecraft/server";
 var guild_id = "1213827104945471538";
 WorldCache.load_world(guild_id).then();
 load_loops();
 load_custom_components(guild_id);
 load_world_event_handlers(guild_id);
-system19.beforeEvents.startup.subscribe((initEvent) => {
-  system19.run(() => {
+system20.beforeEvents.startup.subscribe((initEvent) => {
+  system20.run(() => {
     api_default.Relay.event(
       "AmethystConnect Plugin successfully loaded",
       "Don't see this on server startup? Ping a CM! It's important!",
