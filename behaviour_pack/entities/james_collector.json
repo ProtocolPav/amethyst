@@ -1,5 +1,5 @@
 {
-    "format_version": "1.19.30",
+    "format_version": "1.21.130",
     "minecraft:entity": {
         "description": {
             "identifier": "amethyst:james_collector",
@@ -13,20 +13,20 @@
         "components": {
             "minecraft:economy_trade_table": {
                 "display_name": "James",
-                "table": "trading/james_trades.json",
+                "table": "loot_tables/trading/james_trades.json",
                 "new_screen": true,
                 "persist_trades": true
             },
             "minecraft:damage_sensor": {
                 "triggers": {
                     "cause": "all",
-                    "deals_damage": false
+                    "deals_damage": "yes"
                 }
             },
             "minecraft:type_family": {
                 "family": [ "npc", "mob" ]
             },
-            "minecraft:fire_immune": true,
+            "minecraft:fire_immune": {},
             "minecraft:movement": {
                 "value": 0.5
             },
@@ -42,14 +42,12 @@
                 "look_distance": 6.0,
                 "probability": 0.02
             },
-            "minecraft:persistent": {
-            },
+            "minecraft:persistent": {},
             "minecraft:nameable": {
                 "always_show": true,
                 "allow_name_tag_renaming": false
             },
-            "minecraft:physics": {
-            }
+            "minecraft:physics": {}
         }
     }
 }
