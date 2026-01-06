@@ -1,0 +1,29 @@
+{
+    "pools": [
+        {
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "loot_table",
+                    "name": "loot_tables/gameplay/fishing/dwarf_fish.json",
+                    "weight": 60
+                },
+                {
+                    "type": "item",
+                    "name": "amethyst:cheeky_fish",
+                    "weight": 25
+                },
+                {
+                    "type": "item",
+                    "name": "amethyst:thorn_fish",
+                    "weight": 2
+                },
+                {
+                    "type": "item",
+                    "name": "amethyst:ember_minnow",
+                    "weight": 13
+                }
+            ]
+        }
+    ]
+}

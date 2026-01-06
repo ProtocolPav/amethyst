@@ -1,13 +1,25 @@
 pack.name=Amethyst Connect RP
 pack.description=The plugin used to connect the Minecraft world to the NexusCore BDS server
+
 entity.amethyst:shroomland_scientist.name=Shroomland Scientist
 item.spawn_egg.entity.amethyst:shroomland_scientist.name=Spawn Shroomland Scientist
+
 entity.amethyst:padovan_monk.name=Padovan Monk
 item.spawn_egg.entity.amethyst:padovan_monk.name=Spawn Padovan Monk
+
 entity.amethyst:ceran_detective.name=Ceran Detective
 item.spawn_egg.entity.amethyst:ceran_detective.name=Spawn Ceran Detective
+
 tile.amethyst:fungus_block.name=Unstable Fungus
+
 entity.amethyst:the_breath.name=The Breath
 item.spawn_egg.entity.amethyst:the_breath.name=Spawn The Breath
+
 entity.amethyst:endstone_golem.name=Endstone Golem
 item.spawn_egg.entity.amethyst:endstone_golem.name=Spawn Endstone Golem
+
+entity.amethyst:eliana_fisherman.name=Eliana
+item.spawn_egg.entity.amethyst:eliana_fisherman.name=Spawn Eliana the Fisherwoman
+
+entity.amethyst:james_collector.name=James
+item.spawn_egg.entity.amethyst:james_collector.name=Spawn James the Collector

@@ -1,0 +1,55 @@
+{
+    "format_version": "1.19.30",
+    "minecraft:entity": {
+        "description": {
+            "identifier": "amethyst:james_collector",
+            "runtime_identifier": "minecraft:npc",
+            "spawn_category": "creature",
+            "is_spawnable": true,
+            "is_summonable": true,
+            "is_experimental": false
+        },
+
+        "components": {
+            "minecraft:economy_trade_table": {
+                "display_name": "James",
+                "table": "trading/fisherman_trades.json",
+                "new_screen": true,
+                "persist_trades": true
+            },
+            "minecraft:damage_sensor": {
+                "triggers": {
+                    "cause": "all",
+                    "deals_damage": false
+                }
+            },
+            "minecraft:type_family": {
+                "family": [ "npc", "mob" ]
+            },
+            "minecraft:fire_immune": true,
+            "minecraft:movement": {
+                "value": 0.5
+            },
+            "minecraft:loot": {
+                "table": "loot_tables/empty.json"
+            },
+            "minecraft:collision_box": {
+                "width": 0.6,
+                "height": 2.1
+            },
+            "minecraft:behavior.look_at_player": {
+                "priority": 0,
+                "look_distance": 6.0,
+                "probability": 0.02
+            },
+            "minecraft:persistent": {
+            },
+            "minecraft:nameable": {
+                "always_show": true,
+                "allow_name_tag_renaming": false
+            },
+            "minecraft:physics": {
+            }
+        }
+    }
+}
