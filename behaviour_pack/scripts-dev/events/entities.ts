@@ -158,7 +158,7 @@ export default function load_entity_event_handler() {
             // Entity Containers
             MinecraftEntityTypes.ChestBoat, MinecraftEntityTypes.ChestMinecart, MinecraftEntityTypes.HopperMinecart,
 
-            "amethyst:eliana_fisherman", "amethyst:james_collector"
+            "amethyst:james_collector"
         ]
 
         if (
