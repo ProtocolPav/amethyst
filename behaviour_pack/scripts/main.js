@@ -6344,6 +6344,60 @@ import {
   world as world19
 } from "@minecraft/server";
 var fishing_trades = {
+  // --- Rare / Special ---
+  "amethyst:nemo": {
+    name: "Nemo",
+    sizes: {
+      "23cm": { count: 24, item: "amethyst:diamond_nugget" }
+    }
+  },
+  "amethyst:cheeky_fish": {
+    name: "Cheeky Bugger",
+    sizes: {
+      "60cm": { count: 6, item: "amethyst:diamond_nugget" },
+      "57cm": { count: 6, item: "amethyst:diamond_nugget" },
+      "54cm": { count: 6, item: "amethyst:diamond_nugget" }
+    }
+  },
+  "amethyst:void_fish": {
+    name: "Voidswimmer",
+    sizes: {
+      "124cm": { count: 12, item: "amethyst:diamond_nugget" },
+      "112cm": { count: 10, item: "amethyst:diamond_nugget" },
+      "101cm": { count: 8, item: "amethyst:diamond_nugget" },
+      "90cm": { count: 6, item: "amethyst:diamond_nugget" }
+    }
+  },
+  // --- High Tier ---
+  "amethyst:blue_dwarf_fish": {
+    name: "Blue Dwarf Fish",
+    sizes: {
+      "8cm": { count: 15, item: "amethyst:diamond_nugget" },
+      "10cm": { count: 7, item: "amethyst:diamond_nugget" },
+      "13cm": { count: 5, item: "amethyst:diamond_nugget" }
+    }
+  },
+  "amethyst:thorn_fish": {
+    name: "Thornfish",
+    sizes: {
+      "113cm": { count: 10, item: "amethyst:diamond_nugget" },
+      "100cm": { count: 9, item: "amethyst:diamond_nugget" },
+      "84cm": { count: 7, item: "amethyst:diamond_nugget" },
+      "78cm": { count: 6, item: "amethyst:diamond_nugget" },
+      "66cm": { count: 6, item: "amethyst:diamond_nugget" },
+      "57cm": { count: 6, item: "amethyst:diamond_nugget" }
+    }
+  },
+  "amethyst:tuff_fish": {
+    name: "Tuffback Minnow",
+    sizes: {
+      "110cm": { count: 7, item: "amethyst:diamond_nugget" },
+      "104cm": { count: 4, item: "amethyst:diamond_nugget" },
+      "98cm": { count: 12, item: "amethyst:sea_urchin" },
+      "91cm": { count: 6, item: "amethyst:sea_urchin" }
+    }
+  },
+  // --- Medium Tier ---
   "amethyst:dwarf_fish": {
     name: "Dwarf Fish",
     sizes: {
@@ -6351,14 +6405,6 @@ var fishing_trades = {
       "11cm": { count: 2, item: "amethyst:diamond_nugget" },
       "14cm": { count: 5, item: "amethyst:sea_urchin" },
       "20cm": { count: 3, item: "amethyst:sea_urchin" }
-    }
-  },
-  "amethyst:blue_dwarf_fish": {
-    name: "Blue Dwarf Fish",
-    sizes: {
-      "8cm": { count: 15, item: "amethyst:diamond_nugget" },
-      "10cm": { count: 7, item: "amethyst:diamond_nugget" },
-      "13cm": { count: 5, item: "amethyst:diamond_nugget" }
     }
   },
   "amethyst:ever_fish": {
@@ -6371,15 +6417,45 @@ var fishing_trades = {
       "74cm": { count: 4, item: "amethyst:sea_urchin" }
     }
   },
-  "amethyst:thorn_fish": {
-    name: "Thornfish",
+  "amethyst:night_fish": {
+    name: "Night Trout",
     sizes: {
-      "113cm": { count: 10, item: "amethyst:diamond_nugget" },
-      "100cm": { count: 9, item: "amethyst:diamond_nugget" },
-      "84cm": { count: 7, item: "amethyst:diamond_nugget" },
-      "78cm": { count: 6, item: "amethyst:diamond_nugget" },
-      "66cm": { count: 6, item: "amethyst:diamond_nugget" },
-      "57cm": { count: 6, item: "amethyst:diamond_nugget" }
+      "66cm": { count: 5, item: "amethyst:diamond_nugget" },
+      "61cm": { count: 2, item: "amethyst:diamond_nugget" },
+      "56cm": { count: 10, item: "amethyst:sea_urchin" },
+      "52cm": { count: 5, item: "amethyst:sea_urchin" }
+    }
+  },
+  "amethyst:slime_fish": {
+    name: "Slimey Bass",
+    sizes: {
+      "78cm": { count: 3, item: "amethyst:diamond_nugget" },
+      "72cm": { count: 1, item: "amethyst:diamond_nugget" },
+      "67cm": { count: 8, item: "amethyst:sea_urchin" },
+      "62cm": { count: 4, item: "amethyst:sea_urchin" }
+    }
+  },
+  // --- Common Tier ---
+  "amethyst:ember_minnow": {
+    name: "Ember Minnow",
+    sizes: {
+      "84cm": { count: 4, item: "amethyst:sea_urchin" },
+      "78cm": { count: 5, item: "amethyst:sea_urchin" },
+      "75cm": { count: 5, item: "amethyst:sea_urchin" },
+      "73cm": { count: 6, item: "amethyst:sea_urchin" },
+      "70cm": { count: 9, item: "amethyst:diamond_nugget" },
+      // Super Rare jackpot
+      "68cm": { count: 4, item: "amethyst:sea_urchin" }
+    }
+  },
+  "amethyst:northern_chomper": {
+    name: "Northern Chomper",
+    sizes: {
+      "70cm": { count: 5, item: "amethyst:sea_urchin" },
+      "65cm": { count: 4, item: "amethyst:sea_urchin" },
+      "63cm": { count: 4, item: "amethyst:sea_urchin" },
+      "54cm": { count: 2, item: "amethyst:sea_urchin" },
+      "50cm": { count: 1, item: "amethyst:sea_urchin" }
     }
   }
 };

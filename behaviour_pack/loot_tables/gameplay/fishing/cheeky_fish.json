@@ -1,0 +1,33 @@
+{
+    "pools": [
+        {
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "item",
+                    "name": "amethyst:cheeky_fish",
+                    "weight": 10,
+                    "functions": [
+                        { "function": "set_lore", "lore": [ "§r§7Size: 60cm" ] }
+                    ]
+                },
+                {
+                    "type": "item",
+                    "name": "amethyst:cheeky_fish",
+                    "weight": 10,
+                    "functions": [
+                        { "function": "set_lore", "lore": [ "§r§7Size: 57cm" ] }
+                    ]
+                },
+                {
+                    "type": "item",
+                    "name": "amethyst:cheeky_fish",
+                    "weight": 10,
+                    "functions": [
+                        { "function": "set_lore", "lore": [ "§r§7Size: 54cm" ] }
+                    ]
+                }
+            ]
+        }
+    ]
+}

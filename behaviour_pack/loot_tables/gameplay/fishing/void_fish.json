@@ -1,0 +1,41 @@
+{
+    "pools": [
+        {
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "item",
+                    "name": "amethyst:void_fish",
+                    "weight": 1,
+                    "functions": [
+                        { "function": "set_lore", "lore": [ "§r§7Size: 124cm" ] }
+                    ]
+                },
+                {
+                    "type": "item",
+                    "name": "amethyst:void_fish",
+                    "weight": 3,
+                    "functions": [
+                        { "function": "set_lore", "lore": [ "§r§7Size: 112cm" ] }
+                    ]
+                },
+                {
+                    "type": "item",
+                    "name": "amethyst:void_fish",
+                    "weight": 5,
+                    "functions": [
+                        { "function": "set_lore", "lore": [ "§r§7Size: 101cm" ] }
+                    ]
+                },
+                {
+                    "type": "item",
+                    "name": "amethyst:void_fish",
+                    "weight": 8,
+                    "functions": [
+                        { "function": "set_lore", "lore": [ "§r§7Size: 90cm" ] }
+                    ]
+                }
+            ]
+        }
+    ]
+}

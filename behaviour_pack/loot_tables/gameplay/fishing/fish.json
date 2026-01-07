@@ -5,18 +5,63 @@
             "entries": [
                 {
                     "type": "loot_table",
+                    "name": "loot_tables/gameplay/fishing/northern_chomper.json",
+                    "weight": 120
+                },
+                {
+                    "type": "loot_table",
+                    "name": "loot_tables/gameplay/fishing/ember_minnow.json",
+                    "weight": 120
+                },
+                {
+                    "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/dwarf_fish.json",
-                    "weight": 60
+                    "weight": 80
+                },
+                {
+                    "type": "loot_table",
+                    "name": "loot_tables/gameplay/fishing/slime_fish.json",
+                    "weight": 80
                 },
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/ever_fish.json",
+                    "weight": 50
+                },
+                {
+                    "type": "loot_table",
+                    "name": "loot_tables/gameplay/fishing/tuff_fish.json",
+                    "weight": 50
+                },
+                {
+                    "type": "loot_table",
+                    "name": "loot_tables/gameplay/fishing/night_fish.json",
                     "weight": 25
                 },
                 {
                     "type": "loot_table",
+                    "name": "loot_tables/gameplay/fishing/blue_dwarf_fish.json",
+                    "weight": 20
+                },
+                {
+                    "type": "loot_table",
+                    "name": "loot_tables/gameplay/fishing/cheeky_fish.json",
+                    "weight": 10
+                },
+                {
+                    "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/thorn_fish.json",
+                    "weight": 10
+                },
+                {
+                    "type": "loot_table",
+                    "name": "loot_tables/gameplay/fishing/void_fish.json",
                     "weight": 5
+                },
+                {
+                    "type": "loot_table",
+                    "name": "loot_tables/gameplay/fishing/nemo.json",
+                    "weight": 1
                 }
             ]
         }
