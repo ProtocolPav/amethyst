@@ -1,0 +1,57 @@
+{
+    "pools": [
+        {
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "item",
+                    "name": "amethyst:thorn_fish",
+                    "weight": 1,
+                    "functions": [
+                        { "function": "set_lore", "lore": [ "§r§7Size: 113cm" ] }
+                    ]
+                },
+                {
+                    "type": "item",
+                    "name": "amethyst:thorn_fish",
+                    "weight": 1,
+                    "functions": [
+                        { "function": "set_lore", "lore": [ "§r§7Size: 100cm" ] }
+                    ]
+                },
+                {
+                    "type": "item",
+                    "name": "amethyst:thorn_fish",
+                    "weight": 4,
+                    "functions": [
+                        { "function": "set_lore", "lore": [ "§r§7Size: 84cm" ] }
+                    ]
+                },
+                {
+                    "type": "item",
+                    "name": "amethyst:thorn_fish",
+                    "weight": 21,
+                    "functions": [
+                        { "function": "set_lore", "lore": [ "§r§7Size: 78cm" ] }
+                    ]
+                },
+                {
+                    "type": "item",
+                    "name": "amethyst:thorn_fish",
+                    "weight": 18,
+                    "functions": [
+                        { "function": "set_lore", "lore": [ "§r§7Size: 66cm" ] }
+                    ]
+                },
+                {
+                    "type": "item",
+                    "name": "amethyst:thorn_fish",
+                    "weight": 20,
+                    "functions": [
+                        { "function": "set_lore", "lore": [ "§r§7Size: 57cm" ] }
+                    ]
+                }
+            ]
+        }
+    ]
+}

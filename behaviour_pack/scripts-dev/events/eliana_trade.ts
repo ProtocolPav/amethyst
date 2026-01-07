@@ -40,6 +40,27 @@ const fishing_trades: Record<string, FishTrade> = {
             "13cm": {count: 5, item: "amethyst:diamond_nugget"},
         }
     },
+    "amethyst:ever_fish": {
+        name: "Everfish",
+        sizes: {
+            "100cm": {count: 3, item: "amethyst:diamond_nugget"},
+            "94cm": {count: 1, item: "amethyst:diamond_nugget"},
+            "86cm": {count: 8, item: "amethyst:sea_urchin"},
+            "82cm": {count: 7, item: "amethyst:sea_urchin"},
+            "74cm": {count: 4, item: "amethyst:sea_urchin"},
+        }
+    },
+    "amethyst:thorn_fish": {
+        name: "Thornfish",
+        sizes: {
+            "113cm": {count: 10, item: "amethyst:diamond_nugget"},
+            "100cm": {count: 9, item: "amethyst:diamond_nugget"},
+            "84cm": {count: 7, item: "amethyst:diamond_nugget"},
+            "78cm": {count: 6, item: "amethyst:diamond_nugget"},
+            "66cm": {count: 6, item: "amethyst:diamond_nugget"},
+            "57cm": {count: 6, item: "amethyst:diamond_nugget"},
+        }
+    },
 }
 
 function trade_fish(eliana: Entity, player: Player, item: ItemStack) {

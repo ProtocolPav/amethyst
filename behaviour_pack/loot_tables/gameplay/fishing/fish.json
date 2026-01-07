@@ -9,19 +9,14 @@
                     "weight": 60
                 },
                 {
-                    "type": "item",
-                    "name": "amethyst:cheeky_fish",
+                    "type": "loot_table",
+                    "name": "loot_tables/gameplay/fishing/ever_fish.json",
                     "weight": 25
                 },
                 {
-                    "type": "item",
-                    "name": "amethyst:thorn_fish",
-                    "weight": 2
-                },
-                {
-                    "type": "item",
-                    "name": "amethyst:ember_minnow",
-                    "weight": 13
+                    "type": "loot_table",
+                    "name": "loot_tables/gameplay/fishing/thorn_fish.json",
+                    "weight": 5
                 }
             ]
         }

@@ -14,7 +14,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:dwarf_fish",
-                    "weight": 5,
+                    "weight": 7,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 11cm" ] }
                     ]
@@ -22,7 +22,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:dwarf_fish",
-                    "weight": 10,
+                    "weight": 14,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 14cm" ] }
                     ]
@@ -30,7 +30,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:dwarf_fish",
-                    "weight": 20,
+                    "weight": 25,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 20cm" ] }
                     ]
