@@ -2,7 +2,7 @@ import {system, world} from "@minecraft/server"
 import api from "../api"
 import utils from "../utils"
 import { EntityComponentTypes, EquipmentSlot, Player } from "@minecraft/server"
-import {MinecraftBlockTypes, MinecraftEntityTypes} from "@minecraft/vanilla-data"
+import {MinecraftBlockTypes, MinecraftEntityTypes, MinecraftItemTypes} from "@minecraft/vanilla-data"
 import {interaction_preprocess} from "../utils/interaction_preprocess";
 
 export default function load_entity_event_handler() {
@@ -171,6 +171,32 @@ export default function load_entity_event_handler() {
                         type: 'use',
                         coordinates: entity_location,
                         reference: entity_id,
+                        mainhand: mainhand?.typeId ?? null,
+                        dimension: dimension.id
+                    }
+                )
+
+                interaction.post_interaction()
+            })
+        }
+    })
+
+    // Handle Fishing Rod Use Event
+    world.afterEvents.itemUse.subscribe((event) => {
+        const item_id = event.itemStack.typeId
+        const player = event.source
+        const player_location = [player.location.x, player.location.y, player.location.z]
+        const dimension = player.dimension
+        const mainhand = player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
+
+        if (item_id === MinecraftItemTypes.FishingRod) {
+            system.run(() => {
+                const interaction = new api.Interaction(
+                    {
+                        thorny_id: api.ThornyUser.fetch_user(player.name)?.thorny_id ?? 0,
+                        type: 'use',
+                        coordinates: player_location,
+                        reference: item_id,
                         mainhand: mainhand?.typeId ?? null,
                         dimension: dimension.id
                     }
