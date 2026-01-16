@@ -27,24 +27,24 @@ const fishing_trades: Record<string, FishTrade> = {
     "amethyst:nemo": {
         name: "Nemo",
         sizes: {
-            "23cm": {count: 24, item: "amethyst:diamond_nugget"},
+            "23cm": {count: 42, item: "amethyst:diamond_nugget"},
         }
     },
     "amethyst:cheeky_fish": {
         name: "Cheeky Bugger",
         sizes: {
-            "60cm": {count: 6, item: "amethyst:diamond_nugget"},
-            "57cm": {count: 6, item: "amethyst:diamond_nugget"},
-            "54cm": {count: 6, item: "amethyst:diamond_nugget"},
+            "60cm": {count: 4, item: "amethyst:diamond_nugget"},
+            "57cm": {count: 5, item: "amethyst:diamond_nugget"},
+            "54cm": {count: 4, item: "amethyst:diamond_nugget"},
         }
     },
     "amethyst:void_fish": {
         name: "Voidswimmer",
         sizes: {
-            "124cm": {count: 12, item: "amethyst:diamond_nugget"},
-            "112cm": {count: 10, item: "amethyst:diamond_nugget"},
-            "101cm": {count: 8, item: "amethyst:diamond_nugget"},
-            "90cm": {count: 6, item: "amethyst:diamond_nugget"},
+            "124cm": {count: 10, item: "amethyst:diamond_nugget"},
+            "112cm": {count: 8, item: "amethyst:diamond_nugget"},
+            "101cm": {count: 6, item: "amethyst:diamond_nugget"},
+            "90cm": {count: 3, item: "amethyst:diamond_nugget"},
         }
     },
 
@@ -52,27 +52,27 @@ const fishing_trades: Record<string, FishTrade> = {
     "amethyst:blue_dwarf_fish": {
         name: "Blue Dwarf Fish",
         sizes: {
-            "8cm": {count: 15, item: "amethyst:diamond_nugget"},
-            "10cm": {count: 7, item: "amethyst:diamond_nugget"},
-            "13cm": {count: 5, item: "amethyst:diamond_nugget"},
+            "8cm": {count: 9, item: "amethyst:diamond_nugget"},
+            "10cm": {count: 5, item: "amethyst:diamond_nugget"},
+            "13cm": {count: 3, item: "amethyst:diamond_nugget"},
         }
     },
     "amethyst:thorn_fish": {
         name: "Thornfish",
         sizes: {
-            "113cm": {count: 10, item: "amethyst:diamond_nugget"},
-            "100cm": {count: 9, item: "amethyst:diamond_nugget"},
-            "84cm": {count: 7, item: "amethyst:diamond_nugget"},
-            "78cm": {count: 6, item: "amethyst:diamond_nugget"},
-            "66cm": {count: 6, item: "amethyst:diamond_nugget"},
-            "57cm": {count: 6, item: "amethyst:diamond_nugget"},
+            "113cm": {count: 7, item: "amethyst:diamond_nugget"},
+            "100cm": {count: 6, item: "amethyst:diamond_nugget"},
+            "84cm": {count: 5, item: "amethyst:diamond_nugget"},
+            "78cm": {count: 2, item: "amethyst:diamond_nugget"},
+            "66cm": {count: 2, item: "amethyst:diamond_nugget"},
+            "57cm": {count: 2, item: "amethyst:diamond_nugget"},
         }
     },
     "amethyst:tuff_fish": {
         name: "Tuffback Minnow",
         sizes: {
-            "110cm": {count: 7, item: "amethyst:diamond_nugget"},
-            "104cm": {count: 4, item: "amethyst:diamond_nugget"},
+            "110cm": {count: 4, item: "amethyst:diamond_nugget"},
+            "104cm": {count: 1, item: "amethyst:diamond_nugget"},
             "98cm": {count: 12, item: "amethyst:sea_urchin"},
             "91cm": {count: 6, item: "amethyst:sea_urchin"},
         }
@@ -82,7 +82,7 @@ const fishing_trades: Record<string, FishTrade> = {
     "amethyst:dwarf_fish": {
         name: "Dwarf Fish",
         sizes: {
-            "8cm": {count: 9, item: "amethyst:diamond_nugget"},
+            "8cm": {count: 7, item: "amethyst:diamond_nugget"},
             "11cm": {count: 2, item: "amethyst:diamond_nugget"},
             "14cm": {count: 5, item: "amethyst:sea_urchin"},
             "20cm": {count: 3, item: "amethyst:sea_urchin"},
@@ -91,7 +91,7 @@ const fishing_trades: Record<string, FishTrade> = {
     "amethyst:ever_fish": {
         name: "Everfish",
         sizes: {
-            "100cm": {count: 3, item: "amethyst:diamond_nugget"},
+            "100cm": {count: 2, item: "amethyst:diamond_nugget"},
             "94cm": {count: 1, item: "amethyst:diamond_nugget"},
             "86cm": {count: 8, item: "amethyst:sea_urchin"},
             "82cm": {count: 7, item: "amethyst:sea_urchin"},
@@ -101,7 +101,7 @@ const fishing_trades: Record<string, FishTrade> = {
     "amethyst:night_fish": {
         name: "Night Trout",
         sizes: {
-            "66cm": {count: 5, item: "amethyst:diamond_nugget"},
+            "66cm": {count: 4, item: "amethyst:diamond_nugget"},
             "61cm": {count: 2, item: "amethyst:diamond_nugget"},
             "56cm": {count: 10, item: "amethyst:sea_urchin"},
             "52cm": {count: 5, item: "amethyst:sea_urchin"},

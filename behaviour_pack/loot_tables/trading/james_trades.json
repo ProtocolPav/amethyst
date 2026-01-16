@@ -7,7 +7,7 @@
                     "wants": [
                         {
                             "item": "amethyst:sea_urchin",
-                            "quantity": 3
+                            "quantity": 4
                         }
                     ],
                     "gives": [
@@ -16,7 +16,7 @@
                             "quantity": 16
                         }
                     ],
-                    "max_uses": 16,
+                    "max_uses": 99999,
                     "reward_exp": true,
                     "trader_exp": 2
                 },
@@ -24,7 +24,7 @@
                     "wants": [
                         {
                             "item": "amethyst:sea_urchin",
-                            "quantity": 1
+                            "quantity": 2
                         }
                     ],
                     "gives": [
@@ -33,7 +33,7 @@
                             "quantity": 5
                         }
                     ],
-                    "max_uses": 16,
+                    "max_uses": 99999,
                     "reward_exp": true,
                     "trader_exp": 1
                 },
@@ -50,7 +50,7 @@
                             "quantity": 4
                         }
                     ],
-                    "max_uses": 12,
+                    "max_uses": 99999,
                     "reward_exp": true,
                     "trader_exp": 2
                 },
@@ -58,7 +58,7 @@
                     "wants": [
                         {
                             "item": "amethyst:sea_urchin",
-                            "quantity": 6
+                            "quantity": 5
                         }
                     ],
                     "gives": [
@@ -67,7 +67,7 @@
                             "quantity": 5
                         }
                     ],
-                    "max_uses": 12,
+                    "max_uses": 99999,
                     "reward_exp": true,
                     "trader_exp": 4
                 },
@@ -75,7 +75,7 @@
                     "wants": [
                         {
                             "item": "amethyst:sea_urchin",
-                            "quantity": 2
+                            "quantity": 3
                         }
                     ],
                     "gives": [
@@ -84,7 +84,7 @@
                             "quantity": 3
                         }
                     ],
-                    "max_uses": 12,
+                    "max_uses": 99999,
                     "reward_exp": true,
                     "trader_exp": 2
                 },
@@ -92,7 +92,7 @@
                     "wants": [
                         {
                             "item": "amethyst:sea_urchin",
-                            "quantity": 2
+                            "quantity": 4
                         }
                     ],
                     "gives": [
@@ -101,7 +101,7 @@
                             "quantity": 20
                         }
                     ],
-                    "max_uses": 12,
+                    "max_uses": 99999,
                     "reward_exp": true,
                     "trader_exp": 2
                 },
@@ -109,7 +109,7 @@
                     "wants": [
                         {
                             "item": "amethyst:sea_urchin",
-                            "quantity": 14
+                            "quantity": 22
                         }
                     ],
                     "gives": [
@@ -118,7 +118,7 @@
                             "quantity": 1
                         }
                     ],
-                    "max_uses": 3,
+                    "max_uses": 99999,
                     "reward_exp": true,
                     "trader_exp": 4
                 }
@@ -131,7 +131,7 @@
                     "wants": [
                         {
                             "item": "amethyst:diamond_nugget",
-                            "quantity": 4
+                            "quantity": 6
                         }
                     ],
                     "gives": [
@@ -140,7 +140,7 @@
                             "quantity": 20
                         }
                     ],
-                    "max_uses": 12,
+                    "max_uses": 99999,
                     "reward_exp": true,
                     "trader_exp": 5
                 },
@@ -148,7 +148,7 @@
                     "wants": [
                         {
                             "item": "amethyst:diamond_nugget",
-                            "quantity": 3
+                            "quantity": 4
                         }
                     ],
                     "gives": [
@@ -157,7 +157,7 @@
                             "quantity": 1
                         }
                     ],
-                    "max_uses": 8,
+                    "max_uses": 99999,
                     "reward_exp": true,
                     "trader_exp": 7
                 },
@@ -165,7 +165,7 @@
                     "wants": [
                         {
                             "item": "amethyst:diamond_nugget",
-                            "quantity": 8
+                            "quantity": 10
                         }
                     ],
                     "gives": [
@@ -174,7 +174,7 @@
                             "quantity": 20
                         }
                     ],
-                    "max_uses": 12,
+                    "max_uses": 99999,
                     "reward_exp": true,
                     "trader_exp": 5
                 },
@@ -182,7 +182,7 @@
                     "wants": [
                         {
                             "item": "amethyst:diamond_nugget",
-                            "quantity": 12
+                            "quantity": 23
                         }
                     ],
                     "gives": [
@@ -202,7 +202,7 @@
                             ]
                         }
                     ],
-                    "max_uses": 5,
+                    "max_uses": 99999,
                     "reward_exp": true,
                     "trader_exp": 8
                 },
@@ -210,7 +210,7 @@
                     "wants": [
                         {
                             "item": "amethyst:diamond_nugget",
-                            "quantity": 6
+                            "quantity": 8
                         }
                     ],
                     "gives": [
@@ -219,7 +219,7 @@
                             "quantity": 12
                         }
                     ],
-                    "max_uses": 12,
+                    "max_uses": 99999,
                     "reward_exp": true,
                     "trader_exp": 5
                 },
@@ -227,7 +227,7 @@
                     "wants": [
                         {
                             "item": "amethyst:diamond_nugget",
-                            "quantity": 15
+                            "quantity": 18
                         }
                     ],
                     "gives": [
@@ -236,7 +236,7 @@
                             "quantity": 32
                         }
                     ],
-                    "max_uses": 10,
+                    "max_uses": 99999,
                     "reward_exp": true,
                     "trader_exp": 5
                 }
@@ -249,7 +249,7 @@
                     "wants": [
                         {
                             "item": "amethyst:rainbow_shell",
-                            "quantity": 1
+                            "quantity": 2
                         }
                     ],
                     "gives": [
@@ -258,7 +258,7 @@
                             "quantity": 1
                         }
                     ],
-                    "max_uses": 3,
+                    "max_uses": 99999,
                     "reward_exp": true,
                     "trader_exp": 20
                 },
@@ -275,7 +275,7 @@
                             "quantity": 1
                         }
                     ],
-                    "max_uses": 3,
+                    "max_uses": 99999,
                     "reward_exp": true,
                     "trader_exp": 20
                 },
@@ -292,7 +292,7 @@
                             "quantity": 1
                         }
                     ],
-                    "max_uses": 3,
+                    "max_uses": 99999,
                     "reward_exp": true,
                     "trader_exp": 20
                 },
@@ -309,7 +309,7 @@
                             "quantity": 1
                         }
                     ],
-                    "max_uses": 3,
+                    "max_uses": 99999,
                     "reward_exp": true,
                     "trader_exp": 20
                 },
@@ -317,7 +317,7 @@
                     "wants": [
                         {
                             "item": "amethyst:rainbow_shell",
-                            "quantity": 1
+                            "quantity": 2
                         }
                     ],
                     "gives": [
@@ -326,7 +326,7 @@
                             "quantity": 1
                         }
                     ],
-                    "max_uses": 3,
+                    "max_uses": 99999,
                     "reward_exp": true,
                     "trader_exp": 20
                 },
@@ -334,7 +334,7 @@
                     "wants": [
                         {
                             "item": "amethyst:rainbow_shell",
-                            "quantity": 1
+                            "quantity": 2
                         }
                     ],
                     "gives": [
@@ -343,7 +343,7 @@
                             "quantity": 1
                         }
                     ],
-                    "max_uses": 3,
+                    "max_uses": 99999,
                     "reward_exp": true,
                     "trader_exp": 20
                 },
@@ -361,7 +361,7 @@
                             "data": 7
                         }
                     ],
-                    "max_uses": 3,
+                    "max_uses": 99999,
                     "reward_exp": true,
                     "trader_exp": 20
                 }
