@@ -181,32 +181,6 @@ export default function load_entity_event_handler() {
         }
     })
 
-    // Handle Fishing Rod Use Event
-    world.afterEvents.itemUse.subscribe((event) => {
-        const item_id = event.itemStack.typeId
-        const player = event.source
-        const player_location = [player.location.x, player.location.y, player.location.z]
-        const dimension = player.dimension
-        const mainhand = player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
-
-        if (item_id === MinecraftItemTypes.FishingRod) {
-            system.run(() => {
-                const interaction = new api.Interaction(
-                    {
-                        thorny_id: api.ThornyUser.fetch_user(player.name)?.thorny_id ?? 0,
-                        type: 'use',
-                        coordinates: player_location,
-                        reference: item_id,
-                        mainhand: mainhand?.typeId ?? null,
-                        dimension: dimension.id
-                    }
-                )
-
-                interaction.post_interaction()
-            })
-        }
-    })
-
     let first_stage = false
     let second_stage = false
 

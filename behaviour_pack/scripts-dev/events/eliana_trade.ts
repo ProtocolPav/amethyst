@@ -10,7 +10,7 @@ import {
 } from "@minecraft/server";
 import api from "../api";
 import utils from "../utils";
-import {MinecraftEntityTypes} from "@minecraft/vanilla-data";
+import {MinecraftEntityTypes, MinecraftItemTypes} from "@minecraft/vanilla-data";
 
 type TradeItem = {
     count: number;
@@ -157,6 +157,9 @@ function trade_fish(eliana: Entity, player: Player, item: ItemStack) {
     }
 
     player.playSound("mob.villager.yes", {location: eliana.location})
+    player.sendMessage(
+        `§l§8[§eEliana§8]§r Oh wow! Thanks for the §l${fishing_trades[item.typeId].name}§r! Here's some cash you can use somewhere.`
+    )
 }
 
 export default function load_eliana_handler() {
@@ -188,6 +191,9 @@ export default function load_eliana_handler() {
 
                 interaction.post_interaction()
             })
+
+            // system.sendScriptEvent()
+
         } else if (!speaking_to.includes(event.player.name)) {
             speaking_to.push(event.player.name)
 
@@ -214,6 +220,32 @@ export default function load_eliana_handler() {
             await system.waitTicks(30)
 
             delete speaking_to[speaking_to.indexOf(event.player.name)]
+        }
+    })
+
+    // Handle Fishing Rod Use Event
+    world.afterEvents.itemUse.subscribe((event) => {
+        const item_id = event.itemStack.typeId
+        const player = event.source
+        const player_location = [player.location.x, player.location.y, player.location.z]
+        const dimension = player.dimension
+        const mainhand = player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
+
+        if (item_id === MinecraftItemTypes.FishingRod) {
+            system.run(() => {
+                const interaction = new api.Interaction(
+                    {
+                        thorny_id: api.ThornyUser.fetch_user(player.name)?.thorny_id ?? 0,
+                        type: 'use',
+                        coordinates: player_location,
+                        reference: item_id,
+                        mainhand: mainhand?.typeId ?? null,
+                        dimension: dimension.id
+                    }
+                )
+
+                interaction.post_interaction()
+            })
         }
     })
 }
