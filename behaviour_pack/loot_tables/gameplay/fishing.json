@@ -17,7 +17,7 @@
                 },
                 {
                     "type": "loot_table",
-                    "name": "loot_tables/gameplay/fishing/fishing_event.json",
+                    "name": "loot_tables/gameplay/fishing/fishing_event_loot.json",
                     "weight": 34,
                     "quality": 3
                 },
