@@ -12,8 +12,8 @@
                     ],
                     "gives": [
                         {
-                            "item": "minecraft:sand",
-                            "quantity": 16
+                            "item": "minecraft:friend_pottery_sherd",
+                            "quantity": 1
                         }
                     ],
                     "max_uses": 99999,
@@ -97,8 +97,8 @@
                     ],
                     "gives": [
                         {
-                            "item": "minecraft:leaf_litter",
-                            "quantity": 20
+                            "item": "minecraft:glow_ink_sac",
+                            "quantity": 7
                         }
                     ],
                     "max_uses": 99999,
@@ -148,7 +148,7 @@
                     "wants": [
                         {
                             "item": "amethyst:diamond_nugget",
-                            "quantity": 4
+                            "quantity": 8
                         }
                     ],
                     "gives": [
@@ -249,13 +249,13 @@
                     "wants": [
                         {
                             "item": "amethyst:rainbow_shell",
-                            "quantity": 2
+                            "quantity": 1
                         }
                     ],
                     "gives": [
                         {
-                            "item": "minecraft:heavy_core",
-                            "quantity": 1
+                            "item": "minecraft:echo_shard",
+                            "quantity": 3
                         }
                     ],
                     "max_uses": 99999,
@@ -317,7 +317,7 @@
                     "wants": [
                         {
                             "item": "amethyst:rainbow_shell",
-                            "quantity": 2
+                            "quantity": 1
                         }
                     ],
                     "gives": [
@@ -334,7 +334,7 @@
                     "wants": [
                         {
                             "item": "amethyst:rainbow_shell",
-                            "quantity": 2
+                            "quantity": 1
                         }
                     ],
                     "gives": [
