@@ -4,6 +4,26 @@
             "rolls": 1,
             "entries": [
                 {
+                    "type": "item",
+                    "name": "minecraft:fish",
+                    "weight": 120
+                },
+                {
+                    "type": "item",
+                    "name": "minecraft:salmon",
+                    "weight": 120
+                },
+                {
+                    "type": "item",
+                    "name": "minecraft:clownfish",
+                    "weight": 40
+                },
+                {
+                    "type": "item",
+                    "name": "minecraft:pufferfish",
+                    "weight": 80
+                },
+                {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/northern_chomper.json",
                     "weight": 120
@@ -46,17 +66,17 @@
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/cheeky_fish.json",
-                    "weight": 10
+                    "weight": 15
                 },
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/thorn_fish.json",
-                    "weight": 10
+                    "weight": 15
                 },
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/void_fish.json",
-                    "weight": 5
+                    "weight": 7
                 },
                 {
                     "type": "loot_table",

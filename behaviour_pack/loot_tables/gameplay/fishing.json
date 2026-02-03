@@ -18,12 +18,6 @@
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/fishing_event_loot.json",
-                    "weight": 34,
-                    "quality": 3
-                },
-                {
-                    "type": "loot_table",
-                    "name": "loot_tables/gameplay/fishing/fish.json",
                     "weight": 85,
                     "quality": -1
                 }
