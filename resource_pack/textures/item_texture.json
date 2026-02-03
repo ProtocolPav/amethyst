@@ -33,7 +33,7 @@
 			"textures": "textures/items/trophy_third.png"
 		},
 		"diamond_nugget": {
-			"textures": "textures/items/diamond_nugget.png"
+			"textures": "textures/items/diamond_nugget_v2.png"
 		},
 
         "blue_dwarf_fish": {
