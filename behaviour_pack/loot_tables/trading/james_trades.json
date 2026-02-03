@@ -6,6 +6,22 @@
                 {
                     "wants": [
                         {
+                            "item": "minecraft:fish",
+                            "quantity": 64
+                        }
+                    ],
+                    "gives": [
+                        {
+                            "item": "minecraft:black_dye",
+                            "quantity": 10
+                        }
+                    ],
+                    "max_uses": 99999,
+                    "reward_exp": false
+                },
+                {
+                    "wants": [
+                        {
                             "item": "amethyst:sea_urchin",
                             "quantity": 4
                         }
@@ -109,6 +125,23 @@
                     "wants": [
                         {
                             "item": "amethyst:sea_urchin",
+                            "quantity": 19
+                        }
+                    ],
+                    "gives": [
+                        {
+                            "item": "minecraft:turtle_scute",
+                            "quantity": 1
+                        }
+                    ],
+                    "max_uses": 99999,
+                    "reward_exp": true,
+                    "trader_exp": 5
+                },
+                {
+                    "wants": [
+                        {
+                            "item": "amethyst:sea_urchin",
                             "quantity": 22
                         }
                     ],
@@ -127,6 +160,38 @@
         {
             "total_exp_required": 35,
             "trades": [
+                {
+                    "wants": [
+                        {
+                            "item": "minecraft:salmon",
+                            "quantity": 128
+                        }
+                    ],
+                    "gives": [
+                        {
+                            "item": "minecraft:green_dye",
+                            "quantity": 12
+                        }
+                    ],
+                    "max_uses": 99999,
+                    "reward_exp": false
+                },
+                {
+                    "wants": [
+                        {
+                            "item": "minecraft:clownfish",
+                            "quantity": 32
+                        }
+                    ],
+                    "gives": [
+                        {
+                            "item": "minecraft:lime_dye",
+                            "quantity": 17
+                        }
+                    ],
+                    "max_uses": 99999,
+                    "reward_exp": false
+                },
                 {
                     "wants": [
                         {
@@ -222,6 +287,23 @@
                     "max_uses": 99999,
                     "reward_exp": true,
                     "trader_exp": 5
+                },
+                {
+                    "wants": [
+                        {
+                            "item": "amethyst:diamond_nugget",
+                            "quantity": 11
+                        }
+                    ],
+                    "gives": [
+                        {
+                            "item": "minecraft:dragons_breath",
+                            "quantity": 1
+                        }
+                    ],
+                    "max_uses": 99999,
+                    "reward_exp": true,
+                    "trader_exp": 8
                 },
                 {
                     "wants": [
