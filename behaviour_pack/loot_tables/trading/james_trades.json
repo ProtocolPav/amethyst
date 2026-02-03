@@ -297,7 +297,7 @@
                     ],
                     "gives": [
                         {
-                            "item": "minecraft:dragons_breath",
+                            "item": "minecraft:dragon_breath",
                             "quantity": 1
                         }
                     ],
@@ -440,7 +440,7 @@
                         {
                             "item": "minecraft:goat_horn",
                             "quantity": 1,
-                            "data": 7
+                            "data": 6
                         }
                     ],
                     "max_uses": 99999,
