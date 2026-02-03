@@ -6,7 +6,7 @@
                 {
                     "wants": [
                         {
-                            "item": "minecraft:fish",
+                            "item": "minecraft:cod",
                             "quantity": 64
                         }
                     ],
@@ -179,7 +179,7 @@
                 {
                     "wants": [
                         {
-                            "item": "minecraft:clownfish",
+                            "item": "minecraft:tropical_fish",
                             "quantity": 32
                         }
                     ],
