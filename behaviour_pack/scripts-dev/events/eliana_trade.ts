@@ -25,7 +25,7 @@ type FishTrade = {
 const fishing_trades: Record<string, FishTrade> = {
     // --- Rare / Special ---
     "amethyst:nemo": {
-        name: "Nemo",
+        name: "§vN§je§vm§jo§r",
         sizes: {
             "23cm": {count: 30, item: "amethyst:diamond_nugget"},
         }
@@ -71,7 +71,7 @@ const fishing_trades: Record<string, FishTrade> = {
     "amethyst:tuff_fish": {
         name: "Tuffback Minnow",
         sizes: {
-            "110cm": {count: 2, item: "amethyst:diamond_nugget"},
+            "110cm": {count: 3, item: "amethyst:diamond_nugget"},
             "104cm": {count: 1, item: "amethyst:diamond_nugget"},
             "98cm": {count: 5, item: "amethyst:sea_urchin"},
             "91cm": {count: 3, item: "amethyst:sea_urchin"},
@@ -143,23 +143,34 @@ const fishing_trades: Record<string, FishTrade> = {
 
 function trade_fish(eliana: Entity, player: Player, item: ItemStack) {
     const size: string = item.getLore()[0].split(" ")[1]
+    const trade_count = Math.min(4, item.amount)
 
-    const item_count = fishing_trades[item.typeId].sizes[size].count
-    const item_stack = new ItemStack(fishing_trades[item.typeId].sizes[size].item)
+    const trade_info = fishing_trades[item.typeId].sizes[size]
+    const total_item_count = trade_info.count * trade_count
+    const item_stack = new ItemStack(trade_info.item)
 
-    utils.commands.give_item(player.name, item_count, item_stack)
+    utils.commands.give_item(player.name, total_item_count, item_stack)
 
-    if (item.amount === 1) {
+    if (item.amount <= trade_count) {
         player.getComponent(EntityComponentTypes.Equippable)?.setEquipment(EquipmentSlot.Mainhand, undefined)
     } else {
-        item.amount -= 1
+        item.amount -= trade_count
         player.getComponent(EntityComponentTypes.Equippable)?.setEquipment(EquipmentSlot.Mainhand, item)
     }
 
     player.playSound("mob.villager.yes", {location: eliana.location})
-    player.sendMessage(
-        `§l§8[§eEliana§8]§r Oh wow! Thanks for the §l${fishing_trades[item.typeId].name}§r! Here's some cash you can use somewhere.`
-    )
+
+    if (Math.random() < 0.45) {
+        const reward_name = trade_info.item === "amethyst:sea_urchin" ? "§5Sea Urchin" : "§bDiamond Nugget"
+        const reward_label = total_item_count === 1 ? reward_name : `${reward_name}s`
+        const fish_label = trade_count === 1 ? `the §l${fishing_trades[item.typeId].name}§r` : `${trade_count}x §l${fishing_trades[item.typeId].name}§r`
+
+        player.sendMessage(
+            `§l§8[§eEliana§8]§r Thanks for ${fish_label}! That haul was worth §l${total_item_count} ${reward_label}§r.`
+        )
+    }
+
+    return {trade_count, fish_type: item.typeId}
 }
 
 export default function load_eliana_handler() {
@@ -175,21 +186,23 @@ export default function load_eliana_handler() {
         const mainhand = event.player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
 
         if (mainhand && mainhand.getLore().length === 1 && Object.keys(fishing_trades).includes(mainhand.typeId)) {
-            trade_fish(event.target, event.player, mainhand)
+            const trade_result = trade_fish(event.target, event.player, mainhand)
 
             system.run(() => {
-                const interaction = new api.Interaction(
-                    {
-                        thorny_id: api.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
-                        type: 'use',
-                        coordinates: entity_location,
-                        reference: entity_id,
-                        mainhand: mainhand.typeId,
-                        dimension: dimension.id
-                    }
-                )
+                for (let i = 0; i < trade_result.trade_count; i += 1) {
+                    const interaction = new api.Interaction(
+                        {
+                            thorny_id: api.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
+                            type: 'use',
+                            coordinates: entity_location,
+                            reference: entity_id,
+                            mainhand: trade_result.fish_type,
+                            dimension: dimension.id
+                        }
+                    )
 
-                interaction.post_interaction()
+                    interaction.post_interaction()
+                }
             })
 
             // system.sendScriptEvent()

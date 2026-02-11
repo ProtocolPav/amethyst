@@ -6346,7 +6346,7 @@ import {
 var fishing_trades = {
   // --- Rare / Special ---
   "amethyst:nemo": {
-    name: "Nemo",
+    name: "\xA7vN\xA7je\xA7vm\xA7jo\xA7r",
     sizes: {
       "23cm": { count: 30, item: "amethyst:diamond_nugget" }
     }
@@ -6372,9 +6372,9 @@ var fishing_trades = {
   "amethyst:blue_dwarf_fish": {
     name: "Blue Dwarf Fish",
     sizes: {
-      "8cm": { count: 6, item: "amethyst:diamond_nugget" },
-      "10cm": { count: 7, item: "amethyst:diamond_nugget" },
-      "13cm": { count: 9, item: "amethyst:diamond_nugget" }
+      "8cm": { count: 9, item: "amethyst:diamond_nugget" },
+      "10cm": { count: 6, item: "amethyst:diamond_nugget" },
+      "13cm": { count: 4, item: "amethyst:diamond_nugget" }
     }
   },
   "amethyst:thorn_fish": {
@@ -6401,10 +6401,10 @@ var fishing_trades = {
   "amethyst:dwarf_fish": {
     name: "Dwarf Fish",
     sizes: {
-      "8cm": { count: 1, item: "amethyst:sea_urchin" },
-      "11cm": { count: 1, item: "amethyst:sea_urchin" },
+      "8cm": { count: 4, item: "amethyst:sea_urchin" },
+      "11cm": { count: 2, item: "amethyst:sea_urchin" },
       "14cm": { count: 2, item: "amethyst:sea_urchin" },
-      "20cm": { count: 3, item: "amethyst:sea_urchin" }
+      "20cm": { count: 1, item: "amethyst:sea_urchin" }
     }
   },
   "amethyst:ever_fish": {
@@ -6460,19 +6460,27 @@ var fishing_trades = {
 };
 function trade_fish(eliana, player, item) {
   const size = item.getLore()[0].split(" ")[1];
-  const item_count = fishing_trades[item.typeId].sizes[size].count;
-  const item_stack = new ItemStack3(fishing_trades[item.typeId].sizes[size].item);
-  utils_default.commands.give_item(player.name, item_count, item_stack);
-  if (item.amount === 1) {
+  const trade_count = Math.min(4, item.amount);
+  const trade_info = fishing_trades[item.typeId].sizes[size];
+  const total_item_count = trade_info.count * trade_count;
+  const item_stack = new ItemStack3(trade_info.item);
+  utils_default.commands.give_item(player.name, total_item_count, item_stack);
+  if (item.amount <= trade_count) {
     player.getComponent(EntityComponentTypes13.Equippable)?.setEquipment(EquipmentSlot10.Mainhand, void 0);
   } else {
-    item.amount -= 1;
+    item.amount -= trade_count;
     player.getComponent(EntityComponentTypes13.Equippable)?.setEquipment(EquipmentSlot10.Mainhand, item);
   }
   player.playSound("mob.villager.yes", { location: eliana.location });
-  player.sendMessage(
-    `\xA7l\xA78[\xA7eEliana\xA78]\xA7r Oh wow! Thanks for the \xA7l${fishing_trades[item.typeId].name}\xA7r! Here's some cash you can use somewhere.`
-  );
+  if (Math.random() < 0.45) {
+    const reward_name = trade_info.item === "amethyst:sea_urchin" ? "\xA75Sea Urchin" : "\xA7bDiamond Nugget";
+    const reward_label = total_item_count === 1 ? reward_name : `${reward_name}s`;
+    const fish_label = trade_count === 1 ? `the \xA7l${fishing_trades[item.typeId].name}\xA7r` : `${trade_count}x \xA7l${fishing_trades[item.typeId].name}\xA7r`;
+    player.sendMessage(
+      `\xA7l\xA78[\xA7eEliana\xA78]\xA7r Thanks for ${fish_label}! That haul was worth \xA7l${total_item_count} ${reward_label}\xA7r.`
+    );
+  }
+  return { trade_count, fish_type: item.typeId };
 }
 function load_eliana_handler() {
   let speaking_to = [];
@@ -6483,19 +6491,21 @@ function load_eliana_handler() {
     const dimension = event.player.dimension;
     const mainhand = event.player.getComponent(EntityComponentTypes13.Equippable)?.getEquipment(EquipmentSlot10.Mainhand);
     if (mainhand && mainhand.getLore().length === 1 && Object.keys(fishing_trades).includes(mainhand.typeId)) {
-      trade_fish(event.target, event.player, mainhand);
+      const trade_result = trade_fish(event.target, event.player, mainhand);
       system19.run(() => {
-        const interaction = new api_default.Interaction(
-          {
-            thorny_id: api_default.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
-            type: "use",
-            coordinates: entity_location,
-            reference: entity_id,
-            mainhand: mainhand.typeId,
-            dimension: dimension.id
-          }
-        );
-        interaction.post_interaction();
+        for (let i = 0; i < trade_result.trade_count; i += 1) {
+          const interaction = new api_default.Interaction(
+            {
+              thorny_id: api_default.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
+              type: "use",
+              coordinates: entity_location,
+              reference: entity_id,
+              mainhand: trade_result.fish_type,
+              dimension: dimension.id
+            }
+          );
+          interaction.post_interaction();
+        }
       });
     } else if (!speaking_to.includes(event.player.name)) {
       speaking_to.push(event.player.name);
