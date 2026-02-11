@@ -6,82 +6,83 @@
                 {
                     "type": "item",
                     "name": "minecraft:fish",
-                    "weight": 120
+                    "weight": 180
                 },
                 {
                     "type": "item",
                     "name": "minecraft:salmon",
-                    "weight": 120
+                    "weight": 180
                 },
                 {
                     "type": "item",
                     "name": "minecraft:clownfish",
-                    "weight": 40
+                    "weight": 60
                 },
                 {
                     "type": "item",
                     "name": "minecraft:pufferfish",
-                    "weight": 80
+                    "weight": 100
                 },
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/northern_chomper.json",
-                    "weight": 120
+                    "weight": 160
                 },
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/ember_minnow.json",
-                    "weight": 120
+                    "weight": 160
                 },
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/dwarf_fish.json",
-                    "weight": 80
+                    "weight": 70
                 },
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/slime_fish.json",
-                    "weight": 80
+                    "weight": 70
                 },
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/ever_fish.json",
-                    "weight": 50
+                    "weight": 35
                 },
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/tuff_fish.json",
-                    "weight": 50
+                    "weight": 35
                 },
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/night_fish.json",
-                    "weight": 25
+                    "weight": 10
                 },
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/blue_dwarf_fish.json",
-                    "weight": 20
+                    "weight": 6
                 },
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/cheeky_fish.json",
-                    "weight": 15
+                    "weight": 5
                 },
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/thorn_fish.json",
-                    "weight": 15
+                    "weight": 5
                 },
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/void_fish.json",
-                    "weight": 7
+                    "weight": 2
                 },
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/nemo.json",
-                    "weight": 1
+                    "weight": 1,
+                    "quality": 1
                 }
             ]
         }

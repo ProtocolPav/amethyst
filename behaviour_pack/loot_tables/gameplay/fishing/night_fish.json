@@ -6,7 +6,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:night_fish",
-                    "weight": 3,
+                    "weight": 6,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 66cm" ] }
                     ]
@@ -14,7 +14,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:night_fish",
-                    "weight": 6,
+                    "weight": 10,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 61cm" ] }
                     ]
@@ -22,7 +22,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:night_fish",
-                    "weight": 10,
+                    "weight": 24,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 56cm" ] }
                     ]
@@ -30,7 +30,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:night_fish",
-                    "weight": 12,
+                    "weight": 40,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 52cm" ] }
                     ]

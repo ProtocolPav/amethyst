@@ -21,12 +21,14 @@
                 {
                     "type": "item",
                     "name": "amethyst:sea_urchin",
-                    "weight": 6
+                    "weight": 9,
+                    "quality": 2
                 },
                 {
                     "type": "item",
                     "name": "amethyst:rainbow_shell",
-                    "weight": 1
+                    "weight": 3,
+                    "quality": 1
                 },
                 {
                     "type": "item",

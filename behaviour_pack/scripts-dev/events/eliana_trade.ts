@@ -27,14 +27,14 @@ const fishing_trades: Record<string, FishTrade> = {
     "amethyst:nemo": {
         name: "Nemo",
         sizes: {
-            "23cm": {count: 42, item: "amethyst:diamond_nugget"},
+            "23cm": {count: 30, item: "amethyst:diamond_nugget"},
         }
     },
     "amethyst:cheeky_fish": {
         name: "Cheeky Bugger",
         sizes: {
-            "60cm": {count: 4, item: "amethyst:diamond_nugget"},
-            "57cm": {count: 5, item: "amethyst:diamond_nugget"},
+            "60cm": {count: 8, item: "amethyst:diamond_nugget"},
+            "57cm": {count: 6, item: "amethyst:diamond_nugget"},
             "54cm": {count: 4, item: "amethyst:diamond_nugget"},
         }
     },
@@ -44,7 +44,7 @@ const fishing_trades: Record<string, FishTrade> = {
             "124cm": {count: 10, item: "amethyst:diamond_nugget"},
             "112cm": {count: 8, item: "amethyst:diamond_nugget"},
             "101cm": {count: 6, item: "amethyst:diamond_nugget"},
-            "90cm": {count: 3, item: "amethyst:diamond_nugget"},
+            "90cm": {count: 4, item: "amethyst:diamond_nugget"},
         }
     },
 
@@ -53,28 +53,28 @@ const fishing_trades: Record<string, FishTrade> = {
         name: "Blue Dwarf Fish",
         sizes: {
             "8cm": {count: 9, item: "amethyst:diamond_nugget"},
-            "10cm": {count: 5, item: "amethyst:diamond_nugget"},
-            "13cm": {count: 3, item: "amethyst:diamond_nugget"},
+            "10cm": {count: 6, item: "amethyst:diamond_nugget"},
+            "13cm": {count: 4, item: "amethyst:diamond_nugget"},
         }
     },
     "amethyst:thorn_fish": {
         name: "Thornfish",
         sizes: {
-            "113cm": {count: 7, item: "amethyst:diamond_nugget"},
-            "100cm": {count: 6, item: "amethyst:diamond_nugget"},
-            "84cm": {count: 5, item: "amethyst:diamond_nugget"},
-            "78cm": {count: 2, item: "amethyst:diamond_nugget"},
-            "66cm": {count: 2, item: "amethyst:diamond_nugget"},
-            "57cm": {count: 2, item: "amethyst:diamond_nugget"},
+            "113cm": {count: 10, item: "amethyst:diamond_nugget"},
+            "100cm": {count: 8, item: "amethyst:diamond_nugget"},
+            "84cm": {count: 6, item: "amethyst:diamond_nugget"},
+            "78cm": {count: 4, item: "amethyst:diamond_nugget"},
+            "66cm": {count: 3, item: "amethyst:diamond_nugget"},
+            "57cm": {count: 3, item: "amethyst:diamond_nugget"},
         }
     },
     "amethyst:tuff_fish": {
         name: "Tuffback Minnow",
         sizes: {
-            "110cm": {count: 4, item: "amethyst:diamond_nugget"},
+            "110cm": {count: 2, item: "amethyst:diamond_nugget"},
             "104cm": {count: 1, item: "amethyst:diamond_nugget"},
-            "98cm": {count: 12, item: "amethyst:sea_urchin"},
-            "91cm": {count: 6, item: "amethyst:sea_urchin"},
+            "98cm": {count: 5, item: "amethyst:sea_urchin"},
+            "91cm": {count: 3, item: "amethyst:sea_urchin"},
         }
     },
 
@@ -82,10 +82,10 @@ const fishing_trades: Record<string, FishTrade> = {
     "amethyst:dwarf_fish": {
         name: "Dwarf Fish",
         sizes: {
-            "8cm": {count: 7, item: "amethyst:diamond_nugget"},
-            "11cm": {count: 2, item: "amethyst:diamond_nugget"},
-            "14cm": {count: 5, item: "amethyst:sea_urchin"},
-            "20cm": {count: 3, item: "amethyst:sea_urchin"},
+            "8cm": {count: 4, item: "amethyst:sea_urchin"},
+            "11cm": {count: 2, item: "amethyst:sea_urchin"},
+            "14cm": {count: 2, item: "amethyst:sea_urchin"},
+            "20cm": {count: 1, item: "amethyst:sea_urchin"},
         }
     },
     "amethyst:ever_fish": {
@@ -93,27 +93,27 @@ const fishing_trades: Record<string, FishTrade> = {
         sizes: {
             "100cm": {count: 2, item: "amethyst:diamond_nugget"},
             "94cm": {count: 1, item: "amethyst:diamond_nugget"},
-            "86cm": {count: 8, item: "amethyst:sea_urchin"},
-            "82cm": {count: 7, item: "amethyst:sea_urchin"},
-            "74cm": {count: 4, item: "amethyst:sea_urchin"},
+            "86cm": {count: 4, item: "amethyst:sea_urchin"},
+            "82cm": {count: 3, item: "amethyst:sea_urchin"},
+            "74cm": {count: 2, item: "amethyst:sea_urchin"},
         }
     },
     "amethyst:night_fish": {
         name: "Night Trout",
         sizes: {
-            "66cm": {count: 4, item: "amethyst:diamond_nugget"},
-            "61cm": {count: 2, item: "amethyst:diamond_nugget"},
-            "56cm": {count: 10, item: "amethyst:sea_urchin"},
-            "52cm": {count: 5, item: "amethyst:sea_urchin"},
+            "66cm": {count: 2, item: "amethyst:diamond_nugget"},
+            "61cm": {count: 1, item: "amethyst:diamond_nugget"},
+            "56cm": {count: 4, item: "amethyst:sea_urchin"},
+            "52cm": {count: 2, item: "amethyst:sea_urchin"},
         }
     },
     "amethyst:slime_fish": {
         name: "Slimey Bass",
         sizes: {
-            "78cm": {count: 3, item: "amethyst:diamond_nugget"},
+            "78cm": {count: 2, item: "amethyst:diamond_nugget"},
             "72cm": {count: 1, item: "amethyst:diamond_nugget"},
-            "67cm": {count: 8, item: "amethyst:sea_urchin"},
-            "62cm": {count: 4, item: "amethyst:sea_urchin"},
+            "67cm": {count: 4, item: "amethyst:sea_urchin"},
+            "62cm": {count: 2, item: "amethyst:sea_urchin"},
         }
     },
 
@@ -121,21 +121,21 @@ const fishing_trades: Record<string, FishTrade> = {
     "amethyst:ember_minnow": {
         name: "Ember Minnow",
         sizes: {
-            "84cm": {count: 4, item: "amethyst:sea_urchin"},
-            "78cm": {count: 5, item: "amethyst:sea_urchin"},
-            "75cm": {count: 5, item: "amethyst:sea_urchin"},
-            "73cm": {count: 6, item: "amethyst:sea_urchin"},
-            "70cm": {count: 9, item: "amethyst:diamond_nugget"}, // Super Rare jackpot
-            "68cm": {count: 4, item: "amethyst:sea_urchin"},
+            "84cm": {count: 1, item: "amethyst:sea_urchin"},
+            "78cm": {count: 1, item: "amethyst:sea_urchin"},
+            "75cm": {count: 1, item: "amethyst:sea_urchin"},
+            "73cm": {count: 2, item: "amethyst:sea_urchin"},
+            "70cm": {count: 3, item: "amethyst:sea_urchin"},
+            "68cm": {count: 2, item: "amethyst:sea_urchin"},
         }
     },
     "amethyst:northern_chomper": {
         name: "Northern Chomper",
         sizes: {
-            "70cm": {count: 5, item: "amethyst:sea_urchin"},
-            "65cm": {count: 4, item: "amethyst:sea_urchin"},
-            "63cm": {count: 4, item: "amethyst:sea_urchin"},
-            "54cm": {count: 2, item: "amethyst:sea_urchin"},
+            "70cm": {count: 3, item: "amethyst:sea_urchin"},
+            "65cm": {count: 2, item: "amethyst:sea_urchin"},
+            "63cm": {count: 2, item: "amethyst:sea_urchin"},
+            "54cm": {count: 1, item: "amethyst:sea_urchin"},
             "50cm": {count: 1, item: "amethyst:sea_urchin"},
         }
     },

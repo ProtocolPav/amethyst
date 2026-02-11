@@ -6,7 +6,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:northern_chomper",
-                    "weight": 5,
+                    "weight": 12,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 70cm" ] }
                     ]
@@ -14,7 +14,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:northern_chomper",
-                    "weight": 8,
+                    "weight": 16,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 65cm" ] }
                     ]
@@ -22,7 +22,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:northern_chomper",
-                    "weight": 8,
+                    "weight": 14,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 63cm" ] }
                     ]
@@ -30,7 +30,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:northern_chomper",
-                    "weight": 12,
+                    "weight": 18,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 54cm" ] }
                     ]
@@ -38,7 +38,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:northern_chomper",
-                    "weight": 15,
+                    "weight": 40,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 50cm" ] }
                     ]

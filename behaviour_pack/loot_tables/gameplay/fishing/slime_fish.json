@@ -6,7 +6,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:slime_fish",
-                    "weight": 4,
+                    "weight": 6,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 78cm" ] }
                     ]
@@ -14,7 +14,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:slime_fish",
-                    "weight": 7,
+                    "weight": 12,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 72cm" ] }
                     ]
@@ -22,7 +22,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:slime_fish",
-                    "weight": 10,
+                    "weight": 26,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 67cm" ] }
                     ]
@@ -30,7 +30,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:slime_fish",
-                    "weight": 15,
+                    "weight": 36,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 62cm" ] }
                     ]

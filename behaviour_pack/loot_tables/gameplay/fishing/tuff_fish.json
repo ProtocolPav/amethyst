@@ -6,7 +6,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:tuff_fish",
-                    "weight": 2,
+                    "weight": 5,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 110cm" ] }
                     ]
@@ -14,7 +14,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:tuff_fish",
-                    "weight": 5,
+                    "weight": 10,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 104cm" ] }
                     ]
@@ -22,7 +22,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:tuff_fish",
-                    "weight": 9,
+                    "weight": 25,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 98cm" ] }
                     ]
@@ -30,7 +30,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:tuff_fish",
-                    "weight": 12,
+                    "weight": 40,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 91cm" ] }
                     ]

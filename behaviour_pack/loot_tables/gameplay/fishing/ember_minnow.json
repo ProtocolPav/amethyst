@@ -6,7 +6,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:ember_minnow",
-                    "weight": 8,
+                    "weight": 24,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 84cm" ] }
                     ]
@@ -14,7 +14,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:ember_minnow",
-                    "weight": 8,
+                    "weight": 16,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 78cm" ] }
                     ]
@@ -22,7 +22,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:ember_minnow",
-                    "weight": 8,
+                    "weight": 10,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 75cm" ] }
                     ]
@@ -30,7 +30,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:ember_minnow",
-                    "weight": 8,
+                    "weight": 6,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 73cm" ] }
                     ]
@@ -38,7 +38,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:ember_minnow",
-                    "weight": 1,
+                    "weight": 2,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 70cm" ] }
                     ]
@@ -46,7 +46,7 @@
                 {
                     "type": "item",
                     "name": "amethyst:ember_minnow",
-                    "weight": 10,
+                    "weight": 42,
                     "functions": [
                         { "function": "set_lore", "lore": [ "§r§7Size: 68cm" ] }
                     ]

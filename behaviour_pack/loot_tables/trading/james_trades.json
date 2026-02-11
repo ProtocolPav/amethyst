@@ -9,23 +9,84 @@
                             "wants": [
                                 {
                                     "item": "minecraft:cod",
-                                    "quantity": 64
+                                    "quantity": 16
                                 }
                             ],
                             "gives": [
                                 {
                                     "item": "minecraft:black_dye",
-                                    "quantity": 10
+                                    "quantity": 5
                                 }
                             ],
                             "max_uses": 99999,
-                            "reward_exp": false
+                            "reward_exp": true,
+                            "trader_exp": 1
                         },
                         {
                             "wants": [
                                 {
+                                    "item": "minecraft:salmon",
+                                    "quantity": 26
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "minecraft:green_dye",
+                                    "quantity": 12
+                                }
+                            ],
+                            "max_uses": 99999,
+                            "reward_exp": true,
+                            "trader_exp": 1
+                        },
+                        {
+                            "wants": [
+                                {
+                                    "item": "minecraft:tropical_fish",
+                                    "quantity": 32
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "minecraft:lime_dye",
+                                    "quantity": 17
+                                }
+                            ],
+                            "max_uses": 99999,
+                            "reward_exp": true,
+                            "trader_exp": 2
+                        },
+                        {
+                            "wants": [
+                                {
+                                    "item": "minecraft:pufferfish",
+                                    "quantity": 29
+                                }
+                            ],
+                            "gives": [
+                                {
+                                    "item": "minecraft:red_dye",
+                                    "quantity": 13
+                                }
+                            ],
+                            "max_uses": 99999,
+                            "reward_exp": true,
+                            "trader_exp": 2
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "total_exp_required": 5,
+            "groups": [
+                {
+                    "trades": [
+                        {
+                            "wants": [
+                                {
                                     "item": "amethyst:sea_urchin",
-                                    "quantity": 4
+                                    "quantity": 6
                                 }
                             ],
                             "gives": [
@@ -42,7 +103,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:sea_urchin",
-                                    "quantity": 2
+                                    "quantity": 3
                                 }
                             ],
                             "gives": [
@@ -59,7 +120,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:sea_urchin",
-                                    "quantity": 1
+                                    "quantity": 2
                                 }
                             ],
                             "gives": [
@@ -76,7 +137,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:sea_urchin",
-                                    "quantity": 5
+                                    "quantity": 8
                                 }
                             ],
                             "gives": [
@@ -93,7 +154,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:sea_urchin",
-                                    "quantity": 2
+                                    "quantity": 3
                                 }
                             ],
                             "gives": [
@@ -110,7 +171,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:sea_urchin",
-                                    "quantity": 4
+                                    "quantity": 6
                                 }
                             ],
                             "gives": [
@@ -127,7 +188,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:sea_urchin",
-                                    "quantity": 19
+                                    "quantity": 28
                                 }
                             ],
                             "gives": [
@@ -144,7 +205,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:sea_urchin",
-                                    "quantity": 22
+                                    "quantity": 33
                                 }
                             ],
                             "gives": [
@@ -162,47 +223,15 @@
             ]
         },
         {
-            "total_exp_required": 35,
+            "total_exp_required": 40,
             "groups": [
                 {
                     "trades": [
                         {
                             "wants": [
                                 {
-                                    "item": "minecraft:salmon",
-                                    "quantity": 128
-                                }
-                            ],
-                            "gives": [
-                                {
-                                    "item": "minecraft:green_dye",
-                                    "quantity": 12
-                                }
-                            ],
-                            "max_uses": 99999,
-                            "reward_exp": false
-                        },
-                        {
-                            "wants": [
-                                {
-                                    "item": "minecraft:tropical_fish",
-                                    "quantity": 32
-                                }
-                            ],
-                            "gives": [
-                                {
-                                    "item": "minecraft:lime_dye",
-                                    "quantity": 17
-                                }
-                            ],
-                            "max_uses": 99999,
-                            "reward_exp": false
-                        },
-                        {
-                            "wants": [
-                                {
                                     "item": "amethyst:diamond_nugget",
-                                    "quantity": 6
+                                    "quantity": 9
                                 }
                             ],
                             "gives": [
@@ -219,7 +248,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:diamond_nugget",
-                                    "quantity": 8
+                                    "quantity": 12
                                 }
                             ],
                             "gives": [
@@ -236,7 +265,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:diamond_nugget",
-                                    "quantity": 10
+                                    "quantity": 15
                                 }
                             ],
                             "gives": [
@@ -253,7 +282,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:diamond_nugget",
-                                    "quantity": 17
+                                    "quantity": 25
                                 }
                             ],
                             "gives": [
@@ -270,7 +299,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:diamond_nugget",
-                                    "quantity": 3
+                                    "quantity": 5
                                 }
                             ],
                             "gives": [
@@ -287,7 +316,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:diamond_nugget",
-                                    "quantity": 11
+                                    "quantity": 16
                                 }
                             ],
                             "gives": [
@@ -304,7 +333,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:diamond_nugget",
-                                    "quantity": 18
+                                    "quantity": 27
                                 }
                             ],
                             "gives": [
@@ -321,7 +350,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:diamond_nugget",
-                                    "quantity": 3
+                                    "quantity": 5
                                 }
                             ],
                             "gives": [
@@ -337,7 +366,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:diamond_nugget",
-                                    "quantity": 2
+                                    "quantity": 3
                                 }
                             ],
                             "gives": [
@@ -354,7 +383,7 @@
             ]
         },
         {
-            "total_exp_required": 95,
+            "total_exp_required": 100,
             "groups": [
                 {
                     "trades": [

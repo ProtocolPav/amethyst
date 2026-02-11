@@ -5,26 +5,26 @@
             "entries": [
                 {
                     "type": "item",
-                    "name": "amethyst:cheeky_fish",
-                    "weight": 12,
+                    "name": "amethyst:blue_dwarf_fish",
+                    "weight": 4,
                     "functions": [
-                        { "function": "set_lore", "lore": [ "§r§7Size: 60cm" ] }
+                        { "function": "set_lore", "lore": [ "§r§7Size: 8cm" ] }
                     ]
                 },
                 {
                     "type": "item",
-                    "name": "amethyst:cheeky_fish",
+                    "name": "amethyst:blue_dwarf_fish",
                     "weight": 6,
                     "functions": [
-                        { "function": "set_lore", "lore": [ "§r§7Size: 57cm" ] }
+                        { "function": "set_lore", "lore": [ "§r§7Size: 10cm" ] }
                     ]
                 },
                 {
                     "type": "item",
-                    "name": "amethyst:cheeky_fish",
-                    "weight": 2,
+                    "name": "amethyst:blue_dwarf_fish",
+                    "weight": 10,
                     "functions": [
-                        { "function": "set_lore", "lore": [ "§r§7Size: 54cm" ] }
+                        { "function": "set_lore", "lore": [ "§r§7Size: 13cm" ] }
                     ]
                 }
             ]
