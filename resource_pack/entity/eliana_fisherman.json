@@ -1,0 +1,40 @@
+{
+    "format_version": "1.12.0",
+    "minecraft:client_entity": {
+        "description": {
+            "identifier": "amethyst:eliana_fisherman",
+            "materials": {
+                "default": "npc"
+            },
+            "textures": {
+                "default": "textures/entity/eliana.png"
+            },
+            "geometry": {
+                "default": "geometry.npc.alex"
+            },
+            "scripts": {
+                "animate": [
+                    {
+                        "move": "query.modified_move_speed"
+                    },
+                    "look_at_target",
+                    {
+                        "baby_transform": "query.is_baby"
+                    }
+                ]
+            },
+            "animations": {
+                "look_at_target": "animation.common.look_at_target",
+                "move": "animation.npc.move",
+                "baby_transform": "animation.npc.baby_transform"
+            },
+            "render_controllers": [
+                "controller.render.default"
+            ],
+            "spawn_egg": {
+                "base_color": "#e2a011",
+                "overlay_color": "#995d0e"
+            }
+        }
+    }
+}

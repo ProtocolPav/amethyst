@@ -2,7 +2,7 @@ import {system, world} from "@minecraft/server"
 import api from "../api"
 import utils from "../utils"
 import { EntityComponentTypes, EquipmentSlot, Player } from "@minecraft/server"
-import {MinecraftBlockTypes, MinecraftEntityTypes} from "@minecraft/vanilla-data"
+import {MinecraftBlockTypes, MinecraftEntityTypes, MinecraftItemTypes} from "@minecraft/vanilla-data"
 import {interaction_preprocess} from "../utils/interaction_preprocess";
 
 export default function load_entity_event_handler() {
@@ -156,7 +156,9 @@ export default function load_entity_event_handler() {
             MinecraftEntityTypes.Strider, MinecraftEntityTypes.Pig, MinecraftEntityTypes.Boat, MinecraftEntityTypes.Camel,
 
             // Entity Containers
-            MinecraftEntityTypes.ChestBoat, MinecraftEntityTypes.ChestMinecart, MinecraftEntityTypes.HopperMinecart
+            MinecraftEntityTypes.ChestBoat, MinecraftEntityTypes.ChestMinecart, MinecraftEntityTypes.HopperMinecart,
+
+            "amethyst:james_collector"
         ]
 
         if (

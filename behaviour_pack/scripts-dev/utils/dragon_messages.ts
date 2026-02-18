@@ -1,4 +1,4 @@
-import {world} from "@minecraft/server";
+import {VanillaEntityIdentifier, world} from "@minecraft/server";
 import {MinecraftDimensionTypes} from "@minecraft/vanilla-data";
 
 export default class DragonHeartMessage {
@@ -77,7 +77,7 @@ export default class DragonHeartMessage {
                 const groundY = dimension.getTopmostBlock({x: x, z: z})?.y || 70
 
                 // Spawn the mob at ground level
-                dimension.spawnEntity(mobType, { x: x, y: groundY + 1, z: z });
+                dimension.spawnEntity(mobType as VanillaEntityIdentifier, { x: x, y: groundY + 1, z: z });
                 mobIndex++;
             }
         }
