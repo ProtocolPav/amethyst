@@ -22,14 +22,6 @@ function togetherness(player: Player): void {
             player.addEffect(healthboost, 40, {amplifier: effect_level-1, showParticles: false})
         }
     }
-
-    if (offhand?.typeId === 'amethyst:totem_of_togetherness' && offhand.getLore().length === 0) {
-        offhand.setLore(['\n§r§qEverthorn Christmas 2024'])
-        equippable?.setEquipment(EquipmentSlot.Offhand, offhand)
-    } else if (mainhand?.typeId === 'amethyst:totem_of_togetherness' && mainhand.getLore().length === 0) {
-        mainhand.setLore(['\n§r§qEverthorn Christmas 2024'])
-        equippable?.setEquipment(EquipmentSlot.Mainhand, mainhand)
-    }
 }
 
 export default function load_totem_o_togetherness() {
