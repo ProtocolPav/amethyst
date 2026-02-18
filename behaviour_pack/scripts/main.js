@@ -5816,13 +5816,6 @@ function togetherness(player) {
       player.addEffect(healthboost, 40, { amplifier: effect_level - 1, showParticles: false });
     }
   }
-  if (offhand?.typeId === "amethyst:totem_of_togetherness" && offhand.getLore().length === 0) {
-    offhand.setLore(["\n\xA7r\xA7qEverthorn Christmas 2024"]);
-    equippable?.setEquipment(EquipmentSlot4.Offhand, offhand);
-  } else if (mainhand?.typeId === "amethyst:totem_of_togetherness" && mainhand.getLore().length === 0) {
-    mainhand.setLore(["\n\xA7r\xA7qEverthorn Christmas 2024"]);
-    equippable?.setEquipment(EquipmentSlot4.Mainhand, mainhand);
-  }
 }
 function load_totem_o_togetherness() {
   system12.runInterval(() => {
@@ -6391,7 +6384,7 @@ var fishing_trades = {
   "amethyst:tuff_fish": {
     name: "Tuffback Minnow",
     sizes: {
-      "110cm": { count: 2, item: "amethyst:diamond_nugget" },
+      "110cm": { count: 3, item: "amethyst:diamond_nugget" },
       "104cm": { count: 1, item: "amethyst:diamond_nugget" },
       "98cm": { count: 5, item: "amethyst:sea_urchin" },
       "91cm": { count: 3, item: "amethyst:sea_urchin" }
