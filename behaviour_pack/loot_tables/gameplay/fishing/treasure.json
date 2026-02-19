@@ -6,17 +6,17 @@
                 {
                     "type": "item",
                     "name": "minecraft:nautilus_shell",
-                    "weight": 10
+                    "weight": 35
                 },
                 {
                     "type": "item",
                     "name": "minecraft:name_tag",
-                    "weight": 10
+                    "weight": 35
                 },
                 {
                     "type": "item",
                     "name": "minecraft:saddle",
-                    "weight": 10
+                    "weight": 35
                 },
                 {
                     "type": "item",
@@ -27,13 +27,12 @@
                 {
                     "type": "item",
                     "name": "amethyst:rainbow_shell",
-                    "weight": 3,
-                    "quality": 1
+                    "weight": 1
                 },
                 {
                     "type": "item",
                     "name": "minecraft:diamond_leggings",
-                    "weight": 10,
+                    "weight": 13,
                     "functions": [
                         {
                             "function": "set_damage",
@@ -53,7 +52,7 @@
                 {
                     "type": "item",
                     "name": "minecraft:bow",
-                    "weight": 10,
+                    "weight": 13,
                     "functions": [
                         {
                             "function": "set_damage",
@@ -72,7 +71,7 @@
                 {
                     "type": "item",
                     "name": "minecraft:fishing_rod",
-                    "weight": 10,
+                    "weight": 13,
                     "functions": [
                         {
                             "function": "set_damage",
@@ -92,7 +91,7 @@
                 {
                     "type": "item",
                     "name": "minecraft:netherite_hoe",
-                    "weight": 4,
+                    "weight": 7,
                     "functions": [
                         {
                             "function": "set_damage",
@@ -112,7 +111,7 @@
                 {
                     "type": "item",
                     "name": "minecraft:diamond_sword",
-                    "weight": 10,
+                    "weight": 12,
                     "functions": [
                         {
                             "function": "set_damage",

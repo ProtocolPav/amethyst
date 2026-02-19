@@ -6,42 +6,42 @@
                 {
                     "type": "item",
                     "name": "minecraft:fish",
-                    "weight": 180
+                    "weight": 290
                 },
                 {
                     "type": "item",
                     "name": "minecraft:salmon",
-                    "weight": 180
+                    "weight": 290
                 },
                 {
                     "type": "item",
                     "name": "minecraft:clownfish",
-                    "weight": 60
+                    "weight": 90
                 },
                 {
                     "type": "item",
                     "name": "minecraft:pufferfish",
-                    "weight": 100
+                    "weight": 150
                 },
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/northern_chomper.json",
-                    "weight": 160
+                    "weight": 210
                 },
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/ember_minnow.json",
-                    "weight": 160
+                    "weight": 210
                 },
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/dwarf_fish.json",
-                    "weight": 70
+                    "weight": 90
                 },
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/slime_fish.json",
-                    "weight": 70
+                    "weight": 20
                 },
                 {
                     "type": "loot_table",
@@ -61,12 +61,12 @@
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/blue_dwarf_fish.json",
-                    "weight": 6
+                    "weight": 5
                 },
                 {
                     "type": "loot_table",
                     "name": "loot_tables/gameplay/fishing/cheeky_fish.json",
-                    "weight": 5
+                    "weight": 3
                 },
                 {
                     "type": "loot_table",

@@ -86,7 +86,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:sea_urchin",
-                                    "quantity": 6
+                                    "quantity": 9
                                 }
                             ],
                             "gives": [
@@ -103,7 +103,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:sea_urchin",
-                                    "quantity": 3
+                                    "quantity": 6
                                 }
                             ],
                             "gives": [
@@ -120,7 +120,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:sea_urchin",
-                                    "quantity": 2
+                                    "quantity": 4
                                 }
                             ],
                             "gives": [
@@ -137,7 +137,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:sea_urchin",
-                                    "quantity": 8
+                                    "quantity": 12
                                 }
                             ],
                             "gives": [
@@ -154,7 +154,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:sea_urchin",
-                                    "quantity": 3
+                                    "quantity": 5
                                 }
                             ],
                             "gives": [
@@ -171,7 +171,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:sea_urchin",
-                                    "quantity": 6
+                                    "quantity": 9
                                 }
                             ],
                             "gives": [
@@ -188,7 +188,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:sea_urchin",
-                                    "quantity": 28
+                                    "quantity": 38
                                 }
                             ],
                             "gives": [
@@ -205,7 +205,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:sea_urchin",
-                                    "quantity": 33
+                                    "quantity": 53
                                 }
                             ],
                             "gives": [
@@ -231,7 +231,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:diamond_nugget",
-                                    "quantity": 9
+                                    "quantity": 14
                                 }
                             ],
                             "gives": [
@@ -282,7 +282,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:diamond_nugget",
-                                    "quantity": 25
+                                    "quantity": 35
                                 }
                             ],
                             "gives": [
@@ -299,7 +299,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:diamond_nugget",
-                                    "quantity": 5
+                                    "quantity": 8
                                 }
                             ],
                             "gives": [
@@ -316,7 +316,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:diamond_nugget",
-                                    "quantity": 16
+                                    "quantity": 21
                                 }
                             ],
                             "gives": [
@@ -333,7 +333,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:diamond_nugget",
-                                    "quantity": 27
+                                    "quantity": 36
                                 }
                             ],
                             "gives": [
@@ -350,7 +350,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:diamond_nugget",
-                                    "quantity": 5
+                                    "quantity": 8
                                 }
                             ],
                             "gives": [
@@ -366,7 +366,7 @@
                             "wants": [
                                 {
                                     "item": "amethyst:diamond_nugget",
-                                    "quantity": 3
+                                    "quantity": 6
                                 }
                             ],
                             "gives": [
@@ -397,7 +397,7 @@
                             "gives": [
                                 {
                                     "item": "minecraft:echo_shard",
-                                    "quantity": 3
+                                    "quantity": 1
                                 }
                             ],
                             "max_uses": 99999,
@@ -457,7 +457,7 @@
                                             "enchants": [
                                                 {
                                                     "id": "swift_sneak",
-                                                    "level": 3
+                                                    "level": 1
                                                 }
                                             ]
                                         }
@@ -494,7 +494,7 @@
                             ],
                             "gives": [
                                 {
-                                    "item": "minecraft:netherite_block",
+                                    "item": "minecraft:netherite_ingot",
                                     "quantity": 1
                                 }
                             ],
