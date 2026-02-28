@@ -25,9 +25,21 @@ load_world_event_handlers(guild_id)
 system.beforeEvents.startup.subscribe(initEvent => {
     system.run(() => {
         api.Relay.event(
-            'AmethystConnect Plugin successfully loaded',
+            'Amethyst successfully loaded',
             "Don't see this on server startup? Ping a CM! It's important!",
-            'start'
+            'other'
         )
     })
+
+    const loreCommand: CustomCommand = {
+        name: "amethyst:loreadd",
+        description: "Add one line of lore to the item you're holding",
+        permissionLevel: CustomCommandPermissionLevel.Admin,
+        optionalParameters: [{ type: CustomCommandParamType.Integer, name: "celebrationSize" }],
+    };
+    initEvent.customCommandRegistry.registerCommand(
+        loreCommand,
+        (origin, args) => {}
+    )
+
 })
