@@ -6555,8 +6555,15 @@ function load_world_event_handlers(guild_id2) {
 }
 
 // behaviour_pack/scripts-dev/main.ts
-import { system as system20 } from "@minecraft/server";
-var guild_id = "611008530077712395";
+import {
+  CommandPermissionLevel,
+  CustomCommandParamType,
+  CustomCommandStatus,
+  EntityComponentTypes as EntityComponentTypes14,
+  EquipmentSlot as EquipmentSlot11,
+  system as system20
+} from "@minecraft/server";
+var guild_id = "1213827104945471538";
 WorldCache.load_world(guild_id).then();
 load_loops();
 load_custom_components(guild_id);
@@ -6564,9 +6571,41 @@ load_world_event_handlers(guild_id);
 system20.beforeEvents.startup.subscribe((initEvent) => {
   system20.run(() => {
     api_default.Relay.event(
-      "AmethystConnect Plugin successfully loaded",
+      "Amethyst successfully loaded",
       "Don't see this on server startup? Ping a CM! It's important!",
-      "start"
+      "other"
     );
   });
+  const loreCommand = {
+    name: "amethyst:lore",
+    description: "Add a line to the lore, or remove all lore if blank",
+    permissionLevel: CommandPermissionLevel.GameDirectors,
+    optionalParameters: [{ type: CustomCommandParamType.String, name: "text" }]
+  };
+  initEvent.customCommandRegistry.registerCommand(
+    loreCommand,
+    (origin, ...args) => {
+      try {
+        const mainhand = origin.sourceEntity?.getComponent(EntityComponentTypes14.Equippable)?.getEquipment(EquipmentSlot11.Mainhand);
+        system20.run(() => {
+          if (args[0] === null || args[0] === void 0 || args[0] === "") {
+            mainhand?.setLore();
+          } else {
+            const lore = mainhand?.getLore();
+            lore?.push(args[0]);
+            mainhand?.setLore(lore);
+          }
+          origin.sourceEntity?.getComponent(EntityComponentTypes14.Equippable)?.setEquipment(EquipmentSlot11.Mainhand, mainhand);
+        });
+      } catch (e) {
+        return {
+          status: CustomCommandStatus.Failure,
+          message: e.message
+        };
+      }
+      return {
+        status: CustomCommandStatus.Success
+      };
+    }
+  );
 });
