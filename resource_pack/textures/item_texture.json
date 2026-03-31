@@ -33,9 +33,17 @@
 			"textures": "textures/items/trophy_third.png"
 		},
 		"diamond_nugget": {
-			"textures": "textures/items/diamond_nugget_v2.png"
+			"textures": "textures/items/diamond_nugget.png"
 		},
-
+        "beer": {
+          "textures": "textures/items/beer.png"
+        },
+        "wine": {
+            "textures": "textures/items/red_wine.png"
+        },
+        "glow_wine": {
+            "textures": "textures/items/golden_rum.png"
+        },
         "blue_dwarf_fish": {
             "textures": "textures/items/fish/blue_dwarf_fish.png"
         },
