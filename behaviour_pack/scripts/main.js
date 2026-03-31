@@ -3497,7 +3497,7 @@ var secondsInWeek = secondsInDay * 7;
 var secondsInYear = secondsInDay * daysInYear;
 var secondsInMonth = secondsInYear / 12;
 var secondsInQuarter = secondsInMonth * 3;
-var constructFromSymbol = Symbol.for("constructDateFrom");
+var constructFromSymbol = /* @__PURE__ */ Symbol.for("constructDateFrom");
 
 // node_modules/date-fns/constructFrom.js
 function constructFrom(date, value) {
@@ -4410,6 +4410,18 @@ function normalizeDateString(datetime) {
     return `.${digits.padEnd(6, "0")}`;
   });
 }
+function getWeightedChoice(choices) {
+  const total_weight = choices.reduce((sum, choice) => sum + choice.weight, 0);
+  const random_value = Math.random() * total_weight;
+  let cumulative_weight = 0;
+  for (const choice of choices) {
+    cumulative_weight += choice.weight;
+    if (random_value < cumulative_weight) {
+      return choice.item;
+    }
+  }
+  return choices[0].item;
+}
 var emojis = {
   EVERTHORN: "\uE600",
   NUGS: "\uE601",
@@ -4442,7 +4454,8 @@ var utils = {
   EvilActs,
   Glitches,
   normalizeDateString,
-  emojis
+  emojis,
+  getWeightedChoice
 };
 var utils_default = utils;
 
@@ -5631,6 +5644,35 @@ function load_heal_dragon_component() {
   });
 }
 
+// behaviour_pack/scripts-dev/components/alcohol.ts
+import {
+  system as system9
+} from "@minecraft/server";
+function load_alcohol_component() {
+  async function on_drink(event) {
+    const player = event.source;
+    const drunk_data_string = player.getDynamicProperty("amethyst:drunk_data");
+    if (!drunk_data_string) {
+      player.setDynamicProperty("amethyst:drunk_data", JSON.stringify({ type: event.itemStack.typeId, drinks: 1 }));
+    } else {
+      let drunk_data = JSON.parse(drunk_data_string);
+      drunk_data.drinks += 1;
+      drunk_data.type = event.itemStack.typeId;
+      player.setDynamicProperty("amethyst:drunk_data", JSON.stringify(drunk_data));
+    }
+  }
+  system9.beforeEvents.startup.subscribe((initEvent) => {
+    initEvent.itemComponentRegistry.registerCustomComponent(
+      "amethyst:alcohol",
+      {
+        async onConsume(event) {
+          await on_drink(event);
+        }
+      }
+    );
+  });
+}
+
 // behaviour_pack/scripts-dev/components/index.ts
 function load_custom_components(guild_id2) {
   load_fungus_spreading_component();
@@ -5639,10 +5681,11 @@ function load_custom_components(guild_id2) {
   load_altar_component(guild_id2);
   load_reactor_activate_component();
   load_heal_dragon_component();
+  load_alcohol_component();
 }
 
 // behaviour_pack/scripts-dev/loops/elytra_no_mending.ts
-import { EquipmentSlot as EquipmentSlot3, world as world8, system as system9, EntityComponentTypes as EntityComponentTypes6, ItemComponentTypes as ItemComponentTypes4, EnchantmentType } from "@minecraft/server";
+import { EquipmentSlot as EquipmentSlot3, world as world8, system as system10, EntityComponentTypes as EntityComponentTypes6, ItemComponentTypes as ItemComponentTypes4, EnchantmentType } from "@minecraft/server";
 function elytraCheck(player) {
   const player_equipment = player.getComponent(EntityComponentTypes6.Equippable);
   const item = player_equipment?.getEquipment(EquipmentSlot3.Chest);
@@ -5672,7 +5715,7 @@ function elytraCheck(player) {
   }
 }
 function load_elytra_mending_checker() {
-  system9.runInterval(() => {
+  system10.runInterval(() => {
     let playerlist = world8.getPlayers();
     playerlist.forEach((player) => {
       elytraCheck(player);
@@ -5682,7 +5725,7 @@ function load_elytra_mending_checker() {
 }
 
 // behaviour_pack/scripts-dev/loops/border.ts
-import { world as world9, system as system10, EntityDamageCause as EntityDamageCause2 } from "@minecraft/server";
+import { world as world9, system as system11, EntityDamageCause as EntityDamageCause2 } from "@minecraft/server";
 function borderCheck(player, dimensionID, border_size, warning_range, outside) {
   const position = player.location;
   const distance_2d = Math.sqrt(position.x ** 2 + position.z ** 2);
@@ -5710,7 +5753,7 @@ function borderCheck(player, dimensionID, border_size, warning_range, outside) {
 function load_world_border() {
   let players_100_blocks_away = { overworld: [], nether: [], end: [] };
   let players_outside_border = { overworld: [], nether: [], end: [] };
-  system10.runInterval(() => {
+  system11.runInterval(() => {
     let players = {
       overworld: world9.getDimension(MinecraftDimensionTypes.Overworld).getPlayers(),
       nether: world9.getDimension(MinecraftDimensionTypes.Nether).getPlayers(),
@@ -5730,7 +5773,7 @@ function load_world_border() {
 }
 
 // behaviour_pack/scripts-dev/loops/quests.ts
-import { system as system11, world as world10 } from "@minecraft/server";
+import { system as system12, world as world10 } from "@minecraft/server";
 async function check_quests() {
   try {
     if (!api_default.Interaction.is_processing()) {
@@ -5788,17 +5831,17 @@ async function display_timer() {
   }
 }
 function load_quest_loop() {
-  system11.runInterval(async () => {
+  system12.runInterval(async () => {
     await check_quests();
   }, 1);
-  system11.runInterval(async () => {
+  system12.runInterval(async () => {
     await display_timer();
   }, 10);
   console.log("[Loops] Loaded Quests Loop");
 }
 
 // behaviour_pack/scripts-dev/loops/totem_of_togetherness.ts
-import { EntityComponentTypes as EntityComponentTypes7, EquipmentSlot as EquipmentSlot4, system as system12, world as world11 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes7, EquipmentSlot as EquipmentSlot4, system as system13, world as world11 } from "@minecraft/server";
 var healthboost = MinecraftEffectTypes.HealthBoost;
 function togetherness(player) {
   const position = player.location;
@@ -5818,7 +5861,7 @@ function togetherness(player) {
   }
 }
 function load_totem_o_togetherness() {
-  system12.runInterval(() => {
+  system13.runInterval(() => {
     let playerlist = world11.getPlayers();
     playerlist.forEach((player) => {
       togetherness(player);
@@ -5828,7 +5871,7 @@ function load_totem_o_togetherness() {
 }
 
 // behaviour_pack/scripts-dev/loops/location.ts
-import { EntityComponentTypes as EntityComponentTypes8, EquipmentSlot as EquipmentSlot5, system as system13, world as world12, TicksPerSecond as TicksPerSecond7 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes8, EquipmentSlot as EquipmentSlot5, system as system14, world as world12, TicksPerSecond as TicksPerSecond8 } from "@minecraft/server";
 function location_log(player) {
   const head_gear = player.getComponent(EntityComponentTypes8.Equippable)?.getEquipment(EquipmentSlot5.Head);
   const check_list = [
@@ -5852,17 +5895,17 @@ function location_log(player) {
   }
 }
 function load_location_logger() {
-  system13.runInterval(() => {
+  system14.runInterval(() => {
     let playerlist = world12.getPlayers();
     playerlist.forEach((player) => {
       location_log(player);
     });
-  }, TicksPerSecond7 * 5);
+  }, TicksPerSecond8 * 5);
   console.log("[Loops] Loaded Location Loop");
 }
 
 // behaviour_pack/scripts-dev/loops/champion_set.ts
-import { EntityComponentTypes as EntityComponentTypes9, EquipmentSlot as EquipmentSlot6, MolangVariableMap, system as system14, world as world13 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes9, EquipmentSlot as EquipmentSlot6, MolangVariableMap, system as system15, world as world13 } from "@minecraft/server";
 function champion(player) {
   const molang = new MolangVariableMap();
   molang.setColorRGB("variable.color", { red: 1, green: 0.913, blue: 0.576 });
@@ -5884,13 +5927,133 @@ function champion(player) {
   }
 }
 function load_champion_set() {
-  system14.runInterval(() => {
+  system15.runInterval(() => {
     let playerlist = world13.getPlayers();
     playerlist.forEach((player) => {
       champion(player);
     });
   }, 4);
   console.log("[Loops] Loaded Champion Set Loop");
+}
+
+// behaviour_pack/scripts-dev/loops/drunk.ts
+import { system as system16, TicksPerSecond as TicksPerSecond9, world as world14 } from "@minecraft/server";
+function sober_up(drunk_data) {
+  const sober_chance = 0.06;
+  const drunk_up_chance = 5e-3 * drunk_data.drinks;
+  if (Math.random() < sober_chance) {
+    drunk_data.drinks -= 1;
+  } else if (Math.random() < drunk_up_chance) {
+    drunk_data.drinks += 1;
+  }
+  return drunk_data;
+}
+function cumulative_drunk_effects(player, drunk_data) {
+  player.addEffect(MinecraftEffectTypes.Oozing, TicksPerSecond9 * 2);
+  if (drunk_data.drinks > 4) {
+    player.addEffect(MinecraftEffectTypes.Hunger, TicksPerSecond9 * drunk_data.drinks);
+  }
+  if (drunk_data.drinks > 18) {
+    player.addEffect(MinecraftEffectTypes.Slowness, TicksPerSecond9 * 2, { amplifier: 3 });
+  }
+  if (drunk_data.drinks > 20) {
+    player.addEffect(MinecraftEffectTypes.FatalPoison, TicksPerSecond9 * 2);
+  }
+}
+function drunk(player) {
+  const drunk_data_string = player.getDynamicProperty("amethyst:drunk_data");
+  if (drunk_data_string) {
+    let drunk_data = JSON.parse(drunk_data_string);
+    let effect_choices = [];
+    cumulative_drunk_effects(player, drunk_data);
+    if (drunk_data.type === "amethyst:beer") {
+      effect_choices = [
+        { item: "fart", weight: 2 },
+        { item: "blink", weight: 3 },
+        { item: "nausea", weight: 2 },
+        { item: "burp", weight: 4 },
+        { item: "slowness", weight: 1 },
+        { item: "none", weight: 3 }
+      ];
+    } else if (drunk_data.type === "amethyst:wine") {
+      effect_choices = [
+        { item: "blink", weight: 3 },
+        { item: "nausea", weight: 1 },
+        { item: "slowness", weight: 2 },
+        { item: "laugh", weight: 4 }
+      ];
+    } else if (drunk_data.type === "amethyst:glow_wine") {
+      effect_choices = [
+        { item: "blink", weight: 3 },
+        { item: "nausea", weight: 1 },
+        { item: "burp", weight: 1 },
+        { item: "laugh", weight: 5 },
+        { item: "night_vision", weight: 4 },
+        { item: "speed", weight: 2 }
+      ];
+    }
+    drunk_data = drunk_effects(player, drunk_data, effect_choices);
+    drunk_data = sober_up(drunk_data);
+    if (drunk_data.drinks <= 0) {
+      player.camera.setFov({ easeOptions: { easeTime: 2.5 } });
+      player.setDynamicProperty("amethyst:drunk_data", void 0);
+    } else {
+      player.setDynamicProperty("amethyst:drunk_data", JSON.stringify(drunk_data));
+    }
+  }
+}
+function drunk_effects(player, drunk_data, effect_choices) {
+  const dimension = player.dimension;
+  const location = player.location;
+  const target_fov_level = Math.max(45, 73 - drunk_data.drinks * 2);
+  if (drunk_data.fov_level !== target_fov_level) {
+    drunk_data.fov_level = target_fov_level;
+    player.camera.setFov({ fov: drunk_data.fov_level, easeOptions: { easeTime: 4 } });
+  }
+  const effect_chance = 0.11 + drunk_data.drinks * 0.04;
+  if (Math.random() < effect_chance) {
+    const chosen_effect = utils_default.getWeightedChoice(effect_choices);
+    if (chosen_effect === "fart") {
+      dimension.playSound("fart", location, { volume: 1, pitch: Math.max(0.45, Math.random() * 1.5) });
+      const particle_location = { ...location };
+      particle_location.y += 1;
+      dimension.spawnParticle("minecraft:explosion_particle", particle_location);
+    } else if (chosen_effect === "burp") {
+      dimension.playSound("burp", location, { volume: 1, pitch: Math.max(0.7, Math.random() * 1.5) });
+      const particle_location = { ...location };
+      particle_location.y += 2;
+      dimension.spawnParticle("minecraft:explosion_particle", particle_location);
+    } else if (chosen_effect === "laugh") {
+      dimension.playSound("laugh", location, { volume: 1, pitch: Math.max(0.83, Math.random() * 1.7) });
+    } else if (chosen_effect === "blink") {
+      player.camera.fade({ fadeTime: { fadeInTime: 0.5, holdTime: 0.1, fadeOutTime: 0.25 } });
+    } else if (chosen_effect === "nausea") {
+      player.addEffect(MinecraftEffectTypes.Nausea, TicksPerSecond9 * drunk_data.drinks * 2.5);
+    } else if (chosen_effect === "slowness") {
+      player.addEffect(MinecraftEffectTypes.Slowness, TicksPerSecond9 * drunk_data.drinks);
+    } else if (chosen_effect === "night_vision") {
+      player.addEffect(MinecraftEffectTypes.NightVision, TicksPerSecond9 * drunk_data.drinks);
+    } else if (chosen_effect === "speed") {
+      player.addEffect(MinecraftEffectTypes.Speed, TicksPerSecond9 * drunk_data.drinks);
+    }
+  }
+  return drunk_data;
+}
+function load_drunk() {
+  system16.runInterval(() => {
+    let playerlist = world14.getPlayers();
+    playerlist.forEach((player) => {
+      drunk(player);
+    });
+  }, TicksPerSecond9);
+  world14.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
+    let player = spawn_event.player;
+    if (player.getDynamicProperty("amethyst:drunk_data")) {
+      player.camera.setFov();
+      player.setDynamicProperty("amethyst:drunk_data", void 0);
+    }
+  });
+  console.log("[Loops] Loaded Drunk Loop");
 }
 
 // behaviour_pack/scripts-dev/loops/index.ts
@@ -5901,11 +6064,12 @@ function load_loops() {
   load_totem_o_togetherness();
   load_location_logger();
   load_champion_set();
+  load_drunk();
 }
 
 // behaviour_pack/scripts-dev/events/blocks.ts
-import { world as world14, system as system15 } from "@minecraft/server";
-import { EntityComponentTypes as EntityComponentTypes10, EquipmentSlot as EquipmentSlot7 } from "@minecraft/server";
+import { world as world15, system as system17 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes11, EquipmentSlot as EquipmentSlot8 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/utils/interaction_preprocess.ts
 function interaction_preprocess(interaction, quest) {
@@ -5919,14 +6083,14 @@ function interaction_preprocess(interaction, quest) {
 
 // behaviour_pack/scripts-dev/events/blocks.ts
 function load_block_event_handler() {
-  world14.beforeEvents.playerBreakBlock.subscribe(async (event) => {
+  world15.beforeEvents.playerBreakBlock.subscribe(async (event) => {
     const block_id = event.block.typeId;
     const block_location = [event.block.x, event.block.y, event.block.z];
     const dimension = event.player.dimension;
-    const mainhand = event.player.getComponent(EntityComponentTypes10.Equippable)?.getEquipment(EquipmentSlot7.Mainhand);
+    const mainhand = event.player.getComponent(EntityComponentTypes11.Equippable)?.getEquipment(EquipmentSlot8.Mainhand);
     const thorny_user = api_default.ThornyUser.fetch_user(event.player.name);
     const active_quest = await api_default.QuestProgress.get_quest_progress(thorny_user);
-    system15.run(() => {
+    system17.run(() => {
       const interaction = new api_default.Interaction(
         {
           thorny_id: thorny_user?.thorny_id ?? 0,
@@ -5943,12 +6107,12 @@ function load_block_event_handler() {
       }
     });
   });
-  world14.afterEvents.playerPlaceBlock.subscribe((event) => {
+  world15.afterEvents.playerPlaceBlock.subscribe((event) => {
     const block_id = event.block.typeId;
     const block_location = [event.block.x, event.block.y, event.block.z];
     const dimension = event.player.dimension;
-    const mainhand = event.player.getComponent(EntityComponentTypes10.Equippable)?.getEquipment(EquipmentSlot7.Mainhand);
-    system15.run(() => {
+    const mainhand = event.player.getComponent(EntityComponentTypes11.Equippable)?.getEquipment(EquipmentSlot8.Mainhand);
+    system17.run(() => {
       const interaction = new api_default.Interaction(
         {
           thorny_id: api_default.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
@@ -5962,11 +6126,11 @@ function load_block_event_handler() {
       interaction.post_interaction();
     });
   });
-  world14.afterEvents.playerInteractWithBlock.subscribe((event) => {
+  world15.afterEvents.playerInteractWithBlock.subscribe((event) => {
     const block_id = event.block.typeId;
     const block_location = [event.block.x, event.block.y, event.block.z];
     const dimension = event.player.dimension;
-    const mainhand = event.player.getComponent(EntityComponentTypes10.Equippable)?.getEquipment(EquipmentSlot7.Mainhand);
+    const mainhand = event.player.getComponent(EntityComponentTypes11.Equippable)?.getEquipment(EquipmentSlot8.Mainhand);
     const all_blocks = [
       // Containers
       MinecraftBlockTypes.Chest,
@@ -6085,7 +6249,7 @@ function load_block_event_handler() {
       MinecraftBlockTypes.WaxedWeatheredCopperTrapdoor
     ];
     if (all_blocks.includes(block_id) && !(event.beforeItemStack?.typeId === block_id && event.itemStack?.amount !== event.beforeItemStack?.amount)) {
-      system15.run(() => {
+      system17.run(() => {
         const interaction = new api_default.Interaction(
           {
             thorny_id: api_default.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
@@ -6103,15 +6267,15 @@ function load_block_event_handler() {
 }
 
 // behaviour_pack/scripts-dev/events/chat.ts
-import { system as system16, world as world15 } from "@minecraft/server";
+import { system as system18, world as world16 } from "@minecraft/server";
 function load_chat_handler() {
-  world15.beforeEvents.chatSend.subscribe((chat_event) => {
+  world16.beforeEvents.chatSend.subscribe((chat_event) => {
     const gamertag = chat_event.sender.name;
     const thorny_user = api_default.ThornyUser.fetch_user(gamertag);
-    world15.sendMessage({
+    world16.sendMessage({
       rawtext: [{ text: `${thorny_user?.get_role_display()} \xA77${gamertag}:\xA7r ${chat_event.message}` }]
     });
-    system16.run(() => {
+    system18.run(() => {
       api_default.Relay.message(gamertag, chat_event.message);
     });
     chat_event.cancel = true;
@@ -6119,9 +6283,9 @@ function load_chat_handler() {
 }
 
 // behaviour_pack/scripts-dev/events/connections.ts
-import { world as world16 } from "@minecraft/server";
+import { world as world17 } from "@minecraft/server";
 function load_connections_handler(guild_id2) {
-  world16.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
+  world17.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
     if (spawn_event.initialSpawn) {
       try {
         const thorny_user = await api_default.ThornyUser.get_user_from_api(guild_id2, spawn_event.player.name);
@@ -6138,7 +6302,7 @@ function load_connections_handler(guild_id2) {
       }
     }
   });
-  world16.afterEvents.playerLeave.subscribe((leave_event) => {
+  world17.afterEvents.playerLeave.subscribe((leave_event) => {
     const thorny_user = api_default.ThornyUser.fetch_user(leave_event.playerName);
     if (thorny_user) {
       api_default.QuestProgress.clear_cache(thorny_user);
@@ -6149,14 +6313,14 @@ function load_connections_handler(guild_id2) {
 }
 
 // behaviour_pack/scripts-dev/events/entities.ts
-import { system as system17, world as world17 } from "@minecraft/server";
-import { EntityComponentTypes as EntityComponentTypes12, EquipmentSlot as EquipmentSlot9, Player as Player12 } from "@minecraft/server";
+import { system as system19, world as world18 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes13, EquipmentSlot as EquipmentSlot10, Player as Player14 } from "@minecraft/server";
 function load_entity_event_handler() {
-  world17.afterEvents.entityDie.subscribe(async (event) => {
-    if (event.damageSource.damagingEntity instanceof Player12) {
+  world18.afterEvents.entityDie.subscribe(async (event) => {
+    if (event.damageSource.damagingEntity instanceof Player14) {
       const player = event.damageSource.damagingEntity;
       const dimension = player.dimension;
-      const mainhand = player.getComponent(EntityComponentTypes12.Equippable)?.getEquipment(EquipmentSlot9.Mainhand);
+      const mainhand = player.getComponent(EntityComponentTypes13.Equippable)?.getEquipment(EquipmentSlot10.Mainhand);
       const killer_thorny_user = api_default.ThornyUser.fetch_user(player.name);
       const killer_active_quest = await api_default.QuestProgress.get_quest_progress(killer_thorny_user);
       const interaction = new api_default.Interaction(
@@ -6169,9 +6333,9 @@ function load_entity_event_handler() {
           dimension: dimension.id
         }
       );
-      if (event.deadEntity instanceof Player12) {
+      if (event.deadEntity instanceof Player14) {
         const dead_player = event.deadEntity;
-        const dead_mainhand = dead_player.getComponent(EntityComponentTypes12.Equippable)?.getEquipment(EquipmentSlot9.Mainhand);
+        const dead_mainhand = dead_player.getComponent(EntityComponentTypes13.Equippable)?.getEquipment(EquipmentSlot10.Mainhand);
         const dead_thorny_user = api_default.ThornyUser.fetch_user(dead_player.name);
         interaction.reference = dead_player.name;
         const death_interaction = new api_default.Interaction(
@@ -6195,11 +6359,11 @@ function load_entity_event_handler() {
       if (interaction_preprocess(interaction, killer_active_quest)) {
         api_default.Interaction.enqueue(interaction);
       }
-    } else if (event.deadEntity instanceof Player12 && event.damageSource.damagingEntity) {
+    } else if (event.deadEntity instanceof Player14 && event.damageSource.damagingEntity) {
       const killer = event.damageSource.damagingEntity;
       const player = event.deadEntity;
       const dimension = player.dimension;
-      const mainhand = player.getComponent(EntityComponentTypes12.Equippable)?.getEquipment(EquipmentSlot9.Mainhand);
+      const mainhand = player.getComponent(EntityComponentTypes13.Equippable)?.getEquipment(EquipmentSlot10.Mainhand);
       const thorny_user = api_default.ThornyUser.fetch_user(player.name);
       const active_quest = await api_default.QuestProgress.get_quest_progress(thorny_user);
       const death_interaction = new api_default.Interaction(
@@ -6215,10 +6379,10 @@ function load_entity_event_handler() {
       death_interaction.post_interaction();
       api_default.Interaction.enqueue(death_interaction);
       api_default.Relay.event(utils_default.DeathMessage.random_pve(player.name, killer.typeId), "", "other");
-    } else if (event.deadEntity instanceof Player12 && !event.damageSource.damagingEntity) {
+    } else if (event.deadEntity instanceof Player14 && !event.damageSource.damagingEntity) {
       const player = event.deadEntity;
       const dimension = player.dimension;
-      const mainhand = player.getComponent(EntityComponentTypes12.Equippable)?.getEquipment(EquipmentSlot9.Mainhand);
+      const mainhand = player.getComponent(EntityComponentTypes13.Equippable)?.getEquipment(EquipmentSlot10.Mainhand);
       const thorny_user = api_default.ThornyUser.fetch_user(player.name);
       const active_quest = await api_default.QuestProgress.get_quest_progress(thorny_user);
       const death_interaction = new api_default.Interaction(
@@ -6236,11 +6400,11 @@ function load_entity_event_handler() {
       api_default.Relay.event(utils_default.DeathMessage.random_suicide(player.name, event.damageSource.cause), "", "other");
     }
   });
-  world17.afterEvents.playerInteractWithEntity.subscribe((event) => {
+  world18.afterEvents.playerInteractWithEntity.subscribe((event) => {
     const entity_id = event.target.typeId;
     const entity_location = [event.target.location.x, event.target.location.y, event.target.location.z];
     const dimension = event.player.dimension;
-    const mainhand = event.player.getComponent(EntityComponentTypes12.Equippable)?.getEquipment(EquipmentSlot9.Mainhand);
+    const mainhand = event.player.getComponent(EntityComponentTypes13.Equippable)?.getEquipment(EquipmentSlot10.Mainhand);
     const all_entities = [
       // Villagers
       MinecraftEntityTypes.Villager,
@@ -6262,7 +6426,7 @@ function load_entity_event_handler() {
       "amethyst:james_collector"
     ];
     if (all_entities.includes(entity_id)) {
-      system17.run(() => {
+      system19.run(() => {
         const interaction = new api_default.Interaction(
           {
             thorny_id: api_default.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
@@ -6279,9 +6443,9 @@ function load_entity_event_handler() {
   });
   let first_stage = false;
   let second_stage = false;
-  world17.afterEvents.entityHurt.subscribe((event) => {
+  world18.afterEvents.entityHurt.subscribe((event) => {
     if (event.hurtEntity.typeId === MinecraftEntityTypes.EnderDragon) {
-      const health_component = event.hurtEntity.getComponent(EntityComponentTypes12.Health);
+      const health_component = event.hurtEntity.getComponent(EntityComponentTypes13.Health);
       if (health_component && !first_stage && health_component?.currentValue / health_component?.effectiveMax <= 0.75) {
         first_stage = true;
         const message = utils_default.DragonHeartMessage.health_stage_message(1);
@@ -6306,11 +6470,11 @@ function load_entity_event_handler() {
 }
 
 // behaviour_pack/scripts-dev/events/script_events.ts
-import { system as system18, world as world18 } from "@minecraft/server";
+import { system as system20, world as world19 } from "@minecraft/server";
 function load_script_event_handler() {
-  system18.afterEvents.scriptEventReceive.subscribe((script_event) => {
+  system20.afterEvents.scriptEventReceive.subscribe((script_event) => {
     const thorny_user = api_default.ThornyUser.fetch_user(script_event.message);
-    const player = world18.getPlayers({ name: script_event.message })[0];
+    const player = world19.getPlayers({ name: script_event.message })[0];
     if (thorny_user) {
       const interaction = new api_default.Interaction(
         {
@@ -6330,11 +6494,11 @@ function load_script_event_handler() {
 
 // behaviour_pack/scripts-dev/events/eliana_trade.ts
 import {
-  EntityComponentTypes as EntityComponentTypes13,
-  EquipmentSlot as EquipmentSlot10,
+  EntityComponentTypes as EntityComponentTypes14,
+  EquipmentSlot as EquipmentSlot11,
   ItemStack as ItemStack3,
-  system as system19,
-  world as world19
+  system as system21,
+  world as world20
 } from "@minecraft/server";
 var fishing_trades = {
   // --- Rare / Special ---
@@ -6459,10 +6623,10 @@ function trade_fish(eliana, player, item) {
   const item_stack = new ItemStack3(trade_info.item);
   utils_default.commands.give_item(player.name, total_item_count, item_stack);
   if (item.amount <= trade_count) {
-    player.getComponent(EntityComponentTypes13.Equippable)?.setEquipment(EquipmentSlot10.Mainhand, void 0);
+    player.getComponent(EntityComponentTypes14.Equippable)?.setEquipment(EquipmentSlot11.Mainhand, void 0);
   } else {
     item.amount -= trade_count;
-    player.getComponent(EntityComponentTypes13.Equippable)?.setEquipment(EquipmentSlot10.Mainhand, item);
+    player.getComponent(EntityComponentTypes14.Equippable)?.setEquipment(EquipmentSlot11.Mainhand, item);
   }
   player.playSound("mob.villager.yes", { location: eliana.location });
   if (Math.random() < 0.45) {
@@ -6477,15 +6641,15 @@ function trade_fish(eliana, player, item) {
 }
 function load_eliana_handler() {
   let speaking_to = [];
-  world19.afterEvents.playerInteractWithEntity.subscribe(async (event) => {
+  world20.afterEvents.playerInteractWithEntity.subscribe(async (event) => {
     const entity_id = event.target.typeId;
     if (entity_id !== "amethyst:eliana_fisherman") return;
     const entity_location = [event.target.location.x, event.target.location.y, event.target.location.z];
     const dimension = event.player.dimension;
-    const mainhand = event.player.getComponent(EntityComponentTypes13.Equippable)?.getEquipment(EquipmentSlot10.Mainhand);
+    const mainhand = event.player.getComponent(EntityComponentTypes14.Equippable)?.getEquipment(EquipmentSlot11.Mainhand);
     if (mainhand && mainhand.getLore().length === 1 && Object.keys(fishing_trades).includes(mainhand.typeId)) {
       const trade_result = trade_fish(event.target, event.player, mainhand);
-      system19.run(() => {
+      system21.run(() => {
         for (let i = 0; i < trade_result.trade_count; i += 1) {
           const interaction = new api_default.Interaction(
             {
@@ -6506,28 +6670,28 @@ function load_eliana_handler() {
       event.player.sendMessage(
         `\xA7l\xA78[\xA7eEliana\xA78]\xA7r Hey, ${event.player.name}! I'm Eliana. I \xA7lloove\xA7r collecting fishes!`
       );
-      await system19.waitTicks(40);
+      await system21.waitTicks(40);
       event.player.playSound("mob.villager.yes", { location: event.target.location });
       event.player.sendMessage(
         `\xA7l\xA78[\xA7eEliana\xA78]\xA7r Believe it or not, it's currently \xA7efish migration season\xA7r! It happens once every 10 years, and you're able to catch some totally rare fish during this period!`
       );
-      await system19.waitTicks(100);
+      await system21.waitTicks(100);
       event.player.playSound("mob.villager.haggle", { location: event.target.location });
       event.player.sendMessage(
         `\xA7l\xA78[\xA7eEliana\xA78]\xA7r Let me know if you catch any, cause I'll buy them off of ya!`
       );
-      await system19.waitTicks(30);
+      await system21.waitTicks(30);
       delete speaking_to[speaking_to.indexOf(event.player.name)];
     }
   });
-  world19.afterEvents.itemUse.subscribe((event) => {
+  world20.afterEvents.itemUse.subscribe((event) => {
     const item_id = event.itemStack.typeId;
     const player = event.source;
     const player_location = [player.location.x, player.location.y, player.location.z];
     const dimension = player.dimension;
-    const mainhand = player.getComponent(EntityComponentTypes13.Equippable)?.getEquipment(EquipmentSlot10.Mainhand);
+    const mainhand = player.getComponent(EntityComponentTypes14.Equippable)?.getEquipment(EquipmentSlot11.Mainhand);
     if (item_id === MinecraftItemTypes.FishingRod) {
-      system19.run(() => {
+      system21.run(() => {
         const interaction = new api_default.Interaction(
           {
             thorny_id: api_default.ThornyUser.fetch_user(player.name)?.thorny_id ?? 0,
@@ -6559,17 +6723,17 @@ import {
   CommandPermissionLevel,
   CustomCommandParamType,
   CustomCommandStatus,
-  EntityComponentTypes as EntityComponentTypes14,
-  EquipmentSlot as EquipmentSlot11,
-  system as system20
+  EntityComponentTypes as EntityComponentTypes15,
+  EquipmentSlot as EquipmentSlot12,
+  system as system22
 } from "@minecraft/server";
 var guild_id = "611008530077712395";
 WorldCache.load_world(guild_id).then();
 load_loops();
 load_custom_components(guild_id);
 load_world_event_handlers(guild_id);
-system20.beforeEvents.startup.subscribe((initEvent) => {
-  system20.run(() => {
+system22.beforeEvents.startup.subscribe((initEvent) => {
+  system22.run(() => {
     api_default.Relay.event(
       "Amethyst successfully loaded",
       "Don't see this on server startup? Ping a CM! It's important!",
@@ -6586,8 +6750,8 @@ system20.beforeEvents.startup.subscribe((initEvent) => {
     loreCommand,
     (origin, ...args) => {
       try {
-        const mainhand = origin.sourceEntity?.getComponent(EntityComponentTypes14.Equippable)?.getEquipment(EquipmentSlot11.Mainhand);
-        system20.run(() => {
+        const mainhand = origin.sourceEntity?.getComponent(EntityComponentTypes15.Equippable)?.getEquipment(EquipmentSlot12.Mainhand);
+        system22.run(() => {
           if (args[0] === null || args[0] === void 0 || args[0] === "") {
             mainhand?.setLore();
           } else {
@@ -6595,7 +6759,7 @@ system20.beforeEvents.startup.subscribe((initEvent) => {
             lore?.push(args[0]);
             mainhand?.setLore(lore);
           }
-          origin.sourceEntity?.getComponent(EntityComponentTypes14.Equippable)?.setEquipment(EquipmentSlot11.Mainhand, mainhand);
+          origin.sourceEntity?.getComponent(EntityComponentTypes15.Equippable)?.setEquipment(EquipmentSlot12.Mainhand, mainhand);
         });
       } catch (e) {
         return {
