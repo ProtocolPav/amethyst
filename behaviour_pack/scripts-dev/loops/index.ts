@@ -1,9 +1,9 @@
-import load_elytra_mending_checker from "./elytra_no_mending";
-import load_world_border from "./border";
+import load_elytra_mending_checker from "../features/items/elytra-mending";
+import load_world_border from "../features/border";
 import load_quest_loop from "./quests";
-import load_totem_o_togetherness from "./totem_of_togetherness";
-import load_location_logger from "./location";
-import load_champion_set from "./champion_set";
+import load_totem_o_togetherness from "../features/items/totem-of-togetherness";
+import load_location_logger from "../features/location-logger";
+import load_champion_set from "../features/items/champion-set";
 import load_drunk from "../features/wine-n-beer/loops";
 
 export default function load_loops() {
