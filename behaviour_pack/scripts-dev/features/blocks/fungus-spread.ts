@@ -8,7 +8,7 @@ import {
 import {MinecraftBlockTypes, MinecraftEffectTypes, MinecraftEntityTypes} from "@minecraft/vanilla-data";
 
 
-export default function load_fungus_spreading_component() {
+export default function loadFungusSpreadComponent() {
     function fungus_spread(event : BlockComponentRandomTickEvent) {
         if (Math.random() < 0.5) {
             const adjacent_blocks = [event.block.above(), event.block.below(), event.block.south(), event.block.west(), event.block.north(), event.block.east()]
@@ -17,7 +17,7 @@ export default function load_fungus_spreading_component() {
             const random_adjacent_block = adjacent_blocks[random_index]
     
             if (random_adjacent_block?.typeId == MinecraftBlockTypes.Air) {
-                random_adjacent_block.setType("amethyst:fungus_block")
+                random_adjacent_block.setType(event.block.typeId)
             }
         }
     }
