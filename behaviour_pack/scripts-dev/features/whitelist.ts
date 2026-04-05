@@ -1,5 +1,5 @@
 import {AsyncPlayerJoinBeforeEvent, beforeEvents} from "@minecraft/server-admin";
-import api from "../../api";
+import api from "../api";
 import {world} from "@minecraft/server";
 
 type JoinBlockReason = 'no_whitelist' | 'only_gamertag' | 'not_active' | 'other'
@@ -22,7 +22,7 @@ async function blockJoin(join_event: AsyncPlayerJoinBeforeEvent, reason: JoinBlo
     console.log(`[Admin] ${join_event.name} blocked from joining. Reason: ${reason}`)
 }
 
-export default function handleWhitelist(guild_id: string) {
+export default function loadWhitelistFeature(guild_id: string) {
     // Blocked in early-execution mode, must be loaded after worldLoad
     world.afterEvents.worldLoad.subscribe(() => {
         beforeEvents.asyncPlayerJoin.subscribe(async (join_event) => {

@@ -1,7 +1,7 @@
 import {system, world} from "@minecraft/server";
-import api from "../../api";
+import api from "../api";
 
-export default function load_chat_handler() {
+export default function loadChatDecorationFeature() {
     world.beforeEvents.chatSend.subscribe((chat_event) => {
         const gamertag = chat_event.sender.name
         const thorny_user = api.ThornyUser.fetch_user(gamertag)

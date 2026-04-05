@@ -1,8 +1,8 @@
-import api from '../../api'
-import utils from '../../utils';
+import api from '../api'
+import utils from '../utils';
 import { world } from '@minecraft/server';
 
-export default function handleConnections() {
+export default function loadConnectionsFeature() {
     world.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
         if (spawn_event.initialSpawn) {
             try {
