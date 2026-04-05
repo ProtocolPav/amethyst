@@ -78,5 +78,4 @@ async function display_timer() {
 export default function load_quest_loop() {
     system.runInterval(async () => {await check_quests()}, 1)
     system.runInterval(async () => {await display_timer()}, 10)
-    console.log('[Loops] Loaded Quests Loop') 
 }

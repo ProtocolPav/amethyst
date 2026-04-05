@@ -1,5 +1,5 @@
 import { system, world } from "@minecraft/server"
-import api from "../api";
+import api from "../../api";
 import {MinecraftDimensionTypes} from "@minecraft/vanilla-data";
 
 export default function load_script_event_handler() {

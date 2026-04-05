@@ -8,14 +8,14 @@ import {
     ItemComponentTypes,
     world
 } from "@minecraft/server";
-import utils from "../utils";
-import api from "../api";
-import {WorldCache} from "../api/sacrifice";
+import utils from "../../utils";
+import api from "../../api";
+import {WorldCache} from "../../api/sacrifice";
 
 type playerName = string;
 type timeoutID = number;
 
-export default function load_altar_component(guild_id: string) {
+export default function loadAltarComponent() {
     const sacrificeTimers: Map<playerName, timeoutID> = new Map();
     const sacrificeTotals: Map<playerName, {val: number, orig: number}> = new Map();
     const evil_acts = new utils.EvilActs()

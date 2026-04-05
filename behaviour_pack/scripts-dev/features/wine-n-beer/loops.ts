@@ -1,8 +1,6 @@
-import {EntityComponentTypes, EquipmentSlot, Player, system, TicksPerSecond, world} from "@minecraft/server";
+import {Player, system, TicksPerSecond, world} from "@minecraft/server";
 import {MinecraftEffectTypes} from '@minecraft/vanilla-data';
-import api from "../api";
-import utils from "../utils";
-
+import utils from "../../utils";
 
 interface DrunkPlayer {
     type: "amethyst:beer" | "amethyst:wine" | "amethyst:glow_wine"
@@ -149,7 +147,7 @@ function drunk_effects(
     return drunk_data
 }
 
-export default function load_drunk() {
+export default function drunkDataManager() {
     system.runInterval(() => {
         let playerlist = world.getPlayers();
     
@@ -167,6 +165,4 @@ export default function load_drunk() {
             player.setDynamicProperty('amethyst:drunk_data', undefined)
         }
     })
-
-    console.log('[Loops] Loaded Drunk Loop')
 }

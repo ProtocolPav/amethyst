@@ -1,8 +1,8 @@
 import {Player, BlockComponentTickEvent, system} from "@minecraft/server";
-import utils from "../utils";
+import utils from "../../utils";
 
 
-export default function load_glitch_component() {
+export default function loadGlitchBlockComponent() {
     const glitches = new utils.Glitches();
 
     function glitch(event : BlockComponentTickEvent) {
