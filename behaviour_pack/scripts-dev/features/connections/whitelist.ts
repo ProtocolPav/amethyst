@@ -1,5 +1,6 @@
 import {AsyncPlayerJoinBeforeEvent, beforeEvents} from "@minecraft/server-admin";
 import api from "../../api";
+import {world} from "@minecraft/server";
 
 type JoinBlockReason = 'no_whitelist' | 'only_gamertag' | 'not_active' | 'other'
 
@@ -22,24 +23,27 @@ async function blockJoin(join_event: AsyncPlayerJoinBeforeEvent, reason: JoinBlo
 }
 
 export default function handleWhitelist(guild_id: string) {
-    beforeEvents.asyncPlayerJoin.subscribe(async (join_event) => {
-        try {
-            const thorny_user = await api.ThornyUser.get_user_from_api(guild_id, join_event.name)
+    // Blocked in early-execution mode, must be loaded after worldLoad
+    world.afterEvents.worldLoad.subscribe(() => {
+        beforeEvents.asyncPlayerJoin.subscribe(async (join_event) => {
+            try {
+                const thorny_user = await api.ThornyUser.get_user_from_api(guild_id, join_event.name)
 
-            if (!thorny_user.active) {
-                await blockJoin(join_event, 'not_active')
-                return
+                if (!thorny_user.active) {
+                    await blockJoin(join_event, 'not_active')
+                    return
+                }
+
+                if (thorny_user.whitelist !== join_event.name) {
+                    await blockJoin(join_event, 'only_gamertag')
+                    return
+                }
+
+                join_event.allowJoin()
             }
-
-            if (thorny_user.whitelist !== join_event.name) {
-                await blockJoin(join_event, 'only_gamertag')
-                return
+            catch (e) {
+                await blockJoin(join_event, 'no_whitelist')
             }
-
-            join_event.allowJoin()
-        }
-        catch (e) {
-            await blockJoin(join_event, 'no_whitelist')
-        }
+        })
     })
 }
