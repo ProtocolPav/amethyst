@@ -11,7 +11,7 @@ import {
     EquipmentSlot,
     system, world
 } from "@minecraft/server";
-import {load_admin_connections_handler} from "./events/connections";
+import {load_admin_connections_handler} from "./features/connections/connections";
 
 const guild_id = process.env.GUILD_ID || '0'
 
