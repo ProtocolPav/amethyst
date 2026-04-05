@@ -1,6 +1,3 @@
-import load_custom_components from './components';
-import load_loops from './loops'
-import load_world_event_handlers from './events';
 import {WorldCache} from "./api/sacrifice";
 import api from "./api";
 import {
@@ -11,7 +8,6 @@ import {
     EquipmentSlot,
     system, world
 } from "@minecraft/server";
-import {load_admin_connections_handler} from "./features/connections";
 
 const guild_id = process.env.GUILD_ID || '0'
 
