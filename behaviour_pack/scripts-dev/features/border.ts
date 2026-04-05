@@ -30,7 +30,9 @@ function borderCheck(player: Player, dimensionID: MinecraftDimensionTypes, borde
     }
 }
 
-export default function loadWorldBorder() {
+export default function loadWorldBorder(guild_id: string) {
+    WorldCache.load_world(guild_id).then()
+
     let players_100_blocks_away  = {overworld: [], nether: [], end: []}
     let players_outside_border  = {overworld: [], nether: [], end: []}
     
