@@ -165,6 +165,4 @@ export default function drunkDataManager() {
             player.setDynamicProperty('amethyst:drunk_data', undefined)
         }
     })
-
-    console.log('[Loops] Loaded Drunk Loop')
 }
