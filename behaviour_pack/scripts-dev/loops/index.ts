@@ -4,7 +4,7 @@ import load_quest_loop from "./quests";
 import load_totem_o_togetherness from "./totem_of_togetherness";
 import load_location_logger from "./location";
 import load_champion_set from "./champion_set";
-import load_drunk from "./drunk";
+import load_drunk from "../features/wine-n-beer/loops";
 
 export default function load_loops() {
     load_elytra_mending_checker()
