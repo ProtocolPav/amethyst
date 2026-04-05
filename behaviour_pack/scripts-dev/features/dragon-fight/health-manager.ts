@@ -1,8 +1,8 @@
 import {EntityComponentTypes, EntityDieAfterEvent, EntityHurtAfterEvent, world} from "@minecraft/server";
 import {MinecraftEntityTypes} from "@minecraft/vanilla-data";
-import utils from "../utils";
+import utils from "../../utils";
 
-export default function loadDragonFightHealthFeature() {
+export default function loadHealthManager() {
     let first_stage = false
     let second_stage = false
 

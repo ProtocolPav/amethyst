@@ -1,13 +1,13 @@
 import {
     BlockComponentTickEvent,
     system,
-    EntityComponentTypes, TicksPerSecond, BlockComponentPlayerBreakEvent
+    EntityComponentTypes, BlockComponentPlayerBreakEvent, VanillaEntityIdentifier
 } from "@minecraft/server";
-import {MinecraftEffectTypes, MinecraftEntityTypes} from "@minecraft/vanilla-data";
-import utils from "../utils";
+import {MinecraftEntityTypes} from "@minecraft/vanilla-data";
+import utils from "../../utils";
 
 
-export default function load_heal_dragon_component() {
+export default function loadDraconicHeartComponents() {
     let mined_blocks = 0
 
     function heal_dragon(event : BlockComponentTickEvent) {
@@ -26,19 +26,19 @@ export default function load_heal_dragon_component() {
         mined_blocks++
 
         event.dimension.spawnEntity(
-            'amethyst:the_breath',
+            'amethyst:the_breath' as VanillaEntityIdentifier,
             event.block.location
         )
         event.dimension.spawnEntity(
-            'amethyst:the_breath',
+            'amethyst:the_breath' as VanillaEntityIdentifier,
             event.block.location
         )
         event.dimension.spawnEntity(
-            'amethyst:the_breath',
+            'amethyst:the_breath' as VanillaEntityIdentifier,
             event.block.location
         )
         event.dimension.spawnEntity(
-            'amethyst:endstone_golem',
+            'amethyst:endstone_golem' as VanillaEntityIdentifier,
             event.block.location
         )
 
