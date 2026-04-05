@@ -28,10 +28,12 @@ export default function handleWhitelist(guild_id: string) {
 
             if (!thorny_user.active) {
                 await blockJoin(join_event, 'not_active')
+                return
             }
 
             if (thorny_user.whitelist !== join_event.name) {
                 await blockJoin(join_event, 'only_gamertag')
+                return
             }
 
             join_event.allowJoin()
