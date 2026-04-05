@@ -2,7 +2,7 @@ import {EntityComponentTypes, EntityDieAfterEvent, EntityHurtAfterEvent, world} 
 import {MinecraftEntityTypes} from "@minecraft/vanilla-data";
 import utils from "../../utils";
 
-export default function health_manager() {
+export default function loadHealthManager() {
     let first_stage = false
     let second_stage = false
 
