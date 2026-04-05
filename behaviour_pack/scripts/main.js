@@ -6315,11 +6315,11 @@ function load_connections_handler(guild_id2) {
 function load_admin_connections_handler(guild_id2) {
   const BlockMessageMap = {
     "no_whitelist": "You are not whitelisted. Check the guidelines to see how to whitelist yourself.",
-    "not_active": "WAIT! Don't leave!\n\nYou came back, and that means something to us. Itching for more building? We're itching to have you back!\n\nRejoin us at everthorn.net/apply or reach out on Discord, and we'll get you right back in!",
+    "not_active": "WAIT! Don't go!\n\nCouldn't resist a peek, could you? We don't blame you. Let's get you back to where you belong.\n\nRejoin us at everthorn.net/apply or reach out on Discord. We'll get you right back in!",
     "only_gamertag": "Almost there! Your gamertag is set up correctly. Now, just ask a CM to add you to the whitelist and you'll be good to go!",
     "other": "You are not whitelisted."
   };
-  function blockJoin(join_event, reason = "other") {
+  async function blockJoin(join_event, reason = "other") {
     join_event.disallowJoin(BlockMessageMap[reason] || "You are not whitelisted.");
     api_default.Relay.event(
       `${join_event.name} blocked from joining`,
@@ -6332,15 +6332,14 @@ function load_admin_connections_handler(guild_id2) {
     try {
       const thorny_user = await api_default.ThornyUser.get_user_from_api(guild_id2, join_event.name);
       if (!thorny_user.active) {
-        blockJoin(join_event, "not_active");
+        await blockJoin(join_event, "not_active");
       }
       if (thorny_user.whitelist !== join_event.name) {
-        blockJoin(join_event, "only_gamertag");
+        await blockJoin(join_event, "only_gamertag");
       }
       join_event.allowJoin();
     } catch (e) {
-      blockJoin(join_event, "no_whitelist");
-      console.error(e);
+      await blockJoin(join_event, "no_whitelist");
     }
   });
 }
