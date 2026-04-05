@@ -24,7 +24,7 @@ function togetherness(player: Player): void {
     }
 }
 
-export default function load_totem_o_togetherness() {
+export default function loadTotemOfTogethernessLoop() {
     system.runInterval(() => {
         let playerlist = world.getPlayers();
     
@@ -32,6 +32,4 @@ export default function load_totem_o_togetherness() {
             togetherness(player)
         });
     }, 20)
-
-    console.log('[Loops] Loaded Totem Of Togetherness Loop')
 }

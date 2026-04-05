@@ -6,7 +6,7 @@ import {
     BlockEvent, BlockPermutation, system
 } from "@minecraft/server";
 
-export default function load_whoop_component() {
+export default function loadWhoopieCushionComponent() {
     function play_fart(dimension: Dimension, location: Vector3) {
         dimension.playSound('fart', location, {volume: 3, pitch: Math.max(0.45, Math.random() * 1.5)})
         location.y += 0.65

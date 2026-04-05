@@ -5,7 +5,7 @@ import {
 } from "@minecraft/server";
 import {MinecraftEffectTypes} from "@minecraft/vanilla-data";
 
-export default function load_alcohol_component() {
+export default function loadOnDrinkComponent() {
     async function on_drink(event : ItemComponentConsumeEvent) {
         const player = event.source
 

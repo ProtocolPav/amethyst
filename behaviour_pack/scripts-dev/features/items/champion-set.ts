@@ -26,7 +26,7 @@ function champion(player: Player): void {
     }
 }
 
-export default function load_champion_set() {
+export default function loadChampionSet() {
     system.runInterval(() => {
         let playerlist = world.getPlayers();
     
@@ -34,6 +34,4 @@ export default function load_champion_set() {
             champion(player)
         });
     }, 4)
-
-    console.log('[Loops] Loaded Champion Set Loop')
 }

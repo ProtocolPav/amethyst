@@ -40,7 +40,7 @@ function elytraCheck(player: Player) {
     }
 }
 
-export default function load_elytra_mending_checker() {
+export default function loadRemoveMendingFromElytraLoop() {
     system.runInterval(() => {
         let playerlist = world.getPlayers();
     
@@ -48,6 +48,4 @@ export default function load_elytra_mending_checker() {
             elytraCheck(player)
         });
     }, 20)
-
-    console.log('[Loops] Loaded Elytra Checker Loop') 
 }

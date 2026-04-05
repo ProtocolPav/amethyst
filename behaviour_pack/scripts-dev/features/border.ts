@@ -30,7 +30,9 @@ function borderCheck(player: Player, dimensionID: MinecraftDimensionTypes, borde
     }
 }
 
-export default function load_world_border() {
+export default function loadWorldBorder(guild_id: string) {
+    WorldCache.load_world(guild_id).then()
+
     let players_100_blocks_away  = {overworld: [], nether: [], end: []}
     let players_outside_border  = {overworld: [], nether: [], end: []}
     
@@ -53,6 +55,4 @@ export default function load_world_border() {
             borderCheck(player, MinecraftDimensionTypes.TheEnd, WorldCache.world.end_border, players_100_blocks_away.end, players_outside_border.end)
         });
     }, 20)
-
-    console.log('[Loops] Loaded World Border Loop') 
 }

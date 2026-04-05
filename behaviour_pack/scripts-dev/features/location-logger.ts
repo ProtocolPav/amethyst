@@ -2,20 +2,21 @@ import {EntityComponentTypes, EquipmentSlot, Player, system, world, TicksPerSeco
 import {MinecraftItemTypes} from "@minecraft/vanilla-data";
 import api from "../api";
 
+const HEAD_GEAR: string[] = [
+    MinecraftItemTypes.SkeletonSkull,
+    MinecraftItemTypes.WitherSkeletonSkull,
+    MinecraftItemTypes.CarvedPumpkin,
+    MinecraftItemTypes.PlayerHead,
+    MinecraftItemTypes.PiglinHead,
+    MinecraftItemTypes.CreeperHead,
+    MinecraftItemTypes.ZombieHead,
+    MinecraftItemTypes.DragonHead
+]
+
 function location_log(player: Player) {
     const head_gear = player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Head)
-    const check_list: string[] = [
-        MinecraftItemTypes.SkeletonSkull,
-        MinecraftItemTypes.WitherSkeletonSkull,
-        MinecraftItemTypes.CarvedPumpkin,
-        MinecraftItemTypes.PlayerHead,
-        MinecraftItemTypes.PiglinHead,
-        MinecraftItemTypes.CreeperHead,
-        MinecraftItemTypes.ZombieHead,
-        MinecraftItemTypes.DragonHead
-    ]
 
-    let hidden = (head_gear?.typeId ? check_list.includes(head_gear.typeId) : false) || player.isSneaking
+    let hidden = (head_gear?.typeId ? HEAD_GEAR.includes(head_gear.typeId) : false) || player.isSneaking
 
     const location = [Math.round(player.location.x), Math.round(player.location.y), Math.round(player.location.z)];
 
@@ -30,7 +31,7 @@ function location_log(player: Player) {
     }
 }
 
-export default function load_location_logger() {
+export default function loadLocationLogger() {
     system.runInterval(() => {
         let playerlist = world.getPlayers();
 
@@ -38,6 +39,4 @@ export default function load_location_logger() {
             location_log(player)
         });
     }, TicksPerSecond*5)
-
-    console.log('[Loops] Loaded Location Loop')
 }
