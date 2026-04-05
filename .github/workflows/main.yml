@@ -1,12 +1,15 @@
-name: Bundle
+name: Build & Release
 
 on:
   push:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
-  build:
+  build-and-release:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,3 +24,24 @@ jobs:
 
       - name: Run bundle
         run: bun run bundle
+
+      - name: Get version from manifest
+        id: version
+        run: |
+          VERSION=$(jq -r '.header.version' behaviour_pack/manifest.json)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create release zip
+        run: |
+          zip -r "amethyst-v${{ steps.version.outputs.version }}.zip" \
+            behaviour_pack/ \
+            resource_pack/
+
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v${{ steps.version.outputs.version }}" \
+            "amethyst-v${{ steps.version.outputs.version }}.zip" \
+            --title "v${{ steps.version.outputs.version }}" \
+            --generate-notes
