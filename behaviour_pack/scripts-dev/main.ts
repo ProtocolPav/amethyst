@@ -9,8 +9,9 @@ import {
     CustomCommandParamType,
     CustomCommandStatus, EntityComponentTypes,
     EquipmentSlot,
-    system
+    system, world
 } from "@minecraft/server";
+import {load_admin_connections_handler} from "./events/connections";
 
 const guild_id = process.env.GUILD_ID || '0'
 
@@ -75,4 +76,9 @@ system.beforeEvents.startup.subscribe(initEvent => {
         }
     )
 
+})
+
+// Set up admin connections
+world.afterEvents.worldLoad.subscribe(() => {
+    load_admin_connections_handler(guild_id)
 })

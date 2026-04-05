@@ -6284,6 +6284,7 @@ function load_chat_handler() {
 
 // behaviour_pack/scripts-dev/events/connections.ts
 import { world as world17 } from "@minecraft/server";
+import { beforeEvents } from "@minecraft/server-admin";
 function load_connections_handler(guild_id2) {
   world17.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
     if (spawn_event.initialSpawn) {
@@ -6309,6 +6310,37 @@ function load_connections_handler(guild_id2) {
     }
     thorny_user?.send_connect_event("disconnect");
     api_default.Relay.event(`${leave_event.playerName} has left the server`, "", "leave");
+  });
+}
+function load_admin_connections_handler(guild_id2) {
+  const BlockMessageMap = {
+    "no_whitelist": "You are not whitelisted. Check the guidelines to see how to whitelist yourself.",
+    "not_active": "WAIT! Don't go!\n\nCouldn't resist a peek, could you? We don't blame you. Let's get you back to where you belong.\n\nRejoin us at everthorn.net/apply or reach out on Discord. We'll get you right back in!",
+    "only_gamertag": "Almost there! Your gamertag is set up correctly. Now, just ask a CM to add you to the whitelist and you'll be good to go!",
+    "other": "You are not whitelisted."
+  };
+  async function blockJoin(join_event, reason = "other") {
+    join_event.disallowJoin(BlockMessageMap[reason] || "You are not whitelisted.");
+    api_default.Relay.event(
+      `${join_event.name} blocked from joining`,
+      BlockMessageMap[reason] || "You are not whitelisted.",
+      "other"
+    );
+    console.log(`[Admin] ${join_event.name} blocked from joining. Reason: ${reason}`);
+  }
+  beforeEvents.asyncPlayerJoin.subscribe(async (join_event) => {
+    try {
+      const thorny_user = await api_default.ThornyUser.get_user_from_api(guild_id2, join_event.name);
+      if (!thorny_user.active) {
+        await blockJoin(join_event, "not_active");
+      }
+      if (thorny_user.whitelist !== join_event.name) {
+        await blockJoin(join_event, "only_gamertag");
+      }
+      join_event.allowJoin();
+    } catch (e) {
+      await blockJoin(join_event, "no_whitelist");
+    }
   });
 }
 
@@ -6725,9 +6757,10 @@ import {
   CustomCommandStatus,
   EntityComponentTypes as EntityComponentTypes15,
   EquipmentSlot as EquipmentSlot12,
-  system as system22
+  system as system22,
+  world as world21
 } from "@minecraft/server";
-var guild_id = "611008530077712395";
+var guild_id = "1213827104945471538";
 WorldCache.load_world(guild_id).then();
 load_loops();
 load_custom_components(guild_id);
@@ -6772,4 +6805,7 @@ system22.beforeEvents.startup.subscribe((initEvent) => {
       };
     }
   );
+});
+world21.afterEvents.worldLoad.subscribe(() => {
+  load_admin_connections_handler(guild_id);
 });
