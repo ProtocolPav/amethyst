@@ -18,19 +18,17 @@ export default class QuestProgress {
     objectives!: ObjectiveProgress[]
 
     thorny_user: ThornyUser
-    quest: Quest
 
-    private constructor(data: IQuestProgress, thorny_user: ThornyUser, quest: Quest) {
+    private constructor(data: IQuestProgress, thorny_user: ThornyUser) {
         Object.assign(this, data)
 
         this.thorny_user = thorny_user
-        this.quest = quest
 
         this.accept_time = new Date(data.accept_time)
         this.start_time = data.start_time ? new Date(data.start_time) : null
         this.end_time = data.end_time ? new Date(data.end_time) : null
 
-        this.objectives = data.objectives.map( o => new ObjectiveProgress(o, thorny_user, quest) )
+        this.objectives = data.objectives.map( o => new ObjectiveProgress(o, thorny_user) )
     }
 
     /**
@@ -71,12 +69,7 @@ export default class QuestProgress {
         await http.request(request)
     }
 
-    /**
-     * Fetches QuestProgress, and saves to cache.
-     *
-     * @remarks
-     * If quest already exists in cache, it fetches from cache instead.
-     */
+    /** Fetches QuestProgress **/
     public static async get_quest_progress(thorny_user: ThornyUser): Promise<QuestProgress | null> {
         try {
             const thorny_id = thorny_user.thorny_id
@@ -87,19 +80,8 @@ export default class QuestProgress {
 
             if (quest_progress_response.status === 200) {
                 const quest_progress_data: IQuestProgress = JSON.parse(quest_progress_response.body)
-                const quest_id = quest_progress_data.quest_id
 
-                const quest_response = await http.get(
-                    `http://nexuscore:8000/api/v0.2/quests/${quest_id}`
-                );
-
-                const quest = new Quest( JSON.parse(quest_response.body) as IQuest )
-
-                return new QuestProgress(
-                    quest_progress_data,
-                    thorny_user,
-                    quest
-                )
+                return new QuestProgress(quest_progress_data, thorny_user)
             } else {
                 return null
             }

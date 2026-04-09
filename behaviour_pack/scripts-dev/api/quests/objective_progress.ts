@@ -24,17 +24,14 @@ export class ObjectiveProgress {
     customization_progress!: ICustomizationProgress
 
     thorny_user: ThornyUser
-    objective: Objective
 
-    constructor(data: IObjectiveProgress, thorny_user: ThornyUser, quest: Quest) {
+    constructor(data: IObjectiveProgress, thorny_user: ThornyUser) {
         Object.assign(this, data)
 
         this.thorny_user = thorny_user
 
         this.start_time = data.start_time ? new Date(data.start_time) : null
         this.end_time = data.end_time ? new Date(data.end_time) : null
-
-        this.objective = quest.objectives.find(o => o.objective_id == this.objective_id)!
     }
 
     public async update_user_objective() {
