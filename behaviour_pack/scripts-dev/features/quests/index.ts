@@ -1,7 +1,7 @@
-import loadQuestCache from "./cache";
+import loadQuestProgressCache from "./progress-cache";
 import load_quest_loop from "./quests-old";
 
 export default function loadQuestsFeature() {
-    loadQuestCache()
+    loadQuestProgressCache()
     //load_quest_loop()
 }
