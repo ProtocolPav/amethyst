@@ -1,6 +1,7 @@
 import QuestProgress from "../../api/quests/quest_progress";
 import {system, TicksPerSecond, world} from "@minecraft/server";
 import api from "../../api";
+import {QUEST_CACHE} from "./quest-cache";
 
 export const QUEST_PROGRESS_CACHE = new Map<number, QuestProgress>()
 
@@ -12,19 +13,23 @@ export default function loadQuestProgressCache() {
         if (!player) return;
 
         const thorny_user = api.ThornyUser.fetch_user(player_name)!
-        const quest = await api.QuestProgress.get_quest_progress(thorny_user)
-        const cached_quest = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id)
+        const questProgress = await api.QuestProgress.get_quest_progress(thorny_user)
+        const cachedQuestProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id)
 
-        if (quest && cached_quest?.progress_id !== quest.progress_id) {
-            QUEST_PROGRESS_CACHE.set(thorny_user.thorny_id, quest)
+        if (questProgress && cachedQuestProgress?.progress_id !== questProgress.progress_id) {
+            const quest = QUEST_CACHE.get(questProgress.quest_id)!
 
-            player.sendMessage(`You have a quest active: ${quest.quest.title}`)
-        } else if (!quest && cached_quest) {
+            QUEST_PROGRESS_CACHE.set(thorny_user.thorny_id, questProgress)
+
+            player.sendMessage(`You have a quest active: ${quest.title}`)
+        } else if (!questProgress && cachedQuestProgress) {
+            const cached_quest = QUEST_CACHE.get(cachedQuestProgress.quest_id)!
+
             QUEST_PROGRESS_CACHE.delete(thorny_user.thorny_id)
 
-            player.sendMessage(`You have dropped: ${cached_quest.quest.title}`)
-        } else if (quest && cached_quest?.progress_id === quest.progress_id) {
-            await quest.update_user_quest()
+            player.sendMessage(`You have dropped: ${cached_quest.title}`)
+        } else if (questProgress && cachedQuestProgress?.progress_id === questProgress.progress_id) {
+            await questProgress.update_user_quest()
         }
     }
 

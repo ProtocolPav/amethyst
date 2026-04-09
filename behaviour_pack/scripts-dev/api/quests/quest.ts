@@ -34,4 +34,17 @@ export default class Quest {
             throw error;
         }
     }
+
+    public static async get_active_quests(): Promise<Quest[]> {
+        try {
+            const quest_response = await http.get(`http://nexuscore:8000/api/v0.2/quests?active=true`);
+            const quests_list_data = JSON.parse(quest_response.body) as IQuest[];
+
+            return quests_list_data.map(quest => new Quest(quest));
+
+        } catch (error) {
+            console.error("Error fetching quest:", error);
+            throw error;
+        }
+    }
 }
