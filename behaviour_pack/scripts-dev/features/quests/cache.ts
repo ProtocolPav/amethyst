@@ -23,6 +23,8 @@ export default function loadQuestCache() {
             QUEST_CACHE.delete(thorny_user.thorny_id)
 
             player.sendMessage(`You have dropped: ${cached_quest.quest.title}`)
+        } else if (quest && cached_quest?.progress_id === quest.progress_id) {
+            await quest.update_user_quest()
         }
     }
 

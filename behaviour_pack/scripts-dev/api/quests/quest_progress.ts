@@ -8,8 +8,6 @@ import {ObjectiveProgress} from "./objective_progress";
 import Interaction from "../interaction";
 
 export default class QuestProgress {
-    public static quest_cache: { [thorny_id: number]: QuestProgress } = {}
-
     progress_id!: number
     thorny_id!: number
     quest_id!: number
@@ -74,16 +72,6 @@ export default class QuestProgress {
     }
 
     /**
-     * Clears the QuestProgress cache.
-     *
-     * @remarks
-     * Use this when a player leaves. This way the quest is refetched on join.
-     */
-    public static clear_cache(thorny_user: ThornyUser) {
-        delete this.quest_cache[thorny_user.thorny_id]
-    }
-
-    /**
      * Fetches QuestProgress, and saves to cache.
      *
      * @remarks
@@ -101,27 +89,17 @@ export default class QuestProgress {
                 const quest_progress_data: IQuestProgress = JSON.parse(quest_progress_response.body)
                 const quest_id = quest_progress_data.quest_id
 
-                // Check if the quest exists in the cache and return
-                if (this.quest_cache[thorny_id] && this.quest_cache[thorny_id].quest_id === quest_id) {
-                    return this.quest_cache[thorny_id]
-                }
-
-                // Otherwise, create the QuestProgress object and cache it
                 const quest_response = await http.get(
                     `http://nexuscore:8000/api/v0.2/quests/${quest_id}`
                 );
 
                 const quest = new Quest( JSON.parse(quest_response.body) as IQuest )
 
-                const quest_progress = new QuestProgress(
+                return new QuestProgress(
                     quest_progress_data,
                     thorny_user,
                     quest
                 )
-
-                this.quest_cache[thorny_user.thorny_id] = quest_progress
-
-                return quest_progress
             } else {
                 return null
             }
