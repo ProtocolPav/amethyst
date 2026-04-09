@@ -8,7 +8,7 @@ import loadChatDecorationFeature from "./features/chat";
 import loadInteractionHandlers from "./features/interactions";
 import loadConnectionsFeature from "./features/connections";
 import loadLocationLogger from "./features/location-logger";
-import load_quest_loop from "./features/quests";
+import loadQuestsFeature from "./features/quests";
 import loadWhitelistFeature from "./features/whitelist";
 
 const guild_id = process.env.GUILD_ID || '0'
@@ -37,5 +37,5 @@ load("World Border Feature", loadWorldBorder, guild_id)
 load("Chat Decoration Feature", loadChatDecorationFeature)
 load("Connection Logging Feature", loadConnectionsFeature)
 load("Location Logging Feature", loadLocationLogger)
-load("Quests Feature", load_quest_loop)
+load("Quests Feature", loadQuestsFeature)
 load("Whitelist Feature", loadWhitelistFeature, guild_id)

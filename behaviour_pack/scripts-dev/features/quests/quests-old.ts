@@ -1,5 +1,5 @@
-import api from "../api";
-import utils from "../utils";
+import api from "../../api";
+import utils from "../../utils";
 import {system, world} from "@minecraft/server";
 
 async function check_quests() {
