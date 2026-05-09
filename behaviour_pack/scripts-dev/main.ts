@@ -1,78 +1,41 @@
-import load_custom_components from './components';
-import load_loops from './loops'
-import load_world_event_handlers from './events';
-import {WorldCache} from "./api/sacrifice";
-import api from "./api";
-import {
-    CommandPermissionLevel,
-    CustomCommand,
-    CustomCommandParamType,
-    CustomCommandStatus, EntityComponentTypes,
-    EquipmentSlot,
-    system
-} from "@minecraft/server";
+import loadWorldBorder from "./features/border";
+import loadItemComponents from "./features/items";
+import loadBlockComponents from "./features/blocks";
+import loadDragonFightFeature from "./features/dragon-fight";
+import loadCommands from "./features/commands";
+import loadWineAndBeerFeature from "./features/wine-n-beer";
+import loadChatDecorationFeature from "./features/chat";
+import loadInteractionHandlers from "./features/interactions";
+import loadConnectionsFeature from "./features/connections";
+import loadLocationLogger from "./features/location-logger";
+import load_quest_loop from "./features/quests";
+import loadWhitelistFeature from "./features/whitelist";
 
 const guild_id = process.env.GUILD_ID || '0'
 
-WorldCache.load_world(guild_id).then()
+function load(name: string, fn: () => void): void
 
-// Loading Game Loops
-// These are scripts that loop every now and then
-load_loops()
+function load<T extends unknown[]>(name: string, fn: (...args: T) => void, ...args: T): void
 
-// Loading Custom Component Scripts
-// These are scripts which get executed by blocks/items
-load_custom_components(guild_id)
+function load(name: string, fn: (...args: any[]) => void, ...args: any[]) {
+    try {
+        fn(...args)
+        console.log(`[Amethyst] Loaded ${name}`)
+    }
+    catch (e) {
+        console.log(`[Amethyst] Error loading ${name}: ${e}`)
+    }
+}
 
-// Load Event Handlers
-// These are handlers for game events such as join, leave, break blocks, etc.
-load_world_event_handlers(guild_id)
-
-// Relay Startup Event
-system.beforeEvents.startup.subscribe(initEvent => {
-    system.run(() => {
-        api.Relay.event(
-            'Amethyst successfully loaded',
-            "Don't see this on server startup? Ping a CM! It's important!",
-            'other'
-        )
-    })
-
-    const loreCommand: CustomCommand = {
-        name: "amethyst:lore",
-        description: "Add a line to the lore, or remove all lore if blank",
-        permissionLevel: CommandPermissionLevel.GameDirectors,
-        optionalParameters: [{ type: CustomCommandParamType.String, name: "text" }],
-    };
-
-    initEvent.customCommandRegistry.registerCommand(
-        loreCommand,
-        (origin, ...args) => {
-            try {
-                const mainhand = origin.sourceEntity?.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
-
-                system.run(() => {
-                    if (args[0] === null || args[0] === undefined || args[0] === '') {
-                        mainhand?.setLore();
-                    } else {
-                        const lore = mainhand?.getLore()
-                        lore?.push(args[0])
-                        mainhand?.setLore(lore)
-                    }
-
-                    origin.sourceEntity?.getComponent(EntityComponentTypes.Equippable)?.setEquipment(EquipmentSlot.Mainhand, mainhand)
-                })
-            } catch (e: any) {
-                return {
-                    status: CustomCommandStatus.Failure,
-                    message: e.message
-                }
-            }
-
-            return {
-                status: CustomCommandStatus.Success
-            }
-        }
-    )
-
-})
+load("Block Components", loadBlockComponents)
+load("Commands", loadCommands)
+load("Dragon Fight Feature", loadDragonFightFeature)
+load("Interactions Logging Feature", loadInteractionHandlers)
+load("Item Components", loadItemComponents)
+load("Wine And Beer Update Features", loadWineAndBeerFeature)
+load("World Border Feature", loadWorldBorder, guild_id)
+load("Chat Decoration Feature", loadChatDecorationFeature)
+load("Connection Logging Feature", loadConnectionsFeature)
+load("Location Logging Feature", loadLocationLogger)
+load("Quests Feature", load_quest_loop)
+load("Whitelist Feature", loadWhitelistFeature, guild_id)

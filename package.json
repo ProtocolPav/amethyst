@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@minecraft/server": "2.6.0-beta.1.26.2-stable",
+    "@minecraft/server-admin": "1.0.0-beta.1.26.2-stable",
     "@minecraft/server-net": "1.0.0-beta.1.26.2-stable",
     "@minecraft/vanilla-data": "^1.26.2",
     "cross-env": "^7.0.3"
@@ -9,7 +10,7 @@
     "@types/lodash": "^4.17.13",
     "@types/node": "^22.9.0",
     "date-fns": "^4.1.0",
-    "esbuild": "^0.25.5"
+    "esbuild": "^0.27.1"
   },
   "scripts": {
     "bundle": "cross-env GUILD_ID=611008530077712395 node esbuild.js",
