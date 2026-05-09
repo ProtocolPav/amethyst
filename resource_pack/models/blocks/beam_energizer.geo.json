@@ -3,7 +3,7 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.energizer",
+				"identifier": "geometry.beam_energizer",
 				"texture_width": 16,
 				"texture_height": 16,
 				"visible_bounds_width": 2,
