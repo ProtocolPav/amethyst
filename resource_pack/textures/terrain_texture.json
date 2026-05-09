@@ -27,6 +27,9 @@
 		},
 		"draconic_heart": {
 			"textures": "textures/blocks/draconic_heart.png"
-		}
+		},
+        "beam_energizer": {
+            "textures": "textures/blocks/beam_energizer_turret.png"
+        }
 	}
 }
