@@ -61,7 +61,7 @@
       },
 
       {
-        "condition": "q.block_state('everthorn:connector') == 'none'",
+        "condition": "q.block_state('amethyst:connector') == 'none'",
         "components": {
           "minecraft:geometry": {
             "identifier": "geometry.copper_pipe",
@@ -73,7 +73,7 @@
         }
       },
       {
-        "condition": "q.block_state('everthorn:connector') == 'left'",
+        "condition": "q.block_state('amethyst:connector') == 'left'",
         "components": {
           "minecraft:geometry": {
             "identifier": "geometry.copper_pipe",
@@ -86,7 +86,7 @@
         }
       },
       {
-        "condition": "q.block_state('everthorn:connector') == 'right'",
+        "condition": "q.block_state('amethyst:connector') == 'right'",
         "components": {
           "minecraft:geometry": {
             "identifier": "geometry.copper_pipe",
