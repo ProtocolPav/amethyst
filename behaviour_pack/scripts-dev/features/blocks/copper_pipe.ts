@@ -61,11 +61,11 @@ function updatePipe(block: Block): void {
     if (block.typeId !== PIPE_BLOCK) return;
 
     const newState = getConnectorState(block);
-    const current  = block.permutation.getState("everthorn:connector") as ConnectorState;
+    const current  = block.permutation.getState("amethyst:connector") as ConnectorState;
 
     if (current !== newState) {
         block.setPermutation(
-            block.permutation.withState("everthorn:connector", newState)
+            block.permutation.withState("amethyst:connector", newState)
         );
     }
 }
