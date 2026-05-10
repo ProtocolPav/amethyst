@@ -2,7 +2,7 @@
 	"format_version": "1.21.50",
 	"minecraft:block": {
 		"description": {
-			"identifier": "amethyst:beam_energizer",
+			"identifier": "amethyst:computer",
 			"menu_category": {
 				"category": "construction"
 			},
@@ -13,13 +13,13 @@
             }
 		},
 		"components": {
-			"minecraft:display_name": "Beam Energizer",
+			"minecraft:display_name": "Computer",
 			"minecraft:destructible_by_mining": false,
 			"minecraft:destructible_by_explosion": false,
-			"minecraft:geometry": "geometry.beam_energizer",
+			"minecraft:geometry": "geometry.computer",
 			"minecraft:material_instances": {
 				"*": {
-					"texture": "beam_energizer",
+					"texture": "computer",
 					"render_method": "alpha_test"
 				}
 			},

@@ -30,6 +30,9 @@
 		},
         "beam_energizer": {
             "textures": "textures/blocks/beam_energizer_turret.png"
+        },
+        "computer": {
+            "textures": "textures/blocks/control_panel.png"
         }
 	}
 }
