@@ -1,106 +1,107 @@
 {
-  "format_version": "1.21.0",
-  "minecraft:block": {
-    "description": {
-      "identifier": "amethyst:copper_pipe",
-      "states": {
-        "amethyst:connector": ["none", "left", "right"]
-      },
-        "traits": {
-            "minecraft:placement_direction": {
-                "enabled_states": ["minecraft:cardinal_direction"]
+    "format_version": "1.21.0",
+    "minecraft:block": {
+        "description": {
+            "identifier": "amethyst:copper_pipe",
+            "traits": {
+                "minecraft:placement_direction": {
+                    "enabled_states": [
+                        "minecraft:cardinal_direction"
+                    ]
+                }
             }
-        }
-    },
-    "components": {
-      "minecraft:geometry": {
-        "identifier": "geometry.copper_pipe",
-        "bone_visibility": {
-          "bone": true
-        }
-      },
-      "minecraft:material_instances": {
-        "*": {
-          "texture": "copper_pipe",
-          "render_method": "opaque"
         },
-          "connector": {
-              "texture": "copper_pipe_front"
-          }
-      },
-      "minecraft:collision_box": {
-        "origin": [-4, 4, -8],
-        "size": [8, 8, 16]
-      },
-      "minecraft:selection_box": {
-        "origin": [-4, 4, -8],
-        "size": [8, 8, 16]
-      }
-    },
-    "permutations": [
-      {
-        "condition": "q.block_state('minecraft:cardinal_direction') == 'north'",
         "components": {
-          "minecraft:transformation": { "rotation": [0, 0, 0] }
-        }
-      },
-      {
-        "condition": "q.block_state('minecraft:cardinal_direction') == 'south'",
-        "components": {
-          "minecraft:transformation": { "rotation": [0, 180, 0] }
-        }
-      },
-      {
-        "condition": "q.block_state('minecraft:cardinal_direction') == 'east'",
-        "components": {
-          "minecraft:transformation": { "rotation": [0, -90, 0] }
-        }
-      },
-      {
-        "condition": "q.block_state('minecraft:cardinal_direction') == 'west'",
-        "components": {
-          "minecraft:transformation": { "rotation": [0, 90, 0] }
-        }
-      },
-
-      {
-        "condition": "q.block_state('amethyst:connector') == 'none'",
-        "components": {
-          "minecraft:geometry": {
-            "identifier": "geometry.copper_pipe",
-            "bone_visibility": {
-              "bone": true,
-              "connector": false
+            "minecraft:geometry": {
+                "identifier": "geometry.copper_pipe",
+                "bone_visibility": {
+                    "bone": true
+                }
+            },
+            "minecraft:material_instances": {
+                "*": {
+                    "texture": "copper_pipe",
+                    "render_method": "opaque"
+                },
+                "connector": {
+                    "texture": "copper_pipe_front",
+                    "render_method": "opaque"
+                }
+            },
+            "minecraft:collision_box": {
+                "origin": [
+                    -4,
+                    4,
+                    -8
+                ],
+                "size": [
+                    8,
+                    8,
+                    16
+                ]
+            },
+            "minecraft:selection_box": {
+                "origin": [
+                    -4,
+                    4,
+                    -8
+                ],
+                "size": [
+                    8,
+                    8,
+                    16
+                ]
             }
-          }
-        }
-      },
-      {
-        "condition": "q.block_state('amethyst:connector') == 'left'",
-        "components": {
-          "minecraft:geometry": {
-            "identifier": "geometry.copper_pipe",
-            "bone_visibility": {
-              "bone": true,
-              "connector": true
+        },
+        "permutations": [
+            {
+                "condition": "q.block_state('minecraft:cardinal_direction') == 'north'",
+                "components": {
+                    "minecraft:transformation": {
+                        "rotation": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                }
+            },
+            {
+                "condition": "q.block_state('minecraft:cardinal_direction') == 'south'",
+                "components": {
+                    "minecraft:transformation": {
+                        "rotation": [
+                            0,
+                            180,
+                            0
+                        ]
+                    }
+                }
+            },
+            {
+                "condition": "q.block_state('minecraft:cardinal_direction') == 'east'",
+                "components": {
+                    "minecraft:transformation": {
+                        "rotation": [
+                            0,
+                            -90,
+                            0
+                        ]
+                    }
+                }
+            },
+            {
+                "condition": "q.block_state('minecraft:cardinal_direction') == 'west'",
+                "components": {
+                    "minecraft:transformation": {
+                        "rotation": [
+                            0,
+                            90,
+                            0
+                        ]
+                    }
+                }
             }
-          },
-          "minecraft:transformation": { "rotation": [0, 90, 0] }
-        }
-      },
-      {
-        "condition": "q.block_state('amethyst:connector') == 'right'",
-        "components": {
-          "minecraft:geometry": {
-            "identifier": "geometry.copper_pipe",
-            "bone_visibility": {
-              "bone": true,
-              "connector": true
-            }
-          },
-          "minecraft:transformation": { "rotation": [0, -90, 0] }
-        }
-      }
-    ]
-  }
+        ]
+    }
 }

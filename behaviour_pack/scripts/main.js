@@ -5741,86 +5741,6 @@ function loadAltarComponent() {
   });
 }
 
-// behaviour_pack/scripts-dev/features/blocks/copper_pipe.ts
-import { world as world12, system as system12, Direction } from "@minecraft/server";
-var PIPE_BLOCK = "amethyst:copper_pipe";
-function getConnectorState(block) {
-  const facing = block.permutation.getState("minecraft:cardinal_direction");
-  const leftDir = { north: Direction.West, south: Direction.East, east: Direction.North, west: Direction.South }[facing];
-  const rightDir = { north: Direction.East, south: Direction.West, east: Direction.South, west: Direction.North }[facing];
-  if (!leftDir || !rightDir) return "none";
-  const leftBlock = block.dimension.getBlock(block.location)?.offset(directionToOffset(leftDir));
-  const rightBlock = block.dimension.getBlock(block.location)?.offset(directionToOffset(rightDir));
-  const leftConnects = leftBlock && canConnect(leftBlock);
-  const rightConnects = rightBlock && canConnect(rightBlock);
-  if (leftConnects) return "left";
-  if (rightConnects) return "right";
-  return "none";
-}
-function canConnect(block) {
-  const connectableBlocks = [
-    PIPE_BLOCK
-  ];
-  return connectableBlocks.includes(block.typeId);
-}
-function directionToOffset(dir) {
-  switch (dir) {
-    case Direction.North:
-      return { x: 0, y: 0, z: -1 };
-    case Direction.South:
-      return { x: 0, y: 0, z: 1 };
-    case Direction.East:
-      return { x: 1, y: 0, z: 0 };
-    case Direction.West:
-      return { x: -1, y: 0, z: 0 };
-    default:
-      return { x: 0, y: 0, z: 0 };
-  }
-}
-function updatePipe(block) {
-  if (block.typeId !== PIPE_BLOCK) return;
-  const newState = getConnectorState(block);
-  const current = block.permutation.getState("amethyst:connector");
-  if (current !== newState) {
-    block.setPermutation(
-      block.permutation.withState("amethyst:connector", newState)
-    );
-  }
-}
-function updateNeighbours(block) {
-  const offsets = [
-    { x: 1, y: 0, z: 0 },
-    { x: -1, y: 0, z: 0 },
-    { x: 0, y: 0, z: 1 },
-    { x: 0, y: 0, z: -1 }
-  ];
-  for (const offset of offsets) {
-    const neighbour = block.dimension.getBlock({
-      x: block.location.x + offset.x,
-      y: block.location.y + offset.y,
-      z: block.location.z + offset.z
-    });
-    if (neighbour && neighbour.typeId === PIPE_BLOCK) {
-      updatePipe(neighbour);
-    }
-  }
-}
-function loadCopperPipeComponent() {
-  world12.afterEvents.playerPlaceBlock.subscribe((event) => {
-    const block = event.block;
-    if (block.typeId !== PIPE_BLOCK) return;
-    system12.run(() => {
-      updatePipe(block);
-      updateNeighbours(block);
-    });
-  });
-  world12.afterEvents.playerBreakBlock.subscribe((event) => {
-    system12.run(() => {
-      updateNeighbours(event.block);
-    });
-  });
-}
-
 // behaviour_pack/scripts-dev/features/blocks/index.ts
 function loadBlockComponents() {
   loadFungusSpreadComponent();
@@ -5828,11 +5748,10 @@ function loadBlockComponents() {
   loadMonolithicReactorComponent();
   loadWhoopieCushionComponent();
   loadAltarComponent();
-  loadCopperPipeComponent();
 }
 
 // behaviour_pack/scripts-dev/features/dragon-fight/health-manager.ts
-import { EntityComponentTypes as EntityComponentTypes8, world as world13 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes8, world as world12 } from "@minecraft/server";
 function loadHealthManager() {
   let first_stage = false;
   let second_stage = false;
@@ -5862,11 +5781,11 @@ function loadHealthManager() {
     first_stage = false;
     second_stage = false;
   }
-  world13.afterEvents.entityHurt.subscribe(
+  world12.afterEvents.entityHurt.subscribe(
     react_to_dragon_damage,
     { entityTypes: [MinecraftEntityTypes.EnderDragon] }
   );
-  world13.afterEvents.entityDie.subscribe(
+  world12.afterEvents.entityDie.subscribe(
     reset_health_stage,
     { entityTypes: [MinecraftEntityTypes.EnderDragon] }
   );
@@ -5874,7 +5793,7 @@ function loadHealthManager() {
 
 // behaviour_pack/scripts-dev/features/dragon-fight/draconic-heart.ts
 import {
-  system as system13,
+  system as system12,
   EntityComponentTypes as EntityComponentTypes9
 } from "@minecraft/server";
 function loadDraconicHeartComponents() {
@@ -5914,7 +5833,7 @@ function loadDraconicHeartComponents() {
       message
     );
   }
-  system13.beforeEvents.startup.subscribe((initEvent) => {
+  system12.beforeEvents.startup.subscribe((initEvent) => {
     initEvent.blockComponentRegistry.registerCustomComponent(
       "amethyst:heal_dragon",
       {
@@ -5942,11 +5861,11 @@ import {
   CustomCommandStatus,
   EntityComponentTypes as EntityComponentTypes10,
   EquipmentSlot as EquipmentSlot6,
-  system as system14
+  system as system13
 } from "@minecraft/server";
 function loreCommand() {
-  system14.beforeEvents.startup.subscribe((initEvent) => {
-    system14.run(() => {
+  system13.beforeEvents.startup.subscribe((initEvent) => {
+    system13.run(() => {
       api_default.Relay.event(
         "Amethyst successfully loaded",
         "Don't see this on server startup? Ping a CM! It's important!",
@@ -5964,7 +5883,7 @@ function loreCommand() {
       (origin, ...args) => {
         try {
           const mainhand = origin.sourceEntity?.getComponent(EntityComponentTypes10.Equippable)?.getEquipment(EquipmentSlot6.Mainhand);
-          system14.run(() => {
+          system13.run(() => {
             if (args[0] === null || args[0] === void 0 || args[0] === "") {
               mainhand?.setLore();
             } else {
@@ -5995,7 +5914,7 @@ function loadCommands() {
 
 // behaviour_pack/scripts-dev/features/wine-n-beer/components.ts
 import {
-  system as system15
+  system as system14
 } from "@minecraft/server";
 function loadOnDrinkComponent() {
   async function on_drink(event) {
@@ -6010,7 +5929,7 @@ function loadOnDrinkComponent() {
       player.setDynamicProperty("amethyst:drunk_data", JSON.stringify(drunk_data));
     }
   }
-  system15.beforeEvents.startup.subscribe((initEvent) => {
+  system14.beforeEvents.startup.subscribe((initEvent) => {
     initEvent.itemComponentRegistry.registerCustomComponent(
       "amethyst:alcohol",
       {
@@ -6023,7 +5942,7 @@ function loadOnDrinkComponent() {
 }
 
 // behaviour_pack/scripts-dev/features/wine-n-beer/loops.ts
-import { system as system16, TicksPerSecond as TicksPerSecond7, world as world14 } from "@minecraft/server";
+import { system as system15, TicksPerSecond as TicksPerSecond7, world as world13 } from "@minecraft/server";
 function sober_up(drunk_data) {
   const sober_chance = 0.06;
   const drunk_up_chance = 5e-3 * drunk_data.drinks;
@@ -6126,13 +6045,13 @@ function drunk_effects(player, drunk_data, effect_choices) {
   return drunk_data;
 }
 function drunkDataManager() {
-  system16.runInterval(() => {
-    let playerlist = world14.getPlayers();
+  system15.runInterval(() => {
+    let playerlist = world13.getPlayers();
     playerlist.forEach((player) => {
       drunk(player);
     });
   }, TicksPerSecond7);
-  world14.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
+  world13.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
     let player = spawn_event.player;
     if (player.getDynamicProperty("amethyst:drunk_data")) {
       player.camera.setFov();
@@ -6148,15 +6067,15 @@ function loadWineAndBeerFeature() {
 }
 
 // behaviour_pack/scripts-dev/features/chat.ts
-import { system as system17, world as world15 } from "@minecraft/server";
+import { system as system16, world as world14 } from "@minecraft/server";
 function loadChatDecorationFeature() {
-  world15.beforeEvents.chatSend.subscribe((chat_event) => {
+  world14.beforeEvents.chatSend.subscribe((chat_event) => {
     const gamertag = chat_event.sender.name;
     const thorny_user = api_default.ThornyUser.fetch_user(gamertag);
-    world15.sendMessage({
+    world14.sendMessage({
       rawtext: [{ text: `${thorny_user?.get_role_display()} \xA77${gamertag}:\xA7r ${chat_event.message}` }]
     });
-    system17.run(() => {
+    system16.run(() => {
       api_default.Relay.message(gamertag, chat_event.message);
     });
     chat_event.cancel = true;
@@ -6164,7 +6083,7 @@ function loadChatDecorationFeature() {
 }
 
 // behaviour_pack/scripts-dev/features/interactions/block-interact.ts
-import { world as world16, system as system18 } from "@minecraft/server";
+import { world as world15, system as system17 } from "@minecraft/server";
 import { EntityComponentTypes as EntityComponentTypes11, EquipmentSlot as EquipmentSlot7 } from "@minecraft/server";
 function blockInteract() {
   const LOGGABLE_BLOCKS = [
@@ -6291,7 +6210,7 @@ function blockInteract() {
     const mainhand = event.player.getComponent(EntityComponentTypes11.Equippable)?.getEquipment(EquipmentSlot7.Mainhand);
     const isPlacing = event.beforeItemStack?.typeId === block_id && event.itemStack?.amount !== event.beforeItemStack?.amount;
     if (!isPlacing) {
-      system18.run(() => {
+      system17.run(() => {
         const interaction = new api_default.Interaction(
           {
             thorny_id: api_default.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
@@ -6306,7 +6225,7 @@ function blockInteract() {
       });
     }
   }
-  world16.afterEvents.playerInteractWithBlock.subscribe((event) => {
+  world15.afterEvents.playerInteractWithBlock.subscribe((event) => {
     if (LOGGABLE_BLOCKS.includes(event.block.typeId)) {
       blockInteraction(event);
     }
@@ -6314,7 +6233,7 @@ function blockInteract() {
 }
 
 // behaviour_pack/scripts-dev/features/interactions/block-break.ts
-import { EntityComponentTypes as EntityComponentTypes12, EquipmentSlot as EquipmentSlot8, system as system19, world as world17 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes12, EquipmentSlot as EquipmentSlot8, system as system18, world as world16 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/utils/interaction_preprocess.ts
 function interaction_preprocess(interaction, quest) {
@@ -6328,14 +6247,14 @@ function interaction_preprocess(interaction, quest) {
 
 // behaviour_pack/scripts-dev/features/interactions/block-break.ts
 function blockBreak() {
-  world17.beforeEvents.playerBreakBlock.subscribe(async (event) => {
+  world16.beforeEvents.playerBreakBlock.subscribe(async (event) => {
     const block_id = event.block.typeId;
     const block_location = [event.block.x, event.block.y, event.block.z];
     const dimension = event.player.dimension;
     const mainhand = event.player.getComponent(EntityComponentTypes12.Equippable)?.getEquipment(EquipmentSlot8.Mainhand);
     const thorny_user = api_default.ThornyUser.fetch_user(event.player.name);
     const active_quest = await api_default.QuestProgress.get_quest_progress(thorny_user);
-    system19.run(() => {
+    system18.run(() => {
       const interaction = new api_default.Interaction(
         {
           thorny_id: thorny_user?.thorny_id ?? 0,
@@ -6355,14 +6274,14 @@ function blockBreak() {
 }
 
 // behaviour_pack/scripts-dev/features/interactions/block-place.ts
-import { EntityComponentTypes as EntityComponentTypes13, EquipmentSlot as EquipmentSlot9, system as system20, world as world18 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes13, EquipmentSlot as EquipmentSlot9, system as system19, world as world17 } from "@minecraft/server";
 function blockPlace() {
-  world18.afterEvents.playerPlaceBlock.subscribe((event) => {
+  world17.afterEvents.playerPlaceBlock.subscribe((event) => {
     const block_id = event.block.typeId;
     const block_location = [event.block.x, event.block.y, event.block.z];
     const dimension = event.player.dimension;
     const mainhand = event.player.getComponent(EntityComponentTypes13.Equippable)?.getEquipment(EquipmentSlot9.Mainhand);
-    system20.run(() => {
+    system19.run(() => {
       const interaction = new api_default.Interaction(
         {
           thorny_id: api_default.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
@@ -6379,7 +6298,7 @@ function blockPlace() {
 }
 
 // behaviour_pack/scripts-dev/features/interactions/entity-interact.ts
-import { EntityComponentTypes as EntityComponentTypes14, EquipmentSlot as EquipmentSlot10, system as system21, world as world19 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes14, EquipmentSlot as EquipmentSlot10, system as system20, world as world18 } from "@minecraft/server";
 function entityInteract() {
   const LOGGABLE_ENTITIES = [
     // Villagers
@@ -6414,7 +6333,7 @@ function entityInteract() {
     const entity_location = [event.target.location.x, event.target.location.y, event.target.location.z];
     const dimension = event.player.dimension;
     const mainhand = event.player.getComponent(EntityComponentTypes14.Equippable)?.getEquipment(EquipmentSlot10.Mainhand);
-    system21.run(() => {
+    system20.run(() => {
       const interaction = new api_default.Interaction(
         {
           thorny_id: api_default.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
@@ -6428,7 +6347,7 @@ function entityInteract() {
       interaction.post_interaction();
     });
   }
-  world19.afterEvents.playerInteractWithEntity.subscribe((event) => {
+  world18.afterEvents.playerInteractWithEntity.subscribe((event) => {
     if (LOGGABLE_ENTITIES.includes(event.target.typeId)) {
       entityInteraction(event);
     }
@@ -6436,7 +6355,7 @@ function entityInteract() {
 }
 
 // behaviour_pack/scripts-dev/features/interactions/entity-die.ts
-import { world as world20 } from "@minecraft/server";
+import { world as world19 } from "@minecraft/server";
 import { EntityComponentTypes as EntityComponentTypes15, EquipmentSlot as EquipmentSlot11, Player as Player13 } from "@minecraft/server";
 function entityDie() {
   async function playerKillEntity(player, entity) {
@@ -6513,7 +6432,7 @@ function entityDie() {
     api_default.Interaction.enqueue(death_interaction);
     api_default.Relay.event(utils_default.DeathMessage.random_suicide(player.name, damageCause), "", "other");
   }
-  world20.afterEvents.entityDie.subscribe(async (event) => {
+  world19.afterEvents.entityDie.subscribe(async (event) => {
     const damage_cause = event.damageSource.cause;
     const damaging_entity = event.damageSource.damagingEntity;
     const dead_entity = event.deadEntity;
@@ -6540,9 +6459,9 @@ function loadInteractionHandlers() {
 }
 
 // behaviour_pack/scripts-dev/features/connections.ts
-import { world as world21 } from "@minecraft/server";
+import { world as world20 } from "@minecraft/server";
 function loadConnectionsFeature() {
-  world21.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
+  world20.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
     if (spawn_event.initialSpawn) {
       try {
         const thorny_user = api_default.ThornyUser.fetch_user(spawn_event.player.name);
@@ -6559,7 +6478,7 @@ function loadConnectionsFeature() {
       }
     }
   });
-  world21.afterEvents.playerLeave.subscribe((leave_event) => {
+  world20.afterEvents.playerLeave.subscribe((leave_event) => {
     const thorny_user = api_default.ThornyUser.fetch_user(leave_event.playerName);
     if (thorny_user) {
       api_default.QuestProgress.clear_cache(thorny_user);
@@ -6570,7 +6489,7 @@ function loadConnectionsFeature() {
 }
 
 // behaviour_pack/scripts-dev/features/location-logger.ts
-import { EntityComponentTypes as EntityComponentTypes16, EquipmentSlot as EquipmentSlot12, system as system23, world as world22, TicksPerSecond as TicksPerSecond8 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes16, EquipmentSlot as EquipmentSlot12, system as system22, world as world21, TicksPerSecond as TicksPerSecond8 } from "@minecraft/server";
 var HEAD_GEAR = [
   MinecraftItemTypes.SkeletonSkull,
   MinecraftItemTypes.WitherSkeletonSkull,
@@ -6594,8 +6513,8 @@ function location_log(player) {
   }
 }
 function loadLocationLogger() {
-  system23.runInterval(() => {
-    let playerlist = world22.getPlayers();
+  system22.runInterval(() => {
+    let playerlist = world21.getPlayers();
     playerlist.forEach((player) => {
       location_log(player);
     });
@@ -6603,7 +6522,7 @@ function loadLocationLogger() {
 }
 
 // behaviour_pack/scripts-dev/features/quests.ts
-import { system as system24, world as world23 } from "@minecraft/server";
+import { system as system23, world as world22 } from "@minecraft/server";
 async function check_quests() {
   try {
     if (!api_default.Interaction.is_processing()) {
@@ -6650,7 +6569,7 @@ async function display_timer() {
       let remaining_seconds = Math.max(0, timer_seconds - elapsed_seconds);
       let minutes = Math.floor(remaining_seconds / 60);
       let seconds = remaining_seconds % 60;
-      let player = world23.getPlayers({ name: active_objective.thorny_user.gamertag })[0];
+      let player = world22.getPlayers({ name: active_objective.thorny_user.gamertag })[0];
       utils_default.commands.send_title(
         player.dimension.id,
         player.name,
@@ -6661,17 +6580,17 @@ async function display_timer() {
   }
 }
 function load_quest_loop() {
-  system24.runInterval(async () => {
+  system23.runInterval(async () => {
     await check_quests();
   }, 1);
-  system24.runInterval(async () => {
+  system23.runInterval(async () => {
     await display_timer();
   }, 10);
 }
 
 // behaviour_pack/scripts-dev/features/whitelist.ts
 import { beforeEvents } from "@minecraft/server-admin";
-import { world as world24 } from "@minecraft/server";
+import { world as world23 } from "@minecraft/server";
 var BlockMessageMap = {
   "no_whitelist": "You are not whitelisted. Check the guidelines to see how to whitelist yourself.",
   "not_active": "WAIT! Don't go!\n\nCouldn't resist a peek, could you? We don't blame you. Let's get you back to where you belong.\n\nRejoin us at everthorn.net/apply or reach out on Discord. We'll get you right back in!",
@@ -6688,7 +6607,7 @@ async function blockJoin(join_event, reason = "other") {
   console.log(`[Admin] ${join_event.name} blocked from joining. Reason: ${reason}`);
 }
 function loadWhitelistFeature(guild_id2) {
-  world24.afterEvents.worldLoad.subscribe(() => {
+  world23.afterEvents.worldLoad.subscribe(() => {
     beforeEvents.asyncPlayerJoin.subscribe(async (join_event) => {
       try {
         const thorny_user = await api_default.ThornyUser.get_user_from_api(guild_id2, join_event.name);
