@@ -33,6 +33,12 @@
         },
         "computer": {
             "textures": "textures/blocks/control_panel.png"
+        },
+        "copper_pipe": {
+            "textures": "textures/blocks/copper_pipe.png"
+        },
+        "copper_pipe_front": {
+            "textures": "textures/blocks/copper_pipe_front.png"
         }
-	}
+    }
 }

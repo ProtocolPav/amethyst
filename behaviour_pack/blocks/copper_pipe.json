@@ -23,7 +23,10 @@
         "*": {
           "texture": "copper_pipe",
           "render_method": "opaque"
-        }
+        },
+          "connector": {
+              "texture": "copper_pipe_front"
+          }
       },
       "minecraft:collision_box": {
         "origin": [-4, 4, -8],
