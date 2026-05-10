@@ -1,6 +1,6 @@
 import { world, system, Direction, Block, BlockPermutation } from "@minecraft/server";
 
-const PIPE_BLOCK = "everthorn:copper_pipe";
+const PIPE_BLOCK = "amethyst:copper_pipe";
 
 type ConnectorState = "none" | "left" | "right";
 
@@ -40,9 +40,7 @@ function getConnectorState(block: Block): ConnectorState {
 function canConnect(block: Block): boolean {
     // Add any block type IDs that the pipe can connect to
     const connectableBlocks = [
-        PIPE_BLOCK,
-        "everthorn:copper_valve",
-        "everthorn:copper_tank",
+        PIPE_BLOCK
     ];
     return connectableBlocks.includes(block.typeId);
 }
