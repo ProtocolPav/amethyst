@@ -39,6 +39,9 @@
         },
         "copper_pipe_front": {
             "textures": "textures/blocks/copper_pipe_front.png"
+        },
+        "tesla_coil": {
+            "textures": "textures/blocks/transformer_hv.png"
         }
     }
 }
