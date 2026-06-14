@@ -1,8 +1,5 @@
-// behaviour_pack/scripts-dev/components/fungus_spread.ts
-import {
-  system,
-  TicksPerSecond
-} from "@minecraft/server";
+// behaviour_pack/scripts-dev/features/border.ts
+import { world, system, EntityDamageCause } from "@minecraft/server";
 
 // node_modules/@minecraft/vanilla-data/lib/index.js
 var MinecraftBiomeTypes = ((MinecraftBiomeTypes2) => {
@@ -95,1315 +92,1315 @@ var MinecraftBiomeTypes = ((MinecraftBiomeTypes2) => {
   MinecraftBiomeTypes2["WarpedForest"] = "minecraft:warped_forest";
   return MinecraftBiomeTypes2;
 })(MinecraftBiomeTypes || {});
-var MinecraftBlockTypes = ((MinecraftBlockTypes22) => {
-  MinecraftBlockTypes22["AcaciaButton"] = "minecraft:acacia_button";
-  MinecraftBlockTypes22["AcaciaDoor"] = "minecraft:acacia_door";
-  MinecraftBlockTypes22["AcaciaDoubleSlab"] = "minecraft:acacia_double_slab";
-  MinecraftBlockTypes22["AcaciaFence"] = "minecraft:acacia_fence";
-  MinecraftBlockTypes22["AcaciaFenceGate"] = "minecraft:acacia_fence_gate";
-  MinecraftBlockTypes22["AcaciaHangingSign"] = "minecraft:acacia_hanging_sign";
-  MinecraftBlockTypes22["AcaciaLeaves"] = "minecraft:acacia_leaves";
-  MinecraftBlockTypes22["AcaciaLog"] = "minecraft:acacia_log";
-  MinecraftBlockTypes22["AcaciaPlanks"] = "minecraft:acacia_planks";
-  MinecraftBlockTypes22["AcaciaPressurePlate"] = "minecraft:acacia_pressure_plate";
-  MinecraftBlockTypes22["AcaciaSapling"] = "minecraft:acacia_sapling";
-  MinecraftBlockTypes22["AcaciaShelf"] = "minecraft:acacia_shelf";
-  MinecraftBlockTypes22["AcaciaSlab"] = "minecraft:acacia_slab";
-  MinecraftBlockTypes22["AcaciaStairs"] = "minecraft:acacia_stairs";
-  MinecraftBlockTypes22["AcaciaStandingSign"] = "minecraft:acacia_standing_sign";
-  MinecraftBlockTypes22["AcaciaTrapdoor"] = "minecraft:acacia_trapdoor";
-  MinecraftBlockTypes22["AcaciaWallSign"] = "minecraft:acacia_wall_sign";
-  MinecraftBlockTypes22["AcaciaWood"] = "minecraft:acacia_wood";
-  MinecraftBlockTypes22["ActivatorRail"] = "minecraft:activator_rail";
-  MinecraftBlockTypes22["Air"] = "minecraft:air";
-  MinecraftBlockTypes22["Allium"] = "minecraft:allium";
-  MinecraftBlockTypes22["Allow"] = "minecraft:allow";
-  MinecraftBlockTypes22["AmethystBlock"] = "minecraft:amethyst_block";
-  MinecraftBlockTypes22["AmethystCluster"] = "minecraft:amethyst_cluster";
-  MinecraftBlockTypes22["AncientDebris"] = "minecraft:ancient_debris";
-  MinecraftBlockTypes22["Andesite"] = "minecraft:andesite";
-  MinecraftBlockTypes22["AndesiteDoubleSlab"] = "minecraft:andesite_double_slab";
-  MinecraftBlockTypes22["AndesiteSlab"] = "minecraft:andesite_slab";
-  MinecraftBlockTypes22["AndesiteStairs"] = "minecraft:andesite_stairs";
-  MinecraftBlockTypes22["AndesiteWall"] = "minecraft:andesite_wall";
-  MinecraftBlockTypes22["Anvil"] = "minecraft:anvil";
-  MinecraftBlockTypes22["Azalea"] = "minecraft:azalea";
-  MinecraftBlockTypes22["AzaleaLeaves"] = "minecraft:azalea_leaves";
-  MinecraftBlockTypes22["AzaleaLeavesFlowered"] = "minecraft:azalea_leaves_flowered";
-  MinecraftBlockTypes22["AzureBluet"] = "minecraft:azure_bluet";
-  MinecraftBlockTypes22["Bamboo"] = "minecraft:bamboo";
-  MinecraftBlockTypes22["BambooBlock"] = "minecraft:bamboo_block";
-  MinecraftBlockTypes22["BambooButton"] = "minecraft:bamboo_button";
-  MinecraftBlockTypes22["BambooDoor"] = "minecraft:bamboo_door";
-  MinecraftBlockTypes22["BambooDoubleSlab"] = "minecraft:bamboo_double_slab";
-  MinecraftBlockTypes22["BambooFence"] = "minecraft:bamboo_fence";
-  MinecraftBlockTypes22["BambooFenceGate"] = "minecraft:bamboo_fence_gate";
-  MinecraftBlockTypes22["BambooHangingSign"] = "minecraft:bamboo_hanging_sign";
-  MinecraftBlockTypes22["BambooMosaic"] = "minecraft:bamboo_mosaic";
-  MinecraftBlockTypes22["BambooMosaicDoubleSlab"] = "minecraft:bamboo_mosaic_double_slab";
-  MinecraftBlockTypes22["BambooMosaicSlab"] = "minecraft:bamboo_mosaic_slab";
-  MinecraftBlockTypes22["BambooMosaicStairs"] = "minecraft:bamboo_mosaic_stairs";
-  MinecraftBlockTypes22["BambooPlanks"] = "minecraft:bamboo_planks";
-  MinecraftBlockTypes22["BambooPressurePlate"] = "minecraft:bamboo_pressure_plate";
-  MinecraftBlockTypes22["BambooSapling"] = "minecraft:bamboo_sapling";
-  MinecraftBlockTypes22["BambooShelf"] = "minecraft:bamboo_shelf";
-  MinecraftBlockTypes22["BambooSlab"] = "minecraft:bamboo_slab";
-  MinecraftBlockTypes22["BambooStairs"] = "minecraft:bamboo_stairs";
-  MinecraftBlockTypes22["BambooStandingSign"] = "minecraft:bamboo_standing_sign";
-  MinecraftBlockTypes22["BambooTrapdoor"] = "minecraft:bamboo_trapdoor";
-  MinecraftBlockTypes22["BambooWallSign"] = "minecraft:bamboo_wall_sign";
-  MinecraftBlockTypes22["Barrel"] = "minecraft:barrel";
-  MinecraftBlockTypes22["Barrier"] = "minecraft:barrier";
-  MinecraftBlockTypes22["Basalt"] = "minecraft:basalt";
-  MinecraftBlockTypes22["Beacon"] = "minecraft:beacon";
-  MinecraftBlockTypes22["Bed"] = "minecraft:bed";
-  MinecraftBlockTypes22["Bedrock"] = "minecraft:bedrock";
-  MinecraftBlockTypes22["BeeNest"] = "minecraft:bee_nest";
-  MinecraftBlockTypes22["Beehive"] = "minecraft:beehive";
-  MinecraftBlockTypes22["Beetroot"] = "minecraft:beetroot";
-  MinecraftBlockTypes22["Bell"] = "minecraft:bell";
-  MinecraftBlockTypes22["BigDripleaf"] = "minecraft:big_dripleaf";
-  MinecraftBlockTypes22["BirchButton"] = "minecraft:birch_button";
-  MinecraftBlockTypes22["BirchDoor"] = "minecraft:birch_door";
-  MinecraftBlockTypes22["BirchDoubleSlab"] = "minecraft:birch_double_slab";
-  MinecraftBlockTypes22["BirchFence"] = "minecraft:birch_fence";
-  MinecraftBlockTypes22["BirchFenceGate"] = "minecraft:birch_fence_gate";
-  MinecraftBlockTypes22["BirchHangingSign"] = "minecraft:birch_hanging_sign";
-  MinecraftBlockTypes22["BirchLeaves"] = "minecraft:birch_leaves";
-  MinecraftBlockTypes22["BirchLog"] = "minecraft:birch_log";
-  MinecraftBlockTypes22["BirchPlanks"] = "minecraft:birch_planks";
-  MinecraftBlockTypes22["BirchPressurePlate"] = "minecraft:birch_pressure_plate";
-  MinecraftBlockTypes22["BirchSapling"] = "minecraft:birch_sapling";
-  MinecraftBlockTypes22["BirchShelf"] = "minecraft:birch_shelf";
-  MinecraftBlockTypes22["BirchSlab"] = "minecraft:birch_slab";
-  MinecraftBlockTypes22["BirchStairs"] = "minecraft:birch_stairs";
-  MinecraftBlockTypes22["BirchStandingSign"] = "minecraft:birch_standing_sign";
-  MinecraftBlockTypes22["BirchTrapdoor"] = "minecraft:birch_trapdoor";
-  MinecraftBlockTypes22["BirchWallSign"] = "minecraft:birch_wall_sign";
-  MinecraftBlockTypes22["BirchWood"] = "minecraft:birch_wood";
-  MinecraftBlockTypes22["BlackCandle"] = "minecraft:black_candle";
-  MinecraftBlockTypes22["BlackCandleCake"] = "minecraft:black_candle_cake";
-  MinecraftBlockTypes22["BlackCarpet"] = "minecraft:black_carpet";
-  MinecraftBlockTypes22["BlackConcrete"] = "minecraft:black_concrete";
-  MinecraftBlockTypes22["BlackConcretePowder"] = "minecraft:black_concrete_powder";
-  MinecraftBlockTypes22["BlackGlazedTerracotta"] = "minecraft:black_glazed_terracotta";
-  MinecraftBlockTypes22["BlackShulkerBox"] = "minecraft:black_shulker_box";
-  MinecraftBlockTypes22["BlackStainedGlass"] = "minecraft:black_stained_glass";
-  MinecraftBlockTypes22["BlackStainedGlassPane"] = "minecraft:black_stained_glass_pane";
-  MinecraftBlockTypes22["BlackTerracotta"] = "minecraft:black_terracotta";
-  MinecraftBlockTypes22["BlackWool"] = "minecraft:black_wool";
-  MinecraftBlockTypes22["Blackstone"] = "minecraft:blackstone";
-  MinecraftBlockTypes22["BlackstoneDoubleSlab"] = "minecraft:blackstone_double_slab";
-  MinecraftBlockTypes22["BlackstoneSlab"] = "minecraft:blackstone_slab";
-  MinecraftBlockTypes22["BlackstoneStairs"] = "minecraft:blackstone_stairs";
-  MinecraftBlockTypes22["BlackstoneWall"] = "minecraft:blackstone_wall";
-  MinecraftBlockTypes22["BlastFurnace"] = "minecraft:blast_furnace";
-  MinecraftBlockTypes22["BlueCandle"] = "minecraft:blue_candle";
-  MinecraftBlockTypes22["BlueCandleCake"] = "minecraft:blue_candle_cake";
-  MinecraftBlockTypes22["BlueCarpet"] = "minecraft:blue_carpet";
-  MinecraftBlockTypes22["BlueConcrete"] = "minecraft:blue_concrete";
-  MinecraftBlockTypes22["BlueConcretePowder"] = "minecraft:blue_concrete_powder";
-  MinecraftBlockTypes22["BlueGlazedTerracotta"] = "minecraft:blue_glazed_terracotta";
-  MinecraftBlockTypes22["BlueIce"] = "minecraft:blue_ice";
-  MinecraftBlockTypes22["BlueOrchid"] = "minecraft:blue_orchid";
-  MinecraftBlockTypes22["BlueShulkerBox"] = "minecraft:blue_shulker_box";
-  MinecraftBlockTypes22["BlueStainedGlass"] = "minecraft:blue_stained_glass";
-  MinecraftBlockTypes22["BlueStainedGlassPane"] = "minecraft:blue_stained_glass_pane";
-  MinecraftBlockTypes22["BlueTerracotta"] = "minecraft:blue_terracotta";
-  MinecraftBlockTypes22["BlueWool"] = "minecraft:blue_wool";
-  MinecraftBlockTypes22["BoneBlock"] = "minecraft:bone_block";
-  MinecraftBlockTypes22["Bookshelf"] = "minecraft:bookshelf";
-  MinecraftBlockTypes22["BorderBlock"] = "minecraft:border_block";
-  MinecraftBlockTypes22["BrainCoral"] = "minecraft:brain_coral";
-  MinecraftBlockTypes22["BrainCoralBlock"] = "minecraft:brain_coral_block";
-  MinecraftBlockTypes22["BrainCoralFan"] = "minecraft:brain_coral_fan";
-  MinecraftBlockTypes22["BrainCoralWallFan"] = "minecraft:brain_coral_wall_fan";
-  MinecraftBlockTypes22["BrewingStand"] = "minecraft:brewing_stand";
-  MinecraftBlockTypes22["BrickBlock"] = "minecraft:brick_block";
-  MinecraftBlockTypes22["BrickDoubleSlab"] = "minecraft:brick_double_slab";
-  MinecraftBlockTypes22["BrickSlab"] = "minecraft:brick_slab";
-  MinecraftBlockTypes22["BrickStairs"] = "minecraft:brick_stairs";
-  MinecraftBlockTypes22["BrickWall"] = "minecraft:brick_wall";
-  MinecraftBlockTypes22["BrownCandle"] = "minecraft:brown_candle";
-  MinecraftBlockTypes22["BrownCandleCake"] = "minecraft:brown_candle_cake";
-  MinecraftBlockTypes22["BrownCarpet"] = "minecraft:brown_carpet";
-  MinecraftBlockTypes22["BrownConcrete"] = "minecraft:brown_concrete";
-  MinecraftBlockTypes22["BrownConcretePowder"] = "minecraft:brown_concrete_powder";
-  MinecraftBlockTypes22["BrownGlazedTerracotta"] = "minecraft:brown_glazed_terracotta";
-  MinecraftBlockTypes22["BrownMushroom"] = "minecraft:brown_mushroom";
-  MinecraftBlockTypes22["BrownMushroomBlock"] = "minecraft:brown_mushroom_block";
-  MinecraftBlockTypes22["BrownShulkerBox"] = "minecraft:brown_shulker_box";
-  MinecraftBlockTypes22["BrownStainedGlass"] = "minecraft:brown_stained_glass";
-  MinecraftBlockTypes22["BrownStainedGlassPane"] = "minecraft:brown_stained_glass_pane";
-  MinecraftBlockTypes22["BrownTerracotta"] = "minecraft:brown_terracotta";
-  MinecraftBlockTypes22["BrownWool"] = "minecraft:brown_wool";
-  MinecraftBlockTypes22["BubbleColumn"] = "minecraft:bubble_column";
-  MinecraftBlockTypes22["BubbleCoral"] = "minecraft:bubble_coral";
-  MinecraftBlockTypes22["BubbleCoralBlock"] = "minecraft:bubble_coral_block";
-  MinecraftBlockTypes22["BubbleCoralFan"] = "minecraft:bubble_coral_fan";
-  MinecraftBlockTypes22["BubbleCoralWallFan"] = "minecraft:bubble_coral_wall_fan";
-  MinecraftBlockTypes22["BuddingAmethyst"] = "minecraft:budding_amethyst";
-  MinecraftBlockTypes22["Bush"] = "minecraft:bush";
-  MinecraftBlockTypes22["Cactus"] = "minecraft:cactus";
-  MinecraftBlockTypes22["CactusFlower"] = "minecraft:cactus_flower";
-  MinecraftBlockTypes22["Cake"] = "minecraft:cake";
-  MinecraftBlockTypes22["Calcite"] = "minecraft:calcite";
-  MinecraftBlockTypes22["CalibratedSculkSensor"] = "minecraft:calibrated_sculk_sensor";
-  MinecraftBlockTypes22["Camera"] = "minecraft:camera";
-  MinecraftBlockTypes22["Campfire"] = "minecraft:campfire";
-  MinecraftBlockTypes22["Candle"] = "minecraft:candle";
-  MinecraftBlockTypes22["CandleCake"] = "minecraft:candle_cake";
-  MinecraftBlockTypes22["Carrots"] = "minecraft:carrots";
-  MinecraftBlockTypes22["CartographyTable"] = "minecraft:cartography_table";
-  MinecraftBlockTypes22["CarvedPumpkin"] = "minecraft:carved_pumpkin";
-  MinecraftBlockTypes22["Cauldron"] = "minecraft:cauldron";
-  MinecraftBlockTypes22["CaveVines"] = "minecraft:cave_vines";
-  MinecraftBlockTypes22["CaveVinesBodyWithBerries"] = "minecraft:cave_vines_body_with_berries";
-  MinecraftBlockTypes22["CaveVinesHeadWithBerries"] = "minecraft:cave_vines_head_with_berries";
-  MinecraftBlockTypes22["ChainCommandBlock"] = "minecraft:chain_command_block";
-  MinecraftBlockTypes22["ChemicalHeat"] = "minecraft:chemical_heat";
-  MinecraftBlockTypes22["CherryButton"] = "minecraft:cherry_button";
-  MinecraftBlockTypes22["CherryDoor"] = "minecraft:cherry_door";
-  MinecraftBlockTypes22["CherryDoubleSlab"] = "minecraft:cherry_double_slab";
-  MinecraftBlockTypes22["CherryFence"] = "minecraft:cherry_fence";
-  MinecraftBlockTypes22["CherryFenceGate"] = "minecraft:cherry_fence_gate";
-  MinecraftBlockTypes22["CherryHangingSign"] = "minecraft:cherry_hanging_sign";
-  MinecraftBlockTypes22["CherryLeaves"] = "minecraft:cherry_leaves";
-  MinecraftBlockTypes22["CherryLog"] = "minecraft:cherry_log";
-  MinecraftBlockTypes22["CherryPlanks"] = "minecraft:cherry_planks";
-  MinecraftBlockTypes22["CherryPressurePlate"] = "minecraft:cherry_pressure_plate";
-  MinecraftBlockTypes22["CherrySapling"] = "minecraft:cherry_sapling";
-  MinecraftBlockTypes22["CherryShelf"] = "minecraft:cherry_shelf";
-  MinecraftBlockTypes22["CherrySlab"] = "minecraft:cherry_slab";
-  MinecraftBlockTypes22["CherryStairs"] = "minecraft:cherry_stairs";
-  MinecraftBlockTypes22["CherryStandingSign"] = "minecraft:cherry_standing_sign";
-  MinecraftBlockTypes22["CherryTrapdoor"] = "minecraft:cherry_trapdoor";
-  MinecraftBlockTypes22["CherryWallSign"] = "minecraft:cherry_wall_sign";
-  MinecraftBlockTypes22["CherryWood"] = "minecraft:cherry_wood";
-  MinecraftBlockTypes22["Chest"] = "minecraft:chest";
-  MinecraftBlockTypes22["ChippedAnvil"] = "minecraft:chipped_anvil";
-  MinecraftBlockTypes22["ChiseledBookshelf"] = "minecraft:chiseled_bookshelf";
-  MinecraftBlockTypes22["ChiseledCopper"] = "minecraft:chiseled_copper";
-  MinecraftBlockTypes22["ChiseledDeepslate"] = "minecraft:chiseled_deepslate";
-  MinecraftBlockTypes22["ChiseledNetherBricks"] = "minecraft:chiseled_nether_bricks";
-  MinecraftBlockTypes22["ChiseledPolishedBlackstone"] = "minecraft:chiseled_polished_blackstone";
-  MinecraftBlockTypes22["ChiseledQuartzBlock"] = "minecraft:chiseled_quartz_block";
-  MinecraftBlockTypes22["ChiseledRedSandstone"] = "minecraft:chiseled_red_sandstone";
-  MinecraftBlockTypes22["ChiseledResinBricks"] = "minecraft:chiseled_resin_bricks";
-  MinecraftBlockTypes22["ChiseledSandstone"] = "minecraft:chiseled_sandstone";
-  MinecraftBlockTypes22["ChiseledStoneBricks"] = "minecraft:chiseled_stone_bricks";
-  MinecraftBlockTypes22["ChiseledTuff"] = "minecraft:chiseled_tuff";
-  MinecraftBlockTypes22["ChiseledTuffBricks"] = "minecraft:chiseled_tuff_bricks";
-  MinecraftBlockTypes22["ChorusFlower"] = "minecraft:chorus_flower";
-  MinecraftBlockTypes22["ChorusPlant"] = "minecraft:chorus_plant";
-  MinecraftBlockTypes22["Clay"] = "minecraft:clay";
-  MinecraftBlockTypes22["ClosedEyeblossom"] = "minecraft:closed_eyeblossom";
-  MinecraftBlockTypes22["CoalBlock"] = "minecraft:coal_block";
-  MinecraftBlockTypes22["CoalOre"] = "minecraft:coal_ore";
-  MinecraftBlockTypes22["CoarseDirt"] = "minecraft:coarse_dirt";
-  MinecraftBlockTypes22["CobbledDeepslate"] = "minecraft:cobbled_deepslate";
-  MinecraftBlockTypes22["CobbledDeepslateDoubleSlab"] = "minecraft:cobbled_deepslate_double_slab";
-  MinecraftBlockTypes22["CobbledDeepslateSlab"] = "minecraft:cobbled_deepslate_slab";
-  MinecraftBlockTypes22["CobbledDeepslateStairs"] = "minecraft:cobbled_deepslate_stairs";
-  MinecraftBlockTypes22["CobbledDeepslateWall"] = "minecraft:cobbled_deepslate_wall";
-  MinecraftBlockTypes22["Cobblestone"] = "minecraft:cobblestone";
-  MinecraftBlockTypes22["CobblestoneDoubleSlab"] = "minecraft:cobblestone_double_slab";
-  MinecraftBlockTypes22["CobblestoneSlab"] = "minecraft:cobblestone_slab";
-  MinecraftBlockTypes22["CobblestoneWall"] = "minecraft:cobblestone_wall";
-  MinecraftBlockTypes22["Cocoa"] = "minecraft:cocoa";
-  MinecraftBlockTypes22["ColoredTorchBlue"] = "minecraft:colored_torch_blue";
-  MinecraftBlockTypes22["ColoredTorchGreen"] = "minecraft:colored_torch_green";
-  MinecraftBlockTypes22["ColoredTorchPurple"] = "minecraft:colored_torch_purple";
-  MinecraftBlockTypes22["ColoredTorchRed"] = "minecraft:colored_torch_red";
-  MinecraftBlockTypes22["CommandBlock"] = "minecraft:command_block";
-  MinecraftBlockTypes22["Composter"] = "minecraft:composter";
-  MinecraftBlockTypes22["CompoundCreator"] = "minecraft:compound_creator";
-  MinecraftBlockTypes22["Conduit"] = "minecraft:conduit";
-  MinecraftBlockTypes22["CopperBars"] = "minecraft:copper_bars";
-  MinecraftBlockTypes22["CopperBlock"] = "minecraft:copper_block";
-  MinecraftBlockTypes22["CopperBulb"] = "minecraft:copper_bulb";
-  MinecraftBlockTypes22["CopperChain"] = "minecraft:copper_chain";
-  MinecraftBlockTypes22["CopperChest"] = "minecraft:copper_chest";
-  MinecraftBlockTypes22["CopperDoor"] = "minecraft:copper_door";
-  MinecraftBlockTypes22["CopperGolemStatue"] = "minecraft:copper_golem_statue";
-  MinecraftBlockTypes22["CopperGrate"] = "minecraft:copper_grate";
-  MinecraftBlockTypes22["CopperLantern"] = "minecraft:copper_lantern";
-  MinecraftBlockTypes22["CopperOre"] = "minecraft:copper_ore";
-  MinecraftBlockTypes22["CopperTorch"] = "minecraft:copper_torch";
-  MinecraftBlockTypes22["CopperTrapdoor"] = "minecraft:copper_trapdoor";
-  MinecraftBlockTypes22["Cornflower"] = "minecraft:cornflower";
-  MinecraftBlockTypes22["CrackedDeepslateBricks"] = "minecraft:cracked_deepslate_bricks";
-  MinecraftBlockTypes22["CrackedDeepslateTiles"] = "minecraft:cracked_deepslate_tiles";
-  MinecraftBlockTypes22["CrackedNetherBricks"] = "minecraft:cracked_nether_bricks";
-  MinecraftBlockTypes22["CrackedPolishedBlackstoneBricks"] = "minecraft:cracked_polished_blackstone_bricks";
-  MinecraftBlockTypes22["CrackedStoneBricks"] = "minecraft:cracked_stone_bricks";
-  MinecraftBlockTypes22["Crafter"] = "minecraft:crafter";
-  MinecraftBlockTypes22["CraftingTable"] = "minecraft:crafting_table";
-  MinecraftBlockTypes22["CreakingHeart"] = "minecraft:creaking_heart";
-  MinecraftBlockTypes22["CreeperHead"] = "minecraft:creeper_head";
-  MinecraftBlockTypes22["CrimsonButton"] = "minecraft:crimson_button";
-  MinecraftBlockTypes22["CrimsonDoor"] = "minecraft:crimson_door";
-  MinecraftBlockTypes22["CrimsonDoubleSlab"] = "minecraft:crimson_double_slab";
-  MinecraftBlockTypes22["CrimsonFence"] = "minecraft:crimson_fence";
-  MinecraftBlockTypes22["CrimsonFenceGate"] = "minecraft:crimson_fence_gate";
-  MinecraftBlockTypes22["CrimsonFungus"] = "minecraft:crimson_fungus";
-  MinecraftBlockTypes22["CrimsonHangingSign"] = "minecraft:crimson_hanging_sign";
-  MinecraftBlockTypes22["CrimsonHyphae"] = "minecraft:crimson_hyphae";
-  MinecraftBlockTypes22["CrimsonNylium"] = "minecraft:crimson_nylium";
-  MinecraftBlockTypes22["CrimsonPlanks"] = "minecraft:crimson_planks";
-  MinecraftBlockTypes22["CrimsonPressurePlate"] = "minecraft:crimson_pressure_plate";
-  MinecraftBlockTypes22["CrimsonRoots"] = "minecraft:crimson_roots";
-  MinecraftBlockTypes22["CrimsonShelf"] = "minecraft:crimson_shelf";
-  MinecraftBlockTypes22["CrimsonSlab"] = "minecraft:crimson_slab";
-  MinecraftBlockTypes22["CrimsonStairs"] = "minecraft:crimson_stairs";
-  MinecraftBlockTypes22["CrimsonStandingSign"] = "minecraft:crimson_standing_sign";
-  MinecraftBlockTypes22["CrimsonStem"] = "minecraft:crimson_stem";
-  MinecraftBlockTypes22["CrimsonTrapdoor"] = "minecraft:crimson_trapdoor";
-  MinecraftBlockTypes22["CrimsonWallSign"] = "minecraft:crimson_wall_sign";
-  MinecraftBlockTypes22["CryingObsidian"] = "minecraft:crying_obsidian";
-  MinecraftBlockTypes22["CutCopper"] = "minecraft:cut_copper";
-  MinecraftBlockTypes22["CutCopperSlab"] = "minecraft:cut_copper_slab";
-  MinecraftBlockTypes22["CutCopperStairs"] = "minecraft:cut_copper_stairs";
-  MinecraftBlockTypes22["CutRedSandstone"] = "minecraft:cut_red_sandstone";
-  MinecraftBlockTypes22["CutRedSandstoneDoubleSlab"] = "minecraft:cut_red_sandstone_double_slab";
-  MinecraftBlockTypes22["CutRedSandstoneSlab"] = "minecraft:cut_red_sandstone_slab";
-  MinecraftBlockTypes22["CutSandstone"] = "minecraft:cut_sandstone";
-  MinecraftBlockTypes22["CutSandstoneDoubleSlab"] = "minecraft:cut_sandstone_double_slab";
-  MinecraftBlockTypes22["CutSandstoneSlab"] = "minecraft:cut_sandstone_slab";
-  MinecraftBlockTypes22["CyanCandle"] = "minecraft:cyan_candle";
-  MinecraftBlockTypes22["CyanCandleCake"] = "minecraft:cyan_candle_cake";
-  MinecraftBlockTypes22["CyanCarpet"] = "minecraft:cyan_carpet";
-  MinecraftBlockTypes22["CyanConcrete"] = "minecraft:cyan_concrete";
-  MinecraftBlockTypes22["CyanConcretePowder"] = "minecraft:cyan_concrete_powder";
-  MinecraftBlockTypes22["CyanGlazedTerracotta"] = "minecraft:cyan_glazed_terracotta";
-  MinecraftBlockTypes22["CyanShulkerBox"] = "minecraft:cyan_shulker_box";
-  MinecraftBlockTypes22["CyanStainedGlass"] = "minecraft:cyan_stained_glass";
-  MinecraftBlockTypes22["CyanStainedGlassPane"] = "minecraft:cyan_stained_glass_pane";
-  MinecraftBlockTypes22["CyanTerracotta"] = "minecraft:cyan_terracotta";
-  MinecraftBlockTypes22["CyanWool"] = "minecraft:cyan_wool";
-  MinecraftBlockTypes22["DamagedAnvil"] = "minecraft:damaged_anvil";
-  MinecraftBlockTypes22["Dandelion"] = "minecraft:dandelion";
-  MinecraftBlockTypes22["DarkOakButton"] = "minecraft:dark_oak_button";
-  MinecraftBlockTypes22["DarkOakDoor"] = "minecraft:dark_oak_door";
-  MinecraftBlockTypes22["DarkOakDoubleSlab"] = "minecraft:dark_oak_double_slab";
-  MinecraftBlockTypes22["DarkOakFence"] = "minecraft:dark_oak_fence";
-  MinecraftBlockTypes22["DarkOakFenceGate"] = "minecraft:dark_oak_fence_gate";
-  MinecraftBlockTypes22["DarkOakHangingSign"] = "minecraft:dark_oak_hanging_sign";
-  MinecraftBlockTypes22["DarkOakLeaves"] = "minecraft:dark_oak_leaves";
-  MinecraftBlockTypes22["DarkOakLog"] = "minecraft:dark_oak_log";
-  MinecraftBlockTypes22["DarkOakPlanks"] = "minecraft:dark_oak_planks";
-  MinecraftBlockTypes22["DarkOakPressurePlate"] = "minecraft:dark_oak_pressure_plate";
-  MinecraftBlockTypes22["DarkOakSapling"] = "minecraft:dark_oak_sapling";
-  MinecraftBlockTypes22["DarkOakShelf"] = "minecraft:dark_oak_shelf";
-  MinecraftBlockTypes22["DarkOakSlab"] = "minecraft:dark_oak_slab";
-  MinecraftBlockTypes22["DarkOakStairs"] = "minecraft:dark_oak_stairs";
-  MinecraftBlockTypes22["DarkOakTrapdoor"] = "minecraft:dark_oak_trapdoor";
-  MinecraftBlockTypes22["DarkOakWood"] = "minecraft:dark_oak_wood";
-  MinecraftBlockTypes22["DarkPrismarine"] = "minecraft:dark_prismarine";
-  MinecraftBlockTypes22["DarkPrismarineDoubleSlab"] = "minecraft:dark_prismarine_double_slab";
-  MinecraftBlockTypes22["DarkPrismarineSlab"] = "minecraft:dark_prismarine_slab";
-  MinecraftBlockTypes22["DarkPrismarineStairs"] = "minecraft:dark_prismarine_stairs";
-  MinecraftBlockTypes22["DarkoakStandingSign"] = "minecraft:darkoak_standing_sign";
-  MinecraftBlockTypes22["DarkoakWallSign"] = "minecraft:darkoak_wall_sign";
-  MinecraftBlockTypes22["DaylightDetector"] = "minecraft:daylight_detector";
-  MinecraftBlockTypes22["DaylightDetectorInverted"] = "minecraft:daylight_detector_inverted";
-  MinecraftBlockTypes22["DeadBrainCoral"] = "minecraft:dead_brain_coral";
-  MinecraftBlockTypes22["DeadBrainCoralBlock"] = "minecraft:dead_brain_coral_block";
-  MinecraftBlockTypes22["DeadBrainCoralFan"] = "minecraft:dead_brain_coral_fan";
-  MinecraftBlockTypes22["DeadBrainCoralWallFan"] = "minecraft:dead_brain_coral_wall_fan";
-  MinecraftBlockTypes22["DeadBubbleCoral"] = "minecraft:dead_bubble_coral";
-  MinecraftBlockTypes22["DeadBubbleCoralBlock"] = "minecraft:dead_bubble_coral_block";
-  MinecraftBlockTypes22["DeadBubbleCoralFan"] = "minecraft:dead_bubble_coral_fan";
-  MinecraftBlockTypes22["DeadBubbleCoralWallFan"] = "minecraft:dead_bubble_coral_wall_fan";
-  MinecraftBlockTypes22["DeadFireCoral"] = "minecraft:dead_fire_coral";
-  MinecraftBlockTypes22["DeadFireCoralBlock"] = "minecraft:dead_fire_coral_block";
-  MinecraftBlockTypes22["DeadFireCoralFan"] = "minecraft:dead_fire_coral_fan";
-  MinecraftBlockTypes22["DeadFireCoralWallFan"] = "minecraft:dead_fire_coral_wall_fan";
-  MinecraftBlockTypes22["DeadHornCoral"] = "minecraft:dead_horn_coral";
-  MinecraftBlockTypes22["DeadHornCoralBlock"] = "minecraft:dead_horn_coral_block";
-  MinecraftBlockTypes22["DeadHornCoralFan"] = "minecraft:dead_horn_coral_fan";
-  MinecraftBlockTypes22["DeadHornCoralWallFan"] = "minecraft:dead_horn_coral_wall_fan";
-  MinecraftBlockTypes22["DeadTubeCoral"] = "minecraft:dead_tube_coral";
-  MinecraftBlockTypes22["DeadTubeCoralBlock"] = "minecraft:dead_tube_coral_block";
-  MinecraftBlockTypes22["DeadTubeCoralFan"] = "minecraft:dead_tube_coral_fan";
-  MinecraftBlockTypes22["DeadTubeCoralWallFan"] = "minecraft:dead_tube_coral_wall_fan";
-  MinecraftBlockTypes22["Deadbush"] = "minecraft:deadbush";
-  MinecraftBlockTypes22["DecoratedPot"] = "minecraft:decorated_pot";
-  MinecraftBlockTypes22["Deepslate"] = "minecraft:deepslate";
-  MinecraftBlockTypes22["DeepslateBrickDoubleSlab"] = "minecraft:deepslate_brick_double_slab";
-  MinecraftBlockTypes22["DeepslateBrickSlab"] = "minecraft:deepslate_brick_slab";
-  MinecraftBlockTypes22["DeepslateBrickStairs"] = "minecraft:deepslate_brick_stairs";
-  MinecraftBlockTypes22["DeepslateBrickWall"] = "minecraft:deepslate_brick_wall";
-  MinecraftBlockTypes22["DeepslateBricks"] = "minecraft:deepslate_bricks";
-  MinecraftBlockTypes22["DeepslateCoalOre"] = "minecraft:deepslate_coal_ore";
-  MinecraftBlockTypes22["DeepslateCopperOre"] = "minecraft:deepslate_copper_ore";
-  MinecraftBlockTypes22["DeepslateDiamondOre"] = "minecraft:deepslate_diamond_ore";
-  MinecraftBlockTypes22["DeepslateEmeraldOre"] = "minecraft:deepslate_emerald_ore";
-  MinecraftBlockTypes22["DeepslateGoldOre"] = "minecraft:deepslate_gold_ore";
-  MinecraftBlockTypes22["DeepslateIronOre"] = "minecraft:deepslate_iron_ore";
-  MinecraftBlockTypes22["DeepslateLapisOre"] = "minecraft:deepslate_lapis_ore";
-  MinecraftBlockTypes22["DeepslateRedstoneOre"] = "minecraft:deepslate_redstone_ore";
-  MinecraftBlockTypes22["DeepslateTileDoubleSlab"] = "minecraft:deepslate_tile_double_slab";
-  MinecraftBlockTypes22["DeepslateTileSlab"] = "minecraft:deepslate_tile_slab";
-  MinecraftBlockTypes22["DeepslateTileStairs"] = "minecraft:deepslate_tile_stairs";
-  MinecraftBlockTypes22["DeepslateTileWall"] = "minecraft:deepslate_tile_wall";
-  MinecraftBlockTypes22["DeepslateTiles"] = "minecraft:deepslate_tiles";
-  MinecraftBlockTypes22["Deny"] = "minecraft:deny";
-  MinecraftBlockTypes22["DetectorRail"] = "minecraft:detector_rail";
-  MinecraftBlockTypes22["DiamondBlock"] = "minecraft:diamond_block";
-  MinecraftBlockTypes22["DiamondOre"] = "minecraft:diamond_ore";
-  MinecraftBlockTypes22["Diorite"] = "minecraft:diorite";
-  MinecraftBlockTypes22["DioriteDoubleSlab"] = "minecraft:diorite_double_slab";
-  MinecraftBlockTypes22["DioriteSlab"] = "minecraft:diorite_slab";
-  MinecraftBlockTypes22["DioriteStairs"] = "minecraft:diorite_stairs";
-  MinecraftBlockTypes22["DioriteWall"] = "minecraft:diorite_wall";
-  MinecraftBlockTypes22["Dirt"] = "minecraft:dirt";
-  MinecraftBlockTypes22["DirtWithRoots"] = "minecraft:dirt_with_roots";
-  MinecraftBlockTypes22["Dispenser"] = "minecraft:dispenser";
-  MinecraftBlockTypes22["DoubleCutCopperSlab"] = "minecraft:double_cut_copper_slab";
-  MinecraftBlockTypes22["DragonEgg"] = "minecraft:dragon_egg";
-  MinecraftBlockTypes22["DragonHead"] = "minecraft:dragon_head";
-  MinecraftBlockTypes22["DriedGhast"] = "minecraft:dried_ghast";
-  MinecraftBlockTypes22["DriedKelpBlock"] = "minecraft:dried_kelp_block";
-  MinecraftBlockTypes22["DripstoneBlock"] = "minecraft:dripstone_block";
-  MinecraftBlockTypes22["Dropper"] = "minecraft:dropper";
-  MinecraftBlockTypes22["Element0"] = "minecraft:element_0";
-  MinecraftBlockTypes22["Element1"] = "minecraft:element_1";
-  MinecraftBlockTypes22["Element10"] = "minecraft:element_10";
-  MinecraftBlockTypes22["Element100"] = "minecraft:element_100";
-  MinecraftBlockTypes22["Element101"] = "minecraft:element_101";
-  MinecraftBlockTypes22["Element102"] = "minecraft:element_102";
-  MinecraftBlockTypes22["Element103"] = "minecraft:element_103";
-  MinecraftBlockTypes22["Element104"] = "minecraft:element_104";
-  MinecraftBlockTypes22["Element105"] = "minecraft:element_105";
-  MinecraftBlockTypes22["Element106"] = "minecraft:element_106";
-  MinecraftBlockTypes22["Element107"] = "minecraft:element_107";
-  MinecraftBlockTypes22["Element108"] = "minecraft:element_108";
-  MinecraftBlockTypes22["Element109"] = "minecraft:element_109";
-  MinecraftBlockTypes22["Element11"] = "minecraft:element_11";
-  MinecraftBlockTypes22["Element110"] = "minecraft:element_110";
-  MinecraftBlockTypes22["Element111"] = "minecraft:element_111";
-  MinecraftBlockTypes22["Element112"] = "minecraft:element_112";
-  MinecraftBlockTypes22["Element113"] = "minecraft:element_113";
-  MinecraftBlockTypes22["Element114"] = "minecraft:element_114";
-  MinecraftBlockTypes22["Element115"] = "minecraft:element_115";
-  MinecraftBlockTypes22["Element116"] = "minecraft:element_116";
-  MinecraftBlockTypes22["Element117"] = "minecraft:element_117";
-  MinecraftBlockTypes22["Element118"] = "minecraft:element_118";
-  MinecraftBlockTypes22["Element12"] = "minecraft:element_12";
-  MinecraftBlockTypes22["Element13"] = "minecraft:element_13";
-  MinecraftBlockTypes22["Element14"] = "minecraft:element_14";
-  MinecraftBlockTypes22["Element15"] = "minecraft:element_15";
-  MinecraftBlockTypes22["Element16"] = "minecraft:element_16";
-  MinecraftBlockTypes22["Element17"] = "minecraft:element_17";
-  MinecraftBlockTypes22["Element18"] = "minecraft:element_18";
-  MinecraftBlockTypes22["Element19"] = "minecraft:element_19";
-  MinecraftBlockTypes22["Element2"] = "minecraft:element_2";
-  MinecraftBlockTypes22["Element20"] = "minecraft:element_20";
-  MinecraftBlockTypes22["Element21"] = "minecraft:element_21";
-  MinecraftBlockTypes22["Element22"] = "minecraft:element_22";
-  MinecraftBlockTypes22["Element23"] = "minecraft:element_23";
-  MinecraftBlockTypes22["Element24"] = "minecraft:element_24";
-  MinecraftBlockTypes22["Element25"] = "minecraft:element_25";
-  MinecraftBlockTypes22["Element26"] = "minecraft:element_26";
-  MinecraftBlockTypes22["Element27"] = "minecraft:element_27";
-  MinecraftBlockTypes22["Element28"] = "minecraft:element_28";
-  MinecraftBlockTypes22["Element29"] = "minecraft:element_29";
-  MinecraftBlockTypes22["Element3"] = "minecraft:element_3";
-  MinecraftBlockTypes22["Element30"] = "minecraft:element_30";
-  MinecraftBlockTypes22["Element31"] = "minecraft:element_31";
-  MinecraftBlockTypes22["Element32"] = "minecraft:element_32";
-  MinecraftBlockTypes22["Element33"] = "minecraft:element_33";
-  MinecraftBlockTypes22["Element34"] = "minecraft:element_34";
-  MinecraftBlockTypes22["Element35"] = "minecraft:element_35";
-  MinecraftBlockTypes22["Element36"] = "minecraft:element_36";
-  MinecraftBlockTypes22["Element37"] = "minecraft:element_37";
-  MinecraftBlockTypes22["Element38"] = "minecraft:element_38";
-  MinecraftBlockTypes22["Element39"] = "minecraft:element_39";
-  MinecraftBlockTypes22["Element4"] = "minecraft:element_4";
-  MinecraftBlockTypes22["Element40"] = "minecraft:element_40";
-  MinecraftBlockTypes22["Element41"] = "minecraft:element_41";
-  MinecraftBlockTypes22["Element42"] = "minecraft:element_42";
-  MinecraftBlockTypes22["Element43"] = "minecraft:element_43";
-  MinecraftBlockTypes22["Element44"] = "minecraft:element_44";
-  MinecraftBlockTypes22["Element45"] = "minecraft:element_45";
-  MinecraftBlockTypes22["Element46"] = "minecraft:element_46";
-  MinecraftBlockTypes22["Element47"] = "minecraft:element_47";
-  MinecraftBlockTypes22["Element48"] = "minecraft:element_48";
-  MinecraftBlockTypes22["Element49"] = "minecraft:element_49";
-  MinecraftBlockTypes22["Element5"] = "minecraft:element_5";
-  MinecraftBlockTypes22["Element50"] = "minecraft:element_50";
-  MinecraftBlockTypes22["Element51"] = "minecraft:element_51";
-  MinecraftBlockTypes22["Element52"] = "minecraft:element_52";
-  MinecraftBlockTypes22["Element53"] = "minecraft:element_53";
-  MinecraftBlockTypes22["Element54"] = "minecraft:element_54";
-  MinecraftBlockTypes22["Element55"] = "minecraft:element_55";
-  MinecraftBlockTypes22["Element56"] = "minecraft:element_56";
-  MinecraftBlockTypes22["Element57"] = "minecraft:element_57";
-  MinecraftBlockTypes22["Element58"] = "minecraft:element_58";
-  MinecraftBlockTypes22["Element59"] = "minecraft:element_59";
-  MinecraftBlockTypes22["Element6"] = "minecraft:element_6";
-  MinecraftBlockTypes22["Element60"] = "minecraft:element_60";
-  MinecraftBlockTypes22["Element61"] = "minecraft:element_61";
-  MinecraftBlockTypes22["Element62"] = "minecraft:element_62";
-  MinecraftBlockTypes22["Element63"] = "minecraft:element_63";
-  MinecraftBlockTypes22["Element64"] = "minecraft:element_64";
-  MinecraftBlockTypes22["Element65"] = "minecraft:element_65";
-  MinecraftBlockTypes22["Element66"] = "minecraft:element_66";
-  MinecraftBlockTypes22["Element67"] = "minecraft:element_67";
-  MinecraftBlockTypes22["Element68"] = "minecraft:element_68";
-  MinecraftBlockTypes22["Element69"] = "minecraft:element_69";
-  MinecraftBlockTypes22["Element7"] = "minecraft:element_7";
-  MinecraftBlockTypes22["Element70"] = "minecraft:element_70";
-  MinecraftBlockTypes22["Element71"] = "minecraft:element_71";
-  MinecraftBlockTypes22["Element72"] = "minecraft:element_72";
-  MinecraftBlockTypes22["Element73"] = "minecraft:element_73";
-  MinecraftBlockTypes22["Element74"] = "minecraft:element_74";
-  MinecraftBlockTypes22["Element75"] = "minecraft:element_75";
-  MinecraftBlockTypes22["Element76"] = "minecraft:element_76";
-  MinecraftBlockTypes22["Element77"] = "minecraft:element_77";
-  MinecraftBlockTypes22["Element78"] = "minecraft:element_78";
-  MinecraftBlockTypes22["Element79"] = "minecraft:element_79";
-  MinecraftBlockTypes22["Element8"] = "minecraft:element_8";
-  MinecraftBlockTypes22["Element80"] = "minecraft:element_80";
-  MinecraftBlockTypes22["Element81"] = "minecraft:element_81";
-  MinecraftBlockTypes22["Element82"] = "minecraft:element_82";
-  MinecraftBlockTypes22["Element83"] = "minecraft:element_83";
-  MinecraftBlockTypes22["Element84"] = "minecraft:element_84";
-  MinecraftBlockTypes22["Element85"] = "minecraft:element_85";
-  MinecraftBlockTypes22["Element86"] = "minecraft:element_86";
-  MinecraftBlockTypes22["Element87"] = "minecraft:element_87";
-  MinecraftBlockTypes22["Element88"] = "minecraft:element_88";
-  MinecraftBlockTypes22["Element89"] = "minecraft:element_89";
-  MinecraftBlockTypes22["Element9"] = "minecraft:element_9";
-  MinecraftBlockTypes22["Element90"] = "minecraft:element_90";
-  MinecraftBlockTypes22["Element91"] = "minecraft:element_91";
-  MinecraftBlockTypes22["Element92"] = "minecraft:element_92";
-  MinecraftBlockTypes22["Element93"] = "minecraft:element_93";
-  MinecraftBlockTypes22["Element94"] = "minecraft:element_94";
-  MinecraftBlockTypes22["Element95"] = "minecraft:element_95";
-  MinecraftBlockTypes22["Element96"] = "minecraft:element_96";
-  MinecraftBlockTypes22["Element97"] = "minecraft:element_97";
-  MinecraftBlockTypes22["Element98"] = "minecraft:element_98";
-  MinecraftBlockTypes22["Element99"] = "minecraft:element_99";
-  MinecraftBlockTypes22["ElementConstructor"] = "minecraft:element_constructor";
-  MinecraftBlockTypes22["EmeraldBlock"] = "minecraft:emerald_block";
-  MinecraftBlockTypes22["EmeraldOre"] = "minecraft:emerald_ore";
-  MinecraftBlockTypes22["EnchantingTable"] = "minecraft:enchanting_table";
-  MinecraftBlockTypes22["EndBrickStairs"] = "minecraft:end_brick_stairs";
-  MinecraftBlockTypes22["EndBricks"] = "minecraft:end_bricks";
-  MinecraftBlockTypes22["EndPortal"] = "minecraft:end_portal";
-  MinecraftBlockTypes22["EndPortalFrame"] = "minecraft:end_portal_frame";
-  MinecraftBlockTypes22["EndRod"] = "minecraft:end_rod";
-  MinecraftBlockTypes22["EndStone"] = "minecraft:end_stone";
-  MinecraftBlockTypes22["EndStoneBrickDoubleSlab"] = "minecraft:end_stone_brick_double_slab";
-  MinecraftBlockTypes22["EndStoneBrickSlab"] = "minecraft:end_stone_brick_slab";
-  MinecraftBlockTypes22["EndStoneBrickWall"] = "minecraft:end_stone_brick_wall";
-  MinecraftBlockTypes22["EnderChest"] = "minecraft:ender_chest";
-  MinecraftBlockTypes22["ExposedChiseledCopper"] = "minecraft:exposed_chiseled_copper";
-  MinecraftBlockTypes22["ExposedCopper"] = "minecraft:exposed_copper";
-  MinecraftBlockTypes22["ExposedCopperBars"] = "minecraft:exposed_copper_bars";
-  MinecraftBlockTypes22["ExposedCopperBulb"] = "minecraft:exposed_copper_bulb";
-  MinecraftBlockTypes22["ExposedCopperChain"] = "minecraft:exposed_copper_chain";
-  MinecraftBlockTypes22["ExposedCopperChest"] = "minecraft:exposed_copper_chest";
-  MinecraftBlockTypes22["ExposedCopperDoor"] = "minecraft:exposed_copper_door";
-  MinecraftBlockTypes22["ExposedCopperGolemStatue"] = "minecraft:exposed_copper_golem_statue";
-  MinecraftBlockTypes22["ExposedCopperGrate"] = "minecraft:exposed_copper_grate";
-  MinecraftBlockTypes22["ExposedCopperLantern"] = "minecraft:exposed_copper_lantern";
-  MinecraftBlockTypes22["ExposedCopperTrapdoor"] = "minecraft:exposed_copper_trapdoor";
-  MinecraftBlockTypes22["ExposedCutCopper"] = "minecraft:exposed_cut_copper";
-  MinecraftBlockTypes22["ExposedCutCopperSlab"] = "minecraft:exposed_cut_copper_slab";
-  MinecraftBlockTypes22["ExposedCutCopperStairs"] = "minecraft:exposed_cut_copper_stairs";
-  MinecraftBlockTypes22["ExposedDoubleCutCopperSlab"] = "minecraft:exposed_double_cut_copper_slab";
-  MinecraftBlockTypes22["ExposedLightningRod"] = "minecraft:exposed_lightning_rod";
-  MinecraftBlockTypes22["Farmland"] = "minecraft:farmland";
-  MinecraftBlockTypes22["FenceGate"] = "minecraft:fence_gate";
-  MinecraftBlockTypes22["Fern"] = "minecraft:fern";
-  MinecraftBlockTypes22["Fire"] = "minecraft:fire";
-  MinecraftBlockTypes22["FireCoral"] = "minecraft:fire_coral";
-  MinecraftBlockTypes22["FireCoralBlock"] = "minecraft:fire_coral_block";
-  MinecraftBlockTypes22["FireCoralFan"] = "minecraft:fire_coral_fan";
-  MinecraftBlockTypes22["FireCoralWallFan"] = "minecraft:fire_coral_wall_fan";
-  MinecraftBlockTypes22["FireflyBush"] = "minecraft:firefly_bush";
-  MinecraftBlockTypes22["FletchingTable"] = "minecraft:fletching_table";
-  MinecraftBlockTypes22["FlowerPot"] = "minecraft:flower_pot";
-  MinecraftBlockTypes22["FloweringAzalea"] = "minecraft:flowering_azalea";
-  MinecraftBlockTypes22["FlowingLava"] = "minecraft:flowing_lava";
-  MinecraftBlockTypes22["FlowingWater"] = "minecraft:flowing_water";
-  MinecraftBlockTypes22["Frame"] = "minecraft:frame";
-  MinecraftBlockTypes22["FrogSpawn"] = "minecraft:frog_spawn";
-  MinecraftBlockTypes22["FrostedIce"] = "minecraft:frosted_ice";
-  MinecraftBlockTypes22["Furnace"] = "minecraft:furnace";
-  MinecraftBlockTypes22["GildedBlackstone"] = "minecraft:gilded_blackstone";
-  MinecraftBlockTypes22["Glass"] = "minecraft:glass";
-  MinecraftBlockTypes22["GlassPane"] = "minecraft:glass_pane";
-  MinecraftBlockTypes22["GlowFrame"] = "minecraft:glow_frame";
-  MinecraftBlockTypes22["GlowLichen"] = "minecraft:glow_lichen";
-  MinecraftBlockTypes22["Glowstone"] = "minecraft:glowstone";
-  MinecraftBlockTypes22["GoldBlock"] = "minecraft:gold_block";
-  MinecraftBlockTypes22["GoldOre"] = "minecraft:gold_ore";
-  MinecraftBlockTypes22["GoldenRail"] = "minecraft:golden_rail";
-  MinecraftBlockTypes22["Granite"] = "minecraft:granite";
-  MinecraftBlockTypes22["GraniteDoubleSlab"] = "minecraft:granite_double_slab";
-  MinecraftBlockTypes22["GraniteSlab"] = "minecraft:granite_slab";
-  MinecraftBlockTypes22["GraniteStairs"] = "minecraft:granite_stairs";
-  MinecraftBlockTypes22["GraniteWall"] = "minecraft:granite_wall";
-  MinecraftBlockTypes22["GrassBlock"] = "minecraft:grass_block";
-  MinecraftBlockTypes22["GrassPath"] = "minecraft:grass_path";
-  MinecraftBlockTypes22["Gravel"] = "minecraft:gravel";
-  MinecraftBlockTypes22["GrayCandle"] = "minecraft:gray_candle";
-  MinecraftBlockTypes22["GrayCandleCake"] = "minecraft:gray_candle_cake";
-  MinecraftBlockTypes22["GrayCarpet"] = "minecraft:gray_carpet";
-  MinecraftBlockTypes22["GrayConcrete"] = "minecraft:gray_concrete";
-  MinecraftBlockTypes22["GrayConcretePowder"] = "minecraft:gray_concrete_powder";
-  MinecraftBlockTypes22["GrayGlazedTerracotta"] = "minecraft:gray_glazed_terracotta";
-  MinecraftBlockTypes22["GrayShulkerBox"] = "minecraft:gray_shulker_box";
-  MinecraftBlockTypes22["GrayStainedGlass"] = "minecraft:gray_stained_glass";
-  MinecraftBlockTypes22["GrayStainedGlassPane"] = "minecraft:gray_stained_glass_pane";
-  MinecraftBlockTypes22["GrayTerracotta"] = "minecraft:gray_terracotta";
-  MinecraftBlockTypes22["GrayWool"] = "minecraft:gray_wool";
-  MinecraftBlockTypes22["GreenCandle"] = "minecraft:green_candle";
-  MinecraftBlockTypes22["GreenCandleCake"] = "minecraft:green_candle_cake";
-  MinecraftBlockTypes22["GreenCarpet"] = "minecraft:green_carpet";
-  MinecraftBlockTypes22["GreenConcrete"] = "minecraft:green_concrete";
-  MinecraftBlockTypes22["GreenConcretePowder"] = "minecraft:green_concrete_powder";
-  MinecraftBlockTypes22["GreenGlazedTerracotta"] = "minecraft:green_glazed_terracotta";
-  MinecraftBlockTypes22["GreenShulkerBox"] = "minecraft:green_shulker_box";
-  MinecraftBlockTypes22["GreenStainedGlass"] = "minecraft:green_stained_glass";
-  MinecraftBlockTypes22["GreenStainedGlassPane"] = "minecraft:green_stained_glass_pane";
-  MinecraftBlockTypes22["GreenTerracotta"] = "minecraft:green_terracotta";
-  MinecraftBlockTypes22["GreenWool"] = "minecraft:green_wool";
-  MinecraftBlockTypes22["Grindstone"] = "minecraft:grindstone";
-  MinecraftBlockTypes22["HangingRoots"] = "minecraft:hanging_roots";
-  MinecraftBlockTypes22["HardBlackStainedGlass"] = "minecraft:hard_black_stained_glass";
-  MinecraftBlockTypes22["HardBlackStainedGlassPane"] = "minecraft:hard_black_stained_glass_pane";
-  MinecraftBlockTypes22["HardBlueStainedGlass"] = "minecraft:hard_blue_stained_glass";
-  MinecraftBlockTypes22["HardBlueStainedGlassPane"] = "minecraft:hard_blue_stained_glass_pane";
-  MinecraftBlockTypes22["HardBrownStainedGlass"] = "minecraft:hard_brown_stained_glass";
-  MinecraftBlockTypes22["HardBrownStainedGlassPane"] = "minecraft:hard_brown_stained_glass_pane";
-  MinecraftBlockTypes22["HardCyanStainedGlass"] = "minecraft:hard_cyan_stained_glass";
-  MinecraftBlockTypes22["HardCyanStainedGlassPane"] = "minecraft:hard_cyan_stained_glass_pane";
-  MinecraftBlockTypes22["HardGlass"] = "minecraft:hard_glass";
-  MinecraftBlockTypes22["HardGlassPane"] = "minecraft:hard_glass_pane";
-  MinecraftBlockTypes22["HardGrayStainedGlass"] = "minecraft:hard_gray_stained_glass";
-  MinecraftBlockTypes22["HardGrayStainedGlassPane"] = "minecraft:hard_gray_stained_glass_pane";
-  MinecraftBlockTypes22["HardGreenStainedGlass"] = "minecraft:hard_green_stained_glass";
-  MinecraftBlockTypes22["HardGreenStainedGlassPane"] = "minecraft:hard_green_stained_glass_pane";
-  MinecraftBlockTypes22["HardLightBlueStainedGlass"] = "minecraft:hard_light_blue_stained_glass";
-  MinecraftBlockTypes22["HardLightBlueStainedGlassPane"] = "minecraft:hard_light_blue_stained_glass_pane";
-  MinecraftBlockTypes22["HardLightGrayStainedGlass"] = "minecraft:hard_light_gray_stained_glass";
-  MinecraftBlockTypes22["HardLightGrayStainedGlassPane"] = "minecraft:hard_light_gray_stained_glass_pane";
-  MinecraftBlockTypes22["HardLimeStainedGlass"] = "minecraft:hard_lime_stained_glass";
-  MinecraftBlockTypes22["HardLimeStainedGlassPane"] = "minecraft:hard_lime_stained_glass_pane";
-  MinecraftBlockTypes22["HardMagentaStainedGlass"] = "minecraft:hard_magenta_stained_glass";
-  MinecraftBlockTypes22["HardMagentaStainedGlassPane"] = "minecraft:hard_magenta_stained_glass_pane";
-  MinecraftBlockTypes22["HardOrangeStainedGlass"] = "minecraft:hard_orange_stained_glass";
-  MinecraftBlockTypes22["HardOrangeStainedGlassPane"] = "minecraft:hard_orange_stained_glass_pane";
-  MinecraftBlockTypes22["HardPinkStainedGlass"] = "minecraft:hard_pink_stained_glass";
-  MinecraftBlockTypes22["HardPinkStainedGlassPane"] = "minecraft:hard_pink_stained_glass_pane";
-  MinecraftBlockTypes22["HardPurpleStainedGlass"] = "minecraft:hard_purple_stained_glass";
-  MinecraftBlockTypes22["HardPurpleStainedGlassPane"] = "minecraft:hard_purple_stained_glass_pane";
-  MinecraftBlockTypes22["HardRedStainedGlass"] = "minecraft:hard_red_stained_glass";
-  MinecraftBlockTypes22["HardRedStainedGlassPane"] = "minecraft:hard_red_stained_glass_pane";
-  MinecraftBlockTypes22["HardWhiteStainedGlass"] = "minecraft:hard_white_stained_glass";
-  MinecraftBlockTypes22["HardWhiteStainedGlassPane"] = "minecraft:hard_white_stained_glass_pane";
-  MinecraftBlockTypes22["HardYellowStainedGlass"] = "minecraft:hard_yellow_stained_glass";
-  MinecraftBlockTypes22["HardYellowStainedGlassPane"] = "minecraft:hard_yellow_stained_glass_pane";
-  MinecraftBlockTypes22["HardenedClay"] = "minecraft:hardened_clay";
-  MinecraftBlockTypes22["HayBlock"] = "minecraft:hay_block";
-  MinecraftBlockTypes22["HeavyCore"] = "minecraft:heavy_core";
-  MinecraftBlockTypes22["HeavyWeightedPressurePlate"] = "minecraft:heavy_weighted_pressure_plate";
-  MinecraftBlockTypes22["HoneyBlock"] = "minecraft:honey_block";
-  MinecraftBlockTypes22["HoneycombBlock"] = "minecraft:honeycomb_block";
-  MinecraftBlockTypes22["Hopper"] = "minecraft:hopper";
-  MinecraftBlockTypes22["HornCoral"] = "minecraft:horn_coral";
-  MinecraftBlockTypes22["HornCoralBlock"] = "minecraft:horn_coral_block";
-  MinecraftBlockTypes22["HornCoralFan"] = "minecraft:horn_coral_fan";
-  MinecraftBlockTypes22["HornCoralWallFan"] = "minecraft:horn_coral_wall_fan";
-  MinecraftBlockTypes22["Ice"] = "minecraft:ice";
-  MinecraftBlockTypes22["InfestedChiseledStoneBricks"] = "minecraft:infested_chiseled_stone_bricks";
-  MinecraftBlockTypes22["InfestedCobblestone"] = "minecraft:infested_cobblestone";
-  MinecraftBlockTypes22["InfestedCrackedStoneBricks"] = "minecraft:infested_cracked_stone_bricks";
-  MinecraftBlockTypes22["InfestedDeepslate"] = "minecraft:infested_deepslate";
-  MinecraftBlockTypes22["InfestedMossyStoneBricks"] = "minecraft:infested_mossy_stone_bricks";
-  MinecraftBlockTypes22["InfestedStone"] = "minecraft:infested_stone";
-  MinecraftBlockTypes22["InfestedStoneBricks"] = "minecraft:infested_stone_bricks";
-  MinecraftBlockTypes22["IronBars"] = "minecraft:iron_bars";
-  MinecraftBlockTypes22["IronBlock"] = "minecraft:iron_block";
-  MinecraftBlockTypes22["IronChain"] = "minecraft:iron_chain";
-  MinecraftBlockTypes22["IronDoor"] = "minecraft:iron_door";
-  MinecraftBlockTypes22["IronOre"] = "minecraft:iron_ore";
-  MinecraftBlockTypes22["IronTrapdoor"] = "minecraft:iron_trapdoor";
-  MinecraftBlockTypes22["Jigsaw"] = "minecraft:jigsaw";
-  MinecraftBlockTypes22["Jukebox"] = "minecraft:jukebox";
-  MinecraftBlockTypes22["JungleButton"] = "minecraft:jungle_button";
-  MinecraftBlockTypes22["JungleDoor"] = "minecraft:jungle_door";
-  MinecraftBlockTypes22["JungleDoubleSlab"] = "minecraft:jungle_double_slab";
-  MinecraftBlockTypes22["JungleFence"] = "minecraft:jungle_fence";
-  MinecraftBlockTypes22["JungleFenceGate"] = "minecraft:jungle_fence_gate";
-  MinecraftBlockTypes22["JungleHangingSign"] = "minecraft:jungle_hanging_sign";
-  MinecraftBlockTypes22["JungleLeaves"] = "minecraft:jungle_leaves";
-  MinecraftBlockTypes22["JungleLog"] = "minecraft:jungle_log";
-  MinecraftBlockTypes22["JunglePlanks"] = "minecraft:jungle_planks";
-  MinecraftBlockTypes22["JunglePressurePlate"] = "minecraft:jungle_pressure_plate";
-  MinecraftBlockTypes22["JungleSapling"] = "minecraft:jungle_sapling";
-  MinecraftBlockTypes22["JungleShelf"] = "minecraft:jungle_shelf";
-  MinecraftBlockTypes22["JungleSlab"] = "minecraft:jungle_slab";
-  MinecraftBlockTypes22["JungleStairs"] = "minecraft:jungle_stairs";
-  MinecraftBlockTypes22["JungleStandingSign"] = "minecraft:jungle_standing_sign";
-  MinecraftBlockTypes22["JungleTrapdoor"] = "minecraft:jungle_trapdoor";
-  MinecraftBlockTypes22["JungleWallSign"] = "minecraft:jungle_wall_sign";
-  MinecraftBlockTypes22["JungleWood"] = "minecraft:jungle_wood";
-  MinecraftBlockTypes22["Kelp"] = "minecraft:kelp";
-  MinecraftBlockTypes22["LabTable"] = "minecraft:lab_table";
-  MinecraftBlockTypes22["Ladder"] = "minecraft:ladder";
-  MinecraftBlockTypes22["Lantern"] = "minecraft:lantern";
-  MinecraftBlockTypes22["LapisBlock"] = "minecraft:lapis_block";
-  MinecraftBlockTypes22["LapisOre"] = "minecraft:lapis_ore";
-  MinecraftBlockTypes22["LargeAmethystBud"] = "minecraft:large_amethyst_bud";
-  MinecraftBlockTypes22["LargeFern"] = "minecraft:large_fern";
-  MinecraftBlockTypes22["Lava"] = "minecraft:lava";
-  MinecraftBlockTypes22["LeafLitter"] = "minecraft:leaf_litter";
-  MinecraftBlockTypes22["Lectern"] = "minecraft:lectern";
-  MinecraftBlockTypes22["Lever"] = "minecraft:lever";
-  MinecraftBlockTypes22["LightBlock0"] = "minecraft:light_block_0";
-  MinecraftBlockTypes22["LightBlock1"] = "minecraft:light_block_1";
-  MinecraftBlockTypes22["LightBlock10"] = "minecraft:light_block_10";
-  MinecraftBlockTypes22["LightBlock11"] = "minecraft:light_block_11";
-  MinecraftBlockTypes22["LightBlock12"] = "minecraft:light_block_12";
-  MinecraftBlockTypes22["LightBlock13"] = "minecraft:light_block_13";
-  MinecraftBlockTypes22["LightBlock14"] = "minecraft:light_block_14";
-  MinecraftBlockTypes22["LightBlock15"] = "minecraft:light_block_15";
-  MinecraftBlockTypes22["LightBlock2"] = "minecraft:light_block_2";
-  MinecraftBlockTypes22["LightBlock3"] = "minecraft:light_block_3";
-  MinecraftBlockTypes22["LightBlock4"] = "minecraft:light_block_4";
-  MinecraftBlockTypes22["LightBlock5"] = "minecraft:light_block_5";
-  MinecraftBlockTypes22["LightBlock6"] = "minecraft:light_block_6";
-  MinecraftBlockTypes22["LightBlock7"] = "minecraft:light_block_7";
-  MinecraftBlockTypes22["LightBlock8"] = "minecraft:light_block_8";
-  MinecraftBlockTypes22["LightBlock9"] = "minecraft:light_block_9";
-  MinecraftBlockTypes22["LightBlueCandle"] = "minecraft:light_blue_candle";
-  MinecraftBlockTypes22["LightBlueCandleCake"] = "minecraft:light_blue_candle_cake";
-  MinecraftBlockTypes22["LightBlueCarpet"] = "minecraft:light_blue_carpet";
-  MinecraftBlockTypes22["LightBlueConcrete"] = "minecraft:light_blue_concrete";
-  MinecraftBlockTypes22["LightBlueConcretePowder"] = "minecraft:light_blue_concrete_powder";
-  MinecraftBlockTypes22["LightBlueGlazedTerracotta"] = "minecraft:light_blue_glazed_terracotta";
-  MinecraftBlockTypes22["LightBlueShulkerBox"] = "minecraft:light_blue_shulker_box";
-  MinecraftBlockTypes22["LightBlueStainedGlass"] = "minecraft:light_blue_stained_glass";
-  MinecraftBlockTypes22["LightBlueStainedGlassPane"] = "minecraft:light_blue_stained_glass_pane";
-  MinecraftBlockTypes22["LightBlueTerracotta"] = "minecraft:light_blue_terracotta";
-  MinecraftBlockTypes22["LightBlueWool"] = "minecraft:light_blue_wool";
-  MinecraftBlockTypes22["LightGrayCandle"] = "minecraft:light_gray_candle";
-  MinecraftBlockTypes22["LightGrayCandleCake"] = "minecraft:light_gray_candle_cake";
-  MinecraftBlockTypes22["LightGrayCarpet"] = "minecraft:light_gray_carpet";
-  MinecraftBlockTypes22["LightGrayConcrete"] = "minecraft:light_gray_concrete";
-  MinecraftBlockTypes22["LightGrayConcretePowder"] = "minecraft:light_gray_concrete_powder";
-  MinecraftBlockTypes22["LightGrayShulkerBox"] = "minecraft:light_gray_shulker_box";
-  MinecraftBlockTypes22["LightGrayStainedGlass"] = "minecraft:light_gray_stained_glass";
-  MinecraftBlockTypes22["LightGrayStainedGlassPane"] = "minecraft:light_gray_stained_glass_pane";
-  MinecraftBlockTypes22["LightGrayTerracotta"] = "minecraft:light_gray_terracotta";
-  MinecraftBlockTypes22["LightGrayWool"] = "minecraft:light_gray_wool";
-  MinecraftBlockTypes22["LightWeightedPressurePlate"] = "minecraft:light_weighted_pressure_plate";
-  MinecraftBlockTypes22["LightningRod"] = "minecraft:lightning_rod";
-  MinecraftBlockTypes22["Lilac"] = "minecraft:lilac";
-  MinecraftBlockTypes22["LilyOfTheValley"] = "minecraft:lily_of_the_valley";
-  MinecraftBlockTypes22["LimeCandle"] = "minecraft:lime_candle";
-  MinecraftBlockTypes22["LimeCandleCake"] = "minecraft:lime_candle_cake";
-  MinecraftBlockTypes22["LimeCarpet"] = "minecraft:lime_carpet";
-  MinecraftBlockTypes22["LimeConcrete"] = "minecraft:lime_concrete";
-  MinecraftBlockTypes22["LimeConcretePowder"] = "minecraft:lime_concrete_powder";
-  MinecraftBlockTypes22["LimeGlazedTerracotta"] = "minecraft:lime_glazed_terracotta";
-  MinecraftBlockTypes22["LimeShulkerBox"] = "minecraft:lime_shulker_box";
-  MinecraftBlockTypes22["LimeStainedGlass"] = "minecraft:lime_stained_glass";
-  MinecraftBlockTypes22["LimeStainedGlassPane"] = "minecraft:lime_stained_glass_pane";
-  MinecraftBlockTypes22["LimeTerracotta"] = "minecraft:lime_terracotta";
-  MinecraftBlockTypes22["LimeWool"] = "minecraft:lime_wool";
-  MinecraftBlockTypes22["LitBlastFurnace"] = "minecraft:lit_blast_furnace";
-  MinecraftBlockTypes22["LitDeepslateRedstoneOre"] = "minecraft:lit_deepslate_redstone_ore";
-  MinecraftBlockTypes22["LitFurnace"] = "minecraft:lit_furnace";
-  MinecraftBlockTypes22["LitPumpkin"] = "minecraft:lit_pumpkin";
-  MinecraftBlockTypes22["LitRedstoneLamp"] = "minecraft:lit_redstone_lamp";
-  MinecraftBlockTypes22["LitRedstoneOre"] = "minecraft:lit_redstone_ore";
-  MinecraftBlockTypes22["LitSmoker"] = "minecraft:lit_smoker";
-  MinecraftBlockTypes22["Lodestone"] = "minecraft:lodestone";
-  MinecraftBlockTypes22["Loom"] = "minecraft:loom";
-  MinecraftBlockTypes22["MagentaCandle"] = "minecraft:magenta_candle";
-  MinecraftBlockTypes22["MagentaCandleCake"] = "minecraft:magenta_candle_cake";
-  MinecraftBlockTypes22["MagentaCarpet"] = "minecraft:magenta_carpet";
-  MinecraftBlockTypes22["MagentaConcrete"] = "minecraft:magenta_concrete";
-  MinecraftBlockTypes22["MagentaConcretePowder"] = "minecraft:magenta_concrete_powder";
-  MinecraftBlockTypes22["MagentaGlazedTerracotta"] = "minecraft:magenta_glazed_terracotta";
-  MinecraftBlockTypes22["MagentaShulkerBox"] = "minecraft:magenta_shulker_box";
-  MinecraftBlockTypes22["MagentaStainedGlass"] = "minecraft:magenta_stained_glass";
-  MinecraftBlockTypes22["MagentaStainedGlassPane"] = "minecraft:magenta_stained_glass_pane";
-  MinecraftBlockTypes22["MagentaTerracotta"] = "minecraft:magenta_terracotta";
-  MinecraftBlockTypes22["MagentaWool"] = "minecraft:magenta_wool";
-  MinecraftBlockTypes22["Magma"] = "minecraft:magma";
-  MinecraftBlockTypes22["MangroveButton"] = "minecraft:mangrove_button";
-  MinecraftBlockTypes22["MangroveDoor"] = "minecraft:mangrove_door";
-  MinecraftBlockTypes22["MangroveDoubleSlab"] = "minecraft:mangrove_double_slab";
-  MinecraftBlockTypes22["MangroveFence"] = "minecraft:mangrove_fence";
-  MinecraftBlockTypes22["MangroveFenceGate"] = "minecraft:mangrove_fence_gate";
-  MinecraftBlockTypes22["MangroveHangingSign"] = "minecraft:mangrove_hanging_sign";
-  MinecraftBlockTypes22["MangroveLeaves"] = "minecraft:mangrove_leaves";
-  MinecraftBlockTypes22["MangroveLog"] = "minecraft:mangrove_log";
-  MinecraftBlockTypes22["MangrovePlanks"] = "minecraft:mangrove_planks";
-  MinecraftBlockTypes22["MangrovePressurePlate"] = "minecraft:mangrove_pressure_plate";
-  MinecraftBlockTypes22["MangrovePropagule"] = "minecraft:mangrove_propagule";
-  MinecraftBlockTypes22["MangroveRoots"] = "minecraft:mangrove_roots";
-  MinecraftBlockTypes22["MangroveShelf"] = "minecraft:mangrove_shelf";
-  MinecraftBlockTypes22["MangroveSlab"] = "minecraft:mangrove_slab";
-  MinecraftBlockTypes22["MangroveStairs"] = "minecraft:mangrove_stairs";
-  MinecraftBlockTypes22["MangroveStandingSign"] = "minecraft:mangrove_standing_sign";
-  MinecraftBlockTypes22["MangroveTrapdoor"] = "minecraft:mangrove_trapdoor";
-  MinecraftBlockTypes22["MangroveWallSign"] = "minecraft:mangrove_wall_sign";
-  MinecraftBlockTypes22["MangroveWood"] = "minecraft:mangrove_wood";
-  MinecraftBlockTypes22["MaterialReducer"] = "minecraft:material_reducer";
-  MinecraftBlockTypes22["MediumAmethystBud"] = "minecraft:medium_amethyst_bud";
-  MinecraftBlockTypes22["MelonBlock"] = "minecraft:melon_block";
-  MinecraftBlockTypes22["MelonStem"] = "minecraft:melon_stem";
-  MinecraftBlockTypes22["MobSpawner"] = "minecraft:mob_spawner";
-  MinecraftBlockTypes22["MossBlock"] = "minecraft:moss_block";
-  MinecraftBlockTypes22["MossCarpet"] = "minecraft:moss_carpet";
-  MinecraftBlockTypes22["MossyCobblestone"] = "minecraft:mossy_cobblestone";
-  MinecraftBlockTypes22["MossyCobblestoneDoubleSlab"] = "minecraft:mossy_cobblestone_double_slab";
-  MinecraftBlockTypes22["MossyCobblestoneSlab"] = "minecraft:mossy_cobblestone_slab";
-  MinecraftBlockTypes22["MossyCobblestoneStairs"] = "minecraft:mossy_cobblestone_stairs";
-  MinecraftBlockTypes22["MossyCobblestoneWall"] = "minecraft:mossy_cobblestone_wall";
-  MinecraftBlockTypes22["MossyStoneBrickDoubleSlab"] = "minecraft:mossy_stone_brick_double_slab";
-  MinecraftBlockTypes22["MossyStoneBrickSlab"] = "minecraft:mossy_stone_brick_slab";
-  MinecraftBlockTypes22["MossyStoneBrickStairs"] = "minecraft:mossy_stone_brick_stairs";
-  MinecraftBlockTypes22["MossyStoneBrickWall"] = "minecraft:mossy_stone_brick_wall";
-  MinecraftBlockTypes22["MossyStoneBricks"] = "minecraft:mossy_stone_bricks";
-  MinecraftBlockTypes22["Mud"] = "minecraft:mud";
-  MinecraftBlockTypes22["MudBrickDoubleSlab"] = "minecraft:mud_brick_double_slab";
-  MinecraftBlockTypes22["MudBrickSlab"] = "minecraft:mud_brick_slab";
-  MinecraftBlockTypes22["MudBrickStairs"] = "minecraft:mud_brick_stairs";
-  MinecraftBlockTypes22["MudBrickWall"] = "minecraft:mud_brick_wall";
-  MinecraftBlockTypes22["MudBricks"] = "minecraft:mud_bricks";
-  MinecraftBlockTypes22["MuddyMangroveRoots"] = "minecraft:muddy_mangrove_roots";
-  MinecraftBlockTypes22["MushroomStem"] = "minecraft:mushroom_stem";
-  MinecraftBlockTypes22["Mycelium"] = "minecraft:mycelium";
-  MinecraftBlockTypes22["NetherBrick"] = "minecraft:nether_brick";
-  MinecraftBlockTypes22["NetherBrickDoubleSlab"] = "minecraft:nether_brick_double_slab";
-  MinecraftBlockTypes22["NetherBrickFence"] = "minecraft:nether_brick_fence";
-  MinecraftBlockTypes22["NetherBrickSlab"] = "minecraft:nether_brick_slab";
-  MinecraftBlockTypes22["NetherBrickStairs"] = "minecraft:nether_brick_stairs";
-  MinecraftBlockTypes22["NetherBrickWall"] = "minecraft:nether_brick_wall";
-  MinecraftBlockTypes22["NetherGoldOre"] = "minecraft:nether_gold_ore";
-  MinecraftBlockTypes22["NetherSprouts"] = "minecraft:nether_sprouts";
-  MinecraftBlockTypes22["NetherWart"] = "minecraft:nether_wart";
-  MinecraftBlockTypes22["NetherWartBlock"] = "minecraft:nether_wart_block";
-  MinecraftBlockTypes22["NetheriteBlock"] = "minecraft:netherite_block";
-  MinecraftBlockTypes22["Netherrack"] = "minecraft:netherrack";
-  MinecraftBlockTypes22["NormalStoneDoubleSlab"] = "minecraft:normal_stone_double_slab";
-  MinecraftBlockTypes22["NormalStoneSlab"] = "minecraft:normal_stone_slab";
-  MinecraftBlockTypes22["NormalStoneStairs"] = "minecraft:normal_stone_stairs";
-  MinecraftBlockTypes22["Noteblock"] = "minecraft:noteblock";
-  MinecraftBlockTypes22["OakDoubleSlab"] = "minecraft:oak_double_slab";
-  MinecraftBlockTypes22["OakFence"] = "minecraft:oak_fence";
-  MinecraftBlockTypes22["OakHangingSign"] = "minecraft:oak_hanging_sign";
-  MinecraftBlockTypes22["OakLeaves"] = "minecraft:oak_leaves";
-  MinecraftBlockTypes22["OakLog"] = "minecraft:oak_log";
-  MinecraftBlockTypes22["OakPlanks"] = "minecraft:oak_planks";
-  MinecraftBlockTypes22["OakSapling"] = "minecraft:oak_sapling";
-  MinecraftBlockTypes22["OakShelf"] = "minecraft:oak_shelf";
-  MinecraftBlockTypes22["OakSlab"] = "minecraft:oak_slab";
-  MinecraftBlockTypes22["OakStairs"] = "minecraft:oak_stairs";
-  MinecraftBlockTypes22["OakWood"] = "minecraft:oak_wood";
-  MinecraftBlockTypes22["Observer"] = "minecraft:observer";
-  MinecraftBlockTypes22["Obsidian"] = "minecraft:obsidian";
-  MinecraftBlockTypes22["OchreFroglight"] = "minecraft:ochre_froglight";
-  MinecraftBlockTypes22["OpenEyeblossom"] = "minecraft:open_eyeblossom";
-  MinecraftBlockTypes22["OrangeCandle"] = "minecraft:orange_candle";
-  MinecraftBlockTypes22["OrangeCandleCake"] = "minecraft:orange_candle_cake";
-  MinecraftBlockTypes22["OrangeCarpet"] = "minecraft:orange_carpet";
-  MinecraftBlockTypes22["OrangeConcrete"] = "minecraft:orange_concrete";
-  MinecraftBlockTypes22["OrangeConcretePowder"] = "minecraft:orange_concrete_powder";
-  MinecraftBlockTypes22["OrangeGlazedTerracotta"] = "minecraft:orange_glazed_terracotta";
-  MinecraftBlockTypes22["OrangeShulkerBox"] = "minecraft:orange_shulker_box";
-  MinecraftBlockTypes22["OrangeStainedGlass"] = "minecraft:orange_stained_glass";
-  MinecraftBlockTypes22["OrangeStainedGlassPane"] = "minecraft:orange_stained_glass_pane";
-  MinecraftBlockTypes22["OrangeTerracotta"] = "minecraft:orange_terracotta";
-  MinecraftBlockTypes22["OrangeTulip"] = "minecraft:orange_tulip";
-  MinecraftBlockTypes22["OrangeWool"] = "minecraft:orange_wool";
-  MinecraftBlockTypes22["OxeyeDaisy"] = "minecraft:oxeye_daisy";
-  MinecraftBlockTypes22["OxidizedChiseledCopper"] = "minecraft:oxidized_chiseled_copper";
-  MinecraftBlockTypes22["OxidizedCopper"] = "minecraft:oxidized_copper";
-  MinecraftBlockTypes22["OxidizedCopperBars"] = "minecraft:oxidized_copper_bars";
-  MinecraftBlockTypes22["OxidizedCopperBulb"] = "minecraft:oxidized_copper_bulb";
-  MinecraftBlockTypes22["OxidizedCopperChain"] = "minecraft:oxidized_copper_chain";
-  MinecraftBlockTypes22["OxidizedCopperChest"] = "minecraft:oxidized_copper_chest";
-  MinecraftBlockTypes22["OxidizedCopperDoor"] = "minecraft:oxidized_copper_door";
-  MinecraftBlockTypes22["OxidizedCopperGolemStatue"] = "minecraft:oxidized_copper_golem_statue";
-  MinecraftBlockTypes22["OxidizedCopperGrate"] = "minecraft:oxidized_copper_grate";
-  MinecraftBlockTypes22["OxidizedCopperLantern"] = "minecraft:oxidized_copper_lantern";
-  MinecraftBlockTypes22["OxidizedCopperTrapdoor"] = "minecraft:oxidized_copper_trapdoor";
-  MinecraftBlockTypes22["OxidizedCutCopper"] = "minecraft:oxidized_cut_copper";
-  MinecraftBlockTypes22["OxidizedCutCopperSlab"] = "minecraft:oxidized_cut_copper_slab";
-  MinecraftBlockTypes22["OxidizedCutCopperStairs"] = "minecraft:oxidized_cut_copper_stairs";
-  MinecraftBlockTypes22["OxidizedDoubleCutCopperSlab"] = "minecraft:oxidized_double_cut_copper_slab";
-  MinecraftBlockTypes22["OxidizedLightningRod"] = "minecraft:oxidized_lightning_rod";
-  MinecraftBlockTypes22["PackedIce"] = "minecraft:packed_ice";
-  MinecraftBlockTypes22["PackedMud"] = "minecraft:packed_mud";
-  MinecraftBlockTypes22["PaleHangingMoss"] = "minecraft:pale_hanging_moss";
-  MinecraftBlockTypes22["PaleMossBlock"] = "minecraft:pale_moss_block";
-  MinecraftBlockTypes22["PaleMossCarpet"] = "minecraft:pale_moss_carpet";
-  MinecraftBlockTypes22["PaleOakButton"] = "minecraft:pale_oak_button";
-  MinecraftBlockTypes22["PaleOakDoor"] = "minecraft:pale_oak_door";
-  MinecraftBlockTypes22["PaleOakDoubleSlab"] = "minecraft:pale_oak_double_slab";
-  MinecraftBlockTypes22["PaleOakFence"] = "minecraft:pale_oak_fence";
-  MinecraftBlockTypes22["PaleOakFenceGate"] = "minecraft:pale_oak_fence_gate";
-  MinecraftBlockTypes22["PaleOakHangingSign"] = "minecraft:pale_oak_hanging_sign";
-  MinecraftBlockTypes22["PaleOakLeaves"] = "minecraft:pale_oak_leaves";
-  MinecraftBlockTypes22["PaleOakLog"] = "minecraft:pale_oak_log";
-  MinecraftBlockTypes22["PaleOakPlanks"] = "minecraft:pale_oak_planks";
-  MinecraftBlockTypes22["PaleOakPressurePlate"] = "minecraft:pale_oak_pressure_plate";
-  MinecraftBlockTypes22["PaleOakSapling"] = "minecraft:pale_oak_sapling";
-  MinecraftBlockTypes22["PaleOakShelf"] = "minecraft:pale_oak_shelf";
-  MinecraftBlockTypes22["PaleOakSlab"] = "minecraft:pale_oak_slab";
-  MinecraftBlockTypes22["PaleOakStairs"] = "minecraft:pale_oak_stairs";
-  MinecraftBlockTypes22["PaleOakStandingSign"] = "minecraft:pale_oak_standing_sign";
-  MinecraftBlockTypes22["PaleOakTrapdoor"] = "minecraft:pale_oak_trapdoor";
-  MinecraftBlockTypes22["PaleOakWallSign"] = "minecraft:pale_oak_wall_sign";
-  MinecraftBlockTypes22["PaleOakWood"] = "minecraft:pale_oak_wood";
-  MinecraftBlockTypes22["PearlescentFroglight"] = "minecraft:pearlescent_froglight";
-  MinecraftBlockTypes22["Peony"] = "minecraft:peony";
-  MinecraftBlockTypes22["PetrifiedOakDoubleSlab"] = "minecraft:petrified_oak_double_slab";
-  MinecraftBlockTypes22["PetrifiedOakSlab"] = "minecraft:petrified_oak_slab";
-  MinecraftBlockTypes22["PiglinHead"] = "minecraft:piglin_head";
-  MinecraftBlockTypes22["PinkCandle"] = "minecraft:pink_candle";
-  MinecraftBlockTypes22["PinkCandleCake"] = "minecraft:pink_candle_cake";
-  MinecraftBlockTypes22["PinkCarpet"] = "minecraft:pink_carpet";
-  MinecraftBlockTypes22["PinkConcrete"] = "minecraft:pink_concrete";
-  MinecraftBlockTypes22["PinkConcretePowder"] = "minecraft:pink_concrete_powder";
-  MinecraftBlockTypes22["PinkGlazedTerracotta"] = "minecraft:pink_glazed_terracotta";
-  MinecraftBlockTypes22["PinkPetals"] = "minecraft:pink_petals";
-  MinecraftBlockTypes22["PinkShulkerBox"] = "minecraft:pink_shulker_box";
-  MinecraftBlockTypes22["PinkStainedGlass"] = "minecraft:pink_stained_glass";
-  MinecraftBlockTypes22["PinkStainedGlassPane"] = "minecraft:pink_stained_glass_pane";
-  MinecraftBlockTypes22["PinkTerracotta"] = "minecraft:pink_terracotta";
-  MinecraftBlockTypes22["PinkTulip"] = "minecraft:pink_tulip";
-  MinecraftBlockTypes22["PinkWool"] = "minecraft:pink_wool";
-  MinecraftBlockTypes22["Piston"] = "minecraft:piston";
-  MinecraftBlockTypes22["PistonArmCollision"] = "minecraft:piston_arm_collision";
-  MinecraftBlockTypes22["PitcherCrop"] = "minecraft:pitcher_crop";
-  MinecraftBlockTypes22["PitcherPlant"] = "minecraft:pitcher_plant";
-  MinecraftBlockTypes22["PlayerHead"] = "minecraft:player_head";
-  MinecraftBlockTypes22["Podzol"] = "minecraft:podzol";
-  MinecraftBlockTypes22["PointedDripstone"] = "minecraft:pointed_dripstone";
-  MinecraftBlockTypes22["PolishedAndesite"] = "minecraft:polished_andesite";
-  MinecraftBlockTypes22["PolishedAndesiteDoubleSlab"] = "minecraft:polished_andesite_double_slab";
-  MinecraftBlockTypes22["PolishedAndesiteSlab"] = "minecraft:polished_andesite_slab";
-  MinecraftBlockTypes22["PolishedAndesiteStairs"] = "minecraft:polished_andesite_stairs";
-  MinecraftBlockTypes22["PolishedBasalt"] = "minecraft:polished_basalt";
-  MinecraftBlockTypes22["PolishedBlackstone"] = "minecraft:polished_blackstone";
-  MinecraftBlockTypes22["PolishedBlackstoneBrickDoubleSlab"] = "minecraft:polished_blackstone_brick_double_slab";
-  MinecraftBlockTypes22["PolishedBlackstoneBrickSlab"] = "minecraft:polished_blackstone_brick_slab";
-  MinecraftBlockTypes22["PolishedBlackstoneBrickStairs"] = "minecraft:polished_blackstone_brick_stairs";
-  MinecraftBlockTypes22["PolishedBlackstoneBrickWall"] = "minecraft:polished_blackstone_brick_wall";
-  MinecraftBlockTypes22["PolishedBlackstoneBricks"] = "minecraft:polished_blackstone_bricks";
-  MinecraftBlockTypes22["PolishedBlackstoneButton"] = "minecraft:polished_blackstone_button";
-  MinecraftBlockTypes22["PolishedBlackstoneDoubleSlab"] = "minecraft:polished_blackstone_double_slab";
-  MinecraftBlockTypes22["PolishedBlackstonePressurePlate"] = "minecraft:polished_blackstone_pressure_plate";
-  MinecraftBlockTypes22["PolishedBlackstoneSlab"] = "minecraft:polished_blackstone_slab";
-  MinecraftBlockTypes22["PolishedBlackstoneStairs"] = "minecraft:polished_blackstone_stairs";
-  MinecraftBlockTypes22["PolishedBlackstoneWall"] = "minecraft:polished_blackstone_wall";
-  MinecraftBlockTypes22["PolishedDeepslate"] = "minecraft:polished_deepslate";
-  MinecraftBlockTypes22["PolishedDeepslateDoubleSlab"] = "minecraft:polished_deepslate_double_slab";
-  MinecraftBlockTypes22["PolishedDeepslateSlab"] = "minecraft:polished_deepslate_slab";
-  MinecraftBlockTypes22["PolishedDeepslateStairs"] = "minecraft:polished_deepslate_stairs";
-  MinecraftBlockTypes22["PolishedDeepslateWall"] = "minecraft:polished_deepslate_wall";
-  MinecraftBlockTypes22["PolishedDiorite"] = "minecraft:polished_diorite";
-  MinecraftBlockTypes22["PolishedDioriteDoubleSlab"] = "minecraft:polished_diorite_double_slab";
-  MinecraftBlockTypes22["PolishedDioriteSlab"] = "minecraft:polished_diorite_slab";
-  MinecraftBlockTypes22["PolishedDioriteStairs"] = "minecraft:polished_diorite_stairs";
-  MinecraftBlockTypes22["PolishedGranite"] = "minecraft:polished_granite";
-  MinecraftBlockTypes22["PolishedGraniteDoubleSlab"] = "minecraft:polished_granite_double_slab";
-  MinecraftBlockTypes22["PolishedGraniteSlab"] = "minecraft:polished_granite_slab";
-  MinecraftBlockTypes22["PolishedGraniteStairs"] = "minecraft:polished_granite_stairs";
-  MinecraftBlockTypes22["PolishedTuff"] = "minecraft:polished_tuff";
-  MinecraftBlockTypes22["PolishedTuffDoubleSlab"] = "minecraft:polished_tuff_double_slab";
-  MinecraftBlockTypes22["PolishedTuffSlab"] = "minecraft:polished_tuff_slab";
-  MinecraftBlockTypes22["PolishedTuffStairs"] = "minecraft:polished_tuff_stairs";
-  MinecraftBlockTypes22["PolishedTuffWall"] = "minecraft:polished_tuff_wall";
-  MinecraftBlockTypes22["Poppy"] = "minecraft:poppy";
-  MinecraftBlockTypes22["Portal"] = "minecraft:portal";
-  MinecraftBlockTypes22["Potatoes"] = "minecraft:potatoes";
-  MinecraftBlockTypes22["PowderSnow"] = "minecraft:powder_snow";
-  MinecraftBlockTypes22["PoweredComparator"] = "minecraft:powered_comparator";
-  MinecraftBlockTypes22["PoweredRepeater"] = "minecraft:powered_repeater";
-  MinecraftBlockTypes22["Prismarine"] = "minecraft:prismarine";
-  MinecraftBlockTypes22["PrismarineBrickDoubleSlab"] = "minecraft:prismarine_brick_double_slab";
-  MinecraftBlockTypes22["PrismarineBrickSlab"] = "minecraft:prismarine_brick_slab";
-  MinecraftBlockTypes22["PrismarineBricks"] = "minecraft:prismarine_bricks";
-  MinecraftBlockTypes22["PrismarineBricksStairs"] = "minecraft:prismarine_bricks_stairs";
-  MinecraftBlockTypes22["PrismarineDoubleSlab"] = "minecraft:prismarine_double_slab";
-  MinecraftBlockTypes22["PrismarineSlab"] = "minecraft:prismarine_slab";
-  MinecraftBlockTypes22["PrismarineStairs"] = "minecraft:prismarine_stairs";
-  MinecraftBlockTypes22["PrismarineWall"] = "minecraft:prismarine_wall";
-  MinecraftBlockTypes22["Pumpkin"] = "minecraft:pumpkin";
-  MinecraftBlockTypes22["PumpkinStem"] = "minecraft:pumpkin_stem";
-  MinecraftBlockTypes22["PurpleCandle"] = "minecraft:purple_candle";
-  MinecraftBlockTypes22["PurpleCandleCake"] = "minecraft:purple_candle_cake";
-  MinecraftBlockTypes22["PurpleCarpet"] = "minecraft:purple_carpet";
-  MinecraftBlockTypes22["PurpleConcrete"] = "minecraft:purple_concrete";
-  MinecraftBlockTypes22["PurpleConcretePowder"] = "minecraft:purple_concrete_powder";
-  MinecraftBlockTypes22["PurpleGlazedTerracotta"] = "minecraft:purple_glazed_terracotta";
-  MinecraftBlockTypes22["PurpleShulkerBox"] = "minecraft:purple_shulker_box";
-  MinecraftBlockTypes22["PurpleStainedGlass"] = "minecraft:purple_stained_glass";
-  MinecraftBlockTypes22["PurpleStainedGlassPane"] = "minecraft:purple_stained_glass_pane";
-  MinecraftBlockTypes22["PurpleTerracotta"] = "minecraft:purple_terracotta";
-  MinecraftBlockTypes22["PurpleWool"] = "minecraft:purple_wool";
-  MinecraftBlockTypes22["PurpurBlock"] = "minecraft:purpur_block";
-  MinecraftBlockTypes22["PurpurDoubleSlab"] = "minecraft:purpur_double_slab";
-  MinecraftBlockTypes22["PurpurPillar"] = "minecraft:purpur_pillar";
-  MinecraftBlockTypes22["PurpurSlab"] = "minecraft:purpur_slab";
-  MinecraftBlockTypes22["PurpurStairs"] = "minecraft:purpur_stairs";
-  MinecraftBlockTypes22["QuartzBlock"] = "minecraft:quartz_block";
-  MinecraftBlockTypes22["QuartzBricks"] = "minecraft:quartz_bricks";
-  MinecraftBlockTypes22["QuartzDoubleSlab"] = "minecraft:quartz_double_slab";
-  MinecraftBlockTypes22["QuartzOre"] = "minecraft:quartz_ore";
-  MinecraftBlockTypes22["QuartzPillar"] = "minecraft:quartz_pillar";
-  MinecraftBlockTypes22["QuartzSlab"] = "minecraft:quartz_slab";
-  MinecraftBlockTypes22["QuartzStairs"] = "minecraft:quartz_stairs";
-  MinecraftBlockTypes22["Rail"] = "minecraft:rail";
-  MinecraftBlockTypes22["RawCopperBlock"] = "minecraft:raw_copper_block";
-  MinecraftBlockTypes22["RawGoldBlock"] = "minecraft:raw_gold_block";
-  MinecraftBlockTypes22["RawIronBlock"] = "minecraft:raw_iron_block";
-  MinecraftBlockTypes22["RedCandle"] = "minecraft:red_candle";
-  MinecraftBlockTypes22["RedCandleCake"] = "minecraft:red_candle_cake";
-  MinecraftBlockTypes22["RedCarpet"] = "minecraft:red_carpet";
-  MinecraftBlockTypes22["RedConcrete"] = "minecraft:red_concrete";
-  MinecraftBlockTypes22["RedConcretePowder"] = "minecraft:red_concrete_powder";
-  MinecraftBlockTypes22["RedGlazedTerracotta"] = "minecraft:red_glazed_terracotta";
-  MinecraftBlockTypes22["RedMushroom"] = "minecraft:red_mushroom";
-  MinecraftBlockTypes22["RedMushroomBlock"] = "minecraft:red_mushroom_block";
-  MinecraftBlockTypes22["RedNetherBrick"] = "minecraft:red_nether_brick";
-  MinecraftBlockTypes22["RedNetherBrickDoubleSlab"] = "minecraft:red_nether_brick_double_slab";
-  MinecraftBlockTypes22["RedNetherBrickSlab"] = "minecraft:red_nether_brick_slab";
-  MinecraftBlockTypes22["RedNetherBrickStairs"] = "minecraft:red_nether_brick_stairs";
-  MinecraftBlockTypes22["RedNetherBrickWall"] = "minecraft:red_nether_brick_wall";
-  MinecraftBlockTypes22["RedSand"] = "minecraft:red_sand";
-  MinecraftBlockTypes22["RedSandstone"] = "minecraft:red_sandstone";
-  MinecraftBlockTypes22["RedSandstoneDoubleSlab"] = "minecraft:red_sandstone_double_slab";
-  MinecraftBlockTypes22["RedSandstoneSlab"] = "minecraft:red_sandstone_slab";
-  MinecraftBlockTypes22["RedSandstoneStairs"] = "minecraft:red_sandstone_stairs";
-  MinecraftBlockTypes22["RedSandstoneWall"] = "minecraft:red_sandstone_wall";
-  MinecraftBlockTypes22["RedShulkerBox"] = "minecraft:red_shulker_box";
-  MinecraftBlockTypes22["RedStainedGlass"] = "minecraft:red_stained_glass";
-  MinecraftBlockTypes22["RedStainedGlassPane"] = "minecraft:red_stained_glass_pane";
-  MinecraftBlockTypes22["RedTerracotta"] = "minecraft:red_terracotta";
-  MinecraftBlockTypes22["RedTulip"] = "minecraft:red_tulip";
-  MinecraftBlockTypes22["RedWool"] = "minecraft:red_wool";
-  MinecraftBlockTypes22["RedstoneBlock"] = "minecraft:redstone_block";
-  MinecraftBlockTypes22["RedstoneLamp"] = "minecraft:redstone_lamp";
-  MinecraftBlockTypes22["RedstoneOre"] = "minecraft:redstone_ore";
-  MinecraftBlockTypes22["RedstoneTorch"] = "minecraft:redstone_torch";
-  MinecraftBlockTypes22["RedstoneWire"] = "minecraft:redstone_wire";
-  MinecraftBlockTypes22["Reeds"] = "minecraft:reeds";
-  MinecraftBlockTypes22["ReinforcedDeepslate"] = "minecraft:reinforced_deepslate";
-  MinecraftBlockTypes22["RepeatingCommandBlock"] = "minecraft:repeating_command_block";
-  MinecraftBlockTypes22["ResinBlock"] = "minecraft:resin_block";
-  MinecraftBlockTypes22["ResinBrickDoubleSlab"] = "minecraft:resin_brick_double_slab";
-  MinecraftBlockTypes22["ResinBrickSlab"] = "minecraft:resin_brick_slab";
-  MinecraftBlockTypes22["ResinBrickStairs"] = "minecraft:resin_brick_stairs";
-  MinecraftBlockTypes22["ResinBrickWall"] = "minecraft:resin_brick_wall";
-  MinecraftBlockTypes22["ResinBricks"] = "minecraft:resin_bricks";
-  MinecraftBlockTypes22["ResinClump"] = "minecraft:resin_clump";
-  MinecraftBlockTypes22["RespawnAnchor"] = "minecraft:respawn_anchor";
-  MinecraftBlockTypes22["RoseBush"] = "minecraft:rose_bush";
-  MinecraftBlockTypes22["Sand"] = "minecraft:sand";
-  MinecraftBlockTypes22["Sandstone"] = "minecraft:sandstone";
-  MinecraftBlockTypes22["SandstoneDoubleSlab"] = "minecraft:sandstone_double_slab";
-  MinecraftBlockTypes22["SandstoneSlab"] = "minecraft:sandstone_slab";
-  MinecraftBlockTypes22["SandstoneStairs"] = "minecraft:sandstone_stairs";
-  MinecraftBlockTypes22["SandstoneWall"] = "minecraft:sandstone_wall";
-  MinecraftBlockTypes22["Scaffolding"] = "minecraft:scaffolding";
-  MinecraftBlockTypes22["Sculk"] = "minecraft:sculk";
-  MinecraftBlockTypes22["SculkCatalyst"] = "minecraft:sculk_catalyst";
-  MinecraftBlockTypes22["SculkSensor"] = "minecraft:sculk_sensor";
-  MinecraftBlockTypes22["SculkShrieker"] = "minecraft:sculk_shrieker";
-  MinecraftBlockTypes22["SculkVein"] = "minecraft:sculk_vein";
-  MinecraftBlockTypes22["SeaLantern"] = "minecraft:sea_lantern";
-  MinecraftBlockTypes22["SeaPickle"] = "minecraft:sea_pickle";
-  MinecraftBlockTypes22["Seagrass"] = "minecraft:seagrass";
-  MinecraftBlockTypes22["ShortDryGrass"] = "minecraft:short_dry_grass";
-  MinecraftBlockTypes22["ShortGrass"] = "minecraft:short_grass";
-  MinecraftBlockTypes22["Shroomlight"] = "minecraft:shroomlight";
-  MinecraftBlockTypes22["SilverGlazedTerracotta"] = "minecraft:silver_glazed_terracotta";
-  MinecraftBlockTypes22["SkeletonSkull"] = "minecraft:skeleton_skull";
-  MinecraftBlockTypes22["Slime"] = "minecraft:slime";
-  MinecraftBlockTypes22["SmallAmethystBud"] = "minecraft:small_amethyst_bud";
-  MinecraftBlockTypes22["SmallDripleafBlock"] = "minecraft:small_dripleaf_block";
-  MinecraftBlockTypes22["SmithingTable"] = "minecraft:smithing_table";
-  MinecraftBlockTypes22["Smoker"] = "minecraft:smoker";
-  MinecraftBlockTypes22["SmoothBasalt"] = "minecraft:smooth_basalt";
-  MinecraftBlockTypes22["SmoothQuartz"] = "minecraft:smooth_quartz";
-  MinecraftBlockTypes22["SmoothQuartzDoubleSlab"] = "minecraft:smooth_quartz_double_slab";
-  MinecraftBlockTypes22["SmoothQuartzSlab"] = "minecraft:smooth_quartz_slab";
-  MinecraftBlockTypes22["SmoothQuartzStairs"] = "minecraft:smooth_quartz_stairs";
-  MinecraftBlockTypes22["SmoothRedSandstone"] = "minecraft:smooth_red_sandstone";
-  MinecraftBlockTypes22["SmoothRedSandstoneDoubleSlab"] = "minecraft:smooth_red_sandstone_double_slab";
-  MinecraftBlockTypes22["SmoothRedSandstoneSlab"] = "minecraft:smooth_red_sandstone_slab";
-  MinecraftBlockTypes22["SmoothRedSandstoneStairs"] = "minecraft:smooth_red_sandstone_stairs";
-  MinecraftBlockTypes22["SmoothSandstone"] = "minecraft:smooth_sandstone";
-  MinecraftBlockTypes22["SmoothSandstoneDoubleSlab"] = "minecraft:smooth_sandstone_double_slab";
-  MinecraftBlockTypes22["SmoothSandstoneSlab"] = "minecraft:smooth_sandstone_slab";
-  MinecraftBlockTypes22["SmoothSandstoneStairs"] = "minecraft:smooth_sandstone_stairs";
-  MinecraftBlockTypes22["SmoothStone"] = "minecraft:smooth_stone";
-  MinecraftBlockTypes22["SmoothStoneDoubleSlab"] = "minecraft:smooth_stone_double_slab";
-  MinecraftBlockTypes22["SmoothStoneSlab"] = "minecraft:smooth_stone_slab";
-  MinecraftBlockTypes22["SnifferEgg"] = "minecraft:sniffer_egg";
-  MinecraftBlockTypes22["Snow"] = "minecraft:snow";
-  MinecraftBlockTypes22["SnowLayer"] = "minecraft:snow_layer";
-  MinecraftBlockTypes22["SoulCampfire"] = "minecraft:soul_campfire";
-  MinecraftBlockTypes22["SoulFire"] = "minecraft:soul_fire";
-  MinecraftBlockTypes22["SoulLantern"] = "minecraft:soul_lantern";
-  MinecraftBlockTypes22["SoulSand"] = "minecraft:soul_sand";
-  MinecraftBlockTypes22["SoulSoil"] = "minecraft:soul_soil";
-  MinecraftBlockTypes22["SoulTorch"] = "minecraft:soul_torch";
-  MinecraftBlockTypes22["Sponge"] = "minecraft:sponge";
-  MinecraftBlockTypes22["SporeBlossom"] = "minecraft:spore_blossom";
-  MinecraftBlockTypes22["SpruceButton"] = "minecraft:spruce_button";
-  MinecraftBlockTypes22["SpruceDoor"] = "minecraft:spruce_door";
-  MinecraftBlockTypes22["SpruceDoubleSlab"] = "minecraft:spruce_double_slab";
-  MinecraftBlockTypes22["SpruceFence"] = "minecraft:spruce_fence";
-  MinecraftBlockTypes22["SpruceFenceGate"] = "minecraft:spruce_fence_gate";
-  MinecraftBlockTypes22["SpruceHangingSign"] = "minecraft:spruce_hanging_sign";
-  MinecraftBlockTypes22["SpruceLeaves"] = "minecraft:spruce_leaves";
-  MinecraftBlockTypes22["SpruceLog"] = "minecraft:spruce_log";
-  MinecraftBlockTypes22["SprucePlanks"] = "minecraft:spruce_planks";
-  MinecraftBlockTypes22["SprucePressurePlate"] = "minecraft:spruce_pressure_plate";
-  MinecraftBlockTypes22["SpruceSapling"] = "minecraft:spruce_sapling";
-  MinecraftBlockTypes22["SpruceShelf"] = "minecraft:spruce_shelf";
-  MinecraftBlockTypes22["SpruceSlab"] = "minecraft:spruce_slab";
-  MinecraftBlockTypes22["SpruceStairs"] = "minecraft:spruce_stairs";
-  MinecraftBlockTypes22["SpruceStandingSign"] = "minecraft:spruce_standing_sign";
-  MinecraftBlockTypes22["SpruceTrapdoor"] = "minecraft:spruce_trapdoor";
-  MinecraftBlockTypes22["SpruceWallSign"] = "minecraft:spruce_wall_sign";
-  MinecraftBlockTypes22["SpruceWood"] = "minecraft:spruce_wood";
-  MinecraftBlockTypes22["StandingBanner"] = "minecraft:standing_banner";
-  MinecraftBlockTypes22["StandingSign"] = "minecraft:standing_sign";
-  MinecraftBlockTypes22["StickyPiston"] = "minecraft:sticky_piston";
-  MinecraftBlockTypes22["StickyPistonArmCollision"] = "minecraft:sticky_piston_arm_collision";
-  MinecraftBlockTypes22["Stone"] = "minecraft:stone";
-  MinecraftBlockTypes22["StoneBrickDoubleSlab"] = "minecraft:stone_brick_double_slab";
-  MinecraftBlockTypes22["StoneBrickSlab"] = "minecraft:stone_brick_slab";
-  MinecraftBlockTypes22["StoneBrickStairs"] = "minecraft:stone_brick_stairs";
-  MinecraftBlockTypes22["StoneBrickWall"] = "minecraft:stone_brick_wall";
-  MinecraftBlockTypes22["StoneBricks"] = "minecraft:stone_bricks";
-  MinecraftBlockTypes22["StoneButton"] = "minecraft:stone_button";
-  MinecraftBlockTypes22["StonePressurePlate"] = "minecraft:stone_pressure_plate";
-  MinecraftBlockTypes22["StoneStairs"] = "minecraft:stone_stairs";
-  MinecraftBlockTypes22["StonecutterBlock"] = "minecraft:stonecutter_block";
-  MinecraftBlockTypes22["StrippedAcaciaLog"] = "minecraft:stripped_acacia_log";
-  MinecraftBlockTypes22["StrippedAcaciaWood"] = "minecraft:stripped_acacia_wood";
-  MinecraftBlockTypes22["StrippedBambooBlock"] = "minecraft:stripped_bamboo_block";
-  MinecraftBlockTypes22["StrippedBirchLog"] = "minecraft:stripped_birch_log";
-  MinecraftBlockTypes22["StrippedBirchWood"] = "minecraft:stripped_birch_wood";
-  MinecraftBlockTypes22["StrippedCherryLog"] = "minecraft:stripped_cherry_log";
-  MinecraftBlockTypes22["StrippedCherryWood"] = "minecraft:stripped_cherry_wood";
-  MinecraftBlockTypes22["StrippedCrimsonHyphae"] = "minecraft:stripped_crimson_hyphae";
-  MinecraftBlockTypes22["StrippedCrimsonStem"] = "minecraft:stripped_crimson_stem";
-  MinecraftBlockTypes22["StrippedDarkOakLog"] = "minecraft:stripped_dark_oak_log";
-  MinecraftBlockTypes22["StrippedDarkOakWood"] = "minecraft:stripped_dark_oak_wood";
-  MinecraftBlockTypes22["StrippedJungleLog"] = "minecraft:stripped_jungle_log";
-  MinecraftBlockTypes22["StrippedJungleWood"] = "minecraft:stripped_jungle_wood";
-  MinecraftBlockTypes22["StrippedMangroveLog"] = "minecraft:stripped_mangrove_log";
-  MinecraftBlockTypes22["StrippedMangroveWood"] = "minecraft:stripped_mangrove_wood";
-  MinecraftBlockTypes22["StrippedOakLog"] = "minecraft:stripped_oak_log";
-  MinecraftBlockTypes22["StrippedOakWood"] = "minecraft:stripped_oak_wood";
-  MinecraftBlockTypes22["StrippedPaleOakLog"] = "minecraft:stripped_pale_oak_log";
-  MinecraftBlockTypes22["StrippedPaleOakWood"] = "minecraft:stripped_pale_oak_wood";
-  MinecraftBlockTypes22["StrippedSpruceLog"] = "minecraft:stripped_spruce_log";
-  MinecraftBlockTypes22["StrippedSpruceWood"] = "minecraft:stripped_spruce_wood";
-  MinecraftBlockTypes22["StrippedWarpedHyphae"] = "minecraft:stripped_warped_hyphae";
-  MinecraftBlockTypes22["StrippedWarpedStem"] = "minecraft:stripped_warped_stem";
-  MinecraftBlockTypes22["StructureBlock"] = "minecraft:structure_block";
-  MinecraftBlockTypes22["StructureVoid"] = "minecraft:structure_void";
-  MinecraftBlockTypes22["Sunflower"] = "minecraft:sunflower";
-  MinecraftBlockTypes22["SuspiciousGravel"] = "minecraft:suspicious_gravel";
-  MinecraftBlockTypes22["SuspiciousSand"] = "minecraft:suspicious_sand";
-  MinecraftBlockTypes22["SweetBerryBush"] = "minecraft:sweet_berry_bush";
-  MinecraftBlockTypes22["TallDryGrass"] = "minecraft:tall_dry_grass";
-  MinecraftBlockTypes22["TallGrass"] = "minecraft:tall_grass";
-  MinecraftBlockTypes22["Target"] = "minecraft:target";
-  MinecraftBlockTypes22["TintedGlass"] = "minecraft:tinted_glass";
-  MinecraftBlockTypes22["Tnt"] = "minecraft:tnt";
-  MinecraftBlockTypes22["Torch"] = "minecraft:torch";
-  MinecraftBlockTypes22["Torchflower"] = "minecraft:torchflower";
-  MinecraftBlockTypes22["TorchflowerCrop"] = "minecraft:torchflower_crop";
-  MinecraftBlockTypes22["Trapdoor"] = "minecraft:trapdoor";
-  MinecraftBlockTypes22["TrappedChest"] = "minecraft:trapped_chest";
-  MinecraftBlockTypes22["TrialSpawner"] = "minecraft:trial_spawner";
-  MinecraftBlockTypes22["TripWire"] = "minecraft:trip_wire";
-  MinecraftBlockTypes22["TripwireHook"] = "minecraft:tripwire_hook";
-  MinecraftBlockTypes22["TubeCoral"] = "minecraft:tube_coral";
-  MinecraftBlockTypes22["TubeCoralBlock"] = "minecraft:tube_coral_block";
-  MinecraftBlockTypes22["TubeCoralFan"] = "minecraft:tube_coral_fan";
-  MinecraftBlockTypes22["TubeCoralWallFan"] = "minecraft:tube_coral_wall_fan";
-  MinecraftBlockTypes22["Tuff"] = "minecraft:tuff";
-  MinecraftBlockTypes22["TuffBrickDoubleSlab"] = "minecraft:tuff_brick_double_slab";
-  MinecraftBlockTypes22["TuffBrickSlab"] = "minecraft:tuff_brick_slab";
-  MinecraftBlockTypes22["TuffBrickStairs"] = "minecraft:tuff_brick_stairs";
-  MinecraftBlockTypes22["TuffBrickWall"] = "minecraft:tuff_brick_wall";
-  MinecraftBlockTypes22["TuffBricks"] = "minecraft:tuff_bricks";
-  MinecraftBlockTypes22["TuffDoubleSlab"] = "minecraft:tuff_double_slab";
-  MinecraftBlockTypes22["TuffSlab"] = "minecraft:tuff_slab";
-  MinecraftBlockTypes22["TuffStairs"] = "minecraft:tuff_stairs";
-  MinecraftBlockTypes22["TuffWall"] = "minecraft:tuff_wall";
-  MinecraftBlockTypes22["TurtleEgg"] = "minecraft:turtle_egg";
-  MinecraftBlockTypes22["TwistingVines"] = "minecraft:twisting_vines";
-  MinecraftBlockTypes22["UnderwaterTnt"] = "minecraft:underwater_tnt";
-  MinecraftBlockTypes22["UnderwaterTorch"] = "minecraft:underwater_torch";
-  MinecraftBlockTypes22["UndyedShulkerBox"] = "minecraft:undyed_shulker_box";
-  MinecraftBlockTypes22["Unknown"] = "minecraft:unknown";
-  MinecraftBlockTypes22["UnlitRedstoneTorch"] = "minecraft:unlit_redstone_torch";
-  MinecraftBlockTypes22["UnpoweredComparator"] = "minecraft:unpowered_comparator";
-  MinecraftBlockTypes22["UnpoweredRepeater"] = "minecraft:unpowered_repeater";
-  MinecraftBlockTypes22["Vault"] = "minecraft:vault";
-  MinecraftBlockTypes22["VerdantFroglight"] = "minecraft:verdant_froglight";
-  MinecraftBlockTypes22["Vine"] = "minecraft:vine";
-  MinecraftBlockTypes22["WallBanner"] = "minecraft:wall_banner";
-  MinecraftBlockTypes22["WallSign"] = "minecraft:wall_sign";
-  MinecraftBlockTypes22["WarpedButton"] = "minecraft:warped_button";
-  MinecraftBlockTypes22["WarpedDoor"] = "minecraft:warped_door";
-  MinecraftBlockTypes22["WarpedDoubleSlab"] = "minecraft:warped_double_slab";
-  MinecraftBlockTypes22["WarpedFence"] = "minecraft:warped_fence";
-  MinecraftBlockTypes22["WarpedFenceGate"] = "minecraft:warped_fence_gate";
-  MinecraftBlockTypes22["WarpedFungus"] = "minecraft:warped_fungus";
-  MinecraftBlockTypes22["WarpedHangingSign"] = "minecraft:warped_hanging_sign";
-  MinecraftBlockTypes22["WarpedHyphae"] = "minecraft:warped_hyphae";
-  MinecraftBlockTypes22["WarpedNylium"] = "minecraft:warped_nylium";
-  MinecraftBlockTypes22["WarpedPlanks"] = "minecraft:warped_planks";
-  MinecraftBlockTypes22["WarpedPressurePlate"] = "minecraft:warped_pressure_plate";
-  MinecraftBlockTypes22["WarpedRoots"] = "minecraft:warped_roots";
-  MinecraftBlockTypes22["WarpedShelf"] = "minecraft:warped_shelf";
-  MinecraftBlockTypes22["WarpedSlab"] = "minecraft:warped_slab";
-  MinecraftBlockTypes22["WarpedStairs"] = "minecraft:warped_stairs";
-  MinecraftBlockTypes22["WarpedStandingSign"] = "minecraft:warped_standing_sign";
-  MinecraftBlockTypes22["WarpedStem"] = "minecraft:warped_stem";
-  MinecraftBlockTypes22["WarpedTrapdoor"] = "minecraft:warped_trapdoor";
-  MinecraftBlockTypes22["WarpedWallSign"] = "minecraft:warped_wall_sign";
-  MinecraftBlockTypes22["WarpedWartBlock"] = "minecraft:warped_wart_block";
-  MinecraftBlockTypes22["Water"] = "minecraft:water";
-  MinecraftBlockTypes22["Waterlily"] = "minecraft:waterlily";
-  MinecraftBlockTypes22["WaxedChiseledCopper"] = "minecraft:waxed_chiseled_copper";
-  MinecraftBlockTypes22["WaxedCopper"] = "minecraft:waxed_copper";
-  MinecraftBlockTypes22["WaxedCopperBars"] = "minecraft:waxed_copper_bars";
-  MinecraftBlockTypes22["WaxedCopperBulb"] = "minecraft:waxed_copper_bulb";
-  MinecraftBlockTypes22["WaxedCopperChain"] = "minecraft:waxed_copper_chain";
-  MinecraftBlockTypes22["WaxedCopperChest"] = "minecraft:waxed_copper_chest";
-  MinecraftBlockTypes22["WaxedCopperDoor"] = "minecraft:waxed_copper_door";
-  MinecraftBlockTypes22["WaxedCopperGolemStatue"] = "minecraft:waxed_copper_golem_statue";
-  MinecraftBlockTypes22["WaxedCopperGrate"] = "minecraft:waxed_copper_grate";
-  MinecraftBlockTypes22["WaxedCopperLantern"] = "minecraft:waxed_copper_lantern";
-  MinecraftBlockTypes22["WaxedCopperTrapdoor"] = "minecraft:waxed_copper_trapdoor";
-  MinecraftBlockTypes22["WaxedCutCopper"] = "minecraft:waxed_cut_copper";
-  MinecraftBlockTypes22["WaxedCutCopperSlab"] = "minecraft:waxed_cut_copper_slab";
-  MinecraftBlockTypes22["WaxedCutCopperStairs"] = "minecraft:waxed_cut_copper_stairs";
-  MinecraftBlockTypes22["WaxedDoubleCutCopperSlab"] = "minecraft:waxed_double_cut_copper_slab";
-  MinecraftBlockTypes22["WaxedExposedChiseledCopper"] = "minecraft:waxed_exposed_chiseled_copper";
-  MinecraftBlockTypes22["WaxedExposedCopper"] = "minecraft:waxed_exposed_copper";
-  MinecraftBlockTypes22["WaxedExposedCopperBars"] = "minecraft:waxed_exposed_copper_bars";
-  MinecraftBlockTypes22["WaxedExposedCopperBulb"] = "minecraft:waxed_exposed_copper_bulb";
-  MinecraftBlockTypes22["WaxedExposedCopperChain"] = "minecraft:waxed_exposed_copper_chain";
-  MinecraftBlockTypes22["WaxedExposedCopperChest"] = "minecraft:waxed_exposed_copper_chest";
-  MinecraftBlockTypes22["WaxedExposedCopperDoor"] = "minecraft:waxed_exposed_copper_door";
-  MinecraftBlockTypes22["WaxedExposedCopperGolemStatue"] = "minecraft:waxed_exposed_copper_golem_statue";
-  MinecraftBlockTypes22["WaxedExposedCopperGrate"] = "minecraft:waxed_exposed_copper_grate";
-  MinecraftBlockTypes22["WaxedExposedCopperLantern"] = "minecraft:waxed_exposed_copper_lantern";
-  MinecraftBlockTypes22["WaxedExposedCopperTrapdoor"] = "minecraft:waxed_exposed_copper_trapdoor";
-  MinecraftBlockTypes22["WaxedExposedCutCopper"] = "minecraft:waxed_exposed_cut_copper";
-  MinecraftBlockTypes22["WaxedExposedCutCopperSlab"] = "minecraft:waxed_exposed_cut_copper_slab";
-  MinecraftBlockTypes22["WaxedExposedCutCopperStairs"] = "minecraft:waxed_exposed_cut_copper_stairs";
-  MinecraftBlockTypes22["WaxedExposedDoubleCutCopperSlab"] = "minecraft:waxed_exposed_double_cut_copper_slab";
-  MinecraftBlockTypes22["WaxedExposedLightningRod"] = "minecraft:waxed_exposed_lightning_rod";
-  MinecraftBlockTypes22["WaxedLightningRod"] = "minecraft:waxed_lightning_rod";
-  MinecraftBlockTypes22["WaxedOxidizedChiseledCopper"] = "minecraft:waxed_oxidized_chiseled_copper";
-  MinecraftBlockTypes22["WaxedOxidizedCopper"] = "minecraft:waxed_oxidized_copper";
-  MinecraftBlockTypes22["WaxedOxidizedCopperBars"] = "minecraft:waxed_oxidized_copper_bars";
-  MinecraftBlockTypes22["WaxedOxidizedCopperBulb"] = "minecraft:waxed_oxidized_copper_bulb";
-  MinecraftBlockTypes22["WaxedOxidizedCopperChain"] = "minecraft:waxed_oxidized_copper_chain";
-  MinecraftBlockTypes22["WaxedOxidizedCopperChest"] = "minecraft:waxed_oxidized_copper_chest";
-  MinecraftBlockTypes22["WaxedOxidizedCopperDoor"] = "minecraft:waxed_oxidized_copper_door";
-  MinecraftBlockTypes22["WaxedOxidizedCopperGolemStatue"] = "minecraft:waxed_oxidized_copper_golem_statue";
-  MinecraftBlockTypes22["WaxedOxidizedCopperGrate"] = "minecraft:waxed_oxidized_copper_grate";
-  MinecraftBlockTypes22["WaxedOxidizedCopperLantern"] = "minecraft:waxed_oxidized_copper_lantern";
-  MinecraftBlockTypes22["WaxedOxidizedCopperTrapdoor"] = "minecraft:waxed_oxidized_copper_trapdoor";
-  MinecraftBlockTypes22["WaxedOxidizedCutCopper"] = "minecraft:waxed_oxidized_cut_copper";
-  MinecraftBlockTypes22["WaxedOxidizedCutCopperSlab"] = "minecraft:waxed_oxidized_cut_copper_slab";
-  MinecraftBlockTypes22["WaxedOxidizedCutCopperStairs"] = "minecraft:waxed_oxidized_cut_copper_stairs";
-  MinecraftBlockTypes22["WaxedOxidizedDoubleCutCopperSlab"] = "minecraft:waxed_oxidized_double_cut_copper_slab";
-  MinecraftBlockTypes22["WaxedOxidizedLightningRod"] = "minecraft:waxed_oxidized_lightning_rod";
-  MinecraftBlockTypes22["WaxedWeatheredChiseledCopper"] = "minecraft:waxed_weathered_chiseled_copper";
-  MinecraftBlockTypes22["WaxedWeatheredCopper"] = "minecraft:waxed_weathered_copper";
-  MinecraftBlockTypes22["WaxedWeatheredCopperBars"] = "minecraft:waxed_weathered_copper_bars";
-  MinecraftBlockTypes22["WaxedWeatheredCopperBulb"] = "minecraft:waxed_weathered_copper_bulb";
-  MinecraftBlockTypes22["WaxedWeatheredCopperChain"] = "minecraft:waxed_weathered_copper_chain";
-  MinecraftBlockTypes22["WaxedWeatheredCopperChest"] = "minecraft:waxed_weathered_copper_chest";
-  MinecraftBlockTypes22["WaxedWeatheredCopperDoor"] = "minecraft:waxed_weathered_copper_door";
-  MinecraftBlockTypes22["WaxedWeatheredCopperGolemStatue"] = "minecraft:waxed_weathered_copper_golem_statue";
-  MinecraftBlockTypes22["WaxedWeatheredCopperGrate"] = "minecraft:waxed_weathered_copper_grate";
-  MinecraftBlockTypes22["WaxedWeatheredCopperLantern"] = "minecraft:waxed_weathered_copper_lantern";
-  MinecraftBlockTypes22["WaxedWeatheredCopperTrapdoor"] = "minecraft:waxed_weathered_copper_trapdoor";
-  MinecraftBlockTypes22["WaxedWeatheredCutCopper"] = "minecraft:waxed_weathered_cut_copper";
-  MinecraftBlockTypes22["WaxedWeatheredCutCopperSlab"] = "minecraft:waxed_weathered_cut_copper_slab";
-  MinecraftBlockTypes22["WaxedWeatheredCutCopperStairs"] = "minecraft:waxed_weathered_cut_copper_stairs";
-  MinecraftBlockTypes22["WaxedWeatheredDoubleCutCopperSlab"] = "minecraft:waxed_weathered_double_cut_copper_slab";
-  MinecraftBlockTypes22["WaxedWeatheredLightningRod"] = "minecraft:waxed_weathered_lightning_rod";
-  MinecraftBlockTypes22["WeatheredChiseledCopper"] = "minecraft:weathered_chiseled_copper";
-  MinecraftBlockTypes22["WeatheredCopper"] = "minecraft:weathered_copper";
-  MinecraftBlockTypes22["WeatheredCopperBars"] = "minecraft:weathered_copper_bars";
-  MinecraftBlockTypes22["WeatheredCopperBulb"] = "minecraft:weathered_copper_bulb";
-  MinecraftBlockTypes22["WeatheredCopperChain"] = "minecraft:weathered_copper_chain";
-  MinecraftBlockTypes22["WeatheredCopperChest"] = "minecraft:weathered_copper_chest";
-  MinecraftBlockTypes22["WeatheredCopperDoor"] = "minecraft:weathered_copper_door";
-  MinecraftBlockTypes22["WeatheredCopperGolemStatue"] = "minecraft:weathered_copper_golem_statue";
-  MinecraftBlockTypes22["WeatheredCopperGrate"] = "minecraft:weathered_copper_grate";
-  MinecraftBlockTypes22["WeatheredCopperLantern"] = "minecraft:weathered_copper_lantern";
-  MinecraftBlockTypes22["WeatheredCopperTrapdoor"] = "minecraft:weathered_copper_trapdoor";
-  MinecraftBlockTypes22["WeatheredCutCopper"] = "minecraft:weathered_cut_copper";
-  MinecraftBlockTypes22["WeatheredCutCopperSlab"] = "minecraft:weathered_cut_copper_slab";
-  MinecraftBlockTypes22["WeatheredCutCopperStairs"] = "minecraft:weathered_cut_copper_stairs";
-  MinecraftBlockTypes22["WeatheredDoubleCutCopperSlab"] = "minecraft:weathered_double_cut_copper_slab";
-  MinecraftBlockTypes22["WeatheredLightningRod"] = "minecraft:weathered_lightning_rod";
-  MinecraftBlockTypes22["Web"] = "minecraft:web";
-  MinecraftBlockTypes22["WeepingVines"] = "minecraft:weeping_vines";
-  MinecraftBlockTypes22["WetSponge"] = "minecraft:wet_sponge";
-  MinecraftBlockTypes22["Wheat"] = "minecraft:wheat";
-  MinecraftBlockTypes22["WhiteCandle"] = "minecraft:white_candle";
-  MinecraftBlockTypes22["WhiteCandleCake"] = "minecraft:white_candle_cake";
-  MinecraftBlockTypes22["WhiteCarpet"] = "minecraft:white_carpet";
-  MinecraftBlockTypes22["WhiteConcrete"] = "minecraft:white_concrete";
-  MinecraftBlockTypes22["WhiteConcretePowder"] = "minecraft:white_concrete_powder";
-  MinecraftBlockTypes22["WhiteGlazedTerracotta"] = "minecraft:white_glazed_terracotta";
-  MinecraftBlockTypes22["WhiteShulkerBox"] = "minecraft:white_shulker_box";
-  MinecraftBlockTypes22["WhiteStainedGlass"] = "minecraft:white_stained_glass";
-  MinecraftBlockTypes22["WhiteStainedGlassPane"] = "minecraft:white_stained_glass_pane";
-  MinecraftBlockTypes22["WhiteTerracotta"] = "minecraft:white_terracotta";
-  MinecraftBlockTypes22["WhiteTulip"] = "minecraft:white_tulip";
-  MinecraftBlockTypes22["WhiteWool"] = "minecraft:white_wool";
-  MinecraftBlockTypes22["Wildflowers"] = "minecraft:wildflowers";
-  MinecraftBlockTypes22["WitherRose"] = "minecraft:wither_rose";
-  MinecraftBlockTypes22["WitherSkeletonSkull"] = "minecraft:wither_skeleton_skull";
-  MinecraftBlockTypes22["WoodenButton"] = "minecraft:wooden_button";
-  MinecraftBlockTypes22["WoodenDoor"] = "minecraft:wooden_door";
-  MinecraftBlockTypes22["WoodenPressurePlate"] = "minecraft:wooden_pressure_plate";
-  MinecraftBlockTypes22["YellowCandle"] = "minecraft:yellow_candle";
-  MinecraftBlockTypes22["YellowCandleCake"] = "minecraft:yellow_candle_cake";
-  MinecraftBlockTypes22["YellowCarpet"] = "minecraft:yellow_carpet";
-  MinecraftBlockTypes22["YellowConcrete"] = "minecraft:yellow_concrete";
-  MinecraftBlockTypes22["YellowConcretePowder"] = "minecraft:yellow_concrete_powder";
-  MinecraftBlockTypes22["YellowGlazedTerracotta"] = "minecraft:yellow_glazed_terracotta";
-  MinecraftBlockTypes22["YellowShulkerBox"] = "minecraft:yellow_shulker_box";
-  MinecraftBlockTypes22["YellowStainedGlass"] = "minecraft:yellow_stained_glass";
-  MinecraftBlockTypes22["YellowStainedGlassPane"] = "minecraft:yellow_stained_glass_pane";
-  MinecraftBlockTypes22["YellowTerracotta"] = "minecraft:yellow_terracotta";
-  MinecraftBlockTypes22["YellowWool"] = "minecraft:yellow_wool";
-  MinecraftBlockTypes22["ZombieHead"] = "minecraft:zombie_head";
-  return MinecraftBlockTypes22;
+var MinecraftBlockTypes = ((MinecraftBlockTypes2) => {
+  MinecraftBlockTypes2["AcaciaButton"] = "minecraft:acacia_button";
+  MinecraftBlockTypes2["AcaciaDoor"] = "minecraft:acacia_door";
+  MinecraftBlockTypes2["AcaciaDoubleSlab"] = "minecraft:acacia_double_slab";
+  MinecraftBlockTypes2["AcaciaFence"] = "minecraft:acacia_fence";
+  MinecraftBlockTypes2["AcaciaFenceGate"] = "minecraft:acacia_fence_gate";
+  MinecraftBlockTypes2["AcaciaHangingSign"] = "minecraft:acacia_hanging_sign";
+  MinecraftBlockTypes2["AcaciaLeaves"] = "minecraft:acacia_leaves";
+  MinecraftBlockTypes2["AcaciaLog"] = "minecraft:acacia_log";
+  MinecraftBlockTypes2["AcaciaPlanks"] = "minecraft:acacia_planks";
+  MinecraftBlockTypes2["AcaciaPressurePlate"] = "minecraft:acacia_pressure_plate";
+  MinecraftBlockTypes2["AcaciaSapling"] = "minecraft:acacia_sapling";
+  MinecraftBlockTypes2["AcaciaShelf"] = "minecraft:acacia_shelf";
+  MinecraftBlockTypes2["AcaciaSlab"] = "minecraft:acacia_slab";
+  MinecraftBlockTypes2["AcaciaStairs"] = "minecraft:acacia_stairs";
+  MinecraftBlockTypes2["AcaciaStandingSign"] = "minecraft:acacia_standing_sign";
+  MinecraftBlockTypes2["AcaciaTrapdoor"] = "minecraft:acacia_trapdoor";
+  MinecraftBlockTypes2["AcaciaWallSign"] = "minecraft:acacia_wall_sign";
+  MinecraftBlockTypes2["AcaciaWood"] = "minecraft:acacia_wood";
+  MinecraftBlockTypes2["ActivatorRail"] = "minecraft:activator_rail";
+  MinecraftBlockTypes2["Air"] = "minecraft:air";
+  MinecraftBlockTypes2["Allium"] = "minecraft:allium";
+  MinecraftBlockTypes2["Allow"] = "minecraft:allow";
+  MinecraftBlockTypes2["AmethystBlock"] = "minecraft:amethyst_block";
+  MinecraftBlockTypes2["AmethystCluster"] = "minecraft:amethyst_cluster";
+  MinecraftBlockTypes2["AncientDebris"] = "minecraft:ancient_debris";
+  MinecraftBlockTypes2["Andesite"] = "minecraft:andesite";
+  MinecraftBlockTypes2["AndesiteDoubleSlab"] = "minecraft:andesite_double_slab";
+  MinecraftBlockTypes2["AndesiteSlab"] = "minecraft:andesite_slab";
+  MinecraftBlockTypes2["AndesiteStairs"] = "minecraft:andesite_stairs";
+  MinecraftBlockTypes2["AndesiteWall"] = "minecraft:andesite_wall";
+  MinecraftBlockTypes2["Anvil"] = "minecraft:anvil";
+  MinecraftBlockTypes2["Azalea"] = "minecraft:azalea";
+  MinecraftBlockTypes2["AzaleaLeaves"] = "minecraft:azalea_leaves";
+  MinecraftBlockTypes2["AzaleaLeavesFlowered"] = "minecraft:azalea_leaves_flowered";
+  MinecraftBlockTypes2["AzureBluet"] = "minecraft:azure_bluet";
+  MinecraftBlockTypes2["Bamboo"] = "minecraft:bamboo";
+  MinecraftBlockTypes2["BambooBlock"] = "minecraft:bamboo_block";
+  MinecraftBlockTypes2["BambooButton"] = "minecraft:bamboo_button";
+  MinecraftBlockTypes2["BambooDoor"] = "minecraft:bamboo_door";
+  MinecraftBlockTypes2["BambooDoubleSlab"] = "minecraft:bamboo_double_slab";
+  MinecraftBlockTypes2["BambooFence"] = "minecraft:bamboo_fence";
+  MinecraftBlockTypes2["BambooFenceGate"] = "minecraft:bamboo_fence_gate";
+  MinecraftBlockTypes2["BambooHangingSign"] = "minecraft:bamboo_hanging_sign";
+  MinecraftBlockTypes2["BambooMosaic"] = "minecraft:bamboo_mosaic";
+  MinecraftBlockTypes2["BambooMosaicDoubleSlab"] = "minecraft:bamboo_mosaic_double_slab";
+  MinecraftBlockTypes2["BambooMosaicSlab"] = "minecraft:bamboo_mosaic_slab";
+  MinecraftBlockTypes2["BambooMosaicStairs"] = "minecraft:bamboo_mosaic_stairs";
+  MinecraftBlockTypes2["BambooPlanks"] = "minecraft:bamboo_planks";
+  MinecraftBlockTypes2["BambooPressurePlate"] = "minecraft:bamboo_pressure_plate";
+  MinecraftBlockTypes2["BambooSapling"] = "minecraft:bamboo_sapling";
+  MinecraftBlockTypes2["BambooShelf"] = "minecraft:bamboo_shelf";
+  MinecraftBlockTypes2["BambooSlab"] = "minecraft:bamboo_slab";
+  MinecraftBlockTypes2["BambooStairs"] = "minecraft:bamboo_stairs";
+  MinecraftBlockTypes2["BambooStandingSign"] = "minecraft:bamboo_standing_sign";
+  MinecraftBlockTypes2["BambooTrapdoor"] = "minecraft:bamboo_trapdoor";
+  MinecraftBlockTypes2["BambooWallSign"] = "minecraft:bamboo_wall_sign";
+  MinecraftBlockTypes2["Barrel"] = "minecraft:barrel";
+  MinecraftBlockTypes2["Barrier"] = "minecraft:barrier";
+  MinecraftBlockTypes2["Basalt"] = "minecraft:basalt";
+  MinecraftBlockTypes2["Beacon"] = "minecraft:beacon";
+  MinecraftBlockTypes2["Bed"] = "minecraft:bed";
+  MinecraftBlockTypes2["Bedrock"] = "minecraft:bedrock";
+  MinecraftBlockTypes2["BeeNest"] = "minecraft:bee_nest";
+  MinecraftBlockTypes2["Beehive"] = "minecraft:beehive";
+  MinecraftBlockTypes2["Beetroot"] = "minecraft:beetroot";
+  MinecraftBlockTypes2["Bell"] = "minecraft:bell";
+  MinecraftBlockTypes2["BigDripleaf"] = "minecraft:big_dripleaf";
+  MinecraftBlockTypes2["BirchButton"] = "minecraft:birch_button";
+  MinecraftBlockTypes2["BirchDoor"] = "minecraft:birch_door";
+  MinecraftBlockTypes2["BirchDoubleSlab"] = "minecraft:birch_double_slab";
+  MinecraftBlockTypes2["BirchFence"] = "minecraft:birch_fence";
+  MinecraftBlockTypes2["BirchFenceGate"] = "minecraft:birch_fence_gate";
+  MinecraftBlockTypes2["BirchHangingSign"] = "minecraft:birch_hanging_sign";
+  MinecraftBlockTypes2["BirchLeaves"] = "minecraft:birch_leaves";
+  MinecraftBlockTypes2["BirchLog"] = "minecraft:birch_log";
+  MinecraftBlockTypes2["BirchPlanks"] = "minecraft:birch_planks";
+  MinecraftBlockTypes2["BirchPressurePlate"] = "minecraft:birch_pressure_plate";
+  MinecraftBlockTypes2["BirchSapling"] = "minecraft:birch_sapling";
+  MinecraftBlockTypes2["BirchShelf"] = "minecraft:birch_shelf";
+  MinecraftBlockTypes2["BirchSlab"] = "minecraft:birch_slab";
+  MinecraftBlockTypes2["BirchStairs"] = "minecraft:birch_stairs";
+  MinecraftBlockTypes2["BirchStandingSign"] = "minecraft:birch_standing_sign";
+  MinecraftBlockTypes2["BirchTrapdoor"] = "minecraft:birch_trapdoor";
+  MinecraftBlockTypes2["BirchWallSign"] = "minecraft:birch_wall_sign";
+  MinecraftBlockTypes2["BirchWood"] = "minecraft:birch_wood";
+  MinecraftBlockTypes2["BlackCandle"] = "minecraft:black_candle";
+  MinecraftBlockTypes2["BlackCandleCake"] = "minecraft:black_candle_cake";
+  MinecraftBlockTypes2["BlackCarpet"] = "minecraft:black_carpet";
+  MinecraftBlockTypes2["BlackConcrete"] = "minecraft:black_concrete";
+  MinecraftBlockTypes2["BlackConcretePowder"] = "minecraft:black_concrete_powder";
+  MinecraftBlockTypes2["BlackGlazedTerracotta"] = "minecraft:black_glazed_terracotta";
+  MinecraftBlockTypes2["BlackShulkerBox"] = "minecraft:black_shulker_box";
+  MinecraftBlockTypes2["BlackStainedGlass"] = "minecraft:black_stained_glass";
+  MinecraftBlockTypes2["BlackStainedGlassPane"] = "minecraft:black_stained_glass_pane";
+  MinecraftBlockTypes2["BlackTerracotta"] = "minecraft:black_terracotta";
+  MinecraftBlockTypes2["BlackWool"] = "minecraft:black_wool";
+  MinecraftBlockTypes2["Blackstone"] = "minecraft:blackstone";
+  MinecraftBlockTypes2["BlackstoneDoubleSlab"] = "minecraft:blackstone_double_slab";
+  MinecraftBlockTypes2["BlackstoneSlab"] = "minecraft:blackstone_slab";
+  MinecraftBlockTypes2["BlackstoneStairs"] = "minecraft:blackstone_stairs";
+  MinecraftBlockTypes2["BlackstoneWall"] = "minecraft:blackstone_wall";
+  MinecraftBlockTypes2["BlastFurnace"] = "minecraft:blast_furnace";
+  MinecraftBlockTypes2["BlueCandle"] = "minecraft:blue_candle";
+  MinecraftBlockTypes2["BlueCandleCake"] = "minecraft:blue_candle_cake";
+  MinecraftBlockTypes2["BlueCarpet"] = "minecraft:blue_carpet";
+  MinecraftBlockTypes2["BlueConcrete"] = "minecraft:blue_concrete";
+  MinecraftBlockTypes2["BlueConcretePowder"] = "minecraft:blue_concrete_powder";
+  MinecraftBlockTypes2["BlueGlazedTerracotta"] = "minecraft:blue_glazed_terracotta";
+  MinecraftBlockTypes2["BlueIce"] = "minecraft:blue_ice";
+  MinecraftBlockTypes2["BlueOrchid"] = "minecraft:blue_orchid";
+  MinecraftBlockTypes2["BlueShulkerBox"] = "minecraft:blue_shulker_box";
+  MinecraftBlockTypes2["BlueStainedGlass"] = "minecraft:blue_stained_glass";
+  MinecraftBlockTypes2["BlueStainedGlassPane"] = "minecraft:blue_stained_glass_pane";
+  MinecraftBlockTypes2["BlueTerracotta"] = "minecraft:blue_terracotta";
+  MinecraftBlockTypes2["BlueWool"] = "minecraft:blue_wool";
+  MinecraftBlockTypes2["BoneBlock"] = "minecraft:bone_block";
+  MinecraftBlockTypes2["Bookshelf"] = "minecraft:bookshelf";
+  MinecraftBlockTypes2["BorderBlock"] = "minecraft:border_block";
+  MinecraftBlockTypes2["BrainCoral"] = "minecraft:brain_coral";
+  MinecraftBlockTypes2["BrainCoralBlock"] = "minecraft:brain_coral_block";
+  MinecraftBlockTypes2["BrainCoralFan"] = "minecraft:brain_coral_fan";
+  MinecraftBlockTypes2["BrainCoralWallFan"] = "minecraft:brain_coral_wall_fan";
+  MinecraftBlockTypes2["BrewingStand"] = "minecraft:brewing_stand";
+  MinecraftBlockTypes2["BrickBlock"] = "minecraft:brick_block";
+  MinecraftBlockTypes2["BrickDoubleSlab"] = "minecraft:brick_double_slab";
+  MinecraftBlockTypes2["BrickSlab"] = "minecraft:brick_slab";
+  MinecraftBlockTypes2["BrickStairs"] = "minecraft:brick_stairs";
+  MinecraftBlockTypes2["BrickWall"] = "minecraft:brick_wall";
+  MinecraftBlockTypes2["BrownCandle"] = "minecraft:brown_candle";
+  MinecraftBlockTypes2["BrownCandleCake"] = "minecraft:brown_candle_cake";
+  MinecraftBlockTypes2["BrownCarpet"] = "minecraft:brown_carpet";
+  MinecraftBlockTypes2["BrownConcrete"] = "minecraft:brown_concrete";
+  MinecraftBlockTypes2["BrownConcretePowder"] = "minecraft:brown_concrete_powder";
+  MinecraftBlockTypes2["BrownGlazedTerracotta"] = "minecraft:brown_glazed_terracotta";
+  MinecraftBlockTypes2["BrownMushroom"] = "minecraft:brown_mushroom";
+  MinecraftBlockTypes2["BrownMushroomBlock"] = "minecraft:brown_mushroom_block";
+  MinecraftBlockTypes2["BrownShulkerBox"] = "minecraft:brown_shulker_box";
+  MinecraftBlockTypes2["BrownStainedGlass"] = "minecraft:brown_stained_glass";
+  MinecraftBlockTypes2["BrownStainedGlassPane"] = "minecraft:brown_stained_glass_pane";
+  MinecraftBlockTypes2["BrownTerracotta"] = "minecraft:brown_terracotta";
+  MinecraftBlockTypes2["BrownWool"] = "minecraft:brown_wool";
+  MinecraftBlockTypes2["BubbleColumn"] = "minecraft:bubble_column";
+  MinecraftBlockTypes2["BubbleCoral"] = "minecraft:bubble_coral";
+  MinecraftBlockTypes2["BubbleCoralBlock"] = "minecraft:bubble_coral_block";
+  MinecraftBlockTypes2["BubbleCoralFan"] = "minecraft:bubble_coral_fan";
+  MinecraftBlockTypes2["BubbleCoralWallFan"] = "minecraft:bubble_coral_wall_fan";
+  MinecraftBlockTypes2["BuddingAmethyst"] = "minecraft:budding_amethyst";
+  MinecraftBlockTypes2["Bush"] = "minecraft:bush";
+  MinecraftBlockTypes2["Cactus"] = "minecraft:cactus";
+  MinecraftBlockTypes2["CactusFlower"] = "minecraft:cactus_flower";
+  MinecraftBlockTypes2["Cake"] = "minecraft:cake";
+  MinecraftBlockTypes2["Calcite"] = "minecraft:calcite";
+  MinecraftBlockTypes2["CalibratedSculkSensor"] = "minecraft:calibrated_sculk_sensor";
+  MinecraftBlockTypes2["Camera"] = "minecraft:camera";
+  MinecraftBlockTypes2["Campfire"] = "minecraft:campfire";
+  MinecraftBlockTypes2["Candle"] = "minecraft:candle";
+  MinecraftBlockTypes2["CandleCake"] = "minecraft:candle_cake";
+  MinecraftBlockTypes2["Carrots"] = "minecraft:carrots";
+  MinecraftBlockTypes2["CartographyTable"] = "minecraft:cartography_table";
+  MinecraftBlockTypes2["CarvedPumpkin"] = "minecraft:carved_pumpkin";
+  MinecraftBlockTypes2["Cauldron"] = "minecraft:cauldron";
+  MinecraftBlockTypes2["CaveVines"] = "minecraft:cave_vines";
+  MinecraftBlockTypes2["CaveVinesBodyWithBerries"] = "minecraft:cave_vines_body_with_berries";
+  MinecraftBlockTypes2["CaveVinesHeadWithBerries"] = "minecraft:cave_vines_head_with_berries";
+  MinecraftBlockTypes2["ChainCommandBlock"] = "minecraft:chain_command_block";
+  MinecraftBlockTypes2["ChemicalHeat"] = "minecraft:chemical_heat";
+  MinecraftBlockTypes2["CherryButton"] = "minecraft:cherry_button";
+  MinecraftBlockTypes2["CherryDoor"] = "minecraft:cherry_door";
+  MinecraftBlockTypes2["CherryDoubleSlab"] = "minecraft:cherry_double_slab";
+  MinecraftBlockTypes2["CherryFence"] = "minecraft:cherry_fence";
+  MinecraftBlockTypes2["CherryFenceGate"] = "minecraft:cherry_fence_gate";
+  MinecraftBlockTypes2["CherryHangingSign"] = "minecraft:cherry_hanging_sign";
+  MinecraftBlockTypes2["CherryLeaves"] = "minecraft:cherry_leaves";
+  MinecraftBlockTypes2["CherryLog"] = "minecraft:cherry_log";
+  MinecraftBlockTypes2["CherryPlanks"] = "minecraft:cherry_planks";
+  MinecraftBlockTypes2["CherryPressurePlate"] = "minecraft:cherry_pressure_plate";
+  MinecraftBlockTypes2["CherrySapling"] = "minecraft:cherry_sapling";
+  MinecraftBlockTypes2["CherryShelf"] = "minecraft:cherry_shelf";
+  MinecraftBlockTypes2["CherrySlab"] = "minecraft:cherry_slab";
+  MinecraftBlockTypes2["CherryStairs"] = "minecraft:cherry_stairs";
+  MinecraftBlockTypes2["CherryStandingSign"] = "minecraft:cherry_standing_sign";
+  MinecraftBlockTypes2["CherryTrapdoor"] = "minecraft:cherry_trapdoor";
+  MinecraftBlockTypes2["CherryWallSign"] = "minecraft:cherry_wall_sign";
+  MinecraftBlockTypes2["CherryWood"] = "minecraft:cherry_wood";
+  MinecraftBlockTypes2["Chest"] = "minecraft:chest";
+  MinecraftBlockTypes2["ChippedAnvil"] = "minecraft:chipped_anvil";
+  MinecraftBlockTypes2["ChiseledBookshelf"] = "minecraft:chiseled_bookshelf";
+  MinecraftBlockTypes2["ChiseledCopper"] = "minecraft:chiseled_copper";
+  MinecraftBlockTypes2["ChiseledDeepslate"] = "minecraft:chiseled_deepslate";
+  MinecraftBlockTypes2["ChiseledNetherBricks"] = "minecraft:chiseled_nether_bricks";
+  MinecraftBlockTypes2["ChiseledPolishedBlackstone"] = "minecraft:chiseled_polished_blackstone";
+  MinecraftBlockTypes2["ChiseledQuartzBlock"] = "minecraft:chiseled_quartz_block";
+  MinecraftBlockTypes2["ChiseledRedSandstone"] = "minecraft:chiseled_red_sandstone";
+  MinecraftBlockTypes2["ChiseledResinBricks"] = "minecraft:chiseled_resin_bricks";
+  MinecraftBlockTypes2["ChiseledSandstone"] = "minecraft:chiseled_sandstone";
+  MinecraftBlockTypes2["ChiseledStoneBricks"] = "minecraft:chiseled_stone_bricks";
+  MinecraftBlockTypes2["ChiseledTuff"] = "minecraft:chiseled_tuff";
+  MinecraftBlockTypes2["ChiseledTuffBricks"] = "minecraft:chiseled_tuff_bricks";
+  MinecraftBlockTypes2["ChorusFlower"] = "minecraft:chorus_flower";
+  MinecraftBlockTypes2["ChorusPlant"] = "minecraft:chorus_plant";
+  MinecraftBlockTypes2["Clay"] = "minecraft:clay";
+  MinecraftBlockTypes2["ClosedEyeblossom"] = "minecraft:closed_eyeblossom";
+  MinecraftBlockTypes2["CoalBlock"] = "minecraft:coal_block";
+  MinecraftBlockTypes2["CoalOre"] = "minecraft:coal_ore";
+  MinecraftBlockTypes2["CoarseDirt"] = "minecraft:coarse_dirt";
+  MinecraftBlockTypes2["CobbledDeepslate"] = "minecraft:cobbled_deepslate";
+  MinecraftBlockTypes2["CobbledDeepslateDoubleSlab"] = "minecraft:cobbled_deepslate_double_slab";
+  MinecraftBlockTypes2["CobbledDeepslateSlab"] = "minecraft:cobbled_deepslate_slab";
+  MinecraftBlockTypes2["CobbledDeepslateStairs"] = "minecraft:cobbled_deepslate_stairs";
+  MinecraftBlockTypes2["CobbledDeepslateWall"] = "minecraft:cobbled_deepslate_wall";
+  MinecraftBlockTypes2["Cobblestone"] = "minecraft:cobblestone";
+  MinecraftBlockTypes2["CobblestoneDoubleSlab"] = "minecraft:cobblestone_double_slab";
+  MinecraftBlockTypes2["CobblestoneSlab"] = "minecraft:cobblestone_slab";
+  MinecraftBlockTypes2["CobblestoneWall"] = "minecraft:cobblestone_wall";
+  MinecraftBlockTypes2["Cocoa"] = "minecraft:cocoa";
+  MinecraftBlockTypes2["ColoredTorchBlue"] = "minecraft:colored_torch_blue";
+  MinecraftBlockTypes2["ColoredTorchGreen"] = "minecraft:colored_torch_green";
+  MinecraftBlockTypes2["ColoredTorchPurple"] = "minecraft:colored_torch_purple";
+  MinecraftBlockTypes2["ColoredTorchRed"] = "minecraft:colored_torch_red";
+  MinecraftBlockTypes2["CommandBlock"] = "minecraft:command_block";
+  MinecraftBlockTypes2["Composter"] = "minecraft:composter";
+  MinecraftBlockTypes2["CompoundCreator"] = "minecraft:compound_creator";
+  MinecraftBlockTypes2["Conduit"] = "minecraft:conduit";
+  MinecraftBlockTypes2["CopperBars"] = "minecraft:copper_bars";
+  MinecraftBlockTypes2["CopperBlock"] = "minecraft:copper_block";
+  MinecraftBlockTypes2["CopperBulb"] = "minecraft:copper_bulb";
+  MinecraftBlockTypes2["CopperChain"] = "minecraft:copper_chain";
+  MinecraftBlockTypes2["CopperChest"] = "minecraft:copper_chest";
+  MinecraftBlockTypes2["CopperDoor"] = "minecraft:copper_door";
+  MinecraftBlockTypes2["CopperGolemStatue"] = "minecraft:copper_golem_statue";
+  MinecraftBlockTypes2["CopperGrate"] = "minecraft:copper_grate";
+  MinecraftBlockTypes2["CopperLantern"] = "minecraft:copper_lantern";
+  MinecraftBlockTypes2["CopperOre"] = "minecraft:copper_ore";
+  MinecraftBlockTypes2["CopperTorch"] = "minecraft:copper_torch";
+  MinecraftBlockTypes2["CopperTrapdoor"] = "minecraft:copper_trapdoor";
+  MinecraftBlockTypes2["Cornflower"] = "minecraft:cornflower";
+  MinecraftBlockTypes2["CrackedDeepslateBricks"] = "minecraft:cracked_deepslate_bricks";
+  MinecraftBlockTypes2["CrackedDeepslateTiles"] = "minecraft:cracked_deepslate_tiles";
+  MinecraftBlockTypes2["CrackedNetherBricks"] = "minecraft:cracked_nether_bricks";
+  MinecraftBlockTypes2["CrackedPolishedBlackstoneBricks"] = "minecraft:cracked_polished_blackstone_bricks";
+  MinecraftBlockTypes2["CrackedStoneBricks"] = "minecraft:cracked_stone_bricks";
+  MinecraftBlockTypes2["Crafter"] = "minecraft:crafter";
+  MinecraftBlockTypes2["CraftingTable"] = "minecraft:crafting_table";
+  MinecraftBlockTypes2["CreakingHeart"] = "minecraft:creaking_heart";
+  MinecraftBlockTypes2["CreeperHead"] = "minecraft:creeper_head";
+  MinecraftBlockTypes2["CrimsonButton"] = "minecraft:crimson_button";
+  MinecraftBlockTypes2["CrimsonDoor"] = "minecraft:crimson_door";
+  MinecraftBlockTypes2["CrimsonDoubleSlab"] = "minecraft:crimson_double_slab";
+  MinecraftBlockTypes2["CrimsonFence"] = "minecraft:crimson_fence";
+  MinecraftBlockTypes2["CrimsonFenceGate"] = "minecraft:crimson_fence_gate";
+  MinecraftBlockTypes2["CrimsonFungus"] = "minecraft:crimson_fungus";
+  MinecraftBlockTypes2["CrimsonHangingSign"] = "minecraft:crimson_hanging_sign";
+  MinecraftBlockTypes2["CrimsonHyphae"] = "minecraft:crimson_hyphae";
+  MinecraftBlockTypes2["CrimsonNylium"] = "minecraft:crimson_nylium";
+  MinecraftBlockTypes2["CrimsonPlanks"] = "minecraft:crimson_planks";
+  MinecraftBlockTypes2["CrimsonPressurePlate"] = "minecraft:crimson_pressure_plate";
+  MinecraftBlockTypes2["CrimsonRoots"] = "minecraft:crimson_roots";
+  MinecraftBlockTypes2["CrimsonShelf"] = "minecraft:crimson_shelf";
+  MinecraftBlockTypes2["CrimsonSlab"] = "minecraft:crimson_slab";
+  MinecraftBlockTypes2["CrimsonStairs"] = "minecraft:crimson_stairs";
+  MinecraftBlockTypes2["CrimsonStandingSign"] = "minecraft:crimson_standing_sign";
+  MinecraftBlockTypes2["CrimsonStem"] = "minecraft:crimson_stem";
+  MinecraftBlockTypes2["CrimsonTrapdoor"] = "minecraft:crimson_trapdoor";
+  MinecraftBlockTypes2["CrimsonWallSign"] = "minecraft:crimson_wall_sign";
+  MinecraftBlockTypes2["CryingObsidian"] = "minecraft:crying_obsidian";
+  MinecraftBlockTypes2["CutCopper"] = "minecraft:cut_copper";
+  MinecraftBlockTypes2["CutCopperSlab"] = "minecraft:cut_copper_slab";
+  MinecraftBlockTypes2["CutCopperStairs"] = "minecraft:cut_copper_stairs";
+  MinecraftBlockTypes2["CutRedSandstone"] = "minecraft:cut_red_sandstone";
+  MinecraftBlockTypes2["CutRedSandstoneDoubleSlab"] = "minecraft:cut_red_sandstone_double_slab";
+  MinecraftBlockTypes2["CutRedSandstoneSlab"] = "minecraft:cut_red_sandstone_slab";
+  MinecraftBlockTypes2["CutSandstone"] = "minecraft:cut_sandstone";
+  MinecraftBlockTypes2["CutSandstoneDoubleSlab"] = "minecraft:cut_sandstone_double_slab";
+  MinecraftBlockTypes2["CutSandstoneSlab"] = "minecraft:cut_sandstone_slab";
+  MinecraftBlockTypes2["CyanCandle"] = "minecraft:cyan_candle";
+  MinecraftBlockTypes2["CyanCandleCake"] = "minecraft:cyan_candle_cake";
+  MinecraftBlockTypes2["CyanCarpet"] = "minecraft:cyan_carpet";
+  MinecraftBlockTypes2["CyanConcrete"] = "minecraft:cyan_concrete";
+  MinecraftBlockTypes2["CyanConcretePowder"] = "minecraft:cyan_concrete_powder";
+  MinecraftBlockTypes2["CyanGlazedTerracotta"] = "minecraft:cyan_glazed_terracotta";
+  MinecraftBlockTypes2["CyanShulkerBox"] = "minecraft:cyan_shulker_box";
+  MinecraftBlockTypes2["CyanStainedGlass"] = "minecraft:cyan_stained_glass";
+  MinecraftBlockTypes2["CyanStainedGlassPane"] = "minecraft:cyan_stained_glass_pane";
+  MinecraftBlockTypes2["CyanTerracotta"] = "minecraft:cyan_terracotta";
+  MinecraftBlockTypes2["CyanWool"] = "minecraft:cyan_wool";
+  MinecraftBlockTypes2["DamagedAnvil"] = "minecraft:damaged_anvil";
+  MinecraftBlockTypes2["Dandelion"] = "minecraft:dandelion";
+  MinecraftBlockTypes2["DarkOakButton"] = "minecraft:dark_oak_button";
+  MinecraftBlockTypes2["DarkOakDoor"] = "minecraft:dark_oak_door";
+  MinecraftBlockTypes2["DarkOakDoubleSlab"] = "minecraft:dark_oak_double_slab";
+  MinecraftBlockTypes2["DarkOakFence"] = "minecraft:dark_oak_fence";
+  MinecraftBlockTypes2["DarkOakFenceGate"] = "minecraft:dark_oak_fence_gate";
+  MinecraftBlockTypes2["DarkOakHangingSign"] = "minecraft:dark_oak_hanging_sign";
+  MinecraftBlockTypes2["DarkOakLeaves"] = "minecraft:dark_oak_leaves";
+  MinecraftBlockTypes2["DarkOakLog"] = "minecraft:dark_oak_log";
+  MinecraftBlockTypes2["DarkOakPlanks"] = "minecraft:dark_oak_planks";
+  MinecraftBlockTypes2["DarkOakPressurePlate"] = "minecraft:dark_oak_pressure_plate";
+  MinecraftBlockTypes2["DarkOakSapling"] = "minecraft:dark_oak_sapling";
+  MinecraftBlockTypes2["DarkOakShelf"] = "minecraft:dark_oak_shelf";
+  MinecraftBlockTypes2["DarkOakSlab"] = "minecraft:dark_oak_slab";
+  MinecraftBlockTypes2["DarkOakStairs"] = "minecraft:dark_oak_stairs";
+  MinecraftBlockTypes2["DarkOakTrapdoor"] = "minecraft:dark_oak_trapdoor";
+  MinecraftBlockTypes2["DarkOakWood"] = "minecraft:dark_oak_wood";
+  MinecraftBlockTypes2["DarkPrismarine"] = "minecraft:dark_prismarine";
+  MinecraftBlockTypes2["DarkPrismarineDoubleSlab"] = "minecraft:dark_prismarine_double_slab";
+  MinecraftBlockTypes2["DarkPrismarineSlab"] = "minecraft:dark_prismarine_slab";
+  MinecraftBlockTypes2["DarkPrismarineStairs"] = "minecraft:dark_prismarine_stairs";
+  MinecraftBlockTypes2["DarkoakStandingSign"] = "minecraft:darkoak_standing_sign";
+  MinecraftBlockTypes2["DarkoakWallSign"] = "minecraft:darkoak_wall_sign";
+  MinecraftBlockTypes2["DaylightDetector"] = "minecraft:daylight_detector";
+  MinecraftBlockTypes2["DaylightDetectorInverted"] = "minecraft:daylight_detector_inverted";
+  MinecraftBlockTypes2["DeadBrainCoral"] = "minecraft:dead_brain_coral";
+  MinecraftBlockTypes2["DeadBrainCoralBlock"] = "minecraft:dead_brain_coral_block";
+  MinecraftBlockTypes2["DeadBrainCoralFan"] = "minecraft:dead_brain_coral_fan";
+  MinecraftBlockTypes2["DeadBrainCoralWallFan"] = "minecraft:dead_brain_coral_wall_fan";
+  MinecraftBlockTypes2["DeadBubbleCoral"] = "minecraft:dead_bubble_coral";
+  MinecraftBlockTypes2["DeadBubbleCoralBlock"] = "minecraft:dead_bubble_coral_block";
+  MinecraftBlockTypes2["DeadBubbleCoralFan"] = "minecraft:dead_bubble_coral_fan";
+  MinecraftBlockTypes2["DeadBubbleCoralWallFan"] = "minecraft:dead_bubble_coral_wall_fan";
+  MinecraftBlockTypes2["DeadFireCoral"] = "minecraft:dead_fire_coral";
+  MinecraftBlockTypes2["DeadFireCoralBlock"] = "minecraft:dead_fire_coral_block";
+  MinecraftBlockTypes2["DeadFireCoralFan"] = "minecraft:dead_fire_coral_fan";
+  MinecraftBlockTypes2["DeadFireCoralWallFan"] = "minecraft:dead_fire_coral_wall_fan";
+  MinecraftBlockTypes2["DeadHornCoral"] = "minecraft:dead_horn_coral";
+  MinecraftBlockTypes2["DeadHornCoralBlock"] = "minecraft:dead_horn_coral_block";
+  MinecraftBlockTypes2["DeadHornCoralFan"] = "minecraft:dead_horn_coral_fan";
+  MinecraftBlockTypes2["DeadHornCoralWallFan"] = "minecraft:dead_horn_coral_wall_fan";
+  MinecraftBlockTypes2["DeadTubeCoral"] = "minecraft:dead_tube_coral";
+  MinecraftBlockTypes2["DeadTubeCoralBlock"] = "minecraft:dead_tube_coral_block";
+  MinecraftBlockTypes2["DeadTubeCoralFan"] = "minecraft:dead_tube_coral_fan";
+  MinecraftBlockTypes2["DeadTubeCoralWallFan"] = "minecraft:dead_tube_coral_wall_fan";
+  MinecraftBlockTypes2["Deadbush"] = "minecraft:deadbush";
+  MinecraftBlockTypes2["DecoratedPot"] = "minecraft:decorated_pot";
+  MinecraftBlockTypes2["Deepslate"] = "minecraft:deepslate";
+  MinecraftBlockTypes2["DeepslateBrickDoubleSlab"] = "minecraft:deepslate_brick_double_slab";
+  MinecraftBlockTypes2["DeepslateBrickSlab"] = "minecraft:deepslate_brick_slab";
+  MinecraftBlockTypes2["DeepslateBrickStairs"] = "minecraft:deepslate_brick_stairs";
+  MinecraftBlockTypes2["DeepslateBrickWall"] = "minecraft:deepslate_brick_wall";
+  MinecraftBlockTypes2["DeepslateBricks"] = "minecraft:deepslate_bricks";
+  MinecraftBlockTypes2["DeepslateCoalOre"] = "minecraft:deepslate_coal_ore";
+  MinecraftBlockTypes2["DeepslateCopperOre"] = "minecraft:deepslate_copper_ore";
+  MinecraftBlockTypes2["DeepslateDiamondOre"] = "minecraft:deepslate_diamond_ore";
+  MinecraftBlockTypes2["DeepslateEmeraldOre"] = "minecraft:deepslate_emerald_ore";
+  MinecraftBlockTypes2["DeepslateGoldOre"] = "minecraft:deepslate_gold_ore";
+  MinecraftBlockTypes2["DeepslateIronOre"] = "minecraft:deepslate_iron_ore";
+  MinecraftBlockTypes2["DeepslateLapisOre"] = "minecraft:deepslate_lapis_ore";
+  MinecraftBlockTypes2["DeepslateRedstoneOre"] = "minecraft:deepslate_redstone_ore";
+  MinecraftBlockTypes2["DeepslateTileDoubleSlab"] = "minecraft:deepslate_tile_double_slab";
+  MinecraftBlockTypes2["DeepslateTileSlab"] = "minecraft:deepslate_tile_slab";
+  MinecraftBlockTypes2["DeepslateTileStairs"] = "minecraft:deepslate_tile_stairs";
+  MinecraftBlockTypes2["DeepslateTileWall"] = "minecraft:deepslate_tile_wall";
+  MinecraftBlockTypes2["DeepslateTiles"] = "minecraft:deepslate_tiles";
+  MinecraftBlockTypes2["Deny"] = "minecraft:deny";
+  MinecraftBlockTypes2["DetectorRail"] = "minecraft:detector_rail";
+  MinecraftBlockTypes2["DiamondBlock"] = "minecraft:diamond_block";
+  MinecraftBlockTypes2["DiamondOre"] = "minecraft:diamond_ore";
+  MinecraftBlockTypes2["Diorite"] = "minecraft:diorite";
+  MinecraftBlockTypes2["DioriteDoubleSlab"] = "minecraft:diorite_double_slab";
+  MinecraftBlockTypes2["DioriteSlab"] = "minecraft:diorite_slab";
+  MinecraftBlockTypes2["DioriteStairs"] = "minecraft:diorite_stairs";
+  MinecraftBlockTypes2["DioriteWall"] = "minecraft:diorite_wall";
+  MinecraftBlockTypes2["Dirt"] = "minecraft:dirt";
+  MinecraftBlockTypes2["DirtWithRoots"] = "minecraft:dirt_with_roots";
+  MinecraftBlockTypes2["Dispenser"] = "minecraft:dispenser";
+  MinecraftBlockTypes2["DoubleCutCopperSlab"] = "minecraft:double_cut_copper_slab";
+  MinecraftBlockTypes2["DragonEgg"] = "minecraft:dragon_egg";
+  MinecraftBlockTypes2["DragonHead"] = "minecraft:dragon_head";
+  MinecraftBlockTypes2["DriedGhast"] = "minecraft:dried_ghast";
+  MinecraftBlockTypes2["DriedKelpBlock"] = "minecraft:dried_kelp_block";
+  MinecraftBlockTypes2["DripstoneBlock"] = "minecraft:dripstone_block";
+  MinecraftBlockTypes2["Dropper"] = "minecraft:dropper";
+  MinecraftBlockTypes2["Element0"] = "minecraft:element_0";
+  MinecraftBlockTypes2["Element1"] = "minecraft:element_1";
+  MinecraftBlockTypes2["Element10"] = "minecraft:element_10";
+  MinecraftBlockTypes2["Element100"] = "minecraft:element_100";
+  MinecraftBlockTypes2["Element101"] = "minecraft:element_101";
+  MinecraftBlockTypes2["Element102"] = "minecraft:element_102";
+  MinecraftBlockTypes2["Element103"] = "minecraft:element_103";
+  MinecraftBlockTypes2["Element104"] = "minecraft:element_104";
+  MinecraftBlockTypes2["Element105"] = "minecraft:element_105";
+  MinecraftBlockTypes2["Element106"] = "minecraft:element_106";
+  MinecraftBlockTypes2["Element107"] = "minecraft:element_107";
+  MinecraftBlockTypes2["Element108"] = "minecraft:element_108";
+  MinecraftBlockTypes2["Element109"] = "minecraft:element_109";
+  MinecraftBlockTypes2["Element11"] = "minecraft:element_11";
+  MinecraftBlockTypes2["Element110"] = "minecraft:element_110";
+  MinecraftBlockTypes2["Element111"] = "minecraft:element_111";
+  MinecraftBlockTypes2["Element112"] = "minecraft:element_112";
+  MinecraftBlockTypes2["Element113"] = "minecraft:element_113";
+  MinecraftBlockTypes2["Element114"] = "minecraft:element_114";
+  MinecraftBlockTypes2["Element115"] = "minecraft:element_115";
+  MinecraftBlockTypes2["Element116"] = "minecraft:element_116";
+  MinecraftBlockTypes2["Element117"] = "minecraft:element_117";
+  MinecraftBlockTypes2["Element118"] = "minecraft:element_118";
+  MinecraftBlockTypes2["Element12"] = "minecraft:element_12";
+  MinecraftBlockTypes2["Element13"] = "minecraft:element_13";
+  MinecraftBlockTypes2["Element14"] = "minecraft:element_14";
+  MinecraftBlockTypes2["Element15"] = "minecraft:element_15";
+  MinecraftBlockTypes2["Element16"] = "minecraft:element_16";
+  MinecraftBlockTypes2["Element17"] = "minecraft:element_17";
+  MinecraftBlockTypes2["Element18"] = "minecraft:element_18";
+  MinecraftBlockTypes2["Element19"] = "minecraft:element_19";
+  MinecraftBlockTypes2["Element2"] = "minecraft:element_2";
+  MinecraftBlockTypes2["Element20"] = "minecraft:element_20";
+  MinecraftBlockTypes2["Element21"] = "minecraft:element_21";
+  MinecraftBlockTypes2["Element22"] = "minecraft:element_22";
+  MinecraftBlockTypes2["Element23"] = "minecraft:element_23";
+  MinecraftBlockTypes2["Element24"] = "minecraft:element_24";
+  MinecraftBlockTypes2["Element25"] = "minecraft:element_25";
+  MinecraftBlockTypes2["Element26"] = "minecraft:element_26";
+  MinecraftBlockTypes2["Element27"] = "minecraft:element_27";
+  MinecraftBlockTypes2["Element28"] = "minecraft:element_28";
+  MinecraftBlockTypes2["Element29"] = "minecraft:element_29";
+  MinecraftBlockTypes2["Element3"] = "minecraft:element_3";
+  MinecraftBlockTypes2["Element30"] = "minecraft:element_30";
+  MinecraftBlockTypes2["Element31"] = "minecraft:element_31";
+  MinecraftBlockTypes2["Element32"] = "minecraft:element_32";
+  MinecraftBlockTypes2["Element33"] = "minecraft:element_33";
+  MinecraftBlockTypes2["Element34"] = "minecraft:element_34";
+  MinecraftBlockTypes2["Element35"] = "minecraft:element_35";
+  MinecraftBlockTypes2["Element36"] = "minecraft:element_36";
+  MinecraftBlockTypes2["Element37"] = "minecraft:element_37";
+  MinecraftBlockTypes2["Element38"] = "minecraft:element_38";
+  MinecraftBlockTypes2["Element39"] = "minecraft:element_39";
+  MinecraftBlockTypes2["Element4"] = "minecraft:element_4";
+  MinecraftBlockTypes2["Element40"] = "minecraft:element_40";
+  MinecraftBlockTypes2["Element41"] = "minecraft:element_41";
+  MinecraftBlockTypes2["Element42"] = "minecraft:element_42";
+  MinecraftBlockTypes2["Element43"] = "minecraft:element_43";
+  MinecraftBlockTypes2["Element44"] = "minecraft:element_44";
+  MinecraftBlockTypes2["Element45"] = "minecraft:element_45";
+  MinecraftBlockTypes2["Element46"] = "minecraft:element_46";
+  MinecraftBlockTypes2["Element47"] = "minecraft:element_47";
+  MinecraftBlockTypes2["Element48"] = "minecraft:element_48";
+  MinecraftBlockTypes2["Element49"] = "minecraft:element_49";
+  MinecraftBlockTypes2["Element5"] = "minecraft:element_5";
+  MinecraftBlockTypes2["Element50"] = "minecraft:element_50";
+  MinecraftBlockTypes2["Element51"] = "minecraft:element_51";
+  MinecraftBlockTypes2["Element52"] = "minecraft:element_52";
+  MinecraftBlockTypes2["Element53"] = "minecraft:element_53";
+  MinecraftBlockTypes2["Element54"] = "minecraft:element_54";
+  MinecraftBlockTypes2["Element55"] = "minecraft:element_55";
+  MinecraftBlockTypes2["Element56"] = "minecraft:element_56";
+  MinecraftBlockTypes2["Element57"] = "minecraft:element_57";
+  MinecraftBlockTypes2["Element58"] = "minecraft:element_58";
+  MinecraftBlockTypes2["Element59"] = "minecraft:element_59";
+  MinecraftBlockTypes2["Element6"] = "minecraft:element_6";
+  MinecraftBlockTypes2["Element60"] = "minecraft:element_60";
+  MinecraftBlockTypes2["Element61"] = "minecraft:element_61";
+  MinecraftBlockTypes2["Element62"] = "minecraft:element_62";
+  MinecraftBlockTypes2["Element63"] = "minecraft:element_63";
+  MinecraftBlockTypes2["Element64"] = "minecraft:element_64";
+  MinecraftBlockTypes2["Element65"] = "minecraft:element_65";
+  MinecraftBlockTypes2["Element66"] = "minecraft:element_66";
+  MinecraftBlockTypes2["Element67"] = "minecraft:element_67";
+  MinecraftBlockTypes2["Element68"] = "minecraft:element_68";
+  MinecraftBlockTypes2["Element69"] = "minecraft:element_69";
+  MinecraftBlockTypes2["Element7"] = "minecraft:element_7";
+  MinecraftBlockTypes2["Element70"] = "minecraft:element_70";
+  MinecraftBlockTypes2["Element71"] = "minecraft:element_71";
+  MinecraftBlockTypes2["Element72"] = "minecraft:element_72";
+  MinecraftBlockTypes2["Element73"] = "minecraft:element_73";
+  MinecraftBlockTypes2["Element74"] = "minecraft:element_74";
+  MinecraftBlockTypes2["Element75"] = "minecraft:element_75";
+  MinecraftBlockTypes2["Element76"] = "minecraft:element_76";
+  MinecraftBlockTypes2["Element77"] = "minecraft:element_77";
+  MinecraftBlockTypes2["Element78"] = "minecraft:element_78";
+  MinecraftBlockTypes2["Element79"] = "minecraft:element_79";
+  MinecraftBlockTypes2["Element8"] = "minecraft:element_8";
+  MinecraftBlockTypes2["Element80"] = "minecraft:element_80";
+  MinecraftBlockTypes2["Element81"] = "minecraft:element_81";
+  MinecraftBlockTypes2["Element82"] = "minecraft:element_82";
+  MinecraftBlockTypes2["Element83"] = "minecraft:element_83";
+  MinecraftBlockTypes2["Element84"] = "minecraft:element_84";
+  MinecraftBlockTypes2["Element85"] = "minecraft:element_85";
+  MinecraftBlockTypes2["Element86"] = "minecraft:element_86";
+  MinecraftBlockTypes2["Element87"] = "minecraft:element_87";
+  MinecraftBlockTypes2["Element88"] = "minecraft:element_88";
+  MinecraftBlockTypes2["Element89"] = "minecraft:element_89";
+  MinecraftBlockTypes2["Element9"] = "minecraft:element_9";
+  MinecraftBlockTypes2["Element90"] = "minecraft:element_90";
+  MinecraftBlockTypes2["Element91"] = "minecraft:element_91";
+  MinecraftBlockTypes2["Element92"] = "minecraft:element_92";
+  MinecraftBlockTypes2["Element93"] = "minecraft:element_93";
+  MinecraftBlockTypes2["Element94"] = "minecraft:element_94";
+  MinecraftBlockTypes2["Element95"] = "minecraft:element_95";
+  MinecraftBlockTypes2["Element96"] = "minecraft:element_96";
+  MinecraftBlockTypes2["Element97"] = "minecraft:element_97";
+  MinecraftBlockTypes2["Element98"] = "minecraft:element_98";
+  MinecraftBlockTypes2["Element99"] = "minecraft:element_99";
+  MinecraftBlockTypes2["ElementConstructor"] = "minecraft:element_constructor";
+  MinecraftBlockTypes2["EmeraldBlock"] = "minecraft:emerald_block";
+  MinecraftBlockTypes2["EmeraldOre"] = "minecraft:emerald_ore";
+  MinecraftBlockTypes2["EnchantingTable"] = "minecraft:enchanting_table";
+  MinecraftBlockTypes2["EndBrickStairs"] = "minecraft:end_brick_stairs";
+  MinecraftBlockTypes2["EndBricks"] = "minecraft:end_bricks";
+  MinecraftBlockTypes2["EndPortal"] = "minecraft:end_portal";
+  MinecraftBlockTypes2["EndPortalFrame"] = "minecraft:end_portal_frame";
+  MinecraftBlockTypes2["EndRod"] = "minecraft:end_rod";
+  MinecraftBlockTypes2["EndStone"] = "minecraft:end_stone";
+  MinecraftBlockTypes2["EndStoneBrickDoubleSlab"] = "minecraft:end_stone_brick_double_slab";
+  MinecraftBlockTypes2["EndStoneBrickSlab"] = "minecraft:end_stone_brick_slab";
+  MinecraftBlockTypes2["EndStoneBrickWall"] = "minecraft:end_stone_brick_wall";
+  MinecraftBlockTypes2["EnderChest"] = "minecraft:ender_chest";
+  MinecraftBlockTypes2["ExposedChiseledCopper"] = "minecraft:exposed_chiseled_copper";
+  MinecraftBlockTypes2["ExposedCopper"] = "minecraft:exposed_copper";
+  MinecraftBlockTypes2["ExposedCopperBars"] = "minecraft:exposed_copper_bars";
+  MinecraftBlockTypes2["ExposedCopperBulb"] = "minecraft:exposed_copper_bulb";
+  MinecraftBlockTypes2["ExposedCopperChain"] = "minecraft:exposed_copper_chain";
+  MinecraftBlockTypes2["ExposedCopperChest"] = "minecraft:exposed_copper_chest";
+  MinecraftBlockTypes2["ExposedCopperDoor"] = "minecraft:exposed_copper_door";
+  MinecraftBlockTypes2["ExposedCopperGolemStatue"] = "minecraft:exposed_copper_golem_statue";
+  MinecraftBlockTypes2["ExposedCopperGrate"] = "minecraft:exposed_copper_grate";
+  MinecraftBlockTypes2["ExposedCopperLantern"] = "minecraft:exposed_copper_lantern";
+  MinecraftBlockTypes2["ExposedCopperTrapdoor"] = "minecraft:exposed_copper_trapdoor";
+  MinecraftBlockTypes2["ExposedCutCopper"] = "minecraft:exposed_cut_copper";
+  MinecraftBlockTypes2["ExposedCutCopperSlab"] = "minecraft:exposed_cut_copper_slab";
+  MinecraftBlockTypes2["ExposedCutCopperStairs"] = "minecraft:exposed_cut_copper_stairs";
+  MinecraftBlockTypes2["ExposedDoubleCutCopperSlab"] = "minecraft:exposed_double_cut_copper_slab";
+  MinecraftBlockTypes2["ExposedLightningRod"] = "minecraft:exposed_lightning_rod";
+  MinecraftBlockTypes2["Farmland"] = "minecraft:farmland";
+  MinecraftBlockTypes2["FenceGate"] = "minecraft:fence_gate";
+  MinecraftBlockTypes2["Fern"] = "minecraft:fern";
+  MinecraftBlockTypes2["Fire"] = "minecraft:fire";
+  MinecraftBlockTypes2["FireCoral"] = "minecraft:fire_coral";
+  MinecraftBlockTypes2["FireCoralBlock"] = "minecraft:fire_coral_block";
+  MinecraftBlockTypes2["FireCoralFan"] = "minecraft:fire_coral_fan";
+  MinecraftBlockTypes2["FireCoralWallFan"] = "minecraft:fire_coral_wall_fan";
+  MinecraftBlockTypes2["FireflyBush"] = "minecraft:firefly_bush";
+  MinecraftBlockTypes2["FletchingTable"] = "minecraft:fletching_table";
+  MinecraftBlockTypes2["FlowerPot"] = "minecraft:flower_pot";
+  MinecraftBlockTypes2["FloweringAzalea"] = "minecraft:flowering_azalea";
+  MinecraftBlockTypes2["FlowingLava"] = "minecraft:flowing_lava";
+  MinecraftBlockTypes2["FlowingWater"] = "minecraft:flowing_water";
+  MinecraftBlockTypes2["Frame"] = "minecraft:frame";
+  MinecraftBlockTypes2["FrogSpawn"] = "minecraft:frog_spawn";
+  MinecraftBlockTypes2["FrostedIce"] = "minecraft:frosted_ice";
+  MinecraftBlockTypes2["Furnace"] = "minecraft:furnace";
+  MinecraftBlockTypes2["GildedBlackstone"] = "minecraft:gilded_blackstone";
+  MinecraftBlockTypes2["Glass"] = "minecraft:glass";
+  MinecraftBlockTypes2["GlassPane"] = "minecraft:glass_pane";
+  MinecraftBlockTypes2["GlowFrame"] = "minecraft:glow_frame";
+  MinecraftBlockTypes2["GlowLichen"] = "minecraft:glow_lichen";
+  MinecraftBlockTypes2["Glowstone"] = "minecraft:glowstone";
+  MinecraftBlockTypes2["GoldBlock"] = "minecraft:gold_block";
+  MinecraftBlockTypes2["GoldOre"] = "minecraft:gold_ore";
+  MinecraftBlockTypes2["GoldenRail"] = "minecraft:golden_rail";
+  MinecraftBlockTypes2["Granite"] = "minecraft:granite";
+  MinecraftBlockTypes2["GraniteDoubleSlab"] = "minecraft:granite_double_slab";
+  MinecraftBlockTypes2["GraniteSlab"] = "minecraft:granite_slab";
+  MinecraftBlockTypes2["GraniteStairs"] = "minecraft:granite_stairs";
+  MinecraftBlockTypes2["GraniteWall"] = "minecraft:granite_wall";
+  MinecraftBlockTypes2["GrassBlock"] = "minecraft:grass_block";
+  MinecraftBlockTypes2["GrassPath"] = "minecraft:grass_path";
+  MinecraftBlockTypes2["Gravel"] = "minecraft:gravel";
+  MinecraftBlockTypes2["GrayCandle"] = "minecraft:gray_candle";
+  MinecraftBlockTypes2["GrayCandleCake"] = "minecraft:gray_candle_cake";
+  MinecraftBlockTypes2["GrayCarpet"] = "minecraft:gray_carpet";
+  MinecraftBlockTypes2["GrayConcrete"] = "minecraft:gray_concrete";
+  MinecraftBlockTypes2["GrayConcretePowder"] = "minecraft:gray_concrete_powder";
+  MinecraftBlockTypes2["GrayGlazedTerracotta"] = "minecraft:gray_glazed_terracotta";
+  MinecraftBlockTypes2["GrayShulkerBox"] = "minecraft:gray_shulker_box";
+  MinecraftBlockTypes2["GrayStainedGlass"] = "minecraft:gray_stained_glass";
+  MinecraftBlockTypes2["GrayStainedGlassPane"] = "minecraft:gray_stained_glass_pane";
+  MinecraftBlockTypes2["GrayTerracotta"] = "minecraft:gray_terracotta";
+  MinecraftBlockTypes2["GrayWool"] = "minecraft:gray_wool";
+  MinecraftBlockTypes2["GreenCandle"] = "minecraft:green_candle";
+  MinecraftBlockTypes2["GreenCandleCake"] = "minecraft:green_candle_cake";
+  MinecraftBlockTypes2["GreenCarpet"] = "minecraft:green_carpet";
+  MinecraftBlockTypes2["GreenConcrete"] = "minecraft:green_concrete";
+  MinecraftBlockTypes2["GreenConcretePowder"] = "minecraft:green_concrete_powder";
+  MinecraftBlockTypes2["GreenGlazedTerracotta"] = "minecraft:green_glazed_terracotta";
+  MinecraftBlockTypes2["GreenShulkerBox"] = "minecraft:green_shulker_box";
+  MinecraftBlockTypes2["GreenStainedGlass"] = "minecraft:green_stained_glass";
+  MinecraftBlockTypes2["GreenStainedGlassPane"] = "minecraft:green_stained_glass_pane";
+  MinecraftBlockTypes2["GreenTerracotta"] = "minecraft:green_terracotta";
+  MinecraftBlockTypes2["GreenWool"] = "minecraft:green_wool";
+  MinecraftBlockTypes2["Grindstone"] = "minecraft:grindstone";
+  MinecraftBlockTypes2["HangingRoots"] = "minecraft:hanging_roots";
+  MinecraftBlockTypes2["HardBlackStainedGlass"] = "minecraft:hard_black_stained_glass";
+  MinecraftBlockTypes2["HardBlackStainedGlassPane"] = "minecraft:hard_black_stained_glass_pane";
+  MinecraftBlockTypes2["HardBlueStainedGlass"] = "minecraft:hard_blue_stained_glass";
+  MinecraftBlockTypes2["HardBlueStainedGlassPane"] = "minecraft:hard_blue_stained_glass_pane";
+  MinecraftBlockTypes2["HardBrownStainedGlass"] = "minecraft:hard_brown_stained_glass";
+  MinecraftBlockTypes2["HardBrownStainedGlassPane"] = "minecraft:hard_brown_stained_glass_pane";
+  MinecraftBlockTypes2["HardCyanStainedGlass"] = "minecraft:hard_cyan_stained_glass";
+  MinecraftBlockTypes2["HardCyanStainedGlassPane"] = "minecraft:hard_cyan_stained_glass_pane";
+  MinecraftBlockTypes2["HardGlass"] = "minecraft:hard_glass";
+  MinecraftBlockTypes2["HardGlassPane"] = "minecraft:hard_glass_pane";
+  MinecraftBlockTypes2["HardGrayStainedGlass"] = "minecraft:hard_gray_stained_glass";
+  MinecraftBlockTypes2["HardGrayStainedGlassPane"] = "minecraft:hard_gray_stained_glass_pane";
+  MinecraftBlockTypes2["HardGreenStainedGlass"] = "minecraft:hard_green_stained_glass";
+  MinecraftBlockTypes2["HardGreenStainedGlassPane"] = "minecraft:hard_green_stained_glass_pane";
+  MinecraftBlockTypes2["HardLightBlueStainedGlass"] = "minecraft:hard_light_blue_stained_glass";
+  MinecraftBlockTypes2["HardLightBlueStainedGlassPane"] = "minecraft:hard_light_blue_stained_glass_pane";
+  MinecraftBlockTypes2["HardLightGrayStainedGlass"] = "minecraft:hard_light_gray_stained_glass";
+  MinecraftBlockTypes2["HardLightGrayStainedGlassPane"] = "minecraft:hard_light_gray_stained_glass_pane";
+  MinecraftBlockTypes2["HardLimeStainedGlass"] = "minecraft:hard_lime_stained_glass";
+  MinecraftBlockTypes2["HardLimeStainedGlassPane"] = "minecraft:hard_lime_stained_glass_pane";
+  MinecraftBlockTypes2["HardMagentaStainedGlass"] = "minecraft:hard_magenta_stained_glass";
+  MinecraftBlockTypes2["HardMagentaStainedGlassPane"] = "minecraft:hard_magenta_stained_glass_pane";
+  MinecraftBlockTypes2["HardOrangeStainedGlass"] = "minecraft:hard_orange_stained_glass";
+  MinecraftBlockTypes2["HardOrangeStainedGlassPane"] = "minecraft:hard_orange_stained_glass_pane";
+  MinecraftBlockTypes2["HardPinkStainedGlass"] = "minecraft:hard_pink_stained_glass";
+  MinecraftBlockTypes2["HardPinkStainedGlassPane"] = "minecraft:hard_pink_stained_glass_pane";
+  MinecraftBlockTypes2["HardPurpleStainedGlass"] = "minecraft:hard_purple_stained_glass";
+  MinecraftBlockTypes2["HardPurpleStainedGlassPane"] = "minecraft:hard_purple_stained_glass_pane";
+  MinecraftBlockTypes2["HardRedStainedGlass"] = "minecraft:hard_red_stained_glass";
+  MinecraftBlockTypes2["HardRedStainedGlassPane"] = "minecraft:hard_red_stained_glass_pane";
+  MinecraftBlockTypes2["HardWhiteStainedGlass"] = "minecraft:hard_white_stained_glass";
+  MinecraftBlockTypes2["HardWhiteStainedGlassPane"] = "minecraft:hard_white_stained_glass_pane";
+  MinecraftBlockTypes2["HardYellowStainedGlass"] = "minecraft:hard_yellow_stained_glass";
+  MinecraftBlockTypes2["HardYellowStainedGlassPane"] = "minecraft:hard_yellow_stained_glass_pane";
+  MinecraftBlockTypes2["HardenedClay"] = "minecraft:hardened_clay";
+  MinecraftBlockTypes2["HayBlock"] = "minecraft:hay_block";
+  MinecraftBlockTypes2["HeavyCore"] = "minecraft:heavy_core";
+  MinecraftBlockTypes2["HeavyWeightedPressurePlate"] = "minecraft:heavy_weighted_pressure_plate";
+  MinecraftBlockTypes2["HoneyBlock"] = "minecraft:honey_block";
+  MinecraftBlockTypes2["HoneycombBlock"] = "minecraft:honeycomb_block";
+  MinecraftBlockTypes2["Hopper"] = "minecraft:hopper";
+  MinecraftBlockTypes2["HornCoral"] = "minecraft:horn_coral";
+  MinecraftBlockTypes2["HornCoralBlock"] = "minecraft:horn_coral_block";
+  MinecraftBlockTypes2["HornCoralFan"] = "minecraft:horn_coral_fan";
+  MinecraftBlockTypes2["HornCoralWallFan"] = "minecraft:horn_coral_wall_fan";
+  MinecraftBlockTypes2["Ice"] = "minecraft:ice";
+  MinecraftBlockTypes2["InfestedChiseledStoneBricks"] = "minecraft:infested_chiseled_stone_bricks";
+  MinecraftBlockTypes2["InfestedCobblestone"] = "minecraft:infested_cobblestone";
+  MinecraftBlockTypes2["InfestedCrackedStoneBricks"] = "minecraft:infested_cracked_stone_bricks";
+  MinecraftBlockTypes2["InfestedDeepslate"] = "minecraft:infested_deepslate";
+  MinecraftBlockTypes2["InfestedMossyStoneBricks"] = "minecraft:infested_mossy_stone_bricks";
+  MinecraftBlockTypes2["InfestedStone"] = "minecraft:infested_stone";
+  MinecraftBlockTypes2["InfestedStoneBricks"] = "minecraft:infested_stone_bricks";
+  MinecraftBlockTypes2["IronBars"] = "minecraft:iron_bars";
+  MinecraftBlockTypes2["IronBlock"] = "minecraft:iron_block";
+  MinecraftBlockTypes2["IronChain"] = "minecraft:iron_chain";
+  MinecraftBlockTypes2["IronDoor"] = "minecraft:iron_door";
+  MinecraftBlockTypes2["IronOre"] = "minecraft:iron_ore";
+  MinecraftBlockTypes2["IronTrapdoor"] = "minecraft:iron_trapdoor";
+  MinecraftBlockTypes2["Jigsaw"] = "minecraft:jigsaw";
+  MinecraftBlockTypes2["Jukebox"] = "minecraft:jukebox";
+  MinecraftBlockTypes2["JungleButton"] = "minecraft:jungle_button";
+  MinecraftBlockTypes2["JungleDoor"] = "minecraft:jungle_door";
+  MinecraftBlockTypes2["JungleDoubleSlab"] = "minecraft:jungle_double_slab";
+  MinecraftBlockTypes2["JungleFence"] = "minecraft:jungle_fence";
+  MinecraftBlockTypes2["JungleFenceGate"] = "minecraft:jungle_fence_gate";
+  MinecraftBlockTypes2["JungleHangingSign"] = "minecraft:jungle_hanging_sign";
+  MinecraftBlockTypes2["JungleLeaves"] = "minecraft:jungle_leaves";
+  MinecraftBlockTypes2["JungleLog"] = "minecraft:jungle_log";
+  MinecraftBlockTypes2["JunglePlanks"] = "minecraft:jungle_planks";
+  MinecraftBlockTypes2["JunglePressurePlate"] = "minecraft:jungle_pressure_plate";
+  MinecraftBlockTypes2["JungleSapling"] = "minecraft:jungle_sapling";
+  MinecraftBlockTypes2["JungleShelf"] = "minecraft:jungle_shelf";
+  MinecraftBlockTypes2["JungleSlab"] = "minecraft:jungle_slab";
+  MinecraftBlockTypes2["JungleStairs"] = "minecraft:jungle_stairs";
+  MinecraftBlockTypes2["JungleStandingSign"] = "minecraft:jungle_standing_sign";
+  MinecraftBlockTypes2["JungleTrapdoor"] = "minecraft:jungle_trapdoor";
+  MinecraftBlockTypes2["JungleWallSign"] = "minecraft:jungle_wall_sign";
+  MinecraftBlockTypes2["JungleWood"] = "minecraft:jungle_wood";
+  MinecraftBlockTypes2["Kelp"] = "minecraft:kelp";
+  MinecraftBlockTypes2["LabTable"] = "minecraft:lab_table";
+  MinecraftBlockTypes2["Ladder"] = "minecraft:ladder";
+  MinecraftBlockTypes2["Lantern"] = "minecraft:lantern";
+  MinecraftBlockTypes2["LapisBlock"] = "minecraft:lapis_block";
+  MinecraftBlockTypes2["LapisOre"] = "minecraft:lapis_ore";
+  MinecraftBlockTypes2["LargeAmethystBud"] = "minecraft:large_amethyst_bud";
+  MinecraftBlockTypes2["LargeFern"] = "minecraft:large_fern";
+  MinecraftBlockTypes2["Lava"] = "minecraft:lava";
+  MinecraftBlockTypes2["LeafLitter"] = "minecraft:leaf_litter";
+  MinecraftBlockTypes2["Lectern"] = "minecraft:lectern";
+  MinecraftBlockTypes2["Lever"] = "minecraft:lever";
+  MinecraftBlockTypes2["LightBlock0"] = "minecraft:light_block_0";
+  MinecraftBlockTypes2["LightBlock1"] = "minecraft:light_block_1";
+  MinecraftBlockTypes2["LightBlock10"] = "minecraft:light_block_10";
+  MinecraftBlockTypes2["LightBlock11"] = "minecraft:light_block_11";
+  MinecraftBlockTypes2["LightBlock12"] = "minecraft:light_block_12";
+  MinecraftBlockTypes2["LightBlock13"] = "minecraft:light_block_13";
+  MinecraftBlockTypes2["LightBlock14"] = "minecraft:light_block_14";
+  MinecraftBlockTypes2["LightBlock15"] = "minecraft:light_block_15";
+  MinecraftBlockTypes2["LightBlock2"] = "minecraft:light_block_2";
+  MinecraftBlockTypes2["LightBlock3"] = "minecraft:light_block_3";
+  MinecraftBlockTypes2["LightBlock4"] = "minecraft:light_block_4";
+  MinecraftBlockTypes2["LightBlock5"] = "minecraft:light_block_5";
+  MinecraftBlockTypes2["LightBlock6"] = "minecraft:light_block_6";
+  MinecraftBlockTypes2["LightBlock7"] = "minecraft:light_block_7";
+  MinecraftBlockTypes2["LightBlock8"] = "minecraft:light_block_8";
+  MinecraftBlockTypes2["LightBlock9"] = "minecraft:light_block_9";
+  MinecraftBlockTypes2["LightBlueCandle"] = "minecraft:light_blue_candle";
+  MinecraftBlockTypes2["LightBlueCandleCake"] = "minecraft:light_blue_candle_cake";
+  MinecraftBlockTypes2["LightBlueCarpet"] = "minecraft:light_blue_carpet";
+  MinecraftBlockTypes2["LightBlueConcrete"] = "minecraft:light_blue_concrete";
+  MinecraftBlockTypes2["LightBlueConcretePowder"] = "minecraft:light_blue_concrete_powder";
+  MinecraftBlockTypes2["LightBlueGlazedTerracotta"] = "minecraft:light_blue_glazed_terracotta";
+  MinecraftBlockTypes2["LightBlueShulkerBox"] = "minecraft:light_blue_shulker_box";
+  MinecraftBlockTypes2["LightBlueStainedGlass"] = "minecraft:light_blue_stained_glass";
+  MinecraftBlockTypes2["LightBlueStainedGlassPane"] = "minecraft:light_blue_stained_glass_pane";
+  MinecraftBlockTypes2["LightBlueTerracotta"] = "minecraft:light_blue_terracotta";
+  MinecraftBlockTypes2["LightBlueWool"] = "minecraft:light_blue_wool";
+  MinecraftBlockTypes2["LightGrayCandle"] = "minecraft:light_gray_candle";
+  MinecraftBlockTypes2["LightGrayCandleCake"] = "minecraft:light_gray_candle_cake";
+  MinecraftBlockTypes2["LightGrayCarpet"] = "minecraft:light_gray_carpet";
+  MinecraftBlockTypes2["LightGrayConcrete"] = "minecraft:light_gray_concrete";
+  MinecraftBlockTypes2["LightGrayConcretePowder"] = "minecraft:light_gray_concrete_powder";
+  MinecraftBlockTypes2["LightGrayShulkerBox"] = "minecraft:light_gray_shulker_box";
+  MinecraftBlockTypes2["LightGrayStainedGlass"] = "minecraft:light_gray_stained_glass";
+  MinecraftBlockTypes2["LightGrayStainedGlassPane"] = "minecraft:light_gray_stained_glass_pane";
+  MinecraftBlockTypes2["LightGrayTerracotta"] = "minecraft:light_gray_terracotta";
+  MinecraftBlockTypes2["LightGrayWool"] = "minecraft:light_gray_wool";
+  MinecraftBlockTypes2["LightWeightedPressurePlate"] = "minecraft:light_weighted_pressure_plate";
+  MinecraftBlockTypes2["LightningRod"] = "minecraft:lightning_rod";
+  MinecraftBlockTypes2["Lilac"] = "minecraft:lilac";
+  MinecraftBlockTypes2["LilyOfTheValley"] = "minecraft:lily_of_the_valley";
+  MinecraftBlockTypes2["LimeCandle"] = "minecraft:lime_candle";
+  MinecraftBlockTypes2["LimeCandleCake"] = "minecraft:lime_candle_cake";
+  MinecraftBlockTypes2["LimeCarpet"] = "minecraft:lime_carpet";
+  MinecraftBlockTypes2["LimeConcrete"] = "minecraft:lime_concrete";
+  MinecraftBlockTypes2["LimeConcretePowder"] = "minecraft:lime_concrete_powder";
+  MinecraftBlockTypes2["LimeGlazedTerracotta"] = "minecraft:lime_glazed_terracotta";
+  MinecraftBlockTypes2["LimeShulkerBox"] = "minecraft:lime_shulker_box";
+  MinecraftBlockTypes2["LimeStainedGlass"] = "minecraft:lime_stained_glass";
+  MinecraftBlockTypes2["LimeStainedGlassPane"] = "minecraft:lime_stained_glass_pane";
+  MinecraftBlockTypes2["LimeTerracotta"] = "minecraft:lime_terracotta";
+  MinecraftBlockTypes2["LimeWool"] = "minecraft:lime_wool";
+  MinecraftBlockTypes2["LitBlastFurnace"] = "minecraft:lit_blast_furnace";
+  MinecraftBlockTypes2["LitDeepslateRedstoneOre"] = "minecraft:lit_deepslate_redstone_ore";
+  MinecraftBlockTypes2["LitFurnace"] = "minecraft:lit_furnace";
+  MinecraftBlockTypes2["LitPumpkin"] = "minecraft:lit_pumpkin";
+  MinecraftBlockTypes2["LitRedstoneLamp"] = "minecraft:lit_redstone_lamp";
+  MinecraftBlockTypes2["LitRedstoneOre"] = "minecraft:lit_redstone_ore";
+  MinecraftBlockTypes2["LitSmoker"] = "minecraft:lit_smoker";
+  MinecraftBlockTypes2["Lodestone"] = "minecraft:lodestone";
+  MinecraftBlockTypes2["Loom"] = "minecraft:loom";
+  MinecraftBlockTypes2["MagentaCandle"] = "minecraft:magenta_candle";
+  MinecraftBlockTypes2["MagentaCandleCake"] = "minecraft:magenta_candle_cake";
+  MinecraftBlockTypes2["MagentaCarpet"] = "minecraft:magenta_carpet";
+  MinecraftBlockTypes2["MagentaConcrete"] = "minecraft:magenta_concrete";
+  MinecraftBlockTypes2["MagentaConcretePowder"] = "minecraft:magenta_concrete_powder";
+  MinecraftBlockTypes2["MagentaGlazedTerracotta"] = "minecraft:magenta_glazed_terracotta";
+  MinecraftBlockTypes2["MagentaShulkerBox"] = "minecraft:magenta_shulker_box";
+  MinecraftBlockTypes2["MagentaStainedGlass"] = "minecraft:magenta_stained_glass";
+  MinecraftBlockTypes2["MagentaStainedGlassPane"] = "minecraft:magenta_stained_glass_pane";
+  MinecraftBlockTypes2["MagentaTerracotta"] = "minecraft:magenta_terracotta";
+  MinecraftBlockTypes2["MagentaWool"] = "minecraft:magenta_wool";
+  MinecraftBlockTypes2["Magma"] = "minecraft:magma";
+  MinecraftBlockTypes2["MangroveButton"] = "minecraft:mangrove_button";
+  MinecraftBlockTypes2["MangroveDoor"] = "minecraft:mangrove_door";
+  MinecraftBlockTypes2["MangroveDoubleSlab"] = "minecraft:mangrove_double_slab";
+  MinecraftBlockTypes2["MangroveFence"] = "minecraft:mangrove_fence";
+  MinecraftBlockTypes2["MangroveFenceGate"] = "minecraft:mangrove_fence_gate";
+  MinecraftBlockTypes2["MangroveHangingSign"] = "minecraft:mangrove_hanging_sign";
+  MinecraftBlockTypes2["MangroveLeaves"] = "minecraft:mangrove_leaves";
+  MinecraftBlockTypes2["MangroveLog"] = "minecraft:mangrove_log";
+  MinecraftBlockTypes2["MangrovePlanks"] = "minecraft:mangrove_planks";
+  MinecraftBlockTypes2["MangrovePressurePlate"] = "minecraft:mangrove_pressure_plate";
+  MinecraftBlockTypes2["MangrovePropagule"] = "minecraft:mangrove_propagule";
+  MinecraftBlockTypes2["MangroveRoots"] = "minecraft:mangrove_roots";
+  MinecraftBlockTypes2["MangroveShelf"] = "minecraft:mangrove_shelf";
+  MinecraftBlockTypes2["MangroveSlab"] = "minecraft:mangrove_slab";
+  MinecraftBlockTypes2["MangroveStairs"] = "minecraft:mangrove_stairs";
+  MinecraftBlockTypes2["MangroveStandingSign"] = "minecraft:mangrove_standing_sign";
+  MinecraftBlockTypes2["MangroveTrapdoor"] = "minecraft:mangrove_trapdoor";
+  MinecraftBlockTypes2["MangroveWallSign"] = "minecraft:mangrove_wall_sign";
+  MinecraftBlockTypes2["MangroveWood"] = "minecraft:mangrove_wood";
+  MinecraftBlockTypes2["MaterialReducer"] = "minecraft:material_reducer";
+  MinecraftBlockTypes2["MediumAmethystBud"] = "minecraft:medium_amethyst_bud";
+  MinecraftBlockTypes2["MelonBlock"] = "minecraft:melon_block";
+  MinecraftBlockTypes2["MelonStem"] = "minecraft:melon_stem";
+  MinecraftBlockTypes2["MobSpawner"] = "minecraft:mob_spawner";
+  MinecraftBlockTypes2["MossBlock"] = "minecraft:moss_block";
+  MinecraftBlockTypes2["MossCarpet"] = "minecraft:moss_carpet";
+  MinecraftBlockTypes2["MossyCobblestone"] = "minecraft:mossy_cobblestone";
+  MinecraftBlockTypes2["MossyCobblestoneDoubleSlab"] = "minecraft:mossy_cobblestone_double_slab";
+  MinecraftBlockTypes2["MossyCobblestoneSlab"] = "minecraft:mossy_cobblestone_slab";
+  MinecraftBlockTypes2["MossyCobblestoneStairs"] = "minecraft:mossy_cobblestone_stairs";
+  MinecraftBlockTypes2["MossyCobblestoneWall"] = "minecraft:mossy_cobblestone_wall";
+  MinecraftBlockTypes2["MossyStoneBrickDoubleSlab"] = "minecraft:mossy_stone_brick_double_slab";
+  MinecraftBlockTypes2["MossyStoneBrickSlab"] = "minecraft:mossy_stone_brick_slab";
+  MinecraftBlockTypes2["MossyStoneBrickStairs"] = "minecraft:mossy_stone_brick_stairs";
+  MinecraftBlockTypes2["MossyStoneBrickWall"] = "minecraft:mossy_stone_brick_wall";
+  MinecraftBlockTypes2["MossyStoneBricks"] = "minecraft:mossy_stone_bricks";
+  MinecraftBlockTypes2["Mud"] = "minecraft:mud";
+  MinecraftBlockTypes2["MudBrickDoubleSlab"] = "minecraft:mud_brick_double_slab";
+  MinecraftBlockTypes2["MudBrickSlab"] = "minecraft:mud_brick_slab";
+  MinecraftBlockTypes2["MudBrickStairs"] = "minecraft:mud_brick_stairs";
+  MinecraftBlockTypes2["MudBrickWall"] = "minecraft:mud_brick_wall";
+  MinecraftBlockTypes2["MudBricks"] = "minecraft:mud_bricks";
+  MinecraftBlockTypes2["MuddyMangroveRoots"] = "minecraft:muddy_mangrove_roots";
+  MinecraftBlockTypes2["MushroomStem"] = "minecraft:mushroom_stem";
+  MinecraftBlockTypes2["Mycelium"] = "minecraft:mycelium";
+  MinecraftBlockTypes2["NetherBrick"] = "minecraft:nether_brick";
+  MinecraftBlockTypes2["NetherBrickDoubleSlab"] = "minecraft:nether_brick_double_slab";
+  MinecraftBlockTypes2["NetherBrickFence"] = "minecraft:nether_brick_fence";
+  MinecraftBlockTypes2["NetherBrickSlab"] = "minecraft:nether_brick_slab";
+  MinecraftBlockTypes2["NetherBrickStairs"] = "minecraft:nether_brick_stairs";
+  MinecraftBlockTypes2["NetherBrickWall"] = "minecraft:nether_brick_wall";
+  MinecraftBlockTypes2["NetherGoldOre"] = "minecraft:nether_gold_ore";
+  MinecraftBlockTypes2["NetherSprouts"] = "minecraft:nether_sprouts";
+  MinecraftBlockTypes2["NetherWart"] = "minecraft:nether_wart";
+  MinecraftBlockTypes2["NetherWartBlock"] = "minecraft:nether_wart_block";
+  MinecraftBlockTypes2["NetheriteBlock"] = "minecraft:netherite_block";
+  MinecraftBlockTypes2["Netherrack"] = "minecraft:netherrack";
+  MinecraftBlockTypes2["NormalStoneDoubleSlab"] = "minecraft:normal_stone_double_slab";
+  MinecraftBlockTypes2["NormalStoneSlab"] = "minecraft:normal_stone_slab";
+  MinecraftBlockTypes2["NormalStoneStairs"] = "minecraft:normal_stone_stairs";
+  MinecraftBlockTypes2["Noteblock"] = "minecraft:noteblock";
+  MinecraftBlockTypes2["OakDoubleSlab"] = "minecraft:oak_double_slab";
+  MinecraftBlockTypes2["OakFence"] = "minecraft:oak_fence";
+  MinecraftBlockTypes2["OakHangingSign"] = "minecraft:oak_hanging_sign";
+  MinecraftBlockTypes2["OakLeaves"] = "minecraft:oak_leaves";
+  MinecraftBlockTypes2["OakLog"] = "minecraft:oak_log";
+  MinecraftBlockTypes2["OakPlanks"] = "minecraft:oak_planks";
+  MinecraftBlockTypes2["OakSapling"] = "minecraft:oak_sapling";
+  MinecraftBlockTypes2["OakShelf"] = "minecraft:oak_shelf";
+  MinecraftBlockTypes2["OakSlab"] = "minecraft:oak_slab";
+  MinecraftBlockTypes2["OakStairs"] = "minecraft:oak_stairs";
+  MinecraftBlockTypes2["OakWood"] = "minecraft:oak_wood";
+  MinecraftBlockTypes2["Observer"] = "minecraft:observer";
+  MinecraftBlockTypes2["Obsidian"] = "minecraft:obsidian";
+  MinecraftBlockTypes2["OchreFroglight"] = "minecraft:ochre_froglight";
+  MinecraftBlockTypes2["OpenEyeblossom"] = "minecraft:open_eyeblossom";
+  MinecraftBlockTypes2["OrangeCandle"] = "minecraft:orange_candle";
+  MinecraftBlockTypes2["OrangeCandleCake"] = "minecraft:orange_candle_cake";
+  MinecraftBlockTypes2["OrangeCarpet"] = "minecraft:orange_carpet";
+  MinecraftBlockTypes2["OrangeConcrete"] = "minecraft:orange_concrete";
+  MinecraftBlockTypes2["OrangeConcretePowder"] = "minecraft:orange_concrete_powder";
+  MinecraftBlockTypes2["OrangeGlazedTerracotta"] = "minecraft:orange_glazed_terracotta";
+  MinecraftBlockTypes2["OrangeShulkerBox"] = "minecraft:orange_shulker_box";
+  MinecraftBlockTypes2["OrangeStainedGlass"] = "minecraft:orange_stained_glass";
+  MinecraftBlockTypes2["OrangeStainedGlassPane"] = "minecraft:orange_stained_glass_pane";
+  MinecraftBlockTypes2["OrangeTerracotta"] = "minecraft:orange_terracotta";
+  MinecraftBlockTypes2["OrangeTulip"] = "minecraft:orange_tulip";
+  MinecraftBlockTypes2["OrangeWool"] = "minecraft:orange_wool";
+  MinecraftBlockTypes2["OxeyeDaisy"] = "minecraft:oxeye_daisy";
+  MinecraftBlockTypes2["OxidizedChiseledCopper"] = "minecraft:oxidized_chiseled_copper";
+  MinecraftBlockTypes2["OxidizedCopper"] = "minecraft:oxidized_copper";
+  MinecraftBlockTypes2["OxidizedCopperBars"] = "minecraft:oxidized_copper_bars";
+  MinecraftBlockTypes2["OxidizedCopperBulb"] = "minecraft:oxidized_copper_bulb";
+  MinecraftBlockTypes2["OxidizedCopperChain"] = "minecraft:oxidized_copper_chain";
+  MinecraftBlockTypes2["OxidizedCopperChest"] = "minecraft:oxidized_copper_chest";
+  MinecraftBlockTypes2["OxidizedCopperDoor"] = "minecraft:oxidized_copper_door";
+  MinecraftBlockTypes2["OxidizedCopperGolemStatue"] = "minecraft:oxidized_copper_golem_statue";
+  MinecraftBlockTypes2["OxidizedCopperGrate"] = "minecraft:oxidized_copper_grate";
+  MinecraftBlockTypes2["OxidizedCopperLantern"] = "minecraft:oxidized_copper_lantern";
+  MinecraftBlockTypes2["OxidizedCopperTrapdoor"] = "minecraft:oxidized_copper_trapdoor";
+  MinecraftBlockTypes2["OxidizedCutCopper"] = "minecraft:oxidized_cut_copper";
+  MinecraftBlockTypes2["OxidizedCutCopperSlab"] = "minecraft:oxidized_cut_copper_slab";
+  MinecraftBlockTypes2["OxidizedCutCopperStairs"] = "minecraft:oxidized_cut_copper_stairs";
+  MinecraftBlockTypes2["OxidizedDoubleCutCopperSlab"] = "minecraft:oxidized_double_cut_copper_slab";
+  MinecraftBlockTypes2["OxidizedLightningRod"] = "minecraft:oxidized_lightning_rod";
+  MinecraftBlockTypes2["PackedIce"] = "minecraft:packed_ice";
+  MinecraftBlockTypes2["PackedMud"] = "minecraft:packed_mud";
+  MinecraftBlockTypes2["PaleHangingMoss"] = "minecraft:pale_hanging_moss";
+  MinecraftBlockTypes2["PaleMossBlock"] = "minecraft:pale_moss_block";
+  MinecraftBlockTypes2["PaleMossCarpet"] = "minecraft:pale_moss_carpet";
+  MinecraftBlockTypes2["PaleOakButton"] = "minecraft:pale_oak_button";
+  MinecraftBlockTypes2["PaleOakDoor"] = "minecraft:pale_oak_door";
+  MinecraftBlockTypes2["PaleOakDoubleSlab"] = "minecraft:pale_oak_double_slab";
+  MinecraftBlockTypes2["PaleOakFence"] = "minecraft:pale_oak_fence";
+  MinecraftBlockTypes2["PaleOakFenceGate"] = "minecraft:pale_oak_fence_gate";
+  MinecraftBlockTypes2["PaleOakHangingSign"] = "minecraft:pale_oak_hanging_sign";
+  MinecraftBlockTypes2["PaleOakLeaves"] = "minecraft:pale_oak_leaves";
+  MinecraftBlockTypes2["PaleOakLog"] = "minecraft:pale_oak_log";
+  MinecraftBlockTypes2["PaleOakPlanks"] = "minecraft:pale_oak_planks";
+  MinecraftBlockTypes2["PaleOakPressurePlate"] = "minecraft:pale_oak_pressure_plate";
+  MinecraftBlockTypes2["PaleOakSapling"] = "minecraft:pale_oak_sapling";
+  MinecraftBlockTypes2["PaleOakShelf"] = "minecraft:pale_oak_shelf";
+  MinecraftBlockTypes2["PaleOakSlab"] = "minecraft:pale_oak_slab";
+  MinecraftBlockTypes2["PaleOakStairs"] = "minecraft:pale_oak_stairs";
+  MinecraftBlockTypes2["PaleOakStandingSign"] = "minecraft:pale_oak_standing_sign";
+  MinecraftBlockTypes2["PaleOakTrapdoor"] = "minecraft:pale_oak_trapdoor";
+  MinecraftBlockTypes2["PaleOakWallSign"] = "minecraft:pale_oak_wall_sign";
+  MinecraftBlockTypes2["PaleOakWood"] = "minecraft:pale_oak_wood";
+  MinecraftBlockTypes2["PearlescentFroglight"] = "minecraft:pearlescent_froglight";
+  MinecraftBlockTypes2["Peony"] = "minecraft:peony";
+  MinecraftBlockTypes2["PetrifiedOakDoubleSlab"] = "minecraft:petrified_oak_double_slab";
+  MinecraftBlockTypes2["PetrifiedOakSlab"] = "minecraft:petrified_oak_slab";
+  MinecraftBlockTypes2["PiglinHead"] = "minecraft:piglin_head";
+  MinecraftBlockTypes2["PinkCandle"] = "minecraft:pink_candle";
+  MinecraftBlockTypes2["PinkCandleCake"] = "minecraft:pink_candle_cake";
+  MinecraftBlockTypes2["PinkCarpet"] = "minecraft:pink_carpet";
+  MinecraftBlockTypes2["PinkConcrete"] = "minecraft:pink_concrete";
+  MinecraftBlockTypes2["PinkConcretePowder"] = "minecraft:pink_concrete_powder";
+  MinecraftBlockTypes2["PinkGlazedTerracotta"] = "minecraft:pink_glazed_terracotta";
+  MinecraftBlockTypes2["PinkPetals"] = "minecraft:pink_petals";
+  MinecraftBlockTypes2["PinkShulkerBox"] = "minecraft:pink_shulker_box";
+  MinecraftBlockTypes2["PinkStainedGlass"] = "minecraft:pink_stained_glass";
+  MinecraftBlockTypes2["PinkStainedGlassPane"] = "minecraft:pink_stained_glass_pane";
+  MinecraftBlockTypes2["PinkTerracotta"] = "minecraft:pink_terracotta";
+  MinecraftBlockTypes2["PinkTulip"] = "minecraft:pink_tulip";
+  MinecraftBlockTypes2["PinkWool"] = "minecraft:pink_wool";
+  MinecraftBlockTypes2["Piston"] = "minecraft:piston";
+  MinecraftBlockTypes2["PistonArmCollision"] = "minecraft:piston_arm_collision";
+  MinecraftBlockTypes2["PitcherCrop"] = "minecraft:pitcher_crop";
+  MinecraftBlockTypes2["PitcherPlant"] = "minecraft:pitcher_plant";
+  MinecraftBlockTypes2["PlayerHead"] = "minecraft:player_head";
+  MinecraftBlockTypes2["Podzol"] = "minecraft:podzol";
+  MinecraftBlockTypes2["PointedDripstone"] = "minecraft:pointed_dripstone";
+  MinecraftBlockTypes2["PolishedAndesite"] = "minecraft:polished_andesite";
+  MinecraftBlockTypes2["PolishedAndesiteDoubleSlab"] = "minecraft:polished_andesite_double_slab";
+  MinecraftBlockTypes2["PolishedAndesiteSlab"] = "minecraft:polished_andesite_slab";
+  MinecraftBlockTypes2["PolishedAndesiteStairs"] = "minecraft:polished_andesite_stairs";
+  MinecraftBlockTypes2["PolishedBasalt"] = "minecraft:polished_basalt";
+  MinecraftBlockTypes2["PolishedBlackstone"] = "minecraft:polished_blackstone";
+  MinecraftBlockTypes2["PolishedBlackstoneBrickDoubleSlab"] = "minecraft:polished_blackstone_brick_double_slab";
+  MinecraftBlockTypes2["PolishedBlackstoneBrickSlab"] = "minecraft:polished_blackstone_brick_slab";
+  MinecraftBlockTypes2["PolishedBlackstoneBrickStairs"] = "minecraft:polished_blackstone_brick_stairs";
+  MinecraftBlockTypes2["PolishedBlackstoneBrickWall"] = "minecraft:polished_blackstone_brick_wall";
+  MinecraftBlockTypes2["PolishedBlackstoneBricks"] = "minecraft:polished_blackstone_bricks";
+  MinecraftBlockTypes2["PolishedBlackstoneButton"] = "minecraft:polished_blackstone_button";
+  MinecraftBlockTypes2["PolishedBlackstoneDoubleSlab"] = "minecraft:polished_blackstone_double_slab";
+  MinecraftBlockTypes2["PolishedBlackstonePressurePlate"] = "minecraft:polished_blackstone_pressure_plate";
+  MinecraftBlockTypes2["PolishedBlackstoneSlab"] = "minecraft:polished_blackstone_slab";
+  MinecraftBlockTypes2["PolishedBlackstoneStairs"] = "minecraft:polished_blackstone_stairs";
+  MinecraftBlockTypes2["PolishedBlackstoneWall"] = "minecraft:polished_blackstone_wall";
+  MinecraftBlockTypes2["PolishedDeepslate"] = "minecraft:polished_deepslate";
+  MinecraftBlockTypes2["PolishedDeepslateDoubleSlab"] = "minecraft:polished_deepslate_double_slab";
+  MinecraftBlockTypes2["PolishedDeepslateSlab"] = "minecraft:polished_deepslate_slab";
+  MinecraftBlockTypes2["PolishedDeepslateStairs"] = "minecraft:polished_deepslate_stairs";
+  MinecraftBlockTypes2["PolishedDeepslateWall"] = "minecraft:polished_deepslate_wall";
+  MinecraftBlockTypes2["PolishedDiorite"] = "minecraft:polished_diorite";
+  MinecraftBlockTypes2["PolishedDioriteDoubleSlab"] = "minecraft:polished_diorite_double_slab";
+  MinecraftBlockTypes2["PolishedDioriteSlab"] = "minecraft:polished_diorite_slab";
+  MinecraftBlockTypes2["PolishedDioriteStairs"] = "minecraft:polished_diorite_stairs";
+  MinecraftBlockTypes2["PolishedGranite"] = "minecraft:polished_granite";
+  MinecraftBlockTypes2["PolishedGraniteDoubleSlab"] = "minecraft:polished_granite_double_slab";
+  MinecraftBlockTypes2["PolishedGraniteSlab"] = "minecraft:polished_granite_slab";
+  MinecraftBlockTypes2["PolishedGraniteStairs"] = "minecraft:polished_granite_stairs";
+  MinecraftBlockTypes2["PolishedTuff"] = "minecraft:polished_tuff";
+  MinecraftBlockTypes2["PolishedTuffDoubleSlab"] = "minecraft:polished_tuff_double_slab";
+  MinecraftBlockTypes2["PolishedTuffSlab"] = "minecraft:polished_tuff_slab";
+  MinecraftBlockTypes2["PolishedTuffStairs"] = "minecraft:polished_tuff_stairs";
+  MinecraftBlockTypes2["PolishedTuffWall"] = "minecraft:polished_tuff_wall";
+  MinecraftBlockTypes2["Poppy"] = "minecraft:poppy";
+  MinecraftBlockTypes2["Portal"] = "minecraft:portal";
+  MinecraftBlockTypes2["Potatoes"] = "minecraft:potatoes";
+  MinecraftBlockTypes2["PowderSnow"] = "minecraft:powder_snow";
+  MinecraftBlockTypes2["PoweredComparator"] = "minecraft:powered_comparator";
+  MinecraftBlockTypes2["PoweredRepeater"] = "minecraft:powered_repeater";
+  MinecraftBlockTypes2["Prismarine"] = "minecraft:prismarine";
+  MinecraftBlockTypes2["PrismarineBrickDoubleSlab"] = "minecraft:prismarine_brick_double_slab";
+  MinecraftBlockTypes2["PrismarineBrickSlab"] = "minecraft:prismarine_brick_slab";
+  MinecraftBlockTypes2["PrismarineBricks"] = "minecraft:prismarine_bricks";
+  MinecraftBlockTypes2["PrismarineBricksStairs"] = "minecraft:prismarine_bricks_stairs";
+  MinecraftBlockTypes2["PrismarineDoubleSlab"] = "minecraft:prismarine_double_slab";
+  MinecraftBlockTypes2["PrismarineSlab"] = "minecraft:prismarine_slab";
+  MinecraftBlockTypes2["PrismarineStairs"] = "minecraft:prismarine_stairs";
+  MinecraftBlockTypes2["PrismarineWall"] = "minecraft:prismarine_wall";
+  MinecraftBlockTypes2["Pumpkin"] = "minecraft:pumpkin";
+  MinecraftBlockTypes2["PumpkinStem"] = "minecraft:pumpkin_stem";
+  MinecraftBlockTypes2["PurpleCandle"] = "minecraft:purple_candle";
+  MinecraftBlockTypes2["PurpleCandleCake"] = "minecraft:purple_candle_cake";
+  MinecraftBlockTypes2["PurpleCarpet"] = "minecraft:purple_carpet";
+  MinecraftBlockTypes2["PurpleConcrete"] = "minecraft:purple_concrete";
+  MinecraftBlockTypes2["PurpleConcretePowder"] = "minecraft:purple_concrete_powder";
+  MinecraftBlockTypes2["PurpleGlazedTerracotta"] = "minecraft:purple_glazed_terracotta";
+  MinecraftBlockTypes2["PurpleShulkerBox"] = "minecraft:purple_shulker_box";
+  MinecraftBlockTypes2["PurpleStainedGlass"] = "minecraft:purple_stained_glass";
+  MinecraftBlockTypes2["PurpleStainedGlassPane"] = "minecraft:purple_stained_glass_pane";
+  MinecraftBlockTypes2["PurpleTerracotta"] = "minecraft:purple_terracotta";
+  MinecraftBlockTypes2["PurpleWool"] = "minecraft:purple_wool";
+  MinecraftBlockTypes2["PurpurBlock"] = "minecraft:purpur_block";
+  MinecraftBlockTypes2["PurpurDoubleSlab"] = "minecraft:purpur_double_slab";
+  MinecraftBlockTypes2["PurpurPillar"] = "minecraft:purpur_pillar";
+  MinecraftBlockTypes2["PurpurSlab"] = "minecraft:purpur_slab";
+  MinecraftBlockTypes2["PurpurStairs"] = "minecraft:purpur_stairs";
+  MinecraftBlockTypes2["QuartzBlock"] = "minecraft:quartz_block";
+  MinecraftBlockTypes2["QuartzBricks"] = "minecraft:quartz_bricks";
+  MinecraftBlockTypes2["QuartzDoubleSlab"] = "minecraft:quartz_double_slab";
+  MinecraftBlockTypes2["QuartzOre"] = "minecraft:quartz_ore";
+  MinecraftBlockTypes2["QuartzPillar"] = "minecraft:quartz_pillar";
+  MinecraftBlockTypes2["QuartzSlab"] = "minecraft:quartz_slab";
+  MinecraftBlockTypes2["QuartzStairs"] = "minecraft:quartz_stairs";
+  MinecraftBlockTypes2["Rail"] = "minecraft:rail";
+  MinecraftBlockTypes2["RawCopperBlock"] = "minecraft:raw_copper_block";
+  MinecraftBlockTypes2["RawGoldBlock"] = "minecraft:raw_gold_block";
+  MinecraftBlockTypes2["RawIronBlock"] = "minecraft:raw_iron_block";
+  MinecraftBlockTypes2["RedCandle"] = "minecraft:red_candle";
+  MinecraftBlockTypes2["RedCandleCake"] = "minecraft:red_candle_cake";
+  MinecraftBlockTypes2["RedCarpet"] = "minecraft:red_carpet";
+  MinecraftBlockTypes2["RedConcrete"] = "minecraft:red_concrete";
+  MinecraftBlockTypes2["RedConcretePowder"] = "minecraft:red_concrete_powder";
+  MinecraftBlockTypes2["RedGlazedTerracotta"] = "minecraft:red_glazed_terracotta";
+  MinecraftBlockTypes2["RedMushroom"] = "minecraft:red_mushroom";
+  MinecraftBlockTypes2["RedMushroomBlock"] = "minecraft:red_mushroom_block";
+  MinecraftBlockTypes2["RedNetherBrick"] = "minecraft:red_nether_brick";
+  MinecraftBlockTypes2["RedNetherBrickDoubleSlab"] = "minecraft:red_nether_brick_double_slab";
+  MinecraftBlockTypes2["RedNetherBrickSlab"] = "minecraft:red_nether_brick_slab";
+  MinecraftBlockTypes2["RedNetherBrickStairs"] = "minecraft:red_nether_brick_stairs";
+  MinecraftBlockTypes2["RedNetherBrickWall"] = "minecraft:red_nether_brick_wall";
+  MinecraftBlockTypes2["RedSand"] = "minecraft:red_sand";
+  MinecraftBlockTypes2["RedSandstone"] = "minecraft:red_sandstone";
+  MinecraftBlockTypes2["RedSandstoneDoubleSlab"] = "minecraft:red_sandstone_double_slab";
+  MinecraftBlockTypes2["RedSandstoneSlab"] = "minecraft:red_sandstone_slab";
+  MinecraftBlockTypes2["RedSandstoneStairs"] = "minecraft:red_sandstone_stairs";
+  MinecraftBlockTypes2["RedSandstoneWall"] = "minecraft:red_sandstone_wall";
+  MinecraftBlockTypes2["RedShulkerBox"] = "minecraft:red_shulker_box";
+  MinecraftBlockTypes2["RedStainedGlass"] = "minecraft:red_stained_glass";
+  MinecraftBlockTypes2["RedStainedGlassPane"] = "minecraft:red_stained_glass_pane";
+  MinecraftBlockTypes2["RedTerracotta"] = "minecraft:red_terracotta";
+  MinecraftBlockTypes2["RedTulip"] = "minecraft:red_tulip";
+  MinecraftBlockTypes2["RedWool"] = "minecraft:red_wool";
+  MinecraftBlockTypes2["RedstoneBlock"] = "minecraft:redstone_block";
+  MinecraftBlockTypes2["RedstoneLamp"] = "minecraft:redstone_lamp";
+  MinecraftBlockTypes2["RedstoneOre"] = "minecraft:redstone_ore";
+  MinecraftBlockTypes2["RedstoneTorch"] = "minecraft:redstone_torch";
+  MinecraftBlockTypes2["RedstoneWire"] = "minecraft:redstone_wire";
+  MinecraftBlockTypes2["Reeds"] = "minecraft:reeds";
+  MinecraftBlockTypes2["ReinforcedDeepslate"] = "minecraft:reinforced_deepslate";
+  MinecraftBlockTypes2["RepeatingCommandBlock"] = "minecraft:repeating_command_block";
+  MinecraftBlockTypes2["ResinBlock"] = "minecraft:resin_block";
+  MinecraftBlockTypes2["ResinBrickDoubleSlab"] = "minecraft:resin_brick_double_slab";
+  MinecraftBlockTypes2["ResinBrickSlab"] = "minecraft:resin_brick_slab";
+  MinecraftBlockTypes2["ResinBrickStairs"] = "minecraft:resin_brick_stairs";
+  MinecraftBlockTypes2["ResinBrickWall"] = "minecraft:resin_brick_wall";
+  MinecraftBlockTypes2["ResinBricks"] = "minecraft:resin_bricks";
+  MinecraftBlockTypes2["ResinClump"] = "minecraft:resin_clump";
+  MinecraftBlockTypes2["RespawnAnchor"] = "minecraft:respawn_anchor";
+  MinecraftBlockTypes2["RoseBush"] = "minecraft:rose_bush";
+  MinecraftBlockTypes2["Sand"] = "minecraft:sand";
+  MinecraftBlockTypes2["Sandstone"] = "minecraft:sandstone";
+  MinecraftBlockTypes2["SandstoneDoubleSlab"] = "minecraft:sandstone_double_slab";
+  MinecraftBlockTypes2["SandstoneSlab"] = "minecraft:sandstone_slab";
+  MinecraftBlockTypes2["SandstoneStairs"] = "minecraft:sandstone_stairs";
+  MinecraftBlockTypes2["SandstoneWall"] = "minecraft:sandstone_wall";
+  MinecraftBlockTypes2["Scaffolding"] = "minecraft:scaffolding";
+  MinecraftBlockTypes2["Sculk"] = "minecraft:sculk";
+  MinecraftBlockTypes2["SculkCatalyst"] = "minecraft:sculk_catalyst";
+  MinecraftBlockTypes2["SculkSensor"] = "minecraft:sculk_sensor";
+  MinecraftBlockTypes2["SculkShrieker"] = "minecraft:sculk_shrieker";
+  MinecraftBlockTypes2["SculkVein"] = "minecraft:sculk_vein";
+  MinecraftBlockTypes2["SeaLantern"] = "minecraft:sea_lantern";
+  MinecraftBlockTypes2["SeaPickle"] = "minecraft:sea_pickle";
+  MinecraftBlockTypes2["Seagrass"] = "minecraft:seagrass";
+  MinecraftBlockTypes2["ShortDryGrass"] = "minecraft:short_dry_grass";
+  MinecraftBlockTypes2["ShortGrass"] = "minecraft:short_grass";
+  MinecraftBlockTypes2["Shroomlight"] = "minecraft:shroomlight";
+  MinecraftBlockTypes2["SilverGlazedTerracotta"] = "minecraft:silver_glazed_terracotta";
+  MinecraftBlockTypes2["SkeletonSkull"] = "minecraft:skeleton_skull";
+  MinecraftBlockTypes2["Slime"] = "minecraft:slime";
+  MinecraftBlockTypes2["SmallAmethystBud"] = "minecraft:small_amethyst_bud";
+  MinecraftBlockTypes2["SmallDripleafBlock"] = "minecraft:small_dripleaf_block";
+  MinecraftBlockTypes2["SmithingTable"] = "minecraft:smithing_table";
+  MinecraftBlockTypes2["Smoker"] = "minecraft:smoker";
+  MinecraftBlockTypes2["SmoothBasalt"] = "minecraft:smooth_basalt";
+  MinecraftBlockTypes2["SmoothQuartz"] = "minecraft:smooth_quartz";
+  MinecraftBlockTypes2["SmoothQuartzDoubleSlab"] = "minecraft:smooth_quartz_double_slab";
+  MinecraftBlockTypes2["SmoothQuartzSlab"] = "minecraft:smooth_quartz_slab";
+  MinecraftBlockTypes2["SmoothQuartzStairs"] = "minecraft:smooth_quartz_stairs";
+  MinecraftBlockTypes2["SmoothRedSandstone"] = "minecraft:smooth_red_sandstone";
+  MinecraftBlockTypes2["SmoothRedSandstoneDoubleSlab"] = "minecraft:smooth_red_sandstone_double_slab";
+  MinecraftBlockTypes2["SmoothRedSandstoneSlab"] = "minecraft:smooth_red_sandstone_slab";
+  MinecraftBlockTypes2["SmoothRedSandstoneStairs"] = "minecraft:smooth_red_sandstone_stairs";
+  MinecraftBlockTypes2["SmoothSandstone"] = "minecraft:smooth_sandstone";
+  MinecraftBlockTypes2["SmoothSandstoneDoubleSlab"] = "minecraft:smooth_sandstone_double_slab";
+  MinecraftBlockTypes2["SmoothSandstoneSlab"] = "minecraft:smooth_sandstone_slab";
+  MinecraftBlockTypes2["SmoothSandstoneStairs"] = "minecraft:smooth_sandstone_stairs";
+  MinecraftBlockTypes2["SmoothStone"] = "minecraft:smooth_stone";
+  MinecraftBlockTypes2["SmoothStoneDoubleSlab"] = "minecraft:smooth_stone_double_slab";
+  MinecraftBlockTypes2["SmoothStoneSlab"] = "minecraft:smooth_stone_slab";
+  MinecraftBlockTypes2["SnifferEgg"] = "minecraft:sniffer_egg";
+  MinecraftBlockTypes2["Snow"] = "minecraft:snow";
+  MinecraftBlockTypes2["SnowLayer"] = "minecraft:snow_layer";
+  MinecraftBlockTypes2["SoulCampfire"] = "minecraft:soul_campfire";
+  MinecraftBlockTypes2["SoulFire"] = "minecraft:soul_fire";
+  MinecraftBlockTypes2["SoulLantern"] = "minecraft:soul_lantern";
+  MinecraftBlockTypes2["SoulSand"] = "minecraft:soul_sand";
+  MinecraftBlockTypes2["SoulSoil"] = "minecraft:soul_soil";
+  MinecraftBlockTypes2["SoulTorch"] = "minecraft:soul_torch";
+  MinecraftBlockTypes2["Sponge"] = "minecraft:sponge";
+  MinecraftBlockTypes2["SporeBlossom"] = "minecraft:spore_blossom";
+  MinecraftBlockTypes2["SpruceButton"] = "minecraft:spruce_button";
+  MinecraftBlockTypes2["SpruceDoor"] = "minecraft:spruce_door";
+  MinecraftBlockTypes2["SpruceDoubleSlab"] = "minecraft:spruce_double_slab";
+  MinecraftBlockTypes2["SpruceFence"] = "minecraft:spruce_fence";
+  MinecraftBlockTypes2["SpruceFenceGate"] = "minecraft:spruce_fence_gate";
+  MinecraftBlockTypes2["SpruceHangingSign"] = "minecraft:spruce_hanging_sign";
+  MinecraftBlockTypes2["SpruceLeaves"] = "minecraft:spruce_leaves";
+  MinecraftBlockTypes2["SpruceLog"] = "minecraft:spruce_log";
+  MinecraftBlockTypes2["SprucePlanks"] = "minecraft:spruce_planks";
+  MinecraftBlockTypes2["SprucePressurePlate"] = "minecraft:spruce_pressure_plate";
+  MinecraftBlockTypes2["SpruceSapling"] = "minecraft:spruce_sapling";
+  MinecraftBlockTypes2["SpruceShelf"] = "minecraft:spruce_shelf";
+  MinecraftBlockTypes2["SpruceSlab"] = "minecraft:spruce_slab";
+  MinecraftBlockTypes2["SpruceStairs"] = "minecraft:spruce_stairs";
+  MinecraftBlockTypes2["SpruceStandingSign"] = "minecraft:spruce_standing_sign";
+  MinecraftBlockTypes2["SpruceTrapdoor"] = "minecraft:spruce_trapdoor";
+  MinecraftBlockTypes2["SpruceWallSign"] = "minecraft:spruce_wall_sign";
+  MinecraftBlockTypes2["SpruceWood"] = "minecraft:spruce_wood";
+  MinecraftBlockTypes2["StandingBanner"] = "minecraft:standing_banner";
+  MinecraftBlockTypes2["StandingSign"] = "minecraft:standing_sign";
+  MinecraftBlockTypes2["StickyPiston"] = "minecraft:sticky_piston";
+  MinecraftBlockTypes2["StickyPistonArmCollision"] = "minecraft:sticky_piston_arm_collision";
+  MinecraftBlockTypes2["Stone"] = "minecraft:stone";
+  MinecraftBlockTypes2["StoneBrickDoubleSlab"] = "minecraft:stone_brick_double_slab";
+  MinecraftBlockTypes2["StoneBrickSlab"] = "minecraft:stone_brick_slab";
+  MinecraftBlockTypes2["StoneBrickStairs"] = "minecraft:stone_brick_stairs";
+  MinecraftBlockTypes2["StoneBrickWall"] = "minecraft:stone_brick_wall";
+  MinecraftBlockTypes2["StoneBricks"] = "minecraft:stone_bricks";
+  MinecraftBlockTypes2["StoneButton"] = "minecraft:stone_button";
+  MinecraftBlockTypes2["StonePressurePlate"] = "minecraft:stone_pressure_plate";
+  MinecraftBlockTypes2["StoneStairs"] = "minecraft:stone_stairs";
+  MinecraftBlockTypes2["StonecutterBlock"] = "minecraft:stonecutter_block";
+  MinecraftBlockTypes2["StrippedAcaciaLog"] = "minecraft:stripped_acacia_log";
+  MinecraftBlockTypes2["StrippedAcaciaWood"] = "minecraft:stripped_acacia_wood";
+  MinecraftBlockTypes2["StrippedBambooBlock"] = "minecraft:stripped_bamboo_block";
+  MinecraftBlockTypes2["StrippedBirchLog"] = "minecraft:stripped_birch_log";
+  MinecraftBlockTypes2["StrippedBirchWood"] = "minecraft:stripped_birch_wood";
+  MinecraftBlockTypes2["StrippedCherryLog"] = "minecraft:stripped_cherry_log";
+  MinecraftBlockTypes2["StrippedCherryWood"] = "minecraft:stripped_cherry_wood";
+  MinecraftBlockTypes2["StrippedCrimsonHyphae"] = "minecraft:stripped_crimson_hyphae";
+  MinecraftBlockTypes2["StrippedCrimsonStem"] = "minecraft:stripped_crimson_stem";
+  MinecraftBlockTypes2["StrippedDarkOakLog"] = "minecraft:stripped_dark_oak_log";
+  MinecraftBlockTypes2["StrippedDarkOakWood"] = "minecraft:stripped_dark_oak_wood";
+  MinecraftBlockTypes2["StrippedJungleLog"] = "minecraft:stripped_jungle_log";
+  MinecraftBlockTypes2["StrippedJungleWood"] = "minecraft:stripped_jungle_wood";
+  MinecraftBlockTypes2["StrippedMangroveLog"] = "minecraft:stripped_mangrove_log";
+  MinecraftBlockTypes2["StrippedMangroveWood"] = "minecraft:stripped_mangrove_wood";
+  MinecraftBlockTypes2["StrippedOakLog"] = "minecraft:stripped_oak_log";
+  MinecraftBlockTypes2["StrippedOakWood"] = "minecraft:stripped_oak_wood";
+  MinecraftBlockTypes2["StrippedPaleOakLog"] = "minecraft:stripped_pale_oak_log";
+  MinecraftBlockTypes2["StrippedPaleOakWood"] = "minecraft:stripped_pale_oak_wood";
+  MinecraftBlockTypes2["StrippedSpruceLog"] = "minecraft:stripped_spruce_log";
+  MinecraftBlockTypes2["StrippedSpruceWood"] = "minecraft:stripped_spruce_wood";
+  MinecraftBlockTypes2["StrippedWarpedHyphae"] = "minecraft:stripped_warped_hyphae";
+  MinecraftBlockTypes2["StrippedWarpedStem"] = "minecraft:stripped_warped_stem";
+  MinecraftBlockTypes2["StructureBlock"] = "minecraft:structure_block";
+  MinecraftBlockTypes2["StructureVoid"] = "minecraft:structure_void";
+  MinecraftBlockTypes2["Sunflower"] = "minecraft:sunflower";
+  MinecraftBlockTypes2["SuspiciousGravel"] = "minecraft:suspicious_gravel";
+  MinecraftBlockTypes2["SuspiciousSand"] = "minecraft:suspicious_sand";
+  MinecraftBlockTypes2["SweetBerryBush"] = "minecraft:sweet_berry_bush";
+  MinecraftBlockTypes2["TallDryGrass"] = "minecraft:tall_dry_grass";
+  MinecraftBlockTypes2["TallGrass"] = "minecraft:tall_grass";
+  MinecraftBlockTypes2["Target"] = "minecraft:target";
+  MinecraftBlockTypes2["TintedGlass"] = "minecraft:tinted_glass";
+  MinecraftBlockTypes2["Tnt"] = "minecraft:tnt";
+  MinecraftBlockTypes2["Torch"] = "minecraft:torch";
+  MinecraftBlockTypes2["Torchflower"] = "minecraft:torchflower";
+  MinecraftBlockTypes2["TorchflowerCrop"] = "minecraft:torchflower_crop";
+  MinecraftBlockTypes2["Trapdoor"] = "minecraft:trapdoor";
+  MinecraftBlockTypes2["TrappedChest"] = "minecraft:trapped_chest";
+  MinecraftBlockTypes2["TrialSpawner"] = "minecraft:trial_spawner";
+  MinecraftBlockTypes2["TripWire"] = "minecraft:trip_wire";
+  MinecraftBlockTypes2["TripwireHook"] = "minecraft:tripwire_hook";
+  MinecraftBlockTypes2["TubeCoral"] = "minecraft:tube_coral";
+  MinecraftBlockTypes2["TubeCoralBlock"] = "minecraft:tube_coral_block";
+  MinecraftBlockTypes2["TubeCoralFan"] = "minecraft:tube_coral_fan";
+  MinecraftBlockTypes2["TubeCoralWallFan"] = "minecraft:tube_coral_wall_fan";
+  MinecraftBlockTypes2["Tuff"] = "minecraft:tuff";
+  MinecraftBlockTypes2["TuffBrickDoubleSlab"] = "minecraft:tuff_brick_double_slab";
+  MinecraftBlockTypes2["TuffBrickSlab"] = "minecraft:tuff_brick_slab";
+  MinecraftBlockTypes2["TuffBrickStairs"] = "minecraft:tuff_brick_stairs";
+  MinecraftBlockTypes2["TuffBrickWall"] = "minecraft:tuff_brick_wall";
+  MinecraftBlockTypes2["TuffBricks"] = "minecraft:tuff_bricks";
+  MinecraftBlockTypes2["TuffDoubleSlab"] = "minecraft:tuff_double_slab";
+  MinecraftBlockTypes2["TuffSlab"] = "minecraft:tuff_slab";
+  MinecraftBlockTypes2["TuffStairs"] = "minecraft:tuff_stairs";
+  MinecraftBlockTypes2["TuffWall"] = "minecraft:tuff_wall";
+  MinecraftBlockTypes2["TurtleEgg"] = "minecraft:turtle_egg";
+  MinecraftBlockTypes2["TwistingVines"] = "minecraft:twisting_vines";
+  MinecraftBlockTypes2["UnderwaterTnt"] = "minecraft:underwater_tnt";
+  MinecraftBlockTypes2["UnderwaterTorch"] = "minecraft:underwater_torch";
+  MinecraftBlockTypes2["UndyedShulkerBox"] = "minecraft:undyed_shulker_box";
+  MinecraftBlockTypes2["Unknown"] = "minecraft:unknown";
+  MinecraftBlockTypes2["UnlitRedstoneTorch"] = "minecraft:unlit_redstone_torch";
+  MinecraftBlockTypes2["UnpoweredComparator"] = "minecraft:unpowered_comparator";
+  MinecraftBlockTypes2["UnpoweredRepeater"] = "minecraft:unpowered_repeater";
+  MinecraftBlockTypes2["Vault"] = "minecraft:vault";
+  MinecraftBlockTypes2["VerdantFroglight"] = "minecraft:verdant_froglight";
+  MinecraftBlockTypes2["Vine"] = "minecraft:vine";
+  MinecraftBlockTypes2["WallBanner"] = "minecraft:wall_banner";
+  MinecraftBlockTypes2["WallSign"] = "minecraft:wall_sign";
+  MinecraftBlockTypes2["WarpedButton"] = "minecraft:warped_button";
+  MinecraftBlockTypes2["WarpedDoor"] = "minecraft:warped_door";
+  MinecraftBlockTypes2["WarpedDoubleSlab"] = "minecraft:warped_double_slab";
+  MinecraftBlockTypes2["WarpedFence"] = "minecraft:warped_fence";
+  MinecraftBlockTypes2["WarpedFenceGate"] = "minecraft:warped_fence_gate";
+  MinecraftBlockTypes2["WarpedFungus"] = "minecraft:warped_fungus";
+  MinecraftBlockTypes2["WarpedHangingSign"] = "minecraft:warped_hanging_sign";
+  MinecraftBlockTypes2["WarpedHyphae"] = "minecraft:warped_hyphae";
+  MinecraftBlockTypes2["WarpedNylium"] = "minecraft:warped_nylium";
+  MinecraftBlockTypes2["WarpedPlanks"] = "minecraft:warped_planks";
+  MinecraftBlockTypes2["WarpedPressurePlate"] = "minecraft:warped_pressure_plate";
+  MinecraftBlockTypes2["WarpedRoots"] = "minecraft:warped_roots";
+  MinecraftBlockTypes2["WarpedShelf"] = "minecraft:warped_shelf";
+  MinecraftBlockTypes2["WarpedSlab"] = "minecraft:warped_slab";
+  MinecraftBlockTypes2["WarpedStairs"] = "minecraft:warped_stairs";
+  MinecraftBlockTypes2["WarpedStandingSign"] = "minecraft:warped_standing_sign";
+  MinecraftBlockTypes2["WarpedStem"] = "minecraft:warped_stem";
+  MinecraftBlockTypes2["WarpedTrapdoor"] = "minecraft:warped_trapdoor";
+  MinecraftBlockTypes2["WarpedWallSign"] = "minecraft:warped_wall_sign";
+  MinecraftBlockTypes2["WarpedWartBlock"] = "minecraft:warped_wart_block";
+  MinecraftBlockTypes2["Water"] = "minecraft:water";
+  MinecraftBlockTypes2["Waterlily"] = "minecraft:waterlily";
+  MinecraftBlockTypes2["WaxedChiseledCopper"] = "minecraft:waxed_chiseled_copper";
+  MinecraftBlockTypes2["WaxedCopper"] = "minecraft:waxed_copper";
+  MinecraftBlockTypes2["WaxedCopperBars"] = "minecraft:waxed_copper_bars";
+  MinecraftBlockTypes2["WaxedCopperBulb"] = "minecraft:waxed_copper_bulb";
+  MinecraftBlockTypes2["WaxedCopperChain"] = "minecraft:waxed_copper_chain";
+  MinecraftBlockTypes2["WaxedCopperChest"] = "minecraft:waxed_copper_chest";
+  MinecraftBlockTypes2["WaxedCopperDoor"] = "minecraft:waxed_copper_door";
+  MinecraftBlockTypes2["WaxedCopperGolemStatue"] = "minecraft:waxed_copper_golem_statue";
+  MinecraftBlockTypes2["WaxedCopperGrate"] = "minecraft:waxed_copper_grate";
+  MinecraftBlockTypes2["WaxedCopperLantern"] = "minecraft:waxed_copper_lantern";
+  MinecraftBlockTypes2["WaxedCopperTrapdoor"] = "minecraft:waxed_copper_trapdoor";
+  MinecraftBlockTypes2["WaxedCutCopper"] = "minecraft:waxed_cut_copper";
+  MinecraftBlockTypes2["WaxedCutCopperSlab"] = "minecraft:waxed_cut_copper_slab";
+  MinecraftBlockTypes2["WaxedCutCopperStairs"] = "minecraft:waxed_cut_copper_stairs";
+  MinecraftBlockTypes2["WaxedDoubleCutCopperSlab"] = "minecraft:waxed_double_cut_copper_slab";
+  MinecraftBlockTypes2["WaxedExposedChiseledCopper"] = "minecraft:waxed_exposed_chiseled_copper";
+  MinecraftBlockTypes2["WaxedExposedCopper"] = "minecraft:waxed_exposed_copper";
+  MinecraftBlockTypes2["WaxedExposedCopperBars"] = "minecraft:waxed_exposed_copper_bars";
+  MinecraftBlockTypes2["WaxedExposedCopperBulb"] = "minecraft:waxed_exposed_copper_bulb";
+  MinecraftBlockTypes2["WaxedExposedCopperChain"] = "minecraft:waxed_exposed_copper_chain";
+  MinecraftBlockTypes2["WaxedExposedCopperChest"] = "minecraft:waxed_exposed_copper_chest";
+  MinecraftBlockTypes2["WaxedExposedCopperDoor"] = "minecraft:waxed_exposed_copper_door";
+  MinecraftBlockTypes2["WaxedExposedCopperGolemStatue"] = "minecraft:waxed_exposed_copper_golem_statue";
+  MinecraftBlockTypes2["WaxedExposedCopperGrate"] = "minecraft:waxed_exposed_copper_grate";
+  MinecraftBlockTypes2["WaxedExposedCopperLantern"] = "minecraft:waxed_exposed_copper_lantern";
+  MinecraftBlockTypes2["WaxedExposedCopperTrapdoor"] = "minecraft:waxed_exposed_copper_trapdoor";
+  MinecraftBlockTypes2["WaxedExposedCutCopper"] = "minecraft:waxed_exposed_cut_copper";
+  MinecraftBlockTypes2["WaxedExposedCutCopperSlab"] = "minecraft:waxed_exposed_cut_copper_slab";
+  MinecraftBlockTypes2["WaxedExposedCutCopperStairs"] = "minecraft:waxed_exposed_cut_copper_stairs";
+  MinecraftBlockTypes2["WaxedExposedDoubleCutCopperSlab"] = "minecraft:waxed_exposed_double_cut_copper_slab";
+  MinecraftBlockTypes2["WaxedExposedLightningRod"] = "minecraft:waxed_exposed_lightning_rod";
+  MinecraftBlockTypes2["WaxedLightningRod"] = "minecraft:waxed_lightning_rod";
+  MinecraftBlockTypes2["WaxedOxidizedChiseledCopper"] = "minecraft:waxed_oxidized_chiseled_copper";
+  MinecraftBlockTypes2["WaxedOxidizedCopper"] = "minecraft:waxed_oxidized_copper";
+  MinecraftBlockTypes2["WaxedOxidizedCopperBars"] = "minecraft:waxed_oxidized_copper_bars";
+  MinecraftBlockTypes2["WaxedOxidizedCopperBulb"] = "minecraft:waxed_oxidized_copper_bulb";
+  MinecraftBlockTypes2["WaxedOxidizedCopperChain"] = "minecraft:waxed_oxidized_copper_chain";
+  MinecraftBlockTypes2["WaxedOxidizedCopperChest"] = "minecraft:waxed_oxidized_copper_chest";
+  MinecraftBlockTypes2["WaxedOxidizedCopperDoor"] = "minecraft:waxed_oxidized_copper_door";
+  MinecraftBlockTypes2["WaxedOxidizedCopperGolemStatue"] = "minecraft:waxed_oxidized_copper_golem_statue";
+  MinecraftBlockTypes2["WaxedOxidizedCopperGrate"] = "minecraft:waxed_oxidized_copper_grate";
+  MinecraftBlockTypes2["WaxedOxidizedCopperLantern"] = "minecraft:waxed_oxidized_copper_lantern";
+  MinecraftBlockTypes2["WaxedOxidizedCopperTrapdoor"] = "minecraft:waxed_oxidized_copper_trapdoor";
+  MinecraftBlockTypes2["WaxedOxidizedCutCopper"] = "minecraft:waxed_oxidized_cut_copper";
+  MinecraftBlockTypes2["WaxedOxidizedCutCopperSlab"] = "minecraft:waxed_oxidized_cut_copper_slab";
+  MinecraftBlockTypes2["WaxedOxidizedCutCopperStairs"] = "minecraft:waxed_oxidized_cut_copper_stairs";
+  MinecraftBlockTypes2["WaxedOxidizedDoubleCutCopperSlab"] = "minecraft:waxed_oxidized_double_cut_copper_slab";
+  MinecraftBlockTypes2["WaxedOxidizedLightningRod"] = "minecraft:waxed_oxidized_lightning_rod";
+  MinecraftBlockTypes2["WaxedWeatheredChiseledCopper"] = "minecraft:waxed_weathered_chiseled_copper";
+  MinecraftBlockTypes2["WaxedWeatheredCopper"] = "minecraft:waxed_weathered_copper";
+  MinecraftBlockTypes2["WaxedWeatheredCopperBars"] = "minecraft:waxed_weathered_copper_bars";
+  MinecraftBlockTypes2["WaxedWeatheredCopperBulb"] = "minecraft:waxed_weathered_copper_bulb";
+  MinecraftBlockTypes2["WaxedWeatheredCopperChain"] = "minecraft:waxed_weathered_copper_chain";
+  MinecraftBlockTypes2["WaxedWeatheredCopperChest"] = "minecraft:waxed_weathered_copper_chest";
+  MinecraftBlockTypes2["WaxedWeatheredCopperDoor"] = "minecraft:waxed_weathered_copper_door";
+  MinecraftBlockTypes2["WaxedWeatheredCopperGolemStatue"] = "minecraft:waxed_weathered_copper_golem_statue";
+  MinecraftBlockTypes2["WaxedWeatheredCopperGrate"] = "minecraft:waxed_weathered_copper_grate";
+  MinecraftBlockTypes2["WaxedWeatheredCopperLantern"] = "minecraft:waxed_weathered_copper_lantern";
+  MinecraftBlockTypes2["WaxedWeatheredCopperTrapdoor"] = "minecraft:waxed_weathered_copper_trapdoor";
+  MinecraftBlockTypes2["WaxedWeatheredCutCopper"] = "minecraft:waxed_weathered_cut_copper";
+  MinecraftBlockTypes2["WaxedWeatheredCutCopperSlab"] = "minecraft:waxed_weathered_cut_copper_slab";
+  MinecraftBlockTypes2["WaxedWeatheredCutCopperStairs"] = "minecraft:waxed_weathered_cut_copper_stairs";
+  MinecraftBlockTypes2["WaxedWeatheredDoubleCutCopperSlab"] = "minecraft:waxed_weathered_double_cut_copper_slab";
+  MinecraftBlockTypes2["WaxedWeatheredLightningRod"] = "minecraft:waxed_weathered_lightning_rod";
+  MinecraftBlockTypes2["WeatheredChiseledCopper"] = "minecraft:weathered_chiseled_copper";
+  MinecraftBlockTypes2["WeatheredCopper"] = "minecraft:weathered_copper";
+  MinecraftBlockTypes2["WeatheredCopperBars"] = "minecraft:weathered_copper_bars";
+  MinecraftBlockTypes2["WeatheredCopperBulb"] = "minecraft:weathered_copper_bulb";
+  MinecraftBlockTypes2["WeatheredCopperChain"] = "minecraft:weathered_copper_chain";
+  MinecraftBlockTypes2["WeatheredCopperChest"] = "minecraft:weathered_copper_chest";
+  MinecraftBlockTypes2["WeatheredCopperDoor"] = "minecraft:weathered_copper_door";
+  MinecraftBlockTypes2["WeatheredCopperGolemStatue"] = "minecraft:weathered_copper_golem_statue";
+  MinecraftBlockTypes2["WeatheredCopperGrate"] = "minecraft:weathered_copper_grate";
+  MinecraftBlockTypes2["WeatheredCopperLantern"] = "minecraft:weathered_copper_lantern";
+  MinecraftBlockTypes2["WeatheredCopperTrapdoor"] = "minecraft:weathered_copper_trapdoor";
+  MinecraftBlockTypes2["WeatheredCutCopper"] = "minecraft:weathered_cut_copper";
+  MinecraftBlockTypes2["WeatheredCutCopperSlab"] = "minecraft:weathered_cut_copper_slab";
+  MinecraftBlockTypes2["WeatheredCutCopperStairs"] = "minecraft:weathered_cut_copper_stairs";
+  MinecraftBlockTypes2["WeatheredDoubleCutCopperSlab"] = "minecraft:weathered_double_cut_copper_slab";
+  MinecraftBlockTypes2["WeatheredLightningRod"] = "minecraft:weathered_lightning_rod";
+  MinecraftBlockTypes2["Web"] = "minecraft:web";
+  MinecraftBlockTypes2["WeepingVines"] = "minecraft:weeping_vines";
+  MinecraftBlockTypes2["WetSponge"] = "minecraft:wet_sponge";
+  MinecraftBlockTypes2["Wheat"] = "minecraft:wheat";
+  MinecraftBlockTypes2["WhiteCandle"] = "minecraft:white_candle";
+  MinecraftBlockTypes2["WhiteCandleCake"] = "minecraft:white_candle_cake";
+  MinecraftBlockTypes2["WhiteCarpet"] = "minecraft:white_carpet";
+  MinecraftBlockTypes2["WhiteConcrete"] = "minecraft:white_concrete";
+  MinecraftBlockTypes2["WhiteConcretePowder"] = "minecraft:white_concrete_powder";
+  MinecraftBlockTypes2["WhiteGlazedTerracotta"] = "minecraft:white_glazed_terracotta";
+  MinecraftBlockTypes2["WhiteShulkerBox"] = "minecraft:white_shulker_box";
+  MinecraftBlockTypes2["WhiteStainedGlass"] = "minecraft:white_stained_glass";
+  MinecraftBlockTypes2["WhiteStainedGlassPane"] = "minecraft:white_stained_glass_pane";
+  MinecraftBlockTypes2["WhiteTerracotta"] = "minecraft:white_terracotta";
+  MinecraftBlockTypes2["WhiteTulip"] = "minecraft:white_tulip";
+  MinecraftBlockTypes2["WhiteWool"] = "minecraft:white_wool";
+  MinecraftBlockTypes2["Wildflowers"] = "minecraft:wildflowers";
+  MinecraftBlockTypes2["WitherRose"] = "minecraft:wither_rose";
+  MinecraftBlockTypes2["WitherSkeletonSkull"] = "minecraft:wither_skeleton_skull";
+  MinecraftBlockTypes2["WoodenButton"] = "minecraft:wooden_button";
+  MinecraftBlockTypes2["WoodenDoor"] = "minecraft:wooden_door";
+  MinecraftBlockTypes2["WoodenPressurePlate"] = "minecraft:wooden_pressure_plate";
+  MinecraftBlockTypes2["YellowCandle"] = "minecraft:yellow_candle";
+  MinecraftBlockTypes2["YellowCandleCake"] = "minecraft:yellow_candle_cake";
+  MinecraftBlockTypes2["YellowCarpet"] = "minecraft:yellow_carpet";
+  MinecraftBlockTypes2["YellowConcrete"] = "minecraft:yellow_concrete";
+  MinecraftBlockTypes2["YellowConcretePowder"] = "minecraft:yellow_concrete_powder";
+  MinecraftBlockTypes2["YellowGlazedTerracotta"] = "minecraft:yellow_glazed_terracotta";
+  MinecraftBlockTypes2["YellowShulkerBox"] = "minecraft:yellow_shulker_box";
+  MinecraftBlockTypes2["YellowStainedGlass"] = "minecraft:yellow_stained_glass";
+  MinecraftBlockTypes2["YellowStainedGlassPane"] = "minecraft:yellow_stained_glass_pane";
+  MinecraftBlockTypes2["YellowTerracotta"] = "minecraft:yellow_terracotta";
+  MinecraftBlockTypes2["YellowWool"] = "minecraft:yellow_wool";
+  MinecraftBlockTypes2["ZombieHead"] = "minecraft:zombie_head";
+  return MinecraftBlockTypes2;
 })(MinecraftBlockTypes || {});
 var MinecraftCameraPresetsTypes = ((MinecraftCameraPresetsTypes2) => {
   MinecraftCameraPresetsTypes2["ControlSchemeCamera"] = "minecraft:control_scheme_camera";
@@ -1430,45 +1427,45 @@ var MinecraftDimensionTypes = ((MinecraftDimensionTypes2) => {
   MinecraftDimensionTypes2["TheEnd"] = "minecraft:the_end";
   return MinecraftDimensionTypes2;
 })(MinecraftDimensionTypes || {});
-var MinecraftEffectTypes = ((MinecraftEffectTypes22) => {
-  MinecraftEffectTypes22["Absorption"] = "minecraft:absorption";
-  MinecraftEffectTypes22["BadOmen"] = "minecraft:bad_omen";
-  MinecraftEffectTypes22["Blindness"] = "minecraft:blindness";
-  MinecraftEffectTypes22["BreathOfTheNautilus"] = "minecraft:breath_of_the_nautilus";
-  MinecraftEffectTypes22["ConduitPower"] = "minecraft:conduit_power";
-  MinecraftEffectTypes22["Darkness"] = "minecraft:darkness";
-  MinecraftEffectTypes22["FatalPoison"] = "minecraft:fatal_poison";
-  MinecraftEffectTypes22["FireResistance"] = "minecraft:fire_resistance";
-  MinecraftEffectTypes22["Haste"] = "minecraft:haste";
-  MinecraftEffectTypes22["HealthBoost"] = "minecraft:health_boost";
-  MinecraftEffectTypes22["Hunger"] = "minecraft:hunger";
-  MinecraftEffectTypes22["Infested"] = "minecraft:infested";
-  MinecraftEffectTypes22["InstantDamage"] = "minecraft:instant_damage";
-  MinecraftEffectTypes22["InstantHealth"] = "minecraft:instant_health";
-  MinecraftEffectTypes22["Invisibility"] = "minecraft:invisibility";
-  MinecraftEffectTypes22["JumpBoost"] = "minecraft:jump_boost";
-  MinecraftEffectTypes22["Levitation"] = "minecraft:levitation";
-  MinecraftEffectTypes22["MiningFatigue"] = "minecraft:mining_fatigue";
-  MinecraftEffectTypes22["Nausea"] = "minecraft:nausea";
-  MinecraftEffectTypes22["NightVision"] = "minecraft:night_vision";
-  MinecraftEffectTypes22["Oozing"] = "minecraft:oozing";
-  MinecraftEffectTypes22["Poison"] = "minecraft:poison";
-  MinecraftEffectTypes22["RaidOmen"] = "minecraft:raid_omen";
-  MinecraftEffectTypes22["Regeneration"] = "minecraft:regeneration";
-  MinecraftEffectTypes22["Resistance"] = "minecraft:resistance";
-  MinecraftEffectTypes22["Saturation"] = "minecraft:saturation";
-  MinecraftEffectTypes22["SlowFalling"] = "minecraft:slow_falling";
-  MinecraftEffectTypes22["Slowness"] = "minecraft:slowness";
-  MinecraftEffectTypes22["Speed"] = "minecraft:speed";
-  MinecraftEffectTypes22["Strength"] = "minecraft:strength";
-  MinecraftEffectTypes22["TrialOmen"] = "minecraft:trial_omen";
-  MinecraftEffectTypes22["VillageHero"] = "minecraft:village_hero";
-  MinecraftEffectTypes22["WaterBreathing"] = "minecraft:water_breathing";
-  MinecraftEffectTypes22["Weakness"] = "minecraft:weakness";
-  MinecraftEffectTypes22["Weaving"] = "minecraft:weaving";
-  MinecraftEffectTypes22["WindCharged"] = "minecraft:wind_charged";
-  MinecraftEffectTypes22["Wither"] = "minecraft:wither";
-  return MinecraftEffectTypes22;
+var MinecraftEffectTypes = ((MinecraftEffectTypes2) => {
+  MinecraftEffectTypes2["Absorption"] = "minecraft:absorption";
+  MinecraftEffectTypes2["BadOmen"] = "minecraft:bad_omen";
+  MinecraftEffectTypes2["Blindness"] = "minecraft:blindness";
+  MinecraftEffectTypes2["BreathOfTheNautilus"] = "minecraft:breath_of_the_nautilus";
+  MinecraftEffectTypes2["ConduitPower"] = "minecraft:conduit_power";
+  MinecraftEffectTypes2["Darkness"] = "minecraft:darkness";
+  MinecraftEffectTypes2["FatalPoison"] = "minecraft:fatal_poison";
+  MinecraftEffectTypes2["FireResistance"] = "minecraft:fire_resistance";
+  MinecraftEffectTypes2["Haste"] = "minecraft:haste";
+  MinecraftEffectTypes2["HealthBoost"] = "minecraft:health_boost";
+  MinecraftEffectTypes2["Hunger"] = "minecraft:hunger";
+  MinecraftEffectTypes2["Infested"] = "minecraft:infested";
+  MinecraftEffectTypes2["InstantDamage"] = "minecraft:instant_damage";
+  MinecraftEffectTypes2["InstantHealth"] = "minecraft:instant_health";
+  MinecraftEffectTypes2["Invisibility"] = "minecraft:invisibility";
+  MinecraftEffectTypes2["JumpBoost"] = "minecraft:jump_boost";
+  MinecraftEffectTypes2["Levitation"] = "minecraft:levitation";
+  MinecraftEffectTypes2["MiningFatigue"] = "minecraft:mining_fatigue";
+  MinecraftEffectTypes2["Nausea"] = "minecraft:nausea";
+  MinecraftEffectTypes2["NightVision"] = "minecraft:night_vision";
+  MinecraftEffectTypes2["Oozing"] = "minecraft:oozing";
+  MinecraftEffectTypes2["Poison"] = "minecraft:poison";
+  MinecraftEffectTypes2["RaidOmen"] = "minecraft:raid_omen";
+  MinecraftEffectTypes2["Regeneration"] = "minecraft:regeneration";
+  MinecraftEffectTypes2["Resistance"] = "minecraft:resistance";
+  MinecraftEffectTypes2["Saturation"] = "minecraft:saturation";
+  MinecraftEffectTypes2["SlowFalling"] = "minecraft:slow_falling";
+  MinecraftEffectTypes2["Slowness"] = "minecraft:slowness";
+  MinecraftEffectTypes2["Speed"] = "minecraft:speed";
+  MinecraftEffectTypes2["Strength"] = "minecraft:strength";
+  MinecraftEffectTypes2["TrialOmen"] = "minecraft:trial_omen";
+  MinecraftEffectTypes2["VillageHero"] = "minecraft:village_hero";
+  MinecraftEffectTypes2["WaterBreathing"] = "minecraft:water_breathing";
+  MinecraftEffectTypes2["Weakness"] = "minecraft:weakness";
+  MinecraftEffectTypes2["Weaving"] = "minecraft:weaving";
+  MinecraftEffectTypes2["WindCharged"] = "minecraft:wind_charged";
+  MinecraftEffectTypes2["Wither"] = "minecraft:wither";
+  return MinecraftEffectTypes2;
 })(MinecraftEffectTypes || {});
 var MinecraftEnchantmentTypes = ((MinecraftEnchantmentTypes2) => {
   MinecraftEnchantmentTypes2["AquaAffinity"] = "minecraft:aqua_affinity";
@@ -1515,135 +1512,135 @@ var MinecraftEnchantmentTypes = ((MinecraftEnchantmentTypes2) => {
   MinecraftEnchantmentTypes2["WindBurst"] = "minecraft:wind_burst";
   return MinecraftEnchantmentTypes2;
 })(MinecraftEnchantmentTypes || {});
-var MinecraftEntityTypes = ((MinecraftEntityTypes22) => {
-  MinecraftEntityTypes22["Agent"] = "minecraft:agent";
-  MinecraftEntityTypes22["Allay"] = "minecraft:allay";
-  MinecraftEntityTypes22["AreaEffectCloud"] = "minecraft:area_effect_cloud";
-  MinecraftEntityTypes22["Armadillo"] = "minecraft:armadillo";
-  MinecraftEntityTypes22["ArmorStand"] = "minecraft:armor_stand";
-  MinecraftEntityTypes22["Arrow"] = "minecraft:arrow";
-  MinecraftEntityTypes22["Axolotl"] = "minecraft:axolotl";
-  MinecraftEntityTypes22["Bat"] = "minecraft:bat";
-  MinecraftEntityTypes22["Bee"] = "minecraft:bee";
-  MinecraftEntityTypes22["Blaze"] = "minecraft:blaze";
-  MinecraftEntityTypes22["Boat"] = "minecraft:boat";
-  MinecraftEntityTypes22["Bogged"] = "minecraft:bogged";
-  MinecraftEntityTypes22["Breeze"] = "minecraft:breeze";
-  MinecraftEntityTypes22["BreezeWindChargeProjectile"] = "minecraft:breeze_wind_charge_projectile";
-  MinecraftEntityTypes22["Camel"] = "minecraft:camel";
-  MinecraftEntityTypes22["CamelHusk"] = "minecraft:camel_husk";
-  MinecraftEntityTypes22["Cat"] = "minecraft:cat";
-  MinecraftEntityTypes22["CaveSpider"] = "minecraft:cave_spider";
-  MinecraftEntityTypes22["ChestBoat"] = "minecraft:chest_boat";
-  MinecraftEntityTypes22["ChestMinecart"] = "minecraft:chest_minecart";
-  MinecraftEntityTypes22["Chicken"] = "minecraft:chicken";
-  MinecraftEntityTypes22["Cod"] = "minecraft:cod";
-  MinecraftEntityTypes22["CommandBlockMinecart"] = "minecraft:command_block_minecart";
-  MinecraftEntityTypes22["CopperGolem"] = "minecraft:copper_golem";
-  MinecraftEntityTypes22["Cow"] = "minecraft:cow";
-  MinecraftEntityTypes22["Creaking"] = "minecraft:creaking";
-  MinecraftEntityTypes22["Creeper"] = "minecraft:creeper";
-  MinecraftEntityTypes22["Dolphin"] = "minecraft:dolphin";
-  MinecraftEntityTypes22["Donkey"] = "minecraft:donkey";
-  MinecraftEntityTypes22["DragonFireball"] = "minecraft:dragon_fireball";
-  MinecraftEntityTypes22["Drowned"] = "minecraft:drowned";
-  MinecraftEntityTypes22["Egg"] = "minecraft:egg";
-  MinecraftEntityTypes22["ElderGuardian"] = "minecraft:elder_guardian";
-  MinecraftEntityTypes22["EnderCrystal"] = "minecraft:ender_crystal";
-  MinecraftEntityTypes22["EnderDragon"] = "minecraft:ender_dragon";
-  MinecraftEntityTypes22["EnderPearl"] = "minecraft:ender_pearl";
-  MinecraftEntityTypes22["Enderman"] = "minecraft:enderman";
-  MinecraftEntityTypes22["Endermite"] = "minecraft:endermite";
-  MinecraftEntityTypes22["EvocationIllager"] = "minecraft:evocation_illager";
-  MinecraftEntityTypes22["EyeOfEnderSignal"] = "minecraft:eye_of_ender_signal";
-  MinecraftEntityTypes22["Fireball"] = "minecraft:fireball";
-  MinecraftEntityTypes22["FireworksRocket"] = "minecraft:fireworks_rocket";
-  MinecraftEntityTypes22["FishingHook"] = "minecraft:fishing_hook";
-  MinecraftEntityTypes22["Fox"] = "minecraft:fox";
-  MinecraftEntityTypes22["Frog"] = "minecraft:frog";
-  MinecraftEntityTypes22["Ghast"] = "minecraft:ghast";
-  MinecraftEntityTypes22["GlowSquid"] = "minecraft:glow_squid";
-  MinecraftEntityTypes22["Goat"] = "minecraft:goat";
-  MinecraftEntityTypes22["Guardian"] = "minecraft:guardian";
-  MinecraftEntityTypes22["HappyGhast"] = "minecraft:happy_ghast";
-  MinecraftEntityTypes22["Hoglin"] = "minecraft:hoglin";
-  MinecraftEntityTypes22["HopperMinecart"] = "minecraft:hopper_minecart";
-  MinecraftEntityTypes22["Horse"] = "minecraft:horse";
-  MinecraftEntityTypes22["Husk"] = "minecraft:husk";
-  MinecraftEntityTypes22["IronGolem"] = "minecraft:iron_golem";
-  MinecraftEntityTypes22["LightningBolt"] = "minecraft:lightning_bolt";
-  MinecraftEntityTypes22["LingeringPotion"] = "minecraft:lingering_potion";
-  MinecraftEntityTypes22["Llama"] = "minecraft:llama";
-  MinecraftEntityTypes22["LlamaSpit"] = "minecraft:llama_spit";
-  MinecraftEntityTypes22["MagmaCube"] = "minecraft:magma_cube";
-  MinecraftEntityTypes22["Minecart"] = "minecraft:minecart";
-  MinecraftEntityTypes22["Mooshroom"] = "minecraft:mooshroom";
-  MinecraftEntityTypes22["Mule"] = "minecraft:mule";
-  MinecraftEntityTypes22["Nautilus"] = "minecraft:nautilus";
-  MinecraftEntityTypes22["Npc"] = "minecraft:npc";
-  MinecraftEntityTypes22["Ocelot"] = "minecraft:ocelot";
-  MinecraftEntityTypes22["OminousItemSpawner"] = "minecraft:ominous_item_spawner";
-  MinecraftEntityTypes22["Panda"] = "minecraft:panda";
-  MinecraftEntityTypes22["Parched"] = "minecraft:parched";
-  MinecraftEntityTypes22["Parrot"] = "minecraft:parrot";
-  MinecraftEntityTypes22["Phantom"] = "minecraft:phantom";
-  MinecraftEntityTypes22["Pig"] = "minecraft:pig";
-  MinecraftEntityTypes22["Piglin"] = "minecraft:piglin";
-  MinecraftEntityTypes22["PiglinBrute"] = "minecraft:piglin_brute";
-  MinecraftEntityTypes22["Pillager"] = "minecraft:pillager";
-  MinecraftEntityTypes22["Player"] = "minecraft:player";
-  MinecraftEntityTypes22["PolarBear"] = "minecraft:polar_bear";
-  MinecraftEntityTypes22["Pufferfish"] = "minecraft:pufferfish";
-  MinecraftEntityTypes22["Rabbit"] = "minecraft:rabbit";
-  MinecraftEntityTypes22["Ravager"] = "minecraft:ravager";
-  MinecraftEntityTypes22["Salmon"] = "minecraft:salmon";
-  MinecraftEntityTypes22["Sheep"] = "minecraft:sheep";
-  MinecraftEntityTypes22["Shulker"] = "minecraft:shulker";
-  MinecraftEntityTypes22["ShulkerBullet"] = "minecraft:shulker_bullet";
-  MinecraftEntityTypes22["Silverfish"] = "minecraft:silverfish";
-  MinecraftEntityTypes22["Skeleton"] = "minecraft:skeleton";
-  MinecraftEntityTypes22["SkeletonHorse"] = "minecraft:skeleton_horse";
-  MinecraftEntityTypes22["Slime"] = "minecraft:slime";
-  MinecraftEntityTypes22["SmallFireball"] = "minecraft:small_fireball";
-  MinecraftEntityTypes22["Sniffer"] = "minecraft:sniffer";
-  MinecraftEntityTypes22["SnowGolem"] = "minecraft:snow_golem";
-  MinecraftEntityTypes22["Snowball"] = "minecraft:snowball";
-  MinecraftEntityTypes22["Spider"] = "minecraft:spider";
-  MinecraftEntityTypes22["SplashPotion"] = "minecraft:splash_potion";
-  MinecraftEntityTypes22["Squid"] = "minecraft:squid";
-  MinecraftEntityTypes22["Stray"] = "minecraft:stray";
-  MinecraftEntityTypes22["Strider"] = "minecraft:strider";
-  MinecraftEntityTypes22["Tadpole"] = "minecraft:tadpole";
-  MinecraftEntityTypes22["ThrownTrident"] = "minecraft:thrown_trident";
-  MinecraftEntityTypes22["Tnt"] = "minecraft:tnt";
-  MinecraftEntityTypes22["TntMinecart"] = "minecraft:tnt_minecart";
-  MinecraftEntityTypes22["TraderLlama"] = "minecraft:trader_llama";
-  MinecraftEntityTypes22["TripodCamera"] = "minecraft:tripod_camera";
-  MinecraftEntityTypes22["Tropicalfish"] = "minecraft:tropicalfish";
-  MinecraftEntityTypes22["Turtle"] = "minecraft:turtle";
-  MinecraftEntityTypes22["Vex"] = "minecraft:vex";
-  MinecraftEntityTypes22["Villager"] = "minecraft:villager";
-  MinecraftEntityTypes22["VillagerV2"] = "minecraft:villager_v2";
-  MinecraftEntityTypes22["Vindicator"] = "minecraft:vindicator";
-  MinecraftEntityTypes22["WanderingTrader"] = "minecraft:wandering_trader";
-  MinecraftEntityTypes22["Warden"] = "minecraft:warden";
-  MinecraftEntityTypes22["WindChargeProjectile"] = "minecraft:wind_charge_projectile";
-  MinecraftEntityTypes22["Witch"] = "minecraft:witch";
-  MinecraftEntityTypes22["Wither"] = "minecraft:wither";
-  MinecraftEntityTypes22["WitherSkeleton"] = "minecraft:wither_skeleton";
-  MinecraftEntityTypes22["WitherSkull"] = "minecraft:wither_skull";
-  MinecraftEntityTypes22["WitherSkullDangerous"] = "minecraft:wither_skull_dangerous";
-  MinecraftEntityTypes22["Wolf"] = "minecraft:wolf";
-  MinecraftEntityTypes22["XpBottle"] = "minecraft:xp_bottle";
-  MinecraftEntityTypes22["XpOrb"] = "minecraft:xp_orb";
-  MinecraftEntityTypes22["Zoglin"] = "minecraft:zoglin";
-  MinecraftEntityTypes22["Zombie"] = "minecraft:zombie";
-  MinecraftEntityTypes22["ZombieHorse"] = "minecraft:zombie_horse";
-  MinecraftEntityTypes22["ZombieNautilus"] = "minecraft:zombie_nautilus";
-  MinecraftEntityTypes22["ZombiePigman"] = "minecraft:zombie_pigman";
-  MinecraftEntityTypes22["ZombieVillager"] = "minecraft:zombie_villager";
-  MinecraftEntityTypes22["ZombieVillagerV2"] = "minecraft:zombie_villager_v2";
-  return MinecraftEntityTypes22;
+var MinecraftEntityTypes = ((MinecraftEntityTypes2) => {
+  MinecraftEntityTypes2["Agent"] = "minecraft:agent";
+  MinecraftEntityTypes2["Allay"] = "minecraft:allay";
+  MinecraftEntityTypes2["AreaEffectCloud"] = "minecraft:area_effect_cloud";
+  MinecraftEntityTypes2["Armadillo"] = "minecraft:armadillo";
+  MinecraftEntityTypes2["ArmorStand"] = "minecraft:armor_stand";
+  MinecraftEntityTypes2["Arrow"] = "minecraft:arrow";
+  MinecraftEntityTypes2["Axolotl"] = "minecraft:axolotl";
+  MinecraftEntityTypes2["Bat"] = "minecraft:bat";
+  MinecraftEntityTypes2["Bee"] = "minecraft:bee";
+  MinecraftEntityTypes2["Blaze"] = "minecraft:blaze";
+  MinecraftEntityTypes2["Boat"] = "minecraft:boat";
+  MinecraftEntityTypes2["Bogged"] = "minecraft:bogged";
+  MinecraftEntityTypes2["Breeze"] = "minecraft:breeze";
+  MinecraftEntityTypes2["BreezeWindChargeProjectile"] = "minecraft:breeze_wind_charge_projectile";
+  MinecraftEntityTypes2["Camel"] = "minecraft:camel";
+  MinecraftEntityTypes2["CamelHusk"] = "minecraft:camel_husk";
+  MinecraftEntityTypes2["Cat"] = "minecraft:cat";
+  MinecraftEntityTypes2["CaveSpider"] = "minecraft:cave_spider";
+  MinecraftEntityTypes2["ChestBoat"] = "minecraft:chest_boat";
+  MinecraftEntityTypes2["ChestMinecart"] = "minecraft:chest_minecart";
+  MinecraftEntityTypes2["Chicken"] = "minecraft:chicken";
+  MinecraftEntityTypes2["Cod"] = "minecraft:cod";
+  MinecraftEntityTypes2["CommandBlockMinecart"] = "minecraft:command_block_minecart";
+  MinecraftEntityTypes2["CopperGolem"] = "minecraft:copper_golem";
+  MinecraftEntityTypes2["Cow"] = "minecraft:cow";
+  MinecraftEntityTypes2["Creaking"] = "minecraft:creaking";
+  MinecraftEntityTypes2["Creeper"] = "minecraft:creeper";
+  MinecraftEntityTypes2["Dolphin"] = "minecraft:dolphin";
+  MinecraftEntityTypes2["Donkey"] = "minecraft:donkey";
+  MinecraftEntityTypes2["DragonFireball"] = "minecraft:dragon_fireball";
+  MinecraftEntityTypes2["Drowned"] = "minecraft:drowned";
+  MinecraftEntityTypes2["Egg"] = "minecraft:egg";
+  MinecraftEntityTypes2["ElderGuardian"] = "minecraft:elder_guardian";
+  MinecraftEntityTypes2["EnderCrystal"] = "minecraft:ender_crystal";
+  MinecraftEntityTypes2["EnderDragon"] = "minecraft:ender_dragon";
+  MinecraftEntityTypes2["EnderPearl"] = "minecraft:ender_pearl";
+  MinecraftEntityTypes2["Enderman"] = "minecraft:enderman";
+  MinecraftEntityTypes2["Endermite"] = "minecraft:endermite";
+  MinecraftEntityTypes2["EvocationIllager"] = "minecraft:evocation_illager";
+  MinecraftEntityTypes2["EyeOfEnderSignal"] = "minecraft:eye_of_ender_signal";
+  MinecraftEntityTypes2["Fireball"] = "minecraft:fireball";
+  MinecraftEntityTypes2["FireworksRocket"] = "minecraft:fireworks_rocket";
+  MinecraftEntityTypes2["FishingHook"] = "minecraft:fishing_hook";
+  MinecraftEntityTypes2["Fox"] = "minecraft:fox";
+  MinecraftEntityTypes2["Frog"] = "minecraft:frog";
+  MinecraftEntityTypes2["Ghast"] = "minecraft:ghast";
+  MinecraftEntityTypes2["GlowSquid"] = "minecraft:glow_squid";
+  MinecraftEntityTypes2["Goat"] = "minecraft:goat";
+  MinecraftEntityTypes2["Guardian"] = "minecraft:guardian";
+  MinecraftEntityTypes2["HappyGhast"] = "minecraft:happy_ghast";
+  MinecraftEntityTypes2["Hoglin"] = "minecraft:hoglin";
+  MinecraftEntityTypes2["HopperMinecart"] = "minecraft:hopper_minecart";
+  MinecraftEntityTypes2["Horse"] = "minecraft:horse";
+  MinecraftEntityTypes2["Husk"] = "minecraft:husk";
+  MinecraftEntityTypes2["IronGolem"] = "minecraft:iron_golem";
+  MinecraftEntityTypes2["LightningBolt"] = "minecraft:lightning_bolt";
+  MinecraftEntityTypes2["LingeringPotion"] = "minecraft:lingering_potion";
+  MinecraftEntityTypes2["Llama"] = "minecraft:llama";
+  MinecraftEntityTypes2["LlamaSpit"] = "minecraft:llama_spit";
+  MinecraftEntityTypes2["MagmaCube"] = "minecraft:magma_cube";
+  MinecraftEntityTypes2["Minecart"] = "minecraft:minecart";
+  MinecraftEntityTypes2["Mooshroom"] = "minecraft:mooshroom";
+  MinecraftEntityTypes2["Mule"] = "minecraft:mule";
+  MinecraftEntityTypes2["Nautilus"] = "minecraft:nautilus";
+  MinecraftEntityTypes2["Npc"] = "minecraft:npc";
+  MinecraftEntityTypes2["Ocelot"] = "minecraft:ocelot";
+  MinecraftEntityTypes2["OminousItemSpawner"] = "minecraft:ominous_item_spawner";
+  MinecraftEntityTypes2["Panda"] = "minecraft:panda";
+  MinecraftEntityTypes2["Parched"] = "minecraft:parched";
+  MinecraftEntityTypes2["Parrot"] = "minecraft:parrot";
+  MinecraftEntityTypes2["Phantom"] = "minecraft:phantom";
+  MinecraftEntityTypes2["Pig"] = "minecraft:pig";
+  MinecraftEntityTypes2["Piglin"] = "minecraft:piglin";
+  MinecraftEntityTypes2["PiglinBrute"] = "minecraft:piglin_brute";
+  MinecraftEntityTypes2["Pillager"] = "minecraft:pillager";
+  MinecraftEntityTypes2["Player"] = "minecraft:player";
+  MinecraftEntityTypes2["PolarBear"] = "minecraft:polar_bear";
+  MinecraftEntityTypes2["Pufferfish"] = "minecraft:pufferfish";
+  MinecraftEntityTypes2["Rabbit"] = "minecraft:rabbit";
+  MinecraftEntityTypes2["Ravager"] = "minecraft:ravager";
+  MinecraftEntityTypes2["Salmon"] = "minecraft:salmon";
+  MinecraftEntityTypes2["Sheep"] = "minecraft:sheep";
+  MinecraftEntityTypes2["Shulker"] = "minecraft:shulker";
+  MinecraftEntityTypes2["ShulkerBullet"] = "minecraft:shulker_bullet";
+  MinecraftEntityTypes2["Silverfish"] = "minecraft:silverfish";
+  MinecraftEntityTypes2["Skeleton"] = "minecraft:skeleton";
+  MinecraftEntityTypes2["SkeletonHorse"] = "minecraft:skeleton_horse";
+  MinecraftEntityTypes2["Slime"] = "minecraft:slime";
+  MinecraftEntityTypes2["SmallFireball"] = "minecraft:small_fireball";
+  MinecraftEntityTypes2["Sniffer"] = "minecraft:sniffer";
+  MinecraftEntityTypes2["SnowGolem"] = "minecraft:snow_golem";
+  MinecraftEntityTypes2["Snowball"] = "minecraft:snowball";
+  MinecraftEntityTypes2["Spider"] = "minecraft:spider";
+  MinecraftEntityTypes2["SplashPotion"] = "minecraft:splash_potion";
+  MinecraftEntityTypes2["Squid"] = "minecraft:squid";
+  MinecraftEntityTypes2["Stray"] = "minecraft:stray";
+  MinecraftEntityTypes2["Strider"] = "minecraft:strider";
+  MinecraftEntityTypes2["Tadpole"] = "minecraft:tadpole";
+  MinecraftEntityTypes2["ThrownTrident"] = "minecraft:thrown_trident";
+  MinecraftEntityTypes2["Tnt"] = "minecraft:tnt";
+  MinecraftEntityTypes2["TntMinecart"] = "minecraft:tnt_minecart";
+  MinecraftEntityTypes2["TraderLlama"] = "minecraft:trader_llama";
+  MinecraftEntityTypes2["TripodCamera"] = "minecraft:tripod_camera";
+  MinecraftEntityTypes2["Tropicalfish"] = "minecraft:tropicalfish";
+  MinecraftEntityTypes2["Turtle"] = "minecraft:turtle";
+  MinecraftEntityTypes2["Vex"] = "minecraft:vex";
+  MinecraftEntityTypes2["Villager"] = "minecraft:villager";
+  MinecraftEntityTypes2["VillagerV2"] = "minecraft:villager_v2";
+  MinecraftEntityTypes2["Vindicator"] = "minecraft:vindicator";
+  MinecraftEntityTypes2["WanderingTrader"] = "minecraft:wandering_trader";
+  MinecraftEntityTypes2["Warden"] = "minecraft:warden";
+  MinecraftEntityTypes2["WindChargeProjectile"] = "minecraft:wind_charge_projectile";
+  MinecraftEntityTypes2["Witch"] = "minecraft:witch";
+  MinecraftEntityTypes2["Wither"] = "minecraft:wither";
+  MinecraftEntityTypes2["WitherSkeleton"] = "minecraft:wither_skeleton";
+  MinecraftEntityTypes2["WitherSkull"] = "minecraft:wither_skull";
+  MinecraftEntityTypes2["WitherSkullDangerous"] = "minecraft:wither_skull_dangerous";
+  MinecraftEntityTypes2["Wolf"] = "minecraft:wolf";
+  MinecraftEntityTypes2["XpBottle"] = "minecraft:xp_bottle";
+  MinecraftEntityTypes2["XpOrb"] = "minecraft:xp_orb";
+  MinecraftEntityTypes2["Zoglin"] = "minecraft:zoglin";
+  MinecraftEntityTypes2["Zombie"] = "minecraft:zombie";
+  MinecraftEntityTypes2["ZombieHorse"] = "minecraft:zombie_horse";
+  MinecraftEntityTypes2["ZombieNautilus"] = "minecraft:zombie_nautilus";
+  MinecraftEntityTypes2["ZombiePigman"] = "minecraft:zombie_pigman";
+  MinecraftEntityTypes2["ZombieVillager"] = "minecraft:zombie_villager";
+  MinecraftEntityTypes2["ZombieVillagerV2"] = "minecraft:zombie_villager_v2";
+  return MinecraftEntityTypes2;
 })(MinecraftEntityTypes || {});
 var MinecraftFeatureTypes = ((MinecraftFeatureTypes2) => {
   MinecraftFeatureTypes2["AncientCity"] = "minecraft:ancient_city";
@@ -1665,1494 +1662,1494 @@ var MinecraftFeatureTypes = ((MinecraftFeatureTypes2) => {
   MinecraftFeatureTypes2["Village"] = "minecraft:village";
   return MinecraftFeatureTypes2;
 })(MinecraftFeatureTypes || {});
-var MinecraftItemTypes = ((MinecraftItemTypes22) => {
-  MinecraftItemTypes22["AcaciaBoat"] = "minecraft:acacia_boat";
-  MinecraftItemTypes22["AcaciaButton"] = "minecraft:acacia_button";
-  MinecraftItemTypes22["AcaciaChestBoat"] = "minecraft:acacia_chest_boat";
-  MinecraftItemTypes22["AcaciaDoor"] = "minecraft:acacia_door";
-  MinecraftItemTypes22["AcaciaFence"] = "minecraft:acacia_fence";
-  MinecraftItemTypes22["AcaciaFenceGate"] = "minecraft:acacia_fence_gate";
-  MinecraftItemTypes22["AcaciaHangingSign"] = "minecraft:acacia_hanging_sign";
-  MinecraftItemTypes22["AcaciaLeaves"] = "minecraft:acacia_leaves";
-  MinecraftItemTypes22["AcaciaLog"] = "minecraft:acacia_log";
-  MinecraftItemTypes22["AcaciaPlanks"] = "minecraft:acacia_planks";
-  MinecraftItemTypes22["AcaciaPressurePlate"] = "minecraft:acacia_pressure_plate";
-  MinecraftItemTypes22["AcaciaSapling"] = "minecraft:acacia_sapling";
-  MinecraftItemTypes22["AcaciaShelf"] = "minecraft:acacia_shelf";
-  MinecraftItemTypes22["AcaciaSign"] = "minecraft:acacia_sign";
-  MinecraftItemTypes22["AcaciaSlab"] = "minecraft:acacia_slab";
-  MinecraftItemTypes22["AcaciaStairs"] = "minecraft:acacia_stairs";
-  MinecraftItemTypes22["AcaciaTrapdoor"] = "minecraft:acacia_trapdoor";
-  MinecraftItemTypes22["AcaciaWood"] = "minecraft:acacia_wood";
-  MinecraftItemTypes22["ActivatorRail"] = "minecraft:activator_rail";
-  MinecraftItemTypes22["AllaySpawnEgg"] = "minecraft:allay_spawn_egg";
-  MinecraftItemTypes22["Allium"] = "minecraft:allium";
-  MinecraftItemTypes22["Allow"] = "minecraft:allow";
-  MinecraftItemTypes22["AmethystBlock"] = "minecraft:amethyst_block";
-  MinecraftItemTypes22["AmethystCluster"] = "minecraft:amethyst_cluster";
-  MinecraftItemTypes22["AmethystShard"] = "minecraft:amethyst_shard";
-  MinecraftItemTypes22["AncientDebris"] = "minecraft:ancient_debris";
-  MinecraftItemTypes22["Andesite"] = "minecraft:andesite";
-  MinecraftItemTypes22["AndesiteSlab"] = "minecraft:andesite_slab";
-  MinecraftItemTypes22["AndesiteStairs"] = "minecraft:andesite_stairs";
-  MinecraftItemTypes22["AndesiteWall"] = "minecraft:andesite_wall";
-  MinecraftItemTypes22["AnglerPotterySherd"] = "minecraft:angler_pottery_sherd";
-  MinecraftItemTypes22["Anvil"] = "minecraft:anvil";
-  MinecraftItemTypes22["Apple"] = "minecraft:apple";
-  MinecraftItemTypes22["ArcherPotterySherd"] = "minecraft:archer_pottery_sherd";
-  MinecraftItemTypes22["ArmadilloScute"] = "minecraft:armadillo_scute";
-  MinecraftItemTypes22["ArmadilloSpawnEgg"] = "minecraft:armadillo_spawn_egg";
-  MinecraftItemTypes22["ArmorStand"] = "minecraft:armor_stand";
-  MinecraftItemTypes22["ArmsUpPotterySherd"] = "minecraft:arms_up_pottery_sherd";
-  MinecraftItemTypes22["Arrow"] = "minecraft:arrow";
-  MinecraftItemTypes22["AxolotlBucket"] = "minecraft:axolotl_bucket";
-  MinecraftItemTypes22["AxolotlSpawnEgg"] = "minecraft:axolotl_spawn_egg";
-  MinecraftItemTypes22["Azalea"] = "minecraft:azalea";
-  MinecraftItemTypes22["AzaleaLeaves"] = "minecraft:azalea_leaves";
-  MinecraftItemTypes22["AzaleaLeavesFlowered"] = "minecraft:azalea_leaves_flowered";
-  MinecraftItemTypes22["AzureBluet"] = "minecraft:azure_bluet";
-  MinecraftItemTypes22["BakedPotato"] = "minecraft:baked_potato";
-  MinecraftItemTypes22["Bamboo"] = "minecraft:bamboo";
-  MinecraftItemTypes22["BambooBlock"] = "minecraft:bamboo_block";
-  MinecraftItemTypes22["BambooButton"] = "minecraft:bamboo_button";
-  MinecraftItemTypes22["BambooChestRaft"] = "minecraft:bamboo_chest_raft";
-  MinecraftItemTypes22["BambooDoor"] = "minecraft:bamboo_door";
-  MinecraftItemTypes22["BambooFence"] = "minecraft:bamboo_fence";
-  MinecraftItemTypes22["BambooFenceGate"] = "minecraft:bamboo_fence_gate";
-  MinecraftItemTypes22["BambooHangingSign"] = "minecraft:bamboo_hanging_sign";
-  MinecraftItemTypes22["BambooMosaic"] = "minecraft:bamboo_mosaic";
-  MinecraftItemTypes22["BambooMosaicSlab"] = "minecraft:bamboo_mosaic_slab";
-  MinecraftItemTypes22["BambooMosaicStairs"] = "minecraft:bamboo_mosaic_stairs";
-  MinecraftItemTypes22["BambooPlanks"] = "minecraft:bamboo_planks";
-  MinecraftItemTypes22["BambooPressurePlate"] = "minecraft:bamboo_pressure_plate";
-  MinecraftItemTypes22["BambooRaft"] = "minecraft:bamboo_raft";
-  MinecraftItemTypes22["BambooShelf"] = "minecraft:bamboo_shelf";
-  MinecraftItemTypes22["BambooSign"] = "minecraft:bamboo_sign";
-  MinecraftItemTypes22["BambooSlab"] = "minecraft:bamboo_slab";
-  MinecraftItemTypes22["BambooStairs"] = "minecraft:bamboo_stairs";
-  MinecraftItemTypes22["BambooTrapdoor"] = "minecraft:bamboo_trapdoor";
-  MinecraftItemTypes22["Banner"] = "minecraft:banner";
-  MinecraftItemTypes22["Barrel"] = "minecraft:barrel";
-  MinecraftItemTypes22["Barrier"] = "minecraft:barrier";
-  MinecraftItemTypes22["Basalt"] = "minecraft:basalt";
-  MinecraftItemTypes22["BatSpawnEgg"] = "minecraft:bat_spawn_egg";
-  MinecraftItemTypes22["Beacon"] = "minecraft:beacon";
-  MinecraftItemTypes22["Bed"] = "minecraft:bed";
-  MinecraftItemTypes22["Bedrock"] = "minecraft:bedrock";
-  MinecraftItemTypes22["BeeNest"] = "minecraft:bee_nest";
-  MinecraftItemTypes22["BeeSpawnEgg"] = "minecraft:bee_spawn_egg";
-  MinecraftItemTypes22["Beef"] = "minecraft:beef";
-  MinecraftItemTypes22["Beehive"] = "minecraft:beehive";
-  MinecraftItemTypes22["Beetroot"] = "minecraft:beetroot";
-  MinecraftItemTypes22["BeetrootSeeds"] = "minecraft:beetroot_seeds";
-  MinecraftItemTypes22["BeetrootSoup"] = "minecraft:beetroot_soup";
-  MinecraftItemTypes22["Bell"] = "minecraft:bell";
-  MinecraftItemTypes22["BigDripleaf"] = "minecraft:big_dripleaf";
-  MinecraftItemTypes22["BirchBoat"] = "minecraft:birch_boat";
-  MinecraftItemTypes22["BirchButton"] = "minecraft:birch_button";
-  MinecraftItemTypes22["BirchChestBoat"] = "minecraft:birch_chest_boat";
-  MinecraftItemTypes22["BirchDoor"] = "minecraft:birch_door";
-  MinecraftItemTypes22["BirchFence"] = "minecraft:birch_fence";
-  MinecraftItemTypes22["BirchFenceGate"] = "minecraft:birch_fence_gate";
-  MinecraftItemTypes22["BirchHangingSign"] = "minecraft:birch_hanging_sign";
-  MinecraftItemTypes22["BirchLeaves"] = "minecraft:birch_leaves";
-  MinecraftItemTypes22["BirchLog"] = "minecraft:birch_log";
-  MinecraftItemTypes22["BirchPlanks"] = "minecraft:birch_planks";
-  MinecraftItemTypes22["BirchPressurePlate"] = "minecraft:birch_pressure_plate";
-  MinecraftItemTypes22["BirchSapling"] = "minecraft:birch_sapling";
-  MinecraftItemTypes22["BirchShelf"] = "minecraft:birch_shelf";
-  MinecraftItemTypes22["BirchSign"] = "minecraft:birch_sign";
-  MinecraftItemTypes22["BirchSlab"] = "minecraft:birch_slab";
-  MinecraftItemTypes22["BirchStairs"] = "minecraft:birch_stairs";
-  MinecraftItemTypes22["BirchTrapdoor"] = "minecraft:birch_trapdoor";
-  MinecraftItemTypes22["BirchWood"] = "minecraft:birch_wood";
-  MinecraftItemTypes22["BlackBundle"] = "minecraft:black_bundle";
-  MinecraftItemTypes22["BlackCandle"] = "minecraft:black_candle";
-  MinecraftItemTypes22["BlackCarpet"] = "minecraft:black_carpet";
-  MinecraftItemTypes22["BlackConcrete"] = "minecraft:black_concrete";
-  MinecraftItemTypes22["BlackConcretePowder"] = "minecraft:black_concrete_powder";
-  MinecraftItemTypes22["BlackDye"] = "minecraft:black_dye";
-  MinecraftItemTypes22["BlackGlazedTerracotta"] = "minecraft:black_glazed_terracotta";
-  MinecraftItemTypes22["BlackHarness"] = "minecraft:black_harness";
-  MinecraftItemTypes22["BlackShulkerBox"] = "minecraft:black_shulker_box";
-  MinecraftItemTypes22["BlackStainedGlass"] = "minecraft:black_stained_glass";
-  MinecraftItemTypes22["BlackStainedGlassPane"] = "minecraft:black_stained_glass_pane";
-  MinecraftItemTypes22["BlackTerracotta"] = "minecraft:black_terracotta";
-  MinecraftItemTypes22["BlackWool"] = "minecraft:black_wool";
-  MinecraftItemTypes22["Blackstone"] = "minecraft:blackstone";
-  MinecraftItemTypes22["BlackstoneSlab"] = "minecraft:blackstone_slab";
-  MinecraftItemTypes22["BlackstoneStairs"] = "minecraft:blackstone_stairs";
-  MinecraftItemTypes22["BlackstoneWall"] = "minecraft:blackstone_wall";
-  MinecraftItemTypes22["BladePotterySherd"] = "minecraft:blade_pottery_sherd";
-  MinecraftItemTypes22["BlastFurnace"] = "minecraft:blast_furnace";
-  MinecraftItemTypes22["BlazePowder"] = "minecraft:blaze_powder";
-  MinecraftItemTypes22["BlazeRod"] = "minecraft:blaze_rod";
-  MinecraftItemTypes22["BlazeSpawnEgg"] = "minecraft:blaze_spawn_egg";
-  MinecraftItemTypes22["BlueBundle"] = "minecraft:blue_bundle";
-  MinecraftItemTypes22["BlueCandle"] = "minecraft:blue_candle";
-  MinecraftItemTypes22["BlueCarpet"] = "minecraft:blue_carpet";
-  MinecraftItemTypes22["BlueConcrete"] = "minecraft:blue_concrete";
-  MinecraftItemTypes22["BlueConcretePowder"] = "minecraft:blue_concrete_powder";
-  MinecraftItemTypes22["BlueDye"] = "minecraft:blue_dye";
-  MinecraftItemTypes22["BlueEgg"] = "minecraft:blue_egg";
-  MinecraftItemTypes22["BlueGlazedTerracotta"] = "minecraft:blue_glazed_terracotta";
-  MinecraftItemTypes22["BlueHarness"] = "minecraft:blue_harness";
-  MinecraftItemTypes22["BlueIce"] = "minecraft:blue_ice";
-  MinecraftItemTypes22["BlueOrchid"] = "minecraft:blue_orchid";
-  MinecraftItemTypes22["BlueShulkerBox"] = "minecraft:blue_shulker_box";
-  MinecraftItemTypes22["BlueStainedGlass"] = "minecraft:blue_stained_glass";
-  MinecraftItemTypes22["BlueStainedGlassPane"] = "minecraft:blue_stained_glass_pane";
-  MinecraftItemTypes22["BlueTerracotta"] = "minecraft:blue_terracotta";
-  MinecraftItemTypes22["BlueWool"] = "minecraft:blue_wool";
-  MinecraftItemTypes22["BoggedSpawnEgg"] = "minecraft:bogged_spawn_egg";
-  MinecraftItemTypes22["BoltArmorTrimSmithingTemplate"] = "minecraft:bolt_armor_trim_smithing_template";
-  MinecraftItemTypes22["Bone"] = "minecraft:bone";
-  MinecraftItemTypes22["BoneBlock"] = "minecraft:bone_block";
-  MinecraftItemTypes22["BoneMeal"] = "minecraft:bone_meal";
-  MinecraftItemTypes22["Book"] = "minecraft:book";
-  MinecraftItemTypes22["Bookshelf"] = "minecraft:bookshelf";
-  MinecraftItemTypes22["BorderBlock"] = "minecraft:border_block";
-  MinecraftItemTypes22["BordureIndentedBannerPattern"] = "minecraft:bordure_indented_banner_pattern";
-  MinecraftItemTypes22["Bow"] = "minecraft:bow";
-  MinecraftItemTypes22["Bowl"] = "minecraft:bowl";
-  MinecraftItemTypes22["BrainCoral"] = "minecraft:brain_coral";
-  MinecraftItemTypes22["BrainCoralBlock"] = "minecraft:brain_coral_block";
-  MinecraftItemTypes22["BrainCoralFan"] = "minecraft:brain_coral_fan";
-  MinecraftItemTypes22["Bread"] = "minecraft:bread";
-  MinecraftItemTypes22["BreezeRod"] = "minecraft:breeze_rod";
-  MinecraftItemTypes22["BreezeSpawnEgg"] = "minecraft:breeze_spawn_egg";
-  MinecraftItemTypes22["BrewerPotterySherd"] = "minecraft:brewer_pottery_sherd";
-  MinecraftItemTypes22["BrewingStand"] = "minecraft:brewing_stand";
-  MinecraftItemTypes22["Brick"] = "minecraft:brick";
-  MinecraftItemTypes22["BrickBlock"] = "minecraft:brick_block";
-  MinecraftItemTypes22["BrickSlab"] = "minecraft:brick_slab";
-  MinecraftItemTypes22["BrickStairs"] = "minecraft:brick_stairs";
-  MinecraftItemTypes22["BrickWall"] = "minecraft:brick_wall";
-  MinecraftItemTypes22["BrownBundle"] = "minecraft:brown_bundle";
-  MinecraftItemTypes22["BrownCandle"] = "minecraft:brown_candle";
-  MinecraftItemTypes22["BrownCarpet"] = "minecraft:brown_carpet";
-  MinecraftItemTypes22["BrownConcrete"] = "minecraft:brown_concrete";
-  MinecraftItemTypes22["BrownConcretePowder"] = "minecraft:brown_concrete_powder";
-  MinecraftItemTypes22["BrownDye"] = "minecraft:brown_dye";
-  MinecraftItemTypes22["BrownEgg"] = "minecraft:brown_egg";
-  MinecraftItemTypes22["BrownGlazedTerracotta"] = "minecraft:brown_glazed_terracotta";
-  MinecraftItemTypes22["BrownHarness"] = "minecraft:brown_harness";
-  MinecraftItemTypes22["BrownMushroom"] = "minecraft:brown_mushroom";
-  MinecraftItemTypes22["BrownMushroomBlock"] = "minecraft:brown_mushroom_block";
-  MinecraftItemTypes22["BrownShulkerBox"] = "minecraft:brown_shulker_box";
-  MinecraftItemTypes22["BrownStainedGlass"] = "minecraft:brown_stained_glass";
-  MinecraftItemTypes22["BrownStainedGlassPane"] = "minecraft:brown_stained_glass_pane";
-  MinecraftItemTypes22["BrownTerracotta"] = "minecraft:brown_terracotta";
-  MinecraftItemTypes22["BrownWool"] = "minecraft:brown_wool";
-  MinecraftItemTypes22["Brush"] = "minecraft:brush";
-  MinecraftItemTypes22["BubbleCoral"] = "minecraft:bubble_coral";
-  MinecraftItemTypes22["BubbleCoralBlock"] = "minecraft:bubble_coral_block";
-  MinecraftItemTypes22["BubbleCoralFan"] = "minecraft:bubble_coral_fan";
-  MinecraftItemTypes22["Bucket"] = "minecraft:bucket";
-  MinecraftItemTypes22["BuddingAmethyst"] = "minecraft:budding_amethyst";
-  MinecraftItemTypes22["Bundle"] = "minecraft:bundle";
-  MinecraftItemTypes22["BurnPotterySherd"] = "minecraft:burn_pottery_sherd";
-  MinecraftItemTypes22["Bush"] = "minecraft:bush";
-  MinecraftItemTypes22["Cactus"] = "minecraft:cactus";
-  MinecraftItemTypes22["CactusFlower"] = "minecraft:cactus_flower";
-  MinecraftItemTypes22["Cake"] = "minecraft:cake";
-  MinecraftItemTypes22["Calcite"] = "minecraft:calcite";
-  MinecraftItemTypes22["CalibratedSculkSensor"] = "minecraft:calibrated_sculk_sensor";
-  MinecraftItemTypes22["CamelHuskSpawnEgg"] = "minecraft:camel_husk_spawn_egg";
-  MinecraftItemTypes22["CamelSpawnEgg"] = "minecraft:camel_spawn_egg";
-  MinecraftItemTypes22["Campfire"] = "minecraft:campfire";
-  MinecraftItemTypes22["Candle"] = "minecraft:candle";
-  MinecraftItemTypes22["Carrot"] = "minecraft:carrot";
-  MinecraftItemTypes22["CarrotOnAStick"] = "minecraft:carrot_on_a_stick";
-  MinecraftItemTypes22["CartographyTable"] = "minecraft:cartography_table";
-  MinecraftItemTypes22["CarvedPumpkin"] = "minecraft:carved_pumpkin";
-  MinecraftItemTypes22["CatSpawnEgg"] = "minecraft:cat_spawn_egg";
-  MinecraftItemTypes22["Cauldron"] = "minecraft:cauldron";
-  MinecraftItemTypes22["CaveSpiderSpawnEgg"] = "minecraft:cave_spider_spawn_egg";
-  MinecraftItemTypes22["ChainCommandBlock"] = "minecraft:chain_command_block";
-  MinecraftItemTypes22["ChainmailBoots"] = "minecraft:chainmail_boots";
-  MinecraftItemTypes22["ChainmailChestplate"] = "minecraft:chainmail_chestplate";
-  MinecraftItemTypes22["ChainmailHelmet"] = "minecraft:chainmail_helmet";
-  MinecraftItemTypes22["ChainmailLeggings"] = "minecraft:chainmail_leggings";
-  MinecraftItemTypes22["Charcoal"] = "minecraft:charcoal";
-  MinecraftItemTypes22["CherryBoat"] = "minecraft:cherry_boat";
-  MinecraftItemTypes22["CherryButton"] = "minecraft:cherry_button";
-  MinecraftItemTypes22["CherryChestBoat"] = "minecraft:cherry_chest_boat";
-  MinecraftItemTypes22["CherryDoor"] = "minecraft:cherry_door";
-  MinecraftItemTypes22["CherryFence"] = "minecraft:cherry_fence";
-  MinecraftItemTypes22["CherryFenceGate"] = "minecraft:cherry_fence_gate";
-  MinecraftItemTypes22["CherryHangingSign"] = "minecraft:cherry_hanging_sign";
-  MinecraftItemTypes22["CherryLeaves"] = "minecraft:cherry_leaves";
-  MinecraftItemTypes22["CherryLog"] = "minecraft:cherry_log";
-  MinecraftItemTypes22["CherryPlanks"] = "minecraft:cherry_planks";
-  MinecraftItemTypes22["CherryPressurePlate"] = "minecraft:cherry_pressure_plate";
-  MinecraftItemTypes22["CherrySapling"] = "minecraft:cherry_sapling";
-  MinecraftItemTypes22["CherryShelf"] = "minecraft:cherry_shelf";
-  MinecraftItemTypes22["CherrySign"] = "minecraft:cherry_sign";
-  MinecraftItemTypes22["CherrySlab"] = "minecraft:cherry_slab";
-  MinecraftItemTypes22["CherryStairs"] = "minecraft:cherry_stairs";
-  MinecraftItemTypes22["CherryTrapdoor"] = "minecraft:cherry_trapdoor";
-  MinecraftItemTypes22["CherryWood"] = "minecraft:cherry_wood";
-  MinecraftItemTypes22["Chest"] = "minecraft:chest";
-  MinecraftItemTypes22["ChestMinecart"] = "minecraft:chest_minecart";
-  MinecraftItemTypes22["Chicken"] = "minecraft:chicken";
-  MinecraftItemTypes22["ChickenSpawnEgg"] = "minecraft:chicken_spawn_egg";
-  MinecraftItemTypes22["ChippedAnvil"] = "minecraft:chipped_anvil";
-  MinecraftItemTypes22["ChiseledBookshelf"] = "minecraft:chiseled_bookshelf";
-  MinecraftItemTypes22["ChiseledCopper"] = "minecraft:chiseled_copper";
-  MinecraftItemTypes22["ChiseledDeepslate"] = "minecraft:chiseled_deepslate";
-  MinecraftItemTypes22["ChiseledNetherBricks"] = "minecraft:chiseled_nether_bricks";
-  MinecraftItemTypes22["ChiseledPolishedBlackstone"] = "minecraft:chiseled_polished_blackstone";
-  MinecraftItemTypes22["ChiseledQuartzBlock"] = "minecraft:chiseled_quartz_block";
-  MinecraftItemTypes22["ChiseledRedSandstone"] = "minecraft:chiseled_red_sandstone";
-  MinecraftItemTypes22["ChiseledResinBricks"] = "minecraft:chiseled_resin_bricks";
-  MinecraftItemTypes22["ChiseledSandstone"] = "minecraft:chiseled_sandstone";
-  MinecraftItemTypes22["ChiseledStoneBricks"] = "minecraft:chiseled_stone_bricks";
-  MinecraftItemTypes22["ChiseledTuff"] = "minecraft:chiseled_tuff";
-  MinecraftItemTypes22["ChiseledTuffBricks"] = "minecraft:chiseled_tuff_bricks";
-  MinecraftItemTypes22["ChorusFlower"] = "minecraft:chorus_flower";
-  MinecraftItemTypes22["ChorusFruit"] = "minecraft:chorus_fruit";
-  MinecraftItemTypes22["ChorusPlant"] = "minecraft:chorus_plant";
-  MinecraftItemTypes22["Clay"] = "minecraft:clay";
-  MinecraftItemTypes22["ClayBall"] = "minecraft:clay_ball";
-  MinecraftItemTypes22["Clock"] = "minecraft:clock";
-  MinecraftItemTypes22["ClosedEyeblossom"] = "minecraft:closed_eyeblossom";
-  MinecraftItemTypes22["Coal"] = "minecraft:coal";
-  MinecraftItemTypes22["CoalBlock"] = "minecraft:coal_block";
-  MinecraftItemTypes22["CoalOre"] = "minecraft:coal_ore";
-  MinecraftItemTypes22["CoarseDirt"] = "minecraft:coarse_dirt";
-  MinecraftItemTypes22["CoastArmorTrimSmithingTemplate"] = "minecraft:coast_armor_trim_smithing_template";
-  MinecraftItemTypes22["CobbledDeepslate"] = "minecraft:cobbled_deepslate";
-  MinecraftItemTypes22["CobbledDeepslateSlab"] = "minecraft:cobbled_deepslate_slab";
-  MinecraftItemTypes22["CobbledDeepslateStairs"] = "minecraft:cobbled_deepslate_stairs";
-  MinecraftItemTypes22["CobbledDeepslateWall"] = "minecraft:cobbled_deepslate_wall";
-  MinecraftItemTypes22["Cobblestone"] = "minecraft:cobblestone";
-  MinecraftItemTypes22["CobblestoneSlab"] = "minecraft:cobblestone_slab";
-  MinecraftItemTypes22["CobblestoneWall"] = "minecraft:cobblestone_wall";
-  MinecraftItemTypes22["CocoaBeans"] = "minecraft:cocoa_beans";
-  MinecraftItemTypes22["Cod"] = "minecraft:cod";
-  MinecraftItemTypes22["CodBucket"] = "minecraft:cod_bucket";
-  MinecraftItemTypes22["CodSpawnEgg"] = "minecraft:cod_spawn_egg";
-  MinecraftItemTypes22["CommandBlock"] = "minecraft:command_block";
-  MinecraftItemTypes22["CommandBlockMinecart"] = "minecraft:command_block_minecart";
-  MinecraftItemTypes22["Comparator"] = "minecraft:comparator";
-  MinecraftItemTypes22["Compass"] = "minecraft:compass";
-  MinecraftItemTypes22["Composter"] = "minecraft:composter";
-  MinecraftItemTypes22["Conduit"] = "minecraft:conduit";
-  MinecraftItemTypes22["CookedBeef"] = "minecraft:cooked_beef";
-  MinecraftItemTypes22["CookedChicken"] = "minecraft:cooked_chicken";
-  MinecraftItemTypes22["CookedCod"] = "minecraft:cooked_cod";
-  MinecraftItemTypes22["CookedMutton"] = "minecraft:cooked_mutton";
-  MinecraftItemTypes22["CookedPorkchop"] = "minecraft:cooked_porkchop";
-  MinecraftItemTypes22["CookedRabbit"] = "minecraft:cooked_rabbit";
-  MinecraftItemTypes22["CookedSalmon"] = "minecraft:cooked_salmon";
-  MinecraftItemTypes22["Cookie"] = "minecraft:cookie";
-  MinecraftItemTypes22["CopperAxe"] = "minecraft:copper_axe";
-  MinecraftItemTypes22["CopperBars"] = "minecraft:copper_bars";
-  MinecraftItemTypes22["CopperBlock"] = "minecraft:copper_block";
-  MinecraftItemTypes22["CopperBoots"] = "minecraft:copper_boots";
-  MinecraftItemTypes22["CopperBulb"] = "minecraft:copper_bulb";
-  MinecraftItemTypes22["CopperChain"] = "minecraft:copper_chain";
-  MinecraftItemTypes22["CopperChest"] = "minecraft:copper_chest";
-  MinecraftItemTypes22["CopperChestplate"] = "minecraft:copper_chestplate";
-  MinecraftItemTypes22["CopperDoor"] = "minecraft:copper_door";
-  MinecraftItemTypes22["CopperGolemSpawnEgg"] = "minecraft:copper_golem_spawn_egg";
-  MinecraftItemTypes22["CopperGolemStatue"] = "minecraft:copper_golem_statue";
-  MinecraftItemTypes22["CopperGrate"] = "minecraft:copper_grate";
-  MinecraftItemTypes22["CopperHelmet"] = "minecraft:copper_helmet";
-  MinecraftItemTypes22["CopperHoe"] = "minecraft:copper_hoe";
-  MinecraftItemTypes22["CopperHorseArmor"] = "minecraft:copper_horse_armor";
-  MinecraftItemTypes22["CopperIngot"] = "minecraft:copper_ingot";
-  MinecraftItemTypes22["CopperLantern"] = "minecraft:copper_lantern";
-  MinecraftItemTypes22["CopperLeggings"] = "minecraft:copper_leggings";
-  MinecraftItemTypes22["CopperNautilusArmor"] = "minecraft:copper_nautilus_armor";
-  MinecraftItemTypes22["CopperNugget"] = "minecraft:copper_nugget";
-  MinecraftItemTypes22["CopperOre"] = "minecraft:copper_ore";
-  MinecraftItemTypes22["CopperPickaxe"] = "minecraft:copper_pickaxe";
-  MinecraftItemTypes22["CopperShovel"] = "minecraft:copper_shovel";
-  MinecraftItemTypes22["CopperSpear"] = "minecraft:copper_spear";
-  MinecraftItemTypes22["CopperSword"] = "minecraft:copper_sword";
-  MinecraftItemTypes22["CopperTorch"] = "minecraft:copper_torch";
-  MinecraftItemTypes22["CopperTrapdoor"] = "minecraft:copper_trapdoor";
-  MinecraftItemTypes22["Cornflower"] = "minecraft:cornflower";
-  MinecraftItemTypes22["CowSpawnEgg"] = "minecraft:cow_spawn_egg";
-  MinecraftItemTypes22["CrackedDeepslateBricks"] = "minecraft:cracked_deepslate_bricks";
-  MinecraftItemTypes22["CrackedDeepslateTiles"] = "minecraft:cracked_deepslate_tiles";
-  MinecraftItemTypes22["CrackedNetherBricks"] = "minecraft:cracked_nether_bricks";
-  MinecraftItemTypes22["CrackedPolishedBlackstoneBricks"] = "minecraft:cracked_polished_blackstone_bricks";
-  MinecraftItemTypes22["CrackedStoneBricks"] = "minecraft:cracked_stone_bricks";
-  MinecraftItemTypes22["Crafter"] = "minecraft:crafter";
-  MinecraftItemTypes22["CraftingTable"] = "minecraft:crafting_table";
-  MinecraftItemTypes22["CreakingHeart"] = "minecraft:creaking_heart";
-  MinecraftItemTypes22["CreakingSpawnEgg"] = "minecraft:creaking_spawn_egg";
-  MinecraftItemTypes22["CreeperBannerPattern"] = "minecraft:creeper_banner_pattern";
-  MinecraftItemTypes22["CreeperHead"] = "minecraft:creeper_head";
-  MinecraftItemTypes22["CreeperSpawnEgg"] = "minecraft:creeper_spawn_egg";
-  MinecraftItemTypes22["CrimsonButton"] = "minecraft:crimson_button";
-  MinecraftItemTypes22["CrimsonDoor"] = "minecraft:crimson_door";
-  MinecraftItemTypes22["CrimsonFence"] = "minecraft:crimson_fence";
-  MinecraftItemTypes22["CrimsonFenceGate"] = "minecraft:crimson_fence_gate";
-  MinecraftItemTypes22["CrimsonFungus"] = "minecraft:crimson_fungus";
-  MinecraftItemTypes22["CrimsonHangingSign"] = "minecraft:crimson_hanging_sign";
-  MinecraftItemTypes22["CrimsonHyphae"] = "minecraft:crimson_hyphae";
-  MinecraftItemTypes22["CrimsonNylium"] = "minecraft:crimson_nylium";
-  MinecraftItemTypes22["CrimsonPlanks"] = "minecraft:crimson_planks";
-  MinecraftItemTypes22["CrimsonPressurePlate"] = "minecraft:crimson_pressure_plate";
-  MinecraftItemTypes22["CrimsonRoots"] = "minecraft:crimson_roots";
-  MinecraftItemTypes22["CrimsonShelf"] = "minecraft:crimson_shelf";
-  MinecraftItemTypes22["CrimsonSign"] = "minecraft:crimson_sign";
-  MinecraftItemTypes22["CrimsonSlab"] = "minecraft:crimson_slab";
-  MinecraftItemTypes22["CrimsonStairs"] = "minecraft:crimson_stairs";
-  MinecraftItemTypes22["CrimsonStem"] = "minecraft:crimson_stem";
-  MinecraftItemTypes22["CrimsonTrapdoor"] = "minecraft:crimson_trapdoor";
-  MinecraftItemTypes22["Crossbow"] = "minecraft:crossbow";
-  MinecraftItemTypes22["CryingObsidian"] = "minecraft:crying_obsidian";
-  MinecraftItemTypes22["CutCopper"] = "minecraft:cut_copper";
-  MinecraftItemTypes22["CutCopperSlab"] = "minecraft:cut_copper_slab";
-  MinecraftItemTypes22["CutCopperStairs"] = "minecraft:cut_copper_stairs";
-  MinecraftItemTypes22["CutRedSandstone"] = "minecraft:cut_red_sandstone";
-  MinecraftItemTypes22["CutRedSandstoneSlab"] = "minecraft:cut_red_sandstone_slab";
-  MinecraftItemTypes22["CutSandstone"] = "minecraft:cut_sandstone";
-  MinecraftItemTypes22["CutSandstoneSlab"] = "minecraft:cut_sandstone_slab";
-  MinecraftItemTypes22["CyanBundle"] = "minecraft:cyan_bundle";
-  MinecraftItemTypes22["CyanCandle"] = "minecraft:cyan_candle";
-  MinecraftItemTypes22["CyanCarpet"] = "minecraft:cyan_carpet";
-  MinecraftItemTypes22["CyanConcrete"] = "minecraft:cyan_concrete";
-  MinecraftItemTypes22["CyanConcretePowder"] = "minecraft:cyan_concrete_powder";
-  MinecraftItemTypes22["CyanDye"] = "minecraft:cyan_dye";
-  MinecraftItemTypes22["CyanGlazedTerracotta"] = "minecraft:cyan_glazed_terracotta";
-  MinecraftItemTypes22["CyanHarness"] = "minecraft:cyan_harness";
-  MinecraftItemTypes22["CyanShulkerBox"] = "minecraft:cyan_shulker_box";
-  MinecraftItemTypes22["CyanStainedGlass"] = "minecraft:cyan_stained_glass";
-  MinecraftItemTypes22["CyanStainedGlassPane"] = "minecraft:cyan_stained_glass_pane";
-  MinecraftItemTypes22["CyanTerracotta"] = "minecraft:cyan_terracotta";
-  MinecraftItemTypes22["CyanWool"] = "minecraft:cyan_wool";
-  MinecraftItemTypes22["DamagedAnvil"] = "minecraft:damaged_anvil";
-  MinecraftItemTypes22["Dandelion"] = "minecraft:dandelion";
-  MinecraftItemTypes22["DangerPotterySherd"] = "minecraft:danger_pottery_sherd";
-  MinecraftItemTypes22["DarkOakBoat"] = "minecraft:dark_oak_boat";
-  MinecraftItemTypes22["DarkOakButton"] = "minecraft:dark_oak_button";
-  MinecraftItemTypes22["DarkOakChestBoat"] = "minecraft:dark_oak_chest_boat";
-  MinecraftItemTypes22["DarkOakDoor"] = "minecraft:dark_oak_door";
-  MinecraftItemTypes22["DarkOakFence"] = "minecraft:dark_oak_fence";
-  MinecraftItemTypes22["DarkOakFenceGate"] = "minecraft:dark_oak_fence_gate";
-  MinecraftItemTypes22["DarkOakHangingSign"] = "minecraft:dark_oak_hanging_sign";
-  MinecraftItemTypes22["DarkOakLeaves"] = "minecraft:dark_oak_leaves";
-  MinecraftItemTypes22["DarkOakLog"] = "minecraft:dark_oak_log";
-  MinecraftItemTypes22["DarkOakPlanks"] = "minecraft:dark_oak_planks";
-  MinecraftItemTypes22["DarkOakPressurePlate"] = "minecraft:dark_oak_pressure_plate";
-  MinecraftItemTypes22["DarkOakSapling"] = "minecraft:dark_oak_sapling";
-  MinecraftItemTypes22["DarkOakShelf"] = "minecraft:dark_oak_shelf";
-  MinecraftItemTypes22["DarkOakSign"] = "minecraft:dark_oak_sign";
-  MinecraftItemTypes22["DarkOakSlab"] = "minecraft:dark_oak_slab";
-  MinecraftItemTypes22["DarkOakStairs"] = "minecraft:dark_oak_stairs";
-  MinecraftItemTypes22["DarkOakTrapdoor"] = "minecraft:dark_oak_trapdoor";
-  MinecraftItemTypes22["DarkOakWood"] = "minecraft:dark_oak_wood";
-  MinecraftItemTypes22["DarkPrismarine"] = "minecraft:dark_prismarine";
-  MinecraftItemTypes22["DarkPrismarineSlab"] = "minecraft:dark_prismarine_slab";
-  MinecraftItemTypes22["DarkPrismarineStairs"] = "minecraft:dark_prismarine_stairs";
-  MinecraftItemTypes22["DaylightDetector"] = "minecraft:daylight_detector";
-  MinecraftItemTypes22["DeadBrainCoral"] = "minecraft:dead_brain_coral";
-  MinecraftItemTypes22["DeadBrainCoralBlock"] = "minecraft:dead_brain_coral_block";
-  MinecraftItemTypes22["DeadBrainCoralFan"] = "minecraft:dead_brain_coral_fan";
-  MinecraftItemTypes22["DeadBubbleCoral"] = "minecraft:dead_bubble_coral";
-  MinecraftItemTypes22["DeadBubbleCoralBlock"] = "minecraft:dead_bubble_coral_block";
-  MinecraftItemTypes22["DeadBubbleCoralFan"] = "minecraft:dead_bubble_coral_fan";
-  MinecraftItemTypes22["DeadFireCoral"] = "minecraft:dead_fire_coral";
-  MinecraftItemTypes22["DeadFireCoralBlock"] = "minecraft:dead_fire_coral_block";
-  MinecraftItemTypes22["DeadFireCoralFan"] = "minecraft:dead_fire_coral_fan";
-  MinecraftItemTypes22["DeadHornCoral"] = "minecraft:dead_horn_coral";
-  MinecraftItemTypes22["DeadHornCoralBlock"] = "minecraft:dead_horn_coral_block";
-  MinecraftItemTypes22["DeadHornCoralFan"] = "minecraft:dead_horn_coral_fan";
-  MinecraftItemTypes22["DeadTubeCoral"] = "minecraft:dead_tube_coral";
-  MinecraftItemTypes22["DeadTubeCoralBlock"] = "minecraft:dead_tube_coral_block";
-  MinecraftItemTypes22["DeadTubeCoralFan"] = "minecraft:dead_tube_coral_fan";
-  MinecraftItemTypes22["Deadbush"] = "minecraft:deadbush";
-  MinecraftItemTypes22["DecoratedPot"] = "minecraft:decorated_pot";
-  MinecraftItemTypes22["Deepslate"] = "minecraft:deepslate";
-  MinecraftItemTypes22["DeepslateBrickSlab"] = "minecraft:deepslate_brick_slab";
-  MinecraftItemTypes22["DeepslateBrickStairs"] = "minecraft:deepslate_brick_stairs";
-  MinecraftItemTypes22["DeepslateBrickWall"] = "minecraft:deepslate_brick_wall";
-  MinecraftItemTypes22["DeepslateBricks"] = "minecraft:deepslate_bricks";
-  MinecraftItemTypes22["DeepslateCoalOre"] = "minecraft:deepslate_coal_ore";
-  MinecraftItemTypes22["DeepslateCopperOre"] = "minecraft:deepslate_copper_ore";
-  MinecraftItemTypes22["DeepslateDiamondOre"] = "minecraft:deepslate_diamond_ore";
-  MinecraftItemTypes22["DeepslateEmeraldOre"] = "minecraft:deepslate_emerald_ore";
-  MinecraftItemTypes22["DeepslateGoldOre"] = "minecraft:deepslate_gold_ore";
-  MinecraftItemTypes22["DeepslateIronOre"] = "minecraft:deepslate_iron_ore";
-  MinecraftItemTypes22["DeepslateLapisOre"] = "minecraft:deepslate_lapis_ore";
-  MinecraftItemTypes22["DeepslateRedstoneOre"] = "minecraft:deepslate_redstone_ore";
-  MinecraftItemTypes22["DeepslateTileSlab"] = "minecraft:deepslate_tile_slab";
-  MinecraftItemTypes22["DeepslateTileStairs"] = "minecraft:deepslate_tile_stairs";
-  MinecraftItemTypes22["DeepslateTileWall"] = "minecraft:deepslate_tile_wall";
-  MinecraftItemTypes22["DeepslateTiles"] = "minecraft:deepslate_tiles";
-  MinecraftItemTypes22["Deny"] = "minecraft:deny";
-  MinecraftItemTypes22["DetectorRail"] = "minecraft:detector_rail";
-  MinecraftItemTypes22["Diamond"] = "minecraft:diamond";
-  MinecraftItemTypes22["DiamondAxe"] = "minecraft:diamond_axe";
-  MinecraftItemTypes22["DiamondBlock"] = "minecraft:diamond_block";
-  MinecraftItemTypes22["DiamondBoots"] = "minecraft:diamond_boots";
-  MinecraftItemTypes22["DiamondChestplate"] = "minecraft:diamond_chestplate";
-  MinecraftItemTypes22["DiamondHelmet"] = "minecraft:diamond_helmet";
-  MinecraftItemTypes22["DiamondHoe"] = "minecraft:diamond_hoe";
-  MinecraftItemTypes22["DiamondHorseArmor"] = "minecraft:diamond_horse_armor";
-  MinecraftItemTypes22["DiamondLeggings"] = "minecraft:diamond_leggings";
-  MinecraftItemTypes22["DiamondNautilusArmor"] = "minecraft:diamond_nautilus_armor";
-  MinecraftItemTypes22["DiamondOre"] = "minecraft:diamond_ore";
-  MinecraftItemTypes22["DiamondPickaxe"] = "minecraft:diamond_pickaxe";
-  MinecraftItemTypes22["DiamondShovel"] = "minecraft:diamond_shovel";
-  MinecraftItemTypes22["DiamondSpear"] = "minecraft:diamond_spear";
-  MinecraftItemTypes22["DiamondSword"] = "minecraft:diamond_sword";
-  MinecraftItemTypes22["Diorite"] = "minecraft:diorite";
-  MinecraftItemTypes22["DioriteSlab"] = "minecraft:diorite_slab";
-  MinecraftItemTypes22["DioriteStairs"] = "minecraft:diorite_stairs";
-  MinecraftItemTypes22["DioriteWall"] = "minecraft:diorite_wall";
-  MinecraftItemTypes22["Dirt"] = "minecraft:dirt";
-  MinecraftItemTypes22["DirtWithRoots"] = "minecraft:dirt_with_roots";
-  MinecraftItemTypes22["DiscFragment5"] = "minecraft:disc_fragment_5";
-  MinecraftItemTypes22["Dispenser"] = "minecraft:dispenser";
-  MinecraftItemTypes22["DolphinSpawnEgg"] = "minecraft:dolphin_spawn_egg";
-  MinecraftItemTypes22["DonkeySpawnEgg"] = "minecraft:donkey_spawn_egg";
-  MinecraftItemTypes22["DragonBreath"] = "minecraft:dragon_breath";
-  MinecraftItemTypes22["DragonEgg"] = "minecraft:dragon_egg";
-  MinecraftItemTypes22["DragonHead"] = "minecraft:dragon_head";
-  MinecraftItemTypes22["DriedGhast"] = "minecraft:dried_ghast";
-  MinecraftItemTypes22["DriedKelp"] = "minecraft:dried_kelp";
-  MinecraftItemTypes22["DriedKelpBlock"] = "minecraft:dried_kelp_block";
-  MinecraftItemTypes22["DripstoneBlock"] = "minecraft:dripstone_block";
-  MinecraftItemTypes22["Dropper"] = "minecraft:dropper";
-  MinecraftItemTypes22["DrownedSpawnEgg"] = "minecraft:drowned_spawn_egg";
-  MinecraftItemTypes22["DuneArmorTrimSmithingTemplate"] = "minecraft:dune_armor_trim_smithing_template";
-  MinecraftItemTypes22["EchoShard"] = "minecraft:echo_shard";
-  MinecraftItemTypes22["Egg"] = "minecraft:egg";
-  MinecraftItemTypes22["ElderGuardianSpawnEgg"] = "minecraft:elder_guardian_spawn_egg";
-  MinecraftItemTypes22["Elytra"] = "minecraft:elytra";
-  MinecraftItemTypes22["Emerald"] = "minecraft:emerald";
-  MinecraftItemTypes22["EmeraldBlock"] = "minecraft:emerald_block";
-  MinecraftItemTypes22["EmeraldOre"] = "minecraft:emerald_ore";
-  MinecraftItemTypes22["EmptyMap"] = "minecraft:empty_map";
-  MinecraftItemTypes22["EnchantedBook"] = "minecraft:enchanted_book";
-  MinecraftItemTypes22["EnchantedGoldenApple"] = "minecraft:enchanted_golden_apple";
-  MinecraftItemTypes22["EnchantingTable"] = "minecraft:enchanting_table";
-  MinecraftItemTypes22["EndBrickStairs"] = "minecraft:end_brick_stairs";
-  MinecraftItemTypes22["EndBricks"] = "minecraft:end_bricks";
-  MinecraftItemTypes22["EndCrystal"] = "minecraft:end_crystal";
-  MinecraftItemTypes22["EndPortalFrame"] = "minecraft:end_portal_frame";
-  MinecraftItemTypes22["EndRod"] = "minecraft:end_rod";
-  MinecraftItemTypes22["EndStone"] = "minecraft:end_stone";
-  MinecraftItemTypes22["EndStoneBrickSlab"] = "minecraft:end_stone_brick_slab";
-  MinecraftItemTypes22["EndStoneBrickWall"] = "minecraft:end_stone_brick_wall";
-  MinecraftItemTypes22["EnderChest"] = "minecraft:ender_chest";
-  MinecraftItemTypes22["EnderDragonSpawnEgg"] = "minecraft:ender_dragon_spawn_egg";
-  MinecraftItemTypes22["EnderEye"] = "minecraft:ender_eye";
-  MinecraftItemTypes22["EnderPearl"] = "minecraft:ender_pearl";
-  MinecraftItemTypes22["EndermanSpawnEgg"] = "minecraft:enderman_spawn_egg";
-  MinecraftItemTypes22["EndermiteSpawnEgg"] = "minecraft:endermite_spawn_egg";
-  MinecraftItemTypes22["EvokerSpawnEgg"] = "minecraft:evoker_spawn_egg";
-  MinecraftItemTypes22["ExperienceBottle"] = "minecraft:experience_bottle";
-  MinecraftItemTypes22["ExplorerPotterySherd"] = "minecraft:explorer_pottery_sherd";
-  MinecraftItemTypes22["ExposedChiseledCopper"] = "minecraft:exposed_chiseled_copper";
-  MinecraftItemTypes22["ExposedCopper"] = "minecraft:exposed_copper";
-  MinecraftItemTypes22["ExposedCopperBars"] = "minecraft:exposed_copper_bars";
-  MinecraftItemTypes22["ExposedCopperBulb"] = "minecraft:exposed_copper_bulb";
-  MinecraftItemTypes22["ExposedCopperChain"] = "minecraft:exposed_copper_chain";
-  MinecraftItemTypes22["ExposedCopperChest"] = "minecraft:exposed_copper_chest";
-  MinecraftItemTypes22["ExposedCopperDoor"] = "minecraft:exposed_copper_door";
-  MinecraftItemTypes22["ExposedCopperGolemStatue"] = "minecraft:exposed_copper_golem_statue";
-  MinecraftItemTypes22["ExposedCopperGrate"] = "minecraft:exposed_copper_grate";
-  MinecraftItemTypes22["ExposedCopperLantern"] = "minecraft:exposed_copper_lantern";
-  MinecraftItemTypes22["ExposedCopperTrapdoor"] = "minecraft:exposed_copper_trapdoor";
-  MinecraftItemTypes22["ExposedCutCopper"] = "minecraft:exposed_cut_copper";
-  MinecraftItemTypes22["ExposedCutCopperSlab"] = "minecraft:exposed_cut_copper_slab";
-  MinecraftItemTypes22["ExposedCutCopperStairs"] = "minecraft:exposed_cut_copper_stairs";
-  MinecraftItemTypes22["ExposedLightningRod"] = "minecraft:exposed_lightning_rod";
-  MinecraftItemTypes22["EyeArmorTrimSmithingTemplate"] = "minecraft:eye_armor_trim_smithing_template";
-  MinecraftItemTypes22["Farmland"] = "minecraft:farmland";
-  MinecraftItemTypes22["Feather"] = "minecraft:feather";
-  MinecraftItemTypes22["FenceGate"] = "minecraft:fence_gate";
-  MinecraftItemTypes22["FermentedSpiderEye"] = "minecraft:fermented_spider_eye";
-  MinecraftItemTypes22["Fern"] = "minecraft:fern";
-  MinecraftItemTypes22["FieldMasonedBannerPattern"] = "minecraft:field_masoned_banner_pattern";
-  MinecraftItemTypes22["FilledMap"] = "minecraft:filled_map";
-  MinecraftItemTypes22["FireCharge"] = "minecraft:fire_charge";
-  MinecraftItemTypes22["FireCoral"] = "minecraft:fire_coral";
-  MinecraftItemTypes22["FireCoralBlock"] = "minecraft:fire_coral_block";
-  MinecraftItemTypes22["FireCoralFan"] = "minecraft:fire_coral_fan";
-  MinecraftItemTypes22["FireflyBush"] = "minecraft:firefly_bush";
-  MinecraftItemTypes22["FireworkRocket"] = "minecraft:firework_rocket";
-  MinecraftItemTypes22["FireworkStar"] = "minecraft:firework_star";
-  MinecraftItemTypes22["FishingRod"] = "minecraft:fishing_rod";
-  MinecraftItemTypes22["FletchingTable"] = "minecraft:fletching_table";
-  MinecraftItemTypes22["Flint"] = "minecraft:flint";
-  MinecraftItemTypes22["FlintAndSteel"] = "minecraft:flint_and_steel";
-  MinecraftItemTypes22["FlowArmorTrimSmithingTemplate"] = "minecraft:flow_armor_trim_smithing_template";
-  MinecraftItemTypes22["FlowBannerPattern"] = "minecraft:flow_banner_pattern";
-  MinecraftItemTypes22["FlowPotterySherd"] = "minecraft:flow_pottery_sherd";
-  MinecraftItemTypes22["FlowerBannerPattern"] = "minecraft:flower_banner_pattern";
-  MinecraftItemTypes22["FlowerPot"] = "minecraft:flower_pot";
-  MinecraftItemTypes22["FloweringAzalea"] = "minecraft:flowering_azalea";
-  MinecraftItemTypes22["FoxSpawnEgg"] = "minecraft:fox_spawn_egg";
-  MinecraftItemTypes22["Frame"] = "minecraft:frame";
-  MinecraftItemTypes22["FriendPotterySherd"] = "minecraft:friend_pottery_sherd";
-  MinecraftItemTypes22["FrogSpawn"] = "minecraft:frog_spawn";
-  MinecraftItemTypes22["FrogSpawnEgg"] = "minecraft:frog_spawn_egg";
-  MinecraftItemTypes22["FrostedIce"] = "minecraft:frosted_ice";
-  MinecraftItemTypes22["Furnace"] = "minecraft:furnace";
-  MinecraftItemTypes22["GhastSpawnEgg"] = "minecraft:ghast_spawn_egg";
-  MinecraftItemTypes22["GhastTear"] = "minecraft:ghast_tear";
-  MinecraftItemTypes22["GildedBlackstone"] = "minecraft:gilded_blackstone";
-  MinecraftItemTypes22["Glass"] = "minecraft:glass";
-  MinecraftItemTypes22["GlassBottle"] = "minecraft:glass_bottle";
-  MinecraftItemTypes22["GlassPane"] = "minecraft:glass_pane";
-  MinecraftItemTypes22["GlisteringMelonSlice"] = "minecraft:glistering_melon_slice";
-  MinecraftItemTypes22["GlobeBannerPattern"] = "minecraft:globe_banner_pattern";
-  MinecraftItemTypes22["GlowBerries"] = "minecraft:glow_berries";
-  MinecraftItemTypes22["GlowFrame"] = "minecraft:glow_frame";
-  MinecraftItemTypes22["GlowInkSac"] = "minecraft:glow_ink_sac";
-  MinecraftItemTypes22["GlowLichen"] = "minecraft:glow_lichen";
-  MinecraftItemTypes22["GlowSquidSpawnEgg"] = "minecraft:glow_squid_spawn_egg";
-  MinecraftItemTypes22["Glowstone"] = "minecraft:glowstone";
-  MinecraftItemTypes22["GlowstoneDust"] = "minecraft:glowstone_dust";
-  MinecraftItemTypes22["GoatHorn"] = "minecraft:goat_horn";
-  MinecraftItemTypes22["GoatSpawnEgg"] = "minecraft:goat_spawn_egg";
-  MinecraftItemTypes22["GoldBlock"] = "minecraft:gold_block";
-  MinecraftItemTypes22["GoldIngot"] = "minecraft:gold_ingot";
-  MinecraftItemTypes22["GoldNugget"] = "minecraft:gold_nugget";
-  MinecraftItemTypes22["GoldOre"] = "minecraft:gold_ore";
-  MinecraftItemTypes22["GoldenApple"] = "minecraft:golden_apple";
-  MinecraftItemTypes22["GoldenAxe"] = "minecraft:golden_axe";
-  MinecraftItemTypes22["GoldenBoots"] = "minecraft:golden_boots";
-  MinecraftItemTypes22["GoldenCarrot"] = "minecraft:golden_carrot";
-  MinecraftItemTypes22["GoldenChestplate"] = "minecraft:golden_chestplate";
-  MinecraftItemTypes22["GoldenHelmet"] = "minecraft:golden_helmet";
-  MinecraftItemTypes22["GoldenHoe"] = "minecraft:golden_hoe";
-  MinecraftItemTypes22["GoldenHorseArmor"] = "minecraft:golden_horse_armor";
-  MinecraftItemTypes22["GoldenLeggings"] = "minecraft:golden_leggings";
-  MinecraftItemTypes22["GoldenNautilusArmor"] = "minecraft:golden_nautilus_armor";
-  MinecraftItemTypes22["GoldenPickaxe"] = "minecraft:golden_pickaxe";
-  MinecraftItemTypes22["GoldenRail"] = "minecraft:golden_rail";
-  MinecraftItemTypes22["GoldenShovel"] = "minecraft:golden_shovel";
-  MinecraftItemTypes22["GoldenSpear"] = "minecraft:golden_spear";
-  MinecraftItemTypes22["GoldenSword"] = "minecraft:golden_sword";
-  MinecraftItemTypes22["Granite"] = "minecraft:granite";
-  MinecraftItemTypes22["GraniteSlab"] = "minecraft:granite_slab";
-  MinecraftItemTypes22["GraniteStairs"] = "minecraft:granite_stairs";
-  MinecraftItemTypes22["GraniteWall"] = "minecraft:granite_wall";
-  MinecraftItemTypes22["GrassBlock"] = "minecraft:grass_block";
-  MinecraftItemTypes22["GrassPath"] = "minecraft:grass_path";
-  MinecraftItemTypes22["Gravel"] = "minecraft:gravel";
-  MinecraftItemTypes22["GrayBundle"] = "minecraft:gray_bundle";
-  MinecraftItemTypes22["GrayCandle"] = "minecraft:gray_candle";
-  MinecraftItemTypes22["GrayCarpet"] = "minecraft:gray_carpet";
-  MinecraftItemTypes22["GrayConcrete"] = "minecraft:gray_concrete";
-  MinecraftItemTypes22["GrayConcretePowder"] = "minecraft:gray_concrete_powder";
-  MinecraftItemTypes22["GrayDye"] = "minecraft:gray_dye";
-  MinecraftItemTypes22["GrayGlazedTerracotta"] = "minecraft:gray_glazed_terracotta";
-  MinecraftItemTypes22["GrayHarness"] = "minecraft:gray_harness";
-  MinecraftItemTypes22["GrayShulkerBox"] = "minecraft:gray_shulker_box";
-  MinecraftItemTypes22["GrayStainedGlass"] = "minecraft:gray_stained_glass";
-  MinecraftItemTypes22["GrayStainedGlassPane"] = "minecraft:gray_stained_glass_pane";
-  MinecraftItemTypes22["GrayTerracotta"] = "minecraft:gray_terracotta";
-  MinecraftItemTypes22["GrayWool"] = "minecraft:gray_wool";
-  MinecraftItemTypes22["GreenBundle"] = "minecraft:green_bundle";
-  MinecraftItemTypes22["GreenCandle"] = "minecraft:green_candle";
-  MinecraftItemTypes22["GreenCarpet"] = "minecraft:green_carpet";
-  MinecraftItemTypes22["GreenConcrete"] = "minecraft:green_concrete";
-  MinecraftItemTypes22["GreenConcretePowder"] = "minecraft:green_concrete_powder";
-  MinecraftItemTypes22["GreenDye"] = "minecraft:green_dye";
-  MinecraftItemTypes22["GreenGlazedTerracotta"] = "minecraft:green_glazed_terracotta";
-  MinecraftItemTypes22["GreenHarness"] = "minecraft:green_harness";
-  MinecraftItemTypes22["GreenShulkerBox"] = "minecraft:green_shulker_box";
-  MinecraftItemTypes22["GreenStainedGlass"] = "minecraft:green_stained_glass";
-  MinecraftItemTypes22["GreenStainedGlassPane"] = "minecraft:green_stained_glass_pane";
-  MinecraftItemTypes22["GreenTerracotta"] = "minecraft:green_terracotta";
-  MinecraftItemTypes22["GreenWool"] = "minecraft:green_wool";
-  MinecraftItemTypes22["Grindstone"] = "minecraft:grindstone";
-  MinecraftItemTypes22["GuardianSpawnEgg"] = "minecraft:guardian_spawn_egg";
-  MinecraftItemTypes22["Gunpowder"] = "minecraft:gunpowder";
-  MinecraftItemTypes22["GusterBannerPattern"] = "minecraft:guster_banner_pattern";
-  MinecraftItemTypes22["GusterPotterySherd"] = "minecraft:guster_pottery_sherd";
-  MinecraftItemTypes22["HangingRoots"] = "minecraft:hanging_roots";
-  MinecraftItemTypes22["HappyGhastSpawnEgg"] = "minecraft:happy_ghast_spawn_egg";
-  MinecraftItemTypes22["HardenedClay"] = "minecraft:hardened_clay";
-  MinecraftItemTypes22["HayBlock"] = "minecraft:hay_block";
-  MinecraftItemTypes22["HeartOfTheSea"] = "minecraft:heart_of_the_sea";
-  MinecraftItemTypes22["HeartPotterySherd"] = "minecraft:heart_pottery_sherd";
-  MinecraftItemTypes22["HeartbreakPotterySherd"] = "minecraft:heartbreak_pottery_sherd";
-  MinecraftItemTypes22["HeavyCore"] = "minecraft:heavy_core";
-  MinecraftItemTypes22["HeavyWeightedPressurePlate"] = "minecraft:heavy_weighted_pressure_plate";
-  MinecraftItemTypes22["HoglinSpawnEgg"] = "minecraft:hoglin_spawn_egg";
-  MinecraftItemTypes22["HoneyBlock"] = "minecraft:honey_block";
-  MinecraftItemTypes22["HoneyBottle"] = "minecraft:honey_bottle";
-  MinecraftItemTypes22["Honeycomb"] = "minecraft:honeycomb";
-  MinecraftItemTypes22["HoneycombBlock"] = "minecraft:honeycomb_block";
-  MinecraftItemTypes22["Hopper"] = "minecraft:hopper";
-  MinecraftItemTypes22["HopperMinecart"] = "minecraft:hopper_minecart";
-  MinecraftItemTypes22["HornCoral"] = "minecraft:horn_coral";
-  MinecraftItemTypes22["HornCoralBlock"] = "minecraft:horn_coral_block";
-  MinecraftItemTypes22["HornCoralFan"] = "minecraft:horn_coral_fan";
-  MinecraftItemTypes22["HorseSpawnEgg"] = "minecraft:horse_spawn_egg";
-  MinecraftItemTypes22["HostArmorTrimSmithingTemplate"] = "minecraft:host_armor_trim_smithing_template";
-  MinecraftItemTypes22["HowlPotterySherd"] = "minecraft:howl_pottery_sherd";
-  MinecraftItemTypes22["HuskSpawnEgg"] = "minecraft:husk_spawn_egg";
-  MinecraftItemTypes22["Ice"] = "minecraft:ice";
-  MinecraftItemTypes22["InfestedChiseledStoneBricks"] = "minecraft:infested_chiseled_stone_bricks";
-  MinecraftItemTypes22["InfestedCobblestone"] = "minecraft:infested_cobblestone";
-  MinecraftItemTypes22["InfestedCrackedStoneBricks"] = "minecraft:infested_cracked_stone_bricks";
-  MinecraftItemTypes22["InfestedDeepslate"] = "minecraft:infested_deepslate";
-  MinecraftItemTypes22["InfestedMossyStoneBricks"] = "minecraft:infested_mossy_stone_bricks";
-  MinecraftItemTypes22["InfestedStone"] = "minecraft:infested_stone";
-  MinecraftItemTypes22["InfestedStoneBricks"] = "minecraft:infested_stone_bricks";
-  MinecraftItemTypes22["InkSac"] = "minecraft:ink_sac";
-  MinecraftItemTypes22["IronAxe"] = "minecraft:iron_axe";
-  MinecraftItemTypes22["IronBars"] = "minecraft:iron_bars";
-  MinecraftItemTypes22["IronBlock"] = "minecraft:iron_block";
-  MinecraftItemTypes22["IronBoots"] = "minecraft:iron_boots";
-  MinecraftItemTypes22["IronChain"] = "minecraft:iron_chain";
-  MinecraftItemTypes22["IronChestplate"] = "minecraft:iron_chestplate";
-  MinecraftItemTypes22["IronDoor"] = "minecraft:iron_door";
-  MinecraftItemTypes22["IronGolemSpawnEgg"] = "minecraft:iron_golem_spawn_egg";
-  MinecraftItemTypes22["IronHelmet"] = "minecraft:iron_helmet";
-  MinecraftItemTypes22["IronHoe"] = "minecraft:iron_hoe";
-  MinecraftItemTypes22["IronHorseArmor"] = "minecraft:iron_horse_armor";
-  MinecraftItemTypes22["IronIngot"] = "minecraft:iron_ingot";
-  MinecraftItemTypes22["IronLeggings"] = "minecraft:iron_leggings";
-  MinecraftItemTypes22["IronNautilusArmor"] = "minecraft:iron_nautilus_armor";
-  MinecraftItemTypes22["IronNugget"] = "minecraft:iron_nugget";
-  MinecraftItemTypes22["IronOre"] = "minecraft:iron_ore";
-  MinecraftItemTypes22["IronPickaxe"] = "minecraft:iron_pickaxe";
-  MinecraftItemTypes22["IronShovel"] = "minecraft:iron_shovel";
-  MinecraftItemTypes22["IronSpear"] = "minecraft:iron_spear";
-  MinecraftItemTypes22["IronSword"] = "minecraft:iron_sword";
-  MinecraftItemTypes22["IronTrapdoor"] = "minecraft:iron_trapdoor";
-  MinecraftItemTypes22["Jigsaw"] = "minecraft:jigsaw";
-  MinecraftItemTypes22["Jukebox"] = "minecraft:jukebox";
-  MinecraftItemTypes22["JungleBoat"] = "minecraft:jungle_boat";
-  MinecraftItemTypes22["JungleButton"] = "minecraft:jungle_button";
-  MinecraftItemTypes22["JungleChestBoat"] = "minecraft:jungle_chest_boat";
-  MinecraftItemTypes22["JungleDoor"] = "minecraft:jungle_door";
-  MinecraftItemTypes22["JungleFence"] = "minecraft:jungle_fence";
-  MinecraftItemTypes22["JungleFenceGate"] = "minecraft:jungle_fence_gate";
-  MinecraftItemTypes22["JungleHangingSign"] = "minecraft:jungle_hanging_sign";
-  MinecraftItemTypes22["JungleLeaves"] = "minecraft:jungle_leaves";
-  MinecraftItemTypes22["JungleLog"] = "minecraft:jungle_log";
-  MinecraftItemTypes22["JunglePlanks"] = "minecraft:jungle_planks";
-  MinecraftItemTypes22["JunglePressurePlate"] = "minecraft:jungle_pressure_plate";
-  MinecraftItemTypes22["JungleSapling"] = "minecraft:jungle_sapling";
-  MinecraftItemTypes22["JungleShelf"] = "minecraft:jungle_shelf";
-  MinecraftItemTypes22["JungleSign"] = "minecraft:jungle_sign";
-  MinecraftItemTypes22["JungleSlab"] = "minecraft:jungle_slab";
-  MinecraftItemTypes22["JungleStairs"] = "minecraft:jungle_stairs";
-  MinecraftItemTypes22["JungleTrapdoor"] = "minecraft:jungle_trapdoor";
-  MinecraftItemTypes22["JungleWood"] = "minecraft:jungle_wood";
-  MinecraftItemTypes22["Kelp"] = "minecraft:kelp";
-  MinecraftItemTypes22["Ladder"] = "minecraft:ladder";
-  MinecraftItemTypes22["Lantern"] = "minecraft:lantern";
-  MinecraftItemTypes22["LapisBlock"] = "minecraft:lapis_block";
-  MinecraftItemTypes22["LapisLazuli"] = "minecraft:lapis_lazuli";
-  MinecraftItemTypes22["LapisOre"] = "minecraft:lapis_ore";
-  MinecraftItemTypes22["LargeAmethystBud"] = "minecraft:large_amethyst_bud";
-  MinecraftItemTypes22["LargeFern"] = "minecraft:large_fern";
-  MinecraftItemTypes22["LavaBucket"] = "minecraft:lava_bucket";
-  MinecraftItemTypes22["Lead"] = "minecraft:lead";
-  MinecraftItemTypes22["LeafLitter"] = "minecraft:leaf_litter";
-  MinecraftItemTypes22["Leather"] = "minecraft:leather";
-  MinecraftItemTypes22["LeatherBoots"] = "minecraft:leather_boots";
-  MinecraftItemTypes22["LeatherChestplate"] = "minecraft:leather_chestplate";
-  MinecraftItemTypes22["LeatherHelmet"] = "minecraft:leather_helmet";
-  MinecraftItemTypes22["LeatherHorseArmor"] = "minecraft:leather_horse_armor";
-  MinecraftItemTypes22["LeatherLeggings"] = "minecraft:leather_leggings";
-  MinecraftItemTypes22["Lectern"] = "minecraft:lectern";
-  MinecraftItemTypes22["Lever"] = "minecraft:lever";
-  MinecraftItemTypes22["LightBlock0"] = "minecraft:light_block_0";
-  MinecraftItemTypes22["LightBlock1"] = "minecraft:light_block_1";
-  MinecraftItemTypes22["LightBlock10"] = "minecraft:light_block_10";
-  MinecraftItemTypes22["LightBlock11"] = "minecraft:light_block_11";
-  MinecraftItemTypes22["LightBlock12"] = "minecraft:light_block_12";
-  MinecraftItemTypes22["LightBlock13"] = "minecraft:light_block_13";
-  MinecraftItemTypes22["LightBlock14"] = "minecraft:light_block_14";
-  MinecraftItemTypes22["LightBlock15"] = "minecraft:light_block_15";
-  MinecraftItemTypes22["LightBlock2"] = "minecraft:light_block_2";
-  MinecraftItemTypes22["LightBlock3"] = "minecraft:light_block_3";
-  MinecraftItemTypes22["LightBlock4"] = "minecraft:light_block_4";
-  MinecraftItemTypes22["LightBlock5"] = "minecraft:light_block_5";
-  MinecraftItemTypes22["LightBlock6"] = "minecraft:light_block_6";
-  MinecraftItemTypes22["LightBlock7"] = "minecraft:light_block_7";
-  MinecraftItemTypes22["LightBlock8"] = "minecraft:light_block_8";
-  MinecraftItemTypes22["LightBlock9"] = "minecraft:light_block_9";
-  MinecraftItemTypes22["LightBlueBundle"] = "minecraft:light_blue_bundle";
-  MinecraftItemTypes22["LightBlueCandle"] = "minecraft:light_blue_candle";
-  MinecraftItemTypes22["LightBlueCarpet"] = "minecraft:light_blue_carpet";
-  MinecraftItemTypes22["LightBlueConcrete"] = "minecraft:light_blue_concrete";
-  MinecraftItemTypes22["LightBlueConcretePowder"] = "minecraft:light_blue_concrete_powder";
-  MinecraftItemTypes22["LightBlueDye"] = "minecraft:light_blue_dye";
-  MinecraftItemTypes22["LightBlueGlazedTerracotta"] = "minecraft:light_blue_glazed_terracotta";
-  MinecraftItemTypes22["LightBlueHarness"] = "minecraft:light_blue_harness";
-  MinecraftItemTypes22["LightBlueShulkerBox"] = "minecraft:light_blue_shulker_box";
-  MinecraftItemTypes22["LightBlueStainedGlass"] = "minecraft:light_blue_stained_glass";
-  MinecraftItemTypes22["LightBlueStainedGlassPane"] = "minecraft:light_blue_stained_glass_pane";
-  MinecraftItemTypes22["LightBlueTerracotta"] = "minecraft:light_blue_terracotta";
-  MinecraftItemTypes22["LightBlueWool"] = "minecraft:light_blue_wool";
-  MinecraftItemTypes22["LightGrayBundle"] = "minecraft:light_gray_bundle";
-  MinecraftItemTypes22["LightGrayCandle"] = "minecraft:light_gray_candle";
-  MinecraftItemTypes22["LightGrayCarpet"] = "minecraft:light_gray_carpet";
-  MinecraftItemTypes22["LightGrayConcrete"] = "minecraft:light_gray_concrete";
-  MinecraftItemTypes22["LightGrayConcretePowder"] = "minecraft:light_gray_concrete_powder";
-  MinecraftItemTypes22["LightGrayDye"] = "minecraft:light_gray_dye";
-  MinecraftItemTypes22["LightGrayHarness"] = "minecraft:light_gray_harness";
-  MinecraftItemTypes22["LightGrayShulkerBox"] = "minecraft:light_gray_shulker_box";
-  MinecraftItemTypes22["LightGrayStainedGlass"] = "minecraft:light_gray_stained_glass";
-  MinecraftItemTypes22["LightGrayStainedGlassPane"] = "minecraft:light_gray_stained_glass_pane";
-  MinecraftItemTypes22["LightGrayTerracotta"] = "minecraft:light_gray_terracotta";
-  MinecraftItemTypes22["LightGrayWool"] = "minecraft:light_gray_wool";
-  MinecraftItemTypes22["LightWeightedPressurePlate"] = "minecraft:light_weighted_pressure_plate";
-  MinecraftItemTypes22["LightningRod"] = "minecraft:lightning_rod";
-  MinecraftItemTypes22["Lilac"] = "minecraft:lilac";
-  MinecraftItemTypes22["LilyOfTheValley"] = "minecraft:lily_of_the_valley";
-  MinecraftItemTypes22["LimeBundle"] = "minecraft:lime_bundle";
-  MinecraftItemTypes22["LimeCandle"] = "minecraft:lime_candle";
-  MinecraftItemTypes22["LimeCarpet"] = "minecraft:lime_carpet";
-  MinecraftItemTypes22["LimeConcrete"] = "minecraft:lime_concrete";
-  MinecraftItemTypes22["LimeConcretePowder"] = "minecraft:lime_concrete_powder";
-  MinecraftItemTypes22["LimeDye"] = "minecraft:lime_dye";
-  MinecraftItemTypes22["LimeGlazedTerracotta"] = "minecraft:lime_glazed_terracotta";
-  MinecraftItemTypes22["LimeHarness"] = "minecraft:lime_harness";
-  MinecraftItemTypes22["LimeShulkerBox"] = "minecraft:lime_shulker_box";
-  MinecraftItemTypes22["LimeStainedGlass"] = "minecraft:lime_stained_glass";
-  MinecraftItemTypes22["LimeStainedGlassPane"] = "minecraft:lime_stained_glass_pane";
-  MinecraftItemTypes22["LimeTerracotta"] = "minecraft:lime_terracotta";
-  MinecraftItemTypes22["LimeWool"] = "minecraft:lime_wool";
-  MinecraftItemTypes22["LingeringPotion"] = "minecraft:lingering_potion";
-  MinecraftItemTypes22["LitPumpkin"] = "minecraft:lit_pumpkin";
-  MinecraftItemTypes22["LlamaSpawnEgg"] = "minecraft:llama_spawn_egg";
-  MinecraftItemTypes22["Lodestone"] = "minecraft:lodestone";
-  MinecraftItemTypes22["LodestoneCompass"] = "minecraft:lodestone_compass";
-  MinecraftItemTypes22["Loom"] = "minecraft:loom";
-  MinecraftItemTypes22["Mace"] = "minecraft:mace";
-  MinecraftItemTypes22["MagentaBundle"] = "minecraft:magenta_bundle";
-  MinecraftItemTypes22["MagentaCandle"] = "minecraft:magenta_candle";
-  MinecraftItemTypes22["MagentaCarpet"] = "minecraft:magenta_carpet";
-  MinecraftItemTypes22["MagentaConcrete"] = "minecraft:magenta_concrete";
-  MinecraftItemTypes22["MagentaConcretePowder"] = "minecraft:magenta_concrete_powder";
-  MinecraftItemTypes22["MagentaDye"] = "minecraft:magenta_dye";
-  MinecraftItemTypes22["MagentaGlazedTerracotta"] = "minecraft:magenta_glazed_terracotta";
-  MinecraftItemTypes22["MagentaHarness"] = "minecraft:magenta_harness";
-  MinecraftItemTypes22["MagentaShulkerBox"] = "minecraft:magenta_shulker_box";
-  MinecraftItemTypes22["MagentaStainedGlass"] = "minecraft:magenta_stained_glass";
-  MinecraftItemTypes22["MagentaStainedGlassPane"] = "minecraft:magenta_stained_glass_pane";
-  MinecraftItemTypes22["MagentaTerracotta"] = "minecraft:magenta_terracotta";
-  MinecraftItemTypes22["MagentaWool"] = "minecraft:magenta_wool";
-  MinecraftItemTypes22["Magma"] = "minecraft:magma";
-  MinecraftItemTypes22["MagmaCream"] = "minecraft:magma_cream";
-  MinecraftItemTypes22["MagmaCubeSpawnEgg"] = "minecraft:magma_cube_spawn_egg";
-  MinecraftItemTypes22["MangroveBoat"] = "minecraft:mangrove_boat";
-  MinecraftItemTypes22["MangroveButton"] = "minecraft:mangrove_button";
-  MinecraftItemTypes22["MangroveChestBoat"] = "minecraft:mangrove_chest_boat";
-  MinecraftItemTypes22["MangroveDoor"] = "minecraft:mangrove_door";
-  MinecraftItemTypes22["MangroveFence"] = "minecraft:mangrove_fence";
-  MinecraftItemTypes22["MangroveFenceGate"] = "minecraft:mangrove_fence_gate";
-  MinecraftItemTypes22["MangroveHangingSign"] = "minecraft:mangrove_hanging_sign";
-  MinecraftItemTypes22["MangroveLeaves"] = "minecraft:mangrove_leaves";
-  MinecraftItemTypes22["MangroveLog"] = "minecraft:mangrove_log";
-  MinecraftItemTypes22["MangrovePlanks"] = "minecraft:mangrove_planks";
-  MinecraftItemTypes22["MangrovePressurePlate"] = "minecraft:mangrove_pressure_plate";
-  MinecraftItemTypes22["MangrovePropagule"] = "minecraft:mangrove_propagule";
-  MinecraftItemTypes22["MangroveRoots"] = "minecraft:mangrove_roots";
-  MinecraftItemTypes22["MangroveShelf"] = "minecraft:mangrove_shelf";
-  MinecraftItemTypes22["MangroveSign"] = "minecraft:mangrove_sign";
-  MinecraftItemTypes22["MangroveSlab"] = "minecraft:mangrove_slab";
-  MinecraftItemTypes22["MangroveStairs"] = "minecraft:mangrove_stairs";
-  MinecraftItemTypes22["MangroveTrapdoor"] = "minecraft:mangrove_trapdoor";
-  MinecraftItemTypes22["MangroveWood"] = "minecraft:mangrove_wood";
-  MinecraftItemTypes22["MediumAmethystBud"] = "minecraft:medium_amethyst_bud";
-  MinecraftItemTypes22["MelonBlock"] = "minecraft:melon_block";
-  MinecraftItemTypes22["MelonSeeds"] = "minecraft:melon_seeds";
-  MinecraftItemTypes22["MelonSlice"] = "minecraft:melon_slice";
-  MinecraftItemTypes22["MilkBucket"] = "minecraft:milk_bucket";
-  MinecraftItemTypes22["Minecart"] = "minecraft:minecart";
-  MinecraftItemTypes22["MinerPotterySherd"] = "minecraft:miner_pottery_sherd";
-  MinecraftItemTypes22["MobSpawner"] = "minecraft:mob_spawner";
-  MinecraftItemTypes22["MojangBannerPattern"] = "minecraft:mojang_banner_pattern";
-  MinecraftItemTypes22["MooshroomSpawnEgg"] = "minecraft:mooshroom_spawn_egg";
-  MinecraftItemTypes22["MossBlock"] = "minecraft:moss_block";
-  MinecraftItemTypes22["MossCarpet"] = "minecraft:moss_carpet";
-  MinecraftItemTypes22["MossyCobblestone"] = "minecraft:mossy_cobblestone";
-  MinecraftItemTypes22["MossyCobblestoneSlab"] = "minecraft:mossy_cobblestone_slab";
-  MinecraftItemTypes22["MossyCobblestoneStairs"] = "minecraft:mossy_cobblestone_stairs";
-  MinecraftItemTypes22["MossyCobblestoneWall"] = "minecraft:mossy_cobblestone_wall";
-  MinecraftItemTypes22["MossyStoneBrickSlab"] = "minecraft:mossy_stone_brick_slab";
-  MinecraftItemTypes22["MossyStoneBrickStairs"] = "minecraft:mossy_stone_brick_stairs";
-  MinecraftItemTypes22["MossyStoneBrickWall"] = "minecraft:mossy_stone_brick_wall";
-  MinecraftItemTypes22["MossyStoneBricks"] = "minecraft:mossy_stone_bricks";
-  MinecraftItemTypes22["MournerPotterySherd"] = "minecraft:mourner_pottery_sherd";
-  MinecraftItemTypes22["Mud"] = "minecraft:mud";
-  MinecraftItemTypes22["MudBrickSlab"] = "minecraft:mud_brick_slab";
-  MinecraftItemTypes22["MudBrickStairs"] = "minecraft:mud_brick_stairs";
-  MinecraftItemTypes22["MudBrickWall"] = "minecraft:mud_brick_wall";
-  MinecraftItemTypes22["MudBricks"] = "minecraft:mud_bricks";
-  MinecraftItemTypes22["MuddyMangroveRoots"] = "minecraft:muddy_mangrove_roots";
-  MinecraftItemTypes22["MuleSpawnEgg"] = "minecraft:mule_spawn_egg";
-  MinecraftItemTypes22["MushroomStem"] = "minecraft:mushroom_stem";
-  MinecraftItemTypes22["MushroomStew"] = "minecraft:mushroom_stew";
-  MinecraftItemTypes22["MusicDisc11"] = "minecraft:music_disc_11";
-  MinecraftItemTypes22["MusicDisc13"] = "minecraft:music_disc_13";
-  MinecraftItemTypes22["MusicDisc5"] = "minecraft:music_disc_5";
-  MinecraftItemTypes22["MusicDiscBlocks"] = "minecraft:music_disc_blocks";
-  MinecraftItemTypes22["MusicDiscCat"] = "minecraft:music_disc_cat";
-  MinecraftItemTypes22["MusicDiscChirp"] = "minecraft:music_disc_chirp";
-  MinecraftItemTypes22["MusicDiscCreator"] = "minecraft:music_disc_creator";
-  MinecraftItemTypes22["MusicDiscCreatorMusicBox"] = "minecraft:music_disc_creator_music_box";
-  MinecraftItemTypes22["MusicDiscFar"] = "minecraft:music_disc_far";
-  MinecraftItemTypes22["MusicDiscLavaChicken"] = "minecraft:music_disc_lava_chicken";
-  MinecraftItemTypes22["MusicDiscMall"] = "minecraft:music_disc_mall";
-  MinecraftItemTypes22["MusicDiscMellohi"] = "minecraft:music_disc_mellohi";
-  MinecraftItemTypes22["MusicDiscOtherside"] = "minecraft:music_disc_otherside";
-  MinecraftItemTypes22["MusicDiscPigstep"] = "minecraft:music_disc_pigstep";
-  MinecraftItemTypes22["MusicDiscPrecipice"] = "minecraft:music_disc_precipice";
-  MinecraftItemTypes22["MusicDiscRelic"] = "minecraft:music_disc_relic";
-  MinecraftItemTypes22["MusicDiscStal"] = "minecraft:music_disc_stal";
-  MinecraftItemTypes22["MusicDiscStrad"] = "minecraft:music_disc_strad";
-  MinecraftItemTypes22["MusicDiscTears"] = "minecraft:music_disc_tears";
-  MinecraftItemTypes22["MusicDiscWait"] = "minecraft:music_disc_wait";
-  MinecraftItemTypes22["MusicDiscWard"] = "minecraft:music_disc_ward";
-  MinecraftItemTypes22["Mutton"] = "minecraft:mutton";
-  MinecraftItemTypes22["Mycelium"] = "minecraft:mycelium";
-  MinecraftItemTypes22["NameTag"] = "minecraft:name_tag";
-  MinecraftItemTypes22["NautilusShell"] = "minecraft:nautilus_shell";
-  MinecraftItemTypes22["NautilusSpawnEgg"] = "minecraft:nautilus_spawn_egg";
-  MinecraftItemTypes22["NetherBrick"] = "minecraft:nether_brick";
-  MinecraftItemTypes22["NetherBrickFence"] = "minecraft:nether_brick_fence";
-  MinecraftItemTypes22["NetherBrickSlab"] = "minecraft:nether_brick_slab";
-  MinecraftItemTypes22["NetherBrickStairs"] = "minecraft:nether_brick_stairs";
-  MinecraftItemTypes22["NetherBrickWall"] = "minecraft:nether_brick_wall";
-  MinecraftItemTypes22["NetherGoldOre"] = "minecraft:nether_gold_ore";
-  MinecraftItemTypes22["NetherSprouts"] = "minecraft:nether_sprouts";
-  MinecraftItemTypes22["NetherStar"] = "minecraft:nether_star";
-  MinecraftItemTypes22["NetherWart"] = "minecraft:nether_wart";
-  MinecraftItemTypes22["NetherWartBlock"] = "minecraft:nether_wart_block";
-  MinecraftItemTypes22["Netherbrick"] = "minecraft:netherbrick";
-  MinecraftItemTypes22["NetheriteAxe"] = "minecraft:netherite_axe";
-  MinecraftItemTypes22["NetheriteBlock"] = "minecraft:netherite_block";
-  MinecraftItemTypes22["NetheriteBoots"] = "minecraft:netherite_boots";
-  MinecraftItemTypes22["NetheriteChestplate"] = "minecraft:netherite_chestplate";
-  MinecraftItemTypes22["NetheriteHelmet"] = "minecraft:netherite_helmet";
-  MinecraftItemTypes22["NetheriteHoe"] = "minecraft:netherite_hoe";
-  MinecraftItemTypes22["NetheriteHorseArmor"] = "minecraft:netherite_horse_armor";
-  MinecraftItemTypes22["NetheriteIngot"] = "minecraft:netherite_ingot";
-  MinecraftItemTypes22["NetheriteLeggings"] = "minecraft:netherite_leggings";
-  MinecraftItemTypes22["NetheriteNautilusArmor"] = "minecraft:netherite_nautilus_armor";
-  MinecraftItemTypes22["NetheritePickaxe"] = "minecraft:netherite_pickaxe";
-  MinecraftItemTypes22["NetheriteScrap"] = "minecraft:netherite_scrap";
-  MinecraftItemTypes22["NetheriteShovel"] = "minecraft:netherite_shovel";
-  MinecraftItemTypes22["NetheriteSpear"] = "minecraft:netherite_spear";
-  MinecraftItemTypes22["NetheriteSword"] = "minecraft:netherite_sword";
-  MinecraftItemTypes22["NetheriteUpgradeSmithingTemplate"] = "minecraft:netherite_upgrade_smithing_template";
-  MinecraftItemTypes22["Netherrack"] = "minecraft:netherrack";
-  MinecraftItemTypes22["NormalStoneSlab"] = "minecraft:normal_stone_slab";
-  MinecraftItemTypes22["NormalStoneStairs"] = "minecraft:normal_stone_stairs";
-  MinecraftItemTypes22["Noteblock"] = "minecraft:noteblock";
-  MinecraftItemTypes22["OakBoat"] = "minecraft:oak_boat";
-  MinecraftItemTypes22["OakChestBoat"] = "minecraft:oak_chest_boat";
-  MinecraftItemTypes22["OakFence"] = "minecraft:oak_fence";
-  MinecraftItemTypes22["OakHangingSign"] = "minecraft:oak_hanging_sign";
-  MinecraftItemTypes22["OakLeaves"] = "minecraft:oak_leaves";
-  MinecraftItemTypes22["OakLog"] = "minecraft:oak_log";
-  MinecraftItemTypes22["OakPlanks"] = "minecraft:oak_planks";
-  MinecraftItemTypes22["OakSapling"] = "minecraft:oak_sapling";
-  MinecraftItemTypes22["OakShelf"] = "minecraft:oak_shelf";
-  MinecraftItemTypes22["OakSign"] = "minecraft:oak_sign";
-  MinecraftItemTypes22["OakSlab"] = "minecraft:oak_slab";
-  MinecraftItemTypes22["OakStairs"] = "minecraft:oak_stairs";
-  MinecraftItemTypes22["OakWood"] = "minecraft:oak_wood";
-  MinecraftItemTypes22["Observer"] = "minecraft:observer";
-  MinecraftItemTypes22["Obsidian"] = "minecraft:obsidian";
-  MinecraftItemTypes22["OcelotSpawnEgg"] = "minecraft:ocelot_spawn_egg";
-  MinecraftItemTypes22["OchreFroglight"] = "minecraft:ochre_froglight";
-  MinecraftItemTypes22["OminousBottle"] = "minecraft:ominous_bottle";
-  MinecraftItemTypes22["OminousTrialKey"] = "minecraft:ominous_trial_key";
-  MinecraftItemTypes22["OpenEyeblossom"] = "minecraft:open_eyeblossom";
-  MinecraftItemTypes22["OrangeBundle"] = "minecraft:orange_bundle";
-  MinecraftItemTypes22["OrangeCandle"] = "minecraft:orange_candle";
-  MinecraftItemTypes22["OrangeCarpet"] = "minecraft:orange_carpet";
-  MinecraftItemTypes22["OrangeConcrete"] = "minecraft:orange_concrete";
-  MinecraftItemTypes22["OrangeConcretePowder"] = "minecraft:orange_concrete_powder";
-  MinecraftItemTypes22["OrangeDye"] = "minecraft:orange_dye";
-  MinecraftItemTypes22["OrangeGlazedTerracotta"] = "minecraft:orange_glazed_terracotta";
-  MinecraftItemTypes22["OrangeHarness"] = "minecraft:orange_harness";
-  MinecraftItemTypes22["OrangeShulkerBox"] = "minecraft:orange_shulker_box";
-  MinecraftItemTypes22["OrangeStainedGlass"] = "minecraft:orange_stained_glass";
-  MinecraftItemTypes22["OrangeStainedGlassPane"] = "minecraft:orange_stained_glass_pane";
-  MinecraftItemTypes22["OrangeTerracotta"] = "minecraft:orange_terracotta";
-  MinecraftItemTypes22["OrangeTulip"] = "minecraft:orange_tulip";
-  MinecraftItemTypes22["OrangeWool"] = "minecraft:orange_wool";
-  MinecraftItemTypes22["OxeyeDaisy"] = "minecraft:oxeye_daisy";
-  MinecraftItemTypes22["OxidizedChiseledCopper"] = "minecraft:oxidized_chiseled_copper";
-  MinecraftItemTypes22["OxidizedCopper"] = "minecraft:oxidized_copper";
-  MinecraftItemTypes22["OxidizedCopperBars"] = "minecraft:oxidized_copper_bars";
-  MinecraftItemTypes22["OxidizedCopperBulb"] = "minecraft:oxidized_copper_bulb";
-  MinecraftItemTypes22["OxidizedCopperChain"] = "minecraft:oxidized_copper_chain";
-  MinecraftItemTypes22["OxidizedCopperChest"] = "minecraft:oxidized_copper_chest";
-  MinecraftItemTypes22["OxidizedCopperDoor"] = "minecraft:oxidized_copper_door";
-  MinecraftItemTypes22["OxidizedCopperGolemStatue"] = "minecraft:oxidized_copper_golem_statue";
-  MinecraftItemTypes22["OxidizedCopperGrate"] = "minecraft:oxidized_copper_grate";
-  MinecraftItemTypes22["OxidizedCopperLantern"] = "minecraft:oxidized_copper_lantern";
-  MinecraftItemTypes22["OxidizedCopperTrapdoor"] = "minecraft:oxidized_copper_trapdoor";
-  MinecraftItemTypes22["OxidizedCutCopper"] = "minecraft:oxidized_cut_copper";
-  MinecraftItemTypes22["OxidizedCutCopperSlab"] = "minecraft:oxidized_cut_copper_slab";
-  MinecraftItemTypes22["OxidizedCutCopperStairs"] = "minecraft:oxidized_cut_copper_stairs";
-  MinecraftItemTypes22["OxidizedLightningRod"] = "minecraft:oxidized_lightning_rod";
-  MinecraftItemTypes22["PackedIce"] = "minecraft:packed_ice";
-  MinecraftItemTypes22["PackedMud"] = "minecraft:packed_mud";
-  MinecraftItemTypes22["Painting"] = "minecraft:painting";
-  MinecraftItemTypes22["PaleHangingMoss"] = "minecraft:pale_hanging_moss";
-  MinecraftItemTypes22["PaleMossBlock"] = "minecraft:pale_moss_block";
-  MinecraftItemTypes22["PaleMossCarpet"] = "minecraft:pale_moss_carpet";
-  MinecraftItemTypes22["PaleOakBoat"] = "minecraft:pale_oak_boat";
-  MinecraftItemTypes22["PaleOakButton"] = "minecraft:pale_oak_button";
-  MinecraftItemTypes22["PaleOakChestBoat"] = "minecraft:pale_oak_chest_boat";
-  MinecraftItemTypes22["PaleOakDoor"] = "minecraft:pale_oak_door";
-  MinecraftItemTypes22["PaleOakFence"] = "minecraft:pale_oak_fence";
-  MinecraftItemTypes22["PaleOakFenceGate"] = "minecraft:pale_oak_fence_gate";
-  MinecraftItemTypes22["PaleOakHangingSign"] = "minecraft:pale_oak_hanging_sign";
-  MinecraftItemTypes22["PaleOakLeaves"] = "minecraft:pale_oak_leaves";
-  MinecraftItemTypes22["PaleOakLog"] = "minecraft:pale_oak_log";
-  MinecraftItemTypes22["PaleOakPlanks"] = "minecraft:pale_oak_planks";
-  MinecraftItemTypes22["PaleOakPressurePlate"] = "minecraft:pale_oak_pressure_plate";
-  MinecraftItemTypes22["PaleOakSapling"] = "minecraft:pale_oak_sapling";
-  MinecraftItemTypes22["PaleOakShelf"] = "minecraft:pale_oak_shelf";
-  MinecraftItemTypes22["PaleOakSign"] = "minecraft:pale_oak_sign";
-  MinecraftItemTypes22["PaleOakSlab"] = "minecraft:pale_oak_slab";
-  MinecraftItemTypes22["PaleOakStairs"] = "minecraft:pale_oak_stairs";
-  MinecraftItemTypes22["PaleOakTrapdoor"] = "minecraft:pale_oak_trapdoor";
-  MinecraftItemTypes22["PaleOakWood"] = "minecraft:pale_oak_wood";
-  MinecraftItemTypes22["PandaSpawnEgg"] = "minecraft:panda_spawn_egg";
-  MinecraftItemTypes22["Paper"] = "minecraft:paper";
-  MinecraftItemTypes22["ParchedSpawnEgg"] = "minecraft:parched_spawn_egg";
-  MinecraftItemTypes22["ParrotSpawnEgg"] = "minecraft:parrot_spawn_egg";
-  MinecraftItemTypes22["PearlescentFroglight"] = "minecraft:pearlescent_froglight";
-  MinecraftItemTypes22["Peony"] = "minecraft:peony";
-  MinecraftItemTypes22["PetrifiedOakSlab"] = "minecraft:petrified_oak_slab";
-  MinecraftItemTypes22["PhantomMembrane"] = "minecraft:phantom_membrane";
-  MinecraftItemTypes22["PhantomSpawnEgg"] = "minecraft:phantom_spawn_egg";
-  MinecraftItemTypes22["PigSpawnEgg"] = "minecraft:pig_spawn_egg";
-  MinecraftItemTypes22["PiglinBannerPattern"] = "minecraft:piglin_banner_pattern";
-  MinecraftItemTypes22["PiglinBruteSpawnEgg"] = "minecraft:piglin_brute_spawn_egg";
-  MinecraftItemTypes22["PiglinHead"] = "minecraft:piglin_head";
-  MinecraftItemTypes22["PiglinSpawnEgg"] = "minecraft:piglin_spawn_egg";
-  MinecraftItemTypes22["PillagerSpawnEgg"] = "minecraft:pillager_spawn_egg";
-  MinecraftItemTypes22["PinkBundle"] = "minecraft:pink_bundle";
-  MinecraftItemTypes22["PinkCandle"] = "minecraft:pink_candle";
-  MinecraftItemTypes22["PinkCarpet"] = "minecraft:pink_carpet";
-  MinecraftItemTypes22["PinkConcrete"] = "minecraft:pink_concrete";
-  MinecraftItemTypes22["PinkConcretePowder"] = "minecraft:pink_concrete_powder";
-  MinecraftItemTypes22["PinkDye"] = "minecraft:pink_dye";
-  MinecraftItemTypes22["PinkGlazedTerracotta"] = "minecraft:pink_glazed_terracotta";
-  MinecraftItemTypes22["PinkHarness"] = "minecraft:pink_harness";
-  MinecraftItemTypes22["PinkPetals"] = "minecraft:pink_petals";
-  MinecraftItemTypes22["PinkShulkerBox"] = "minecraft:pink_shulker_box";
-  MinecraftItemTypes22["PinkStainedGlass"] = "minecraft:pink_stained_glass";
-  MinecraftItemTypes22["PinkStainedGlassPane"] = "minecraft:pink_stained_glass_pane";
-  MinecraftItemTypes22["PinkTerracotta"] = "minecraft:pink_terracotta";
-  MinecraftItemTypes22["PinkTulip"] = "minecraft:pink_tulip";
-  MinecraftItemTypes22["PinkWool"] = "minecraft:pink_wool";
-  MinecraftItemTypes22["Piston"] = "minecraft:piston";
-  MinecraftItemTypes22["PitcherPlant"] = "minecraft:pitcher_plant";
-  MinecraftItemTypes22["PitcherPod"] = "minecraft:pitcher_pod";
-  MinecraftItemTypes22["PlayerHead"] = "minecraft:player_head";
-  MinecraftItemTypes22["PlentyPotterySherd"] = "minecraft:plenty_pottery_sherd";
-  MinecraftItemTypes22["Podzol"] = "minecraft:podzol";
-  MinecraftItemTypes22["PointedDripstone"] = "minecraft:pointed_dripstone";
-  MinecraftItemTypes22["PoisonousPotato"] = "minecraft:poisonous_potato";
-  MinecraftItemTypes22["PolarBearSpawnEgg"] = "minecraft:polar_bear_spawn_egg";
-  MinecraftItemTypes22["PolishedAndesite"] = "minecraft:polished_andesite";
-  MinecraftItemTypes22["PolishedAndesiteSlab"] = "minecraft:polished_andesite_slab";
-  MinecraftItemTypes22["PolishedAndesiteStairs"] = "minecraft:polished_andesite_stairs";
-  MinecraftItemTypes22["PolishedBasalt"] = "minecraft:polished_basalt";
-  MinecraftItemTypes22["PolishedBlackstone"] = "minecraft:polished_blackstone";
-  MinecraftItemTypes22["PolishedBlackstoneBrickSlab"] = "minecraft:polished_blackstone_brick_slab";
-  MinecraftItemTypes22["PolishedBlackstoneBrickStairs"] = "minecraft:polished_blackstone_brick_stairs";
-  MinecraftItemTypes22["PolishedBlackstoneBrickWall"] = "minecraft:polished_blackstone_brick_wall";
-  MinecraftItemTypes22["PolishedBlackstoneBricks"] = "minecraft:polished_blackstone_bricks";
-  MinecraftItemTypes22["PolishedBlackstoneButton"] = "minecraft:polished_blackstone_button";
-  MinecraftItemTypes22["PolishedBlackstonePressurePlate"] = "minecraft:polished_blackstone_pressure_plate";
-  MinecraftItemTypes22["PolishedBlackstoneSlab"] = "minecraft:polished_blackstone_slab";
-  MinecraftItemTypes22["PolishedBlackstoneStairs"] = "minecraft:polished_blackstone_stairs";
-  MinecraftItemTypes22["PolishedBlackstoneWall"] = "minecraft:polished_blackstone_wall";
-  MinecraftItemTypes22["PolishedDeepslate"] = "minecraft:polished_deepslate";
-  MinecraftItemTypes22["PolishedDeepslateSlab"] = "minecraft:polished_deepslate_slab";
-  MinecraftItemTypes22["PolishedDeepslateStairs"] = "minecraft:polished_deepslate_stairs";
-  MinecraftItemTypes22["PolishedDeepslateWall"] = "minecraft:polished_deepslate_wall";
-  MinecraftItemTypes22["PolishedDiorite"] = "minecraft:polished_diorite";
-  MinecraftItemTypes22["PolishedDioriteSlab"] = "minecraft:polished_diorite_slab";
-  MinecraftItemTypes22["PolishedDioriteStairs"] = "minecraft:polished_diorite_stairs";
-  MinecraftItemTypes22["PolishedGranite"] = "minecraft:polished_granite";
-  MinecraftItemTypes22["PolishedGraniteSlab"] = "minecraft:polished_granite_slab";
-  MinecraftItemTypes22["PolishedGraniteStairs"] = "minecraft:polished_granite_stairs";
-  MinecraftItemTypes22["PolishedTuff"] = "minecraft:polished_tuff";
-  MinecraftItemTypes22["PolishedTuffSlab"] = "minecraft:polished_tuff_slab";
-  MinecraftItemTypes22["PolishedTuffStairs"] = "minecraft:polished_tuff_stairs";
-  MinecraftItemTypes22["PolishedTuffWall"] = "minecraft:polished_tuff_wall";
-  MinecraftItemTypes22["PoppedChorusFruit"] = "minecraft:popped_chorus_fruit";
-  MinecraftItemTypes22["Poppy"] = "minecraft:poppy";
-  MinecraftItemTypes22["Porkchop"] = "minecraft:porkchop";
-  MinecraftItemTypes22["Potato"] = "minecraft:potato";
-  MinecraftItemTypes22["Potion"] = "minecraft:potion";
-  MinecraftItemTypes22["PowderSnowBucket"] = "minecraft:powder_snow_bucket";
-  MinecraftItemTypes22["Prismarine"] = "minecraft:prismarine";
-  MinecraftItemTypes22["PrismarineBrickSlab"] = "minecraft:prismarine_brick_slab";
-  MinecraftItemTypes22["PrismarineBricks"] = "minecraft:prismarine_bricks";
-  MinecraftItemTypes22["PrismarineBricksStairs"] = "minecraft:prismarine_bricks_stairs";
-  MinecraftItemTypes22["PrismarineCrystals"] = "minecraft:prismarine_crystals";
-  MinecraftItemTypes22["PrismarineShard"] = "minecraft:prismarine_shard";
-  MinecraftItemTypes22["PrismarineSlab"] = "minecraft:prismarine_slab";
-  MinecraftItemTypes22["PrismarineStairs"] = "minecraft:prismarine_stairs";
-  MinecraftItemTypes22["PrismarineWall"] = "minecraft:prismarine_wall";
-  MinecraftItemTypes22["PrizePotterySherd"] = "minecraft:prize_pottery_sherd";
-  MinecraftItemTypes22["Pufferfish"] = "minecraft:pufferfish";
-  MinecraftItemTypes22["PufferfishBucket"] = "minecraft:pufferfish_bucket";
-  MinecraftItemTypes22["PufferfishSpawnEgg"] = "minecraft:pufferfish_spawn_egg";
-  MinecraftItemTypes22["Pumpkin"] = "minecraft:pumpkin";
-  MinecraftItemTypes22["PumpkinPie"] = "minecraft:pumpkin_pie";
-  MinecraftItemTypes22["PumpkinSeeds"] = "minecraft:pumpkin_seeds";
-  MinecraftItemTypes22["PurpleBundle"] = "minecraft:purple_bundle";
-  MinecraftItemTypes22["PurpleCandle"] = "minecraft:purple_candle";
-  MinecraftItemTypes22["PurpleCarpet"] = "minecraft:purple_carpet";
-  MinecraftItemTypes22["PurpleConcrete"] = "minecraft:purple_concrete";
-  MinecraftItemTypes22["PurpleConcretePowder"] = "minecraft:purple_concrete_powder";
-  MinecraftItemTypes22["PurpleDye"] = "minecraft:purple_dye";
-  MinecraftItemTypes22["PurpleGlazedTerracotta"] = "minecraft:purple_glazed_terracotta";
-  MinecraftItemTypes22["PurpleHarness"] = "minecraft:purple_harness";
-  MinecraftItemTypes22["PurpleShulkerBox"] = "minecraft:purple_shulker_box";
-  MinecraftItemTypes22["PurpleStainedGlass"] = "minecraft:purple_stained_glass";
-  MinecraftItemTypes22["PurpleStainedGlassPane"] = "minecraft:purple_stained_glass_pane";
-  MinecraftItemTypes22["PurpleTerracotta"] = "minecraft:purple_terracotta";
-  MinecraftItemTypes22["PurpleWool"] = "minecraft:purple_wool";
-  MinecraftItemTypes22["PurpurBlock"] = "minecraft:purpur_block";
-  MinecraftItemTypes22["PurpurPillar"] = "minecraft:purpur_pillar";
-  MinecraftItemTypes22["PurpurSlab"] = "minecraft:purpur_slab";
-  MinecraftItemTypes22["PurpurStairs"] = "minecraft:purpur_stairs";
-  MinecraftItemTypes22["Quartz"] = "minecraft:quartz";
-  MinecraftItemTypes22["QuartzBlock"] = "minecraft:quartz_block";
-  MinecraftItemTypes22["QuartzBricks"] = "minecraft:quartz_bricks";
-  MinecraftItemTypes22["QuartzOre"] = "minecraft:quartz_ore";
-  MinecraftItemTypes22["QuartzPillar"] = "minecraft:quartz_pillar";
-  MinecraftItemTypes22["QuartzSlab"] = "minecraft:quartz_slab";
-  MinecraftItemTypes22["QuartzStairs"] = "minecraft:quartz_stairs";
-  MinecraftItemTypes22["Rabbit"] = "minecraft:rabbit";
-  MinecraftItemTypes22["RabbitFoot"] = "minecraft:rabbit_foot";
-  MinecraftItemTypes22["RabbitHide"] = "minecraft:rabbit_hide";
-  MinecraftItemTypes22["RabbitSpawnEgg"] = "minecraft:rabbit_spawn_egg";
-  MinecraftItemTypes22["RabbitStew"] = "minecraft:rabbit_stew";
-  MinecraftItemTypes22["Rail"] = "minecraft:rail";
-  MinecraftItemTypes22["RaiserArmorTrimSmithingTemplate"] = "minecraft:raiser_armor_trim_smithing_template";
-  MinecraftItemTypes22["RavagerSpawnEgg"] = "minecraft:ravager_spawn_egg";
-  MinecraftItemTypes22["RawCopper"] = "minecraft:raw_copper";
-  MinecraftItemTypes22["RawCopperBlock"] = "minecraft:raw_copper_block";
-  MinecraftItemTypes22["RawGold"] = "minecraft:raw_gold";
-  MinecraftItemTypes22["RawGoldBlock"] = "minecraft:raw_gold_block";
-  MinecraftItemTypes22["RawIron"] = "minecraft:raw_iron";
-  MinecraftItemTypes22["RawIronBlock"] = "minecraft:raw_iron_block";
-  MinecraftItemTypes22["RecoveryCompass"] = "minecraft:recovery_compass";
-  MinecraftItemTypes22["RedBundle"] = "minecraft:red_bundle";
-  MinecraftItemTypes22["RedCandle"] = "minecraft:red_candle";
-  MinecraftItemTypes22["RedCarpet"] = "minecraft:red_carpet";
-  MinecraftItemTypes22["RedConcrete"] = "minecraft:red_concrete";
-  MinecraftItemTypes22["RedConcretePowder"] = "minecraft:red_concrete_powder";
-  MinecraftItemTypes22["RedDye"] = "minecraft:red_dye";
-  MinecraftItemTypes22["RedGlazedTerracotta"] = "minecraft:red_glazed_terracotta";
-  MinecraftItemTypes22["RedHarness"] = "minecraft:red_harness";
-  MinecraftItemTypes22["RedMushroom"] = "minecraft:red_mushroom";
-  MinecraftItemTypes22["RedMushroomBlock"] = "minecraft:red_mushroom_block";
-  MinecraftItemTypes22["RedNetherBrick"] = "minecraft:red_nether_brick";
-  MinecraftItemTypes22["RedNetherBrickSlab"] = "minecraft:red_nether_brick_slab";
-  MinecraftItemTypes22["RedNetherBrickStairs"] = "minecraft:red_nether_brick_stairs";
-  MinecraftItemTypes22["RedNetherBrickWall"] = "minecraft:red_nether_brick_wall";
-  MinecraftItemTypes22["RedSand"] = "minecraft:red_sand";
-  MinecraftItemTypes22["RedSandstone"] = "minecraft:red_sandstone";
-  MinecraftItemTypes22["RedSandstoneSlab"] = "minecraft:red_sandstone_slab";
-  MinecraftItemTypes22["RedSandstoneStairs"] = "minecraft:red_sandstone_stairs";
-  MinecraftItemTypes22["RedSandstoneWall"] = "minecraft:red_sandstone_wall";
-  MinecraftItemTypes22["RedShulkerBox"] = "minecraft:red_shulker_box";
-  MinecraftItemTypes22["RedStainedGlass"] = "minecraft:red_stained_glass";
-  MinecraftItemTypes22["RedStainedGlassPane"] = "minecraft:red_stained_glass_pane";
-  MinecraftItemTypes22["RedTerracotta"] = "minecraft:red_terracotta";
-  MinecraftItemTypes22["RedTulip"] = "minecraft:red_tulip";
-  MinecraftItemTypes22["RedWool"] = "minecraft:red_wool";
-  MinecraftItemTypes22["Redstone"] = "minecraft:redstone";
-  MinecraftItemTypes22["RedstoneBlock"] = "minecraft:redstone_block";
-  MinecraftItemTypes22["RedstoneLamp"] = "minecraft:redstone_lamp";
-  MinecraftItemTypes22["RedstoneOre"] = "minecraft:redstone_ore";
-  MinecraftItemTypes22["RedstoneTorch"] = "minecraft:redstone_torch";
-  MinecraftItemTypes22["ReinforcedDeepslate"] = "minecraft:reinforced_deepslate";
-  MinecraftItemTypes22["Repeater"] = "minecraft:repeater";
-  MinecraftItemTypes22["RepeatingCommandBlock"] = "minecraft:repeating_command_block";
-  MinecraftItemTypes22["ResinBlock"] = "minecraft:resin_block";
-  MinecraftItemTypes22["ResinBrick"] = "minecraft:resin_brick";
-  MinecraftItemTypes22["ResinBrickSlab"] = "minecraft:resin_brick_slab";
-  MinecraftItemTypes22["ResinBrickStairs"] = "minecraft:resin_brick_stairs";
-  MinecraftItemTypes22["ResinBrickWall"] = "minecraft:resin_brick_wall";
-  MinecraftItemTypes22["ResinBricks"] = "minecraft:resin_bricks";
-  MinecraftItemTypes22["ResinClump"] = "minecraft:resin_clump";
-  MinecraftItemTypes22["RespawnAnchor"] = "minecraft:respawn_anchor";
-  MinecraftItemTypes22["RibArmorTrimSmithingTemplate"] = "minecraft:rib_armor_trim_smithing_template";
-  MinecraftItemTypes22["RoseBush"] = "minecraft:rose_bush";
-  MinecraftItemTypes22["RottenFlesh"] = "minecraft:rotten_flesh";
-  MinecraftItemTypes22["Saddle"] = "minecraft:saddle";
-  MinecraftItemTypes22["Salmon"] = "minecraft:salmon";
-  MinecraftItemTypes22["SalmonBucket"] = "minecraft:salmon_bucket";
-  MinecraftItemTypes22["SalmonSpawnEgg"] = "minecraft:salmon_spawn_egg";
-  MinecraftItemTypes22["Sand"] = "minecraft:sand";
-  MinecraftItemTypes22["Sandstone"] = "minecraft:sandstone";
-  MinecraftItemTypes22["SandstoneSlab"] = "minecraft:sandstone_slab";
-  MinecraftItemTypes22["SandstoneStairs"] = "minecraft:sandstone_stairs";
-  MinecraftItemTypes22["SandstoneWall"] = "minecraft:sandstone_wall";
-  MinecraftItemTypes22["Scaffolding"] = "minecraft:scaffolding";
-  MinecraftItemTypes22["ScrapePotterySherd"] = "minecraft:scrape_pottery_sherd";
-  MinecraftItemTypes22["Sculk"] = "minecraft:sculk";
-  MinecraftItemTypes22["SculkCatalyst"] = "minecraft:sculk_catalyst";
-  MinecraftItemTypes22["SculkSensor"] = "minecraft:sculk_sensor";
-  MinecraftItemTypes22["SculkShrieker"] = "minecraft:sculk_shrieker";
-  MinecraftItemTypes22["SculkVein"] = "minecraft:sculk_vein";
-  MinecraftItemTypes22["SeaLantern"] = "minecraft:sea_lantern";
-  MinecraftItemTypes22["SeaPickle"] = "minecraft:sea_pickle";
-  MinecraftItemTypes22["Seagrass"] = "minecraft:seagrass";
-  MinecraftItemTypes22["SentryArmorTrimSmithingTemplate"] = "minecraft:sentry_armor_trim_smithing_template";
-  MinecraftItemTypes22["ShaperArmorTrimSmithingTemplate"] = "minecraft:shaper_armor_trim_smithing_template";
-  MinecraftItemTypes22["SheafPotterySherd"] = "minecraft:sheaf_pottery_sherd";
-  MinecraftItemTypes22["Shears"] = "minecraft:shears";
-  MinecraftItemTypes22["SheepSpawnEgg"] = "minecraft:sheep_spawn_egg";
-  MinecraftItemTypes22["ShelterPotterySherd"] = "minecraft:shelter_pottery_sherd";
-  MinecraftItemTypes22["Shield"] = "minecraft:shield";
-  MinecraftItemTypes22["ShortDryGrass"] = "minecraft:short_dry_grass";
-  MinecraftItemTypes22["ShortGrass"] = "minecraft:short_grass";
-  MinecraftItemTypes22["Shroomlight"] = "minecraft:shroomlight";
-  MinecraftItemTypes22["ShulkerShell"] = "minecraft:shulker_shell";
-  MinecraftItemTypes22["ShulkerSpawnEgg"] = "minecraft:shulker_spawn_egg";
-  MinecraftItemTypes22["SilenceArmorTrimSmithingTemplate"] = "minecraft:silence_armor_trim_smithing_template";
-  MinecraftItemTypes22["SilverGlazedTerracotta"] = "minecraft:silver_glazed_terracotta";
-  MinecraftItemTypes22["SilverfishSpawnEgg"] = "minecraft:silverfish_spawn_egg";
-  MinecraftItemTypes22["SkeletonHorseSpawnEgg"] = "minecraft:skeleton_horse_spawn_egg";
-  MinecraftItemTypes22["SkeletonSkull"] = "minecraft:skeleton_skull";
-  MinecraftItemTypes22["SkeletonSpawnEgg"] = "minecraft:skeleton_spawn_egg";
-  MinecraftItemTypes22["SkullBannerPattern"] = "minecraft:skull_banner_pattern";
-  MinecraftItemTypes22["SkullPotterySherd"] = "minecraft:skull_pottery_sherd";
-  MinecraftItemTypes22["Slime"] = "minecraft:slime";
-  MinecraftItemTypes22["SlimeBall"] = "minecraft:slime_ball";
-  MinecraftItemTypes22["SlimeSpawnEgg"] = "minecraft:slime_spawn_egg";
-  MinecraftItemTypes22["SmallAmethystBud"] = "minecraft:small_amethyst_bud";
-  MinecraftItemTypes22["SmallDripleafBlock"] = "minecraft:small_dripleaf_block";
-  MinecraftItemTypes22["SmithingTable"] = "minecraft:smithing_table";
-  MinecraftItemTypes22["Smoker"] = "minecraft:smoker";
-  MinecraftItemTypes22["SmoothBasalt"] = "minecraft:smooth_basalt";
-  MinecraftItemTypes22["SmoothQuartz"] = "minecraft:smooth_quartz";
-  MinecraftItemTypes22["SmoothQuartzSlab"] = "minecraft:smooth_quartz_slab";
-  MinecraftItemTypes22["SmoothQuartzStairs"] = "minecraft:smooth_quartz_stairs";
-  MinecraftItemTypes22["SmoothRedSandstone"] = "minecraft:smooth_red_sandstone";
-  MinecraftItemTypes22["SmoothRedSandstoneSlab"] = "minecraft:smooth_red_sandstone_slab";
-  MinecraftItemTypes22["SmoothRedSandstoneStairs"] = "minecraft:smooth_red_sandstone_stairs";
-  MinecraftItemTypes22["SmoothSandstone"] = "minecraft:smooth_sandstone";
-  MinecraftItemTypes22["SmoothSandstoneSlab"] = "minecraft:smooth_sandstone_slab";
-  MinecraftItemTypes22["SmoothSandstoneStairs"] = "minecraft:smooth_sandstone_stairs";
-  MinecraftItemTypes22["SmoothStone"] = "minecraft:smooth_stone";
-  MinecraftItemTypes22["SmoothStoneSlab"] = "minecraft:smooth_stone_slab";
-  MinecraftItemTypes22["SnifferEgg"] = "minecraft:sniffer_egg";
-  MinecraftItemTypes22["SnifferSpawnEgg"] = "minecraft:sniffer_spawn_egg";
-  MinecraftItemTypes22["SnortPotterySherd"] = "minecraft:snort_pottery_sherd";
-  MinecraftItemTypes22["SnoutArmorTrimSmithingTemplate"] = "minecraft:snout_armor_trim_smithing_template";
-  MinecraftItemTypes22["Snow"] = "minecraft:snow";
-  MinecraftItemTypes22["SnowGolemSpawnEgg"] = "minecraft:snow_golem_spawn_egg";
-  MinecraftItemTypes22["SnowLayer"] = "minecraft:snow_layer";
-  MinecraftItemTypes22["Snowball"] = "minecraft:snowball";
-  MinecraftItemTypes22["SoulCampfire"] = "minecraft:soul_campfire";
-  MinecraftItemTypes22["SoulLantern"] = "minecraft:soul_lantern";
-  MinecraftItemTypes22["SoulSand"] = "minecraft:soul_sand";
-  MinecraftItemTypes22["SoulSoil"] = "minecraft:soul_soil";
-  MinecraftItemTypes22["SoulTorch"] = "minecraft:soul_torch";
-  MinecraftItemTypes22["SpiderEye"] = "minecraft:spider_eye";
-  MinecraftItemTypes22["SpiderSpawnEgg"] = "minecraft:spider_spawn_egg";
-  MinecraftItemTypes22["SpireArmorTrimSmithingTemplate"] = "minecraft:spire_armor_trim_smithing_template";
-  MinecraftItemTypes22["SplashPotion"] = "minecraft:splash_potion";
-  MinecraftItemTypes22["Sponge"] = "minecraft:sponge";
-  MinecraftItemTypes22["SporeBlossom"] = "minecraft:spore_blossom";
-  MinecraftItemTypes22["SpruceBoat"] = "minecraft:spruce_boat";
-  MinecraftItemTypes22["SpruceButton"] = "minecraft:spruce_button";
-  MinecraftItemTypes22["SpruceChestBoat"] = "minecraft:spruce_chest_boat";
-  MinecraftItemTypes22["SpruceDoor"] = "minecraft:spruce_door";
-  MinecraftItemTypes22["SpruceFence"] = "minecraft:spruce_fence";
-  MinecraftItemTypes22["SpruceFenceGate"] = "minecraft:spruce_fence_gate";
-  MinecraftItemTypes22["SpruceHangingSign"] = "minecraft:spruce_hanging_sign";
-  MinecraftItemTypes22["SpruceLeaves"] = "minecraft:spruce_leaves";
-  MinecraftItemTypes22["SpruceLog"] = "minecraft:spruce_log";
-  MinecraftItemTypes22["SprucePlanks"] = "minecraft:spruce_planks";
-  MinecraftItemTypes22["SprucePressurePlate"] = "minecraft:spruce_pressure_plate";
-  MinecraftItemTypes22["SpruceSapling"] = "minecraft:spruce_sapling";
-  MinecraftItemTypes22["SpruceShelf"] = "minecraft:spruce_shelf";
-  MinecraftItemTypes22["SpruceSign"] = "minecraft:spruce_sign";
-  MinecraftItemTypes22["SpruceSlab"] = "minecraft:spruce_slab";
-  MinecraftItemTypes22["SpruceStairs"] = "minecraft:spruce_stairs";
-  MinecraftItemTypes22["SpruceTrapdoor"] = "minecraft:spruce_trapdoor";
-  MinecraftItemTypes22["SpruceWood"] = "minecraft:spruce_wood";
-  MinecraftItemTypes22["Spyglass"] = "minecraft:spyglass";
-  MinecraftItemTypes22["SquidSpawnEgg"] = "minecraft:squid_spawn_egg";
-  MinecraftItemTypes22["Stick"] = "minecraft:stick";
-  MinecraftItemTypes22["StickyPiston"] = "minecraft:sticky_piston";
-  MinecraftItemTypes22["Stone"] = "minecraft:stone";
-  MinecraftItemTypes22["StoneAxe"] = "minecraft:stone_axe";
-  MinecraftItemTypes22["StoneBrickSlab"] = "minecraft:stone_brick_slab";
-  MinecraftItemTypes22["StoneBrickStairs"] = "minecraft:stone_brick_stairs";
-  MinecraftItemTypes22["StoneBrickWall"] = "minecraft:stone_brick_wall";
-  MinecraftItemTypes22["StoneBricks"] = "minecraft:stone_bricks";
-  MinecraftItemTypes22["StoneButton"] = "minecraft:stone_button";
-  MinecraftItemTypes22["StoneHoe"] = "minecraft:stone_hoe";
-  MinecraftItemTypes22["StonePickaxe"] = "minecraft:stone_pickaxe";
-  MinecraftItemTypes22["StonePressurePlate"] = "minecraft:stone_pressure_plate";
-  MinecraftItemTypes22["StoneShovel"] = "minecraft:stone_shovel";
-  MinecraftItemTypes22["StoneSpear"] = "minecraft:stone_spear";
-  MinecraftItemTypes22["StoneStairs"] = "minecraft:stone_stairs";
-  MinecraftItemTypes22["StoneSword"] = "minecraft:stone_sword";
-  MinecraftItemTypes22["StonecutterBlock"] = "minecraft:stonecutter_block";
-  MinecraftItemTypes22["StraySpawnEgg"] = "minecraft:stray_spawn_egg";
-  MinecraftItemTypes22["StriderSpawnEgg"] = "minecraft:strider_spawn_egg";
-  MinecraftItemTypes22["String"] = "minecraft:string";
-  MinecraftItemTypes22["StrippedAcaciaLog"] = "minecraft:stripped_acacia_log";
-  MinecraftItemTypes22["StrippedAcaciaWood"] = "minecraft:stripped_acacia_wood";
-  MinecraftItemTypes22["StrippedBambooBlock"] = "minecraft:stripped_bamboo_block";
-  MinecraftItemTypes22["StrippedBirchLog"] = "minecraft:stripped_birch_log";
-  MinecraftItemTypes22["StrippedBirchWood"] = "minecraft:stripped_birch_wood";
-  MinecraftItemTypes22["StrippedCherryLog"] = "minecraft:stripped_cherry_log";
-  MinecraftItemTypes22["StrippedCherryWood"] = "minecraft:stripped_cherry_wood";
-  MinecraftItemTypes22["StrippedCrimsonHyphae"] = "minecraft:stripped_crimson_hyphae";
-  MinecraftItemTypes22["StrippedCrimsonStem"] = "minecraft:stripped_crimson_stem";
-  MinecraftItemTypes22["StrippedDarkOakLog"] = "minecraft:stripped_dark_oak_log";
-  MinecraftItemTypes22["StrippedDarkOakWood"] = "minecraft:stripped_dark_oak_wood";
-  MinecraftItemTypes22["StrippedJungleLog"] = "minecraft:stripped_jungle_log";
-  MinecraftItemTypes22["StrippedJungleWood"] = "minecraft:stripped_jungle_wood";
-  MinecraftItemTypes22["StrippedMangroveLog"] = "minecraft:stripped_mangrove_log";
-  MinecraftItemTypes22["StrippedMangroveWood"] = "minecraft:stripped_mangrove_wood";
-  MinecraftItemTypes22["StrippedOakLog"] = "minecraft:stripped_oak_log";
-  MinecraftItemTypes22["StrippedOakWood"] = "minecraft:stripped_oak_wood";
-  MinecraftItemTypes22["StrippedPaleOakLog"] = "minecraft:stripped_pale_oak_log";
-  MinecraftItemTypes22["StrippedPaleOakWood"] = "minecraft:stripped_pale_oak_wood";
-  MinecraftItemTypes22["StrippedSpruceLog"] = "minecraft:stripped_spruce_log";
-  MinecraftItemTypes22["StrippedSpruceWood"] = "minecraft:stripped_spruce_wood";
-  MinecraftItemTypes22["StrippedWarpedHyphae"] = "minecraft:stripped_warped_hyphae";
-  MinecraftItemTypes22["StrippedWarpedStem"] = "minecraft:stripped_warped_stem";
-  MinecraftItemTypes22["StructureBlock"] = "minecraft:structure_block";
-  MinecraftItemTypes22["StructureVoid"] = "minecraft:structure_void";
-  MinecraftItemTypes22["Sugar"] = "minecraft:sugar";
-  MinecraftItemTypes22["SugarCane"] = "minecraft:sugar_cane";
-  MinecraftItemTypes22["Sunflower"] = "minecraft:sunflower";
-  MinecraftItemTypes22["SuspiciousGravel"] = "minecraft:suspicious_gravel";
-  MinecraftItemTypes22["SuspiciousSand"] = "minecraft:suspicious_sand";
-  MinecraftItemTypes22["SuspiciousStew"] = "minecraft:suspicious_stew";
-  MinecraftItemTypes22["SweetBerries"] = "minecraft:sweet_berries";
-  MinecraftItemTypes22["TadpoleBucket"] = "minecraft:tadpole_bucket";
-  MinecraftItemTypes22["TadpoleSpawnEgg"] = "minecraft:tadpole_spawn_egg";
-  MinecraftItemTypes22["TallDryGrass"] = "minecraft:tall_dry_grass";
-  MinecraftItemTypes22["TallGrass"] = "minecraft:tall_grass";
-  MinecraftItemTypes22["Target"] = "minecraft:target";
-  MinecraftItemTypes22["TideArmorTrimSmithingTemplate"] = "minecraft:tide_armor_trim_smithing_template";
-  MinecraftItemTypes22["TintedGlass"] = "minecraft:tinted_glass";
-  MinecraftItemTypes22["Tnt"] = "minecraft:tnt";
-  MinecraftItemTypes22["TntMinecart"] = "minecraft:tnt_minecart";
-  MinecraftItemTypes22["Torch"] = "minecraft:torch";
-  MinecraftItemTypes22["Torchflower"] = "minecraft:torchflower";
-  MinecraftItemTypes22["TorchflowerSeeds"] = "minecraft:torchflower_seeds";
-  MinecraftItemTypes22["TotemOfUndying"] = "minecraft:totem_of_undying";
-  MinecraftItemTypes22["TraderLlamaSpawnEgg"] = "minecraft:trader_llama_spawn_egg";
-  MinecraftItemTypes22["Trapdoor"] = "minecraft:trapdoor";
-  MinecraftItemTypes22["TrappedChest"] = "minecraft:trapped_chest";
-  MinecraftItemTypes22["TrialKey"] = "minecraft:trial_key";
-  MinecraftItemTypes22["TrialSpawner"] = "minecraft:trial_spawner";
-  MinecraftItemTypes22["Trident"] = "minecraft:trident";
-  MinecraftItemTypes22["TripwireHook"] = "minecraft:tripwire_hook";
-  MinecraftItemTypes22["TropicalFish"] = "minecraft:tropical_fish";
-  MinecraftItemTypes22["TropicalFishBucket"] = "minecraft:tropical_fish_bucket";
-  MinecraftItemTypes22["TropicalFishSpawnEgg"] = "minecraft:tropical_fish_spawn_egg";
-  MinecraftItemTypes22["TubeCoral"] = "minecraft:tube_coral";
-  MinecraftItemTypes22["TubeCoralBlock"] = "minecraft:tube_coral_block";
-  MinecraftItemTypes22["TubeCoralFan"] = "minecraft:tube_coral_fan";
-  MinecraftItemTypes22["Tuff"] = "minecraft:tuff";
-  MinecraftItemTypes22["TuffBrickSlab"] = "minecraft:tuff_brick_slab";
-  MinecraftItemTypes22["TuffBrickStairs"] = "minecraft:tuff_brick_stairs";
-  MinecraftItemTypes22["TuffBrickWall"] = "minecraft:tuff_brick_wall";
-  MinecraftItemTypes22["TuffBricks"] = "minecraft:tuff_bricks";
-  MinecraftItemTypes22["TuffSlab"] = "minecraft:tuff_slab";
-  MinecraftItemTypes22["TuffStairs"] = "minecraft:tuff_stairs";
-  MinecraftItemTypes22["TuffWall"] = "minecraft:tuff_wall";
-  MinecraftItemTypes22["TurtleEgg"] = "minecraft:turtle_egg";
-  MinecraftItemTypes22["TurtleHelmet"] = "minecraft:turtle_helmet";
-  MinecraftItemTypes22["TurtleScute"] = "minecraft:turtle_scute";
-  MinecraftItemTypes22["TurtleSpawnEgg"] = "minecraft:turtle_spawn_egg";
-  MinecraftItemTypes22["TwistingVines"] = "minecraft:twisting_vines";
-  MinecraftItemTypes22["UndyedShulkerBox"] = "minecraft:undyed_shulker_box";
-  MinecraftItemTypes22["Vault"] = "minecraft:vault";
-  MinecraftItemTypes22["VerdantFroglight"] = "minecraft:verdant_froglight";
-  MinecraftItemTypes22["VexArmorTrimSmithingTemplate"] = "minecraft:vex_armor_trim_smithing_template";
-  MinecraftItemTypes22["VexSpawnEgg"] = "minecraft:vex_spawn_egg";
-  MinecraftItemTypes22["VillagerSpawnEgg"] = "minecraft:villager_spawn_egg";
-  MinecraftItemTypes22["VindicatorSpawnEgg"] = "minecraft:vindicator_spawn_egg";
-  MinecraftItemTypes22["Vine"] = "minecraft:vine";
-  MinecraftItemTypes22["WanderingTraderSpawnEgg"] = "minecraft:wandering_trader_spawn_egg";
-  MinecraftItemTypes22["WardArmorTrimSmithingTemplate"] = "minecraft:ward_armor_trim_smithing_template";
-  MinecraftItemTypes22["WardenSpawnEgg"] = "minecraft:warden_spawn_egg";
-  MinecraftItemTypes22["WarpedButton"] = "minecraft:warped_button";
-  MinecraftItemTypes22["WarpedDoor"] = "minecraft:warped_door";
-  MinecraftItemTypes22["WarpedFence"] = "minecraft:warped_fence";
-  MinecraftItemTypes22["WarpedFenceGate"] = "minecraft:warped_fence_gate";
-  MinecraftItemTypes22["WarpedFungus"] = "minecraft:warped_fungus";
-  MinecraftItemTypes22["WarpedFungusOnAStick"] = "minecraft:warped_fungus_on_a_stick";
-  MinecraftItemTypes22["WarpedHangingSign"] = "minecraft:warped_hanging_sign";
-  MinecraftItemTypes22["WarpedHyphae"] = "minecraft:warped_hyphae";
-  MinecraftItemTypes22["WarpedNylium"] = "minecraft:warped_nylium";
-  MinecraftItemTypes22["WarpedPlanks"] = "minecraft:warped_planks";
-  MinecraftItemTypes22["WarpedPressurePlate"] = "minecraft:warped_pressure_plate";
-  MinecraftItemTypes22["WarpedRoots"] = "minecraft:warped_roots";
-  MinecraftItemTypes22["WarpedShelf"] = "minecraft:warped_shelf";
-  MinecraftItemTypes22["WarpedSign"] = "minecraft:warped_sign";
-  MinecraftItemTypes22["WarpedSlab"] = "minecraft:warped_slab";
-  MinecraftItemTypes22["WarpedStairs"] = "minecraft:warped_stairs";
-  MinecraftItemTypes22["WarpedStem"] = "minecraft:warped_stem";
-  MinecraftItemTypes22["WarpedTrapdoor"] = "minecraft:warped_trapdoor";
-  MinecraftItemTypes22["WarpedWartBlock"] = "minecraft:warped_wart_block";
-  MinecraftItemTypes22["WaterBucket"] = "minecraft:water_bucket";
-  MinecraftItemTypes22["Waterlily"] = "minecraft:waterlily";
-  MinecraftItemTypes22["WaxedChiseledCopper"] = "minecraft:waxed_chiseled_copper";
-  MinecraftItemTypes22["WaxedCopper"] = "minecraft:waxed_copper";
-  MinecraftItemTypes22["WaxedCopperBars"] = "minecraft:waxed_copper_bars";
-  MinecraftItemTypes22["WaxedCopperBulb"] = "minecraft:waxed_copper_bulb";
-  MinecraftItemTypes22["WaxedCopperChain"] = "minecraft:waxed_copper_chain";
-  MinecraftItemTypes22["WaxedCopperChest"] = "minecraft:waxed_copper_chest";
-  MinecraftItemTypes22["WaxedCopperDoor"] = "minecraft:waxed_copper_door";
-  MinecraftItemTypes22["WaxedCopperGolemStatue"] = "minecraft:waxed_copper_golem_statue";
-  MinecraftItemTypes22["WaxedCopperGrate"] = "minecraft:waxed_copper_grate";
-  MinecraftItemTypes22["WaxedCopperLantern"] = "minecraft:waxed_copper_lantern";
-  MinecraftItemTypes22["WaxedCopperTrapdoor"] = "minecraft:waxed_copper_trapdoor";
-  MinecraftItemTypes22["WaxedCutCopper"] = "minecraft:waxed_cut_copper";
-  MinecraftItemTypes22["WaxedCutCopperSlab"] = "minecraft:waxed_cut_copper_slab";
-  MinecraftItemTypes22["WaxedCutCopperStairs"] = "minecraft:waxed_cut_copper_stairs";
-  MinecraftItemTypes22["WaxedExposedChiseledCopper"] = "minecraft:waxed_exposed_chiseled_copper";
-  MinecraftItemTypes22["WaxedExposedCopper"] = "minecraft:waxed_exposed_copper";
-  MinecraftItemTypes22["WaxedExposedCopperBars"] = "minecraft:waxed_exposed_copper_bars";
-  MinecraftItemTypes22["WaxedExposedCopperBulb"] = "minecraft:waxed_exposed_copper_bulb";
-  MinecraftItemTypes22["WaxedExposedCopperChain"] = "minecraft:waxed_exposed_copper_chain";
-  MinecraftItemTypes22["WaxedExposedCopperChest"] = "minecraft:waxed_exposed_copper_chest";
-  MinecraftItemTypes22["WaxedExposedCopperDoor"] = "minecraft:waxed_exposed_copper_door";
-  MinecraftItemTypes22["WaxedExposedCopperGolemStatue"] = "minecraft:waxed_exposed_copper_golem_statue";
-  MinecraftItemTypes22["WaxedExposedCopperGrate"] = "minecraft:waxed_exposed_copper_grate";
-  MinecraftItemTypes22["WaxedExposedCopperLantern"] = "minecraft:waxed_exposed_copper_lantern";
-  MinecraftItemTypes22["WaxedExposedCopperTrapdoor"] = "minecraft:waxed_exposed_copper_trapdoor";
-  MinecraftItemTypes22["WaxedExposedCutCopper"] = "minecraft:waxed_exposed_cut_copper";
-  MinecraftItemTypes22["WaxedExposedCutCopperSlab"] = "minecraft:waxed_exposed_cut_copper_slab";
-  MinecraftItemTypes22["WaxedExposedCutCopperStairs"] = "minecraft:waxed_exposed_cut_copper_stairs";
-  MinecraftItemTypes22["WaxedExposedLightningRod"] = "minecraft:waxed_exposed_lightning_rod";
-  MinecraftItemTypes22["WaxedLightningRod"] = "minecraft:waxed_lightning_rod";
-  MinecraftItemTypes22["WaxedOxidizedChiseledCopper"] = "minecraft:waxed_oxidized_chiseled_copper";
-  MinecraftItemTypes22["WaxedOxidizedCopper"] = "minecraft:waxed_oxidized_copper";
-  MinecraftItemTypes22["WaxedOxidizedCopperBars"] = "minecraft:waxed_oxidized_copper_bars";
-  MinecraftItemTypes22["WaxedOxidizedCopperBulb"] = "minecraft:waxed_oxidized_copper_bulb";
-  MinecraftItemTypes22["WaxedOxidizedCopperChain"] = "minecraft:waxed_oxidized_copper_chain";
-  MinecraftItemTypes22["WaxedOxidizedCopperChest"] = "minecraft:waxed_oxidized_copper_chest";
-  MinecraftItemTypes22["WaxedOxidizedCopperDoor"] = "minecraft:waxed_oxidized_copper_door";
-  MinecraftItemTypes22["WaxedOxidizedCopperGolemStatue"] = "minecraft:waxed_oxidized_copper_golem_statue";
-  MinecraftItemTypes22["WaxedOxidizedCopperGrate"] = "minecraft:waxed_oxidized_copper_grate";
-  MinecraftItemTypes22["WaxedOxidizedCopperLantern"] = "minecraft:waxed_oxidized_copper_lantern";
-  MinecraftItemTypes22["WaxedOxidizedCopperTrapdoor"] = "minecraft:waxed_oxidized_copper_trapdoor";
-  MinecraftItemTypes22["WaxedOxidizedCutCopper"] = "minecraft:waxed_oxidized_cut_copper";
-  MinecraftItemTypes22["WaxedOxidizedCutCopperSlab"] = "minecraft:waxed_oxidized_cut_copper_slab";
-  MinecraftItemTypes22["WaxedOxidizedCutCopperStairs"] = "minecraft:waxed_oxidized_cut_copper_stairs";
-  MinecraftItemTypes22["WaxedOxidizedLightningRod"] = "minecraft:waxed_oxidized_lightning_rod";
-  MinecraftItemTypes22["WaxedWeatheredChiseledCopper"] = "minecraft:waxed_weathered_chiseled_copper";
-  MinecraftItemTypes22["WaxedWeatheredCopper"] = "minecraft:waxed_weathered_copper";
-  MinecraftItemTypes22["WaxedWeatheredCopperBars"] = "minecraft:waxed_weathered_copper_bars";
-  MinecraftItemTypes22["WaxedWeatheredCopperBulb"] = "minecraft:waxed_weathered_copper_bulb";
-  MinecraftItemTypes22["WaxedWeatheredCopperChain"] = "minecraft:waxed_weathered_copper_chain";
-  MinecraftItemTypes22["WaxedWeatheredCopperChest"] = "minecraft:waxed_weathered_copper_chest";
-  MinecraftItemTypes22["WaxedWeatheredCopperDoor"] = "minecraft:waxed_weathered_copper_door";
-  MinecraftItemTypes22["WaxedWeatheredCopperGolemStatue"] = "minecraft:waxed_weathered_copper_golem_statue";
-  MinecraftItemTypes22["WaxedWeatheredCopperGrate"] = "minecraft:waxed_weathered_copper_grate";
-  MinecraftItemTypes22["WaxedWeatheredCopperLantern"] = "minecraft:waxed_weathered_copper_lantern";
-  MinecraftItemTypes22["WaxedWeatheredCopperTrapdoor"] = "minecraft:waxed_weathered_copper_trapdoor";
-  MinecraftItemTypes22["WaxedWeatheredCutCopper"] = "minecraft:waxed_weathered_cut_copper";
-  MinecraftItemTypes22["WaxedWeatheredCutCopperSlab"] = "minecraft:waxed_weathered_cut_copper_slab";
-  MinecraftItemTypes22["WaxedWeatheredCutCopperStairs"] = "minecraft:waxed_weathered_cut_copper_stairs";
-  MinecraftItemTypes22["WaxedWeatheredLightningRod"] = "minecraft:waxed_weathered_lightning_rod";
-  MinecraftItemTypes22["WayfinderArmorTrimSmithingTemplate"] = "minecraft:wayfinder_armor_trim_smithing_template";
-  MinecraftItemTypes22["WeatheredChiseledCopper"] = "minecraft:weathered_chiseled_copper";
-  MinecraftItemTypes22["WeatheredCopper"] = "minecraft:weathered_copper";
-  MinecraftItemTypes22["WeatheredCopperBars"] = "minecraft:weathered_copper_bars";
-  MinecraftItemTypes22["WeatheredCopperBulb"] = "minecraft:weathered_copper_bulb";
-  MinecraftItemTypes22["WeatheredCopperChain"] = "minecraft:weathered_copper_chain";
-  MinecraftItemTypes22["WeatheredCopperChest"] = "minecraft:weathered_copper_chest";
-  MinecraftItemTypes22["WeatheredCopperDoor"] = "minecraft:weathered_copper_door";
-  MinecraftItemTypes22["WeatheredCopperGolemStatue"] = "minecraft:weathered_copper_golem_statue";
-  MinecraftItemTypes22["WeatheredCopperGrate"] = "minecraft:weathered_copper_grate";
-  MinecraftItemTypes22["WeatheredCopperLantern"] = "minecraft:weathered_copper_lantern";
-  MinecraftItemTypes22["WeatheredCopperTrapdoor"] = "minecraft:weathered_copper_trapdoor";
-  MinecraftItemTypes22["WeatheredCutCopper"] = "minecraft:weathered_cut_copper";
-  MinecraftItemTypes22["WeatheredCutCopperSlab"] = "minecraft:weathered_cut_copper_slab";
-  MinecraftItemTypes22["WeatheredCutCopperStairs"] = "minecraft:weathered_cut_copper_stairs";
-  MinecraftItemTypes22["WeatheredLightningRod"] = "minecraft:weathered_lightning_rod";
-  MinecraftItemTypes22["Web"] = "minecraft:web";
-  MinecraftItemTypes22["WeepingVines"] = "minecraft:weeping_vines";
-  MinecraftItemTypes22["WetSponge"] = "minecraft:wet_sponge";
-  MinecraftItemTypes22["Wheat"] = "minecraft:wheat";
-  MinecraftItemTypes22["WheatSeeds"] = "minecraft:wheat_seeds";
-  MinecraftItemTypes22["WhiteBundle"] = "minecraft:white_bundle";
-  MinecraftItemTypes22["WhiteCandle"] = "minecraft:white_candle";
-  MinecraftItemTypes22["WhiteCarpet"] = "minecraft:white_carpet";
-  MinecraftItemTypes22["WhiteConcrete"] = "minecraft:white_concrete";
-  MinecraftItemTypes22["WhiteConcretePowder"] = "minecraft:white_concrete_powder";
-  MinecraftItemTypes22["WhiteDye"] = "minecraft:white_dye";
-  MinecraftItemTypes22["WhiteGlazedTerracotta"] = "minecraft:white_glazed_terracotta";
-  MinecraftItemTypes22["WhiteHarness"] = "minecraft:white_harness";
-  MinecraftItemTypes22["WhiteShulkerBox"] = "minecraft:white_shulker_box";
-  MinecraftItemTypes22["WhiteStainedGlass"] = "minecraft:white_stained_glass";
-  MinecraftItemTypes22["WhiteStainedGlassPane"] = "minecraft:white_stained_glass_pane";
-  MinecraftItemTypes22["WhiteTerracotta"] = "minecraft:white_terracotta";
-  MinecraftItemTypes22["WhiteTulip"] = "minecraft:white_tulip";
-  MinecraftItemTypes22["WhiteWool"] = "minecraft:white_wool";
-  MinecraftItemTypes22["WildArmorTrimSmithingTemplate"] = "minecraft:wild_armor_trim_smithing_template";
-  MinecraftItemTypes22["Wildflowers"] = "minecraft:wildflowers";
-  MinecraftItemTypes22["WindCharge"] = "minecraft:wind_charge";
-  MinecraftItemTypes22["WitchSpawnEgg"] = "minecraft:witch_spawn_egg";
-  MinecraftItemTypes22["WitherRose"] = "minecraft:wither_rose";
-  MinecraftItemTypes22["WitherSkeletonSkull"] = "minecraft:wither_skeleton_skull";
-  MinecraftItemTypes22["WitherSkeletonSpawnEgg"] = "minecraft:wither_skeleton_spawn_egg";
-  MinecraftItemTypes22["WitherSpawnEgg"] = "minecraft:wither_spawn_egg";
-  MinecraftItemTypes22["WolfArmor"] = "minecraft:wolf_armor";
-  MinecraftItemTypes22["WolfSpawnEgg"] = "minecraft:wolf_spawn_egg";
-  MinecraftItemTypes22["WoodenAxe"] = "minecraft:wooden_axe";
-  MinecraftItemTypes22["WoodenButton"] = "minecraft:wooden_button";
-  MinecraftItemTypes22["WoodenDoor"] = "minecraft:wooden_door";
-  MinecraftItemTypes22["WoodenHoe"] = "minecraft:wooden_hoe";
-  MinecraftItemTypes22["WoodenPickaxe"] = "minecraft:wooden_pickaxe";
-  MinecraftItemTypes22["WoodenPressurePlate"] = "minecraft:wooden_pressure_plate";
-  MinecraftItemTypes22["WoodenShovel"] = "minecraft:wooden_shovel";
-  MinecraftItemTypes22["WoodenSpear"] = "minecraft:wooden_spear";
-  MinecraftItemTypes22["WoodenSword"] = "minecraft:wooden_sword";
-  MinecraftItemTypes22["WritableBook"] = "minecraft:writable_book";
-  MinecraftItemTypes22["YellowBundle"] = "minecraft:yellow_bundle";
-  MinecraftItemTypes22["YellowCandle"] = "minecraft:yellow_candle";
-  MinecraftItemTypes22["YellowCarpet"] = "minecraft:yellow_carpet";
-  MinecraftItemTypes22["YellowConcrete"] = "minecraft:yellow_concrete";
-  MinecraftItemTypes22["YellowConcretePowder"] = "minecraft:yellow_concrete_powder";
-  MinecraftItemTypes22["YellowDye"] = "minecraft:yellow_dye";
-  MinecraftItemTypes22["YellowGlazedTerracotta"] = "minecraft:yellow_glazed_terracotta";
-  MinecraftItemTypes22["YellowHarness"] = "minecraft:yellow_harness";
-  MinecraftItemTypes22["YellowShulkerBox"] = "minecraft:yellow_shulker_box";
-  MinecraftItemTypes22["YellowStainedGlass"] = "minecraft:yellow_stained_glass";
-  MinecraftItemTypes22["YellowStainedGlassPane"] = "minecraft:yellow_stained_glass_pane";
-  MinecraftItemTypes22["YellowTerracotta"] = "minecraft:yellow_terracotta";
-  MinecraftItemTypes22["YellowWool"] = "minecraft:yellow_wool";
-  MinecraftItemTypes22["ZoglinSpawnEgg"] = "minecraft:zoglin_spawn_egg";
-  MinecraftItemTypes22["ZombieHead"] = "minecraft:zombie_head";
-  MinecraftItemTypes22["ZombieHorseSpawnEgg"] = "minecraft:zombie_horse_spawn_egg";
-  MinecraftItemTypes22["ZombieNautilusSpawnEgg"] = "minecraft:zombie_nautilus_spawn_egg";
-  MinecraftItemTypes22["ZombiePigmanSpawnEgg"] = "minecraft:zombie_pigman_spawn_egg";
-  MinecraftItemTypes22["ZombieSpawnEgg"] = "minecraft:zombie_spawn_egg";
-  MinecraftItemTypes22["ZombieVillagerSpawnEgg"] = "minecraft:zombie_villager_spawn_egg";
-  return MinecraftItemTypes22;
+var MinecraftItemTypes = ((MinecraftItemTypes2) => {
+  MinecraftItemTypes2["AcaciaBoat"] = "minecraft:acacia_boat";
+  MinecraftItemTypes2["AcaciaButton"] = "minecraft:acacia_button";
+  MinecraftItemTypes2["AcaciaChestBoat"] = "minecraft:acacia_chest_boat";
+  MinecraftItemTypes2["AcaciaDoor"] = "minecraft:acacia_door";
+  MinecraftItemTypes2["AcaciaFence"] = "minecraft:acacia_fence";
+  MinecraftItemTypes2["AcaciaFenceGate"] = "minecraft:acacia_fence_gate";
+  MinecraftItemTypes2["AcaciaHangingSign"] = "minecraft:acacia_hanging_sign";
+  MinecraftItemTypes2["AcaciaLeaves"] = "minecraft:acacia_leaves";
+  MinecraftItemTypes2["AcaciaLog"] = "minecraft:acacia_log";
+  MinecraftItemTypes2["AcaciaPlanks"] = "minecraft:acacia_planks";
+  MinecraftItemTypes2["AcaciaPressurePlate"] = "minecraft:acacia_pressure_plate";
+  MinecraftItemTypes2["AcaciaSapling"] = "minecraft:acacia_sapling";
+  MinecraftItemTypes2["AcaciaShelf"] = "minecraft:acacia_shelf";
+  MinecraftItemTypes2["AcaciaSign"] = "minecraft:acacia_sign";
+  MinecraftItemTypes2["AcaciaSlab"] = "minecraft:acacia_slab";
+  MinecraftItemTypes2["AcaciaStairs"] = "minecraft:acacia_stairs";
+  MinecraftItemTypes2["AcaciaTrapdoor"] = "minecraft:acacia_trapdoor";
+  MinecraftItemTypes2["AcaciaWood"] = "minecraft:acacia_wood";
+  MinecraftItemTypes2["ActivatorRail"] = "minecraft:activator_rail";
+  MinecraftItemTypes2["AllaySpawnEgg"] = "minecraft:allay_spawn_egg";
+  MinecraftItemTypes2["Allium"] = "minecraft:allium";
+  MinecraftItemTypes2["Allow"] = "minecraft:allow";
+  MinecraftItemTypes2["AmethystBlock"] = "minecraft:amethyst_block";
+  MinecraftItemTypes2["AmethystCluster"] = "minecraft:amethyst_cluster";
+  MinecraftItemTypes2["AmethystShard"] = "minecraft:amethyst_shard";
+  MinecraftItemTypes2["AncientDebris"] = "minecraft:ancient_debris";
+  MinecraftItemTypes2["Andesite"] = "minecraft:andesite";
+  MinecraftItemTypes2["AndesiteSlab"] = "minecraft:andesite_slab";
+  MinecraftItemTypes2["AndesiteStairs"] = "minecraft:andesite_stairs";
+  MinecraftItemTypes2["AndesiteWall"] = "minecraft:andesite_wall";
+  MinecraftItemTypes2["AnglerPotterySherd"] = "minecraft:angler_pottery_sherd";
+  MinecraftItemTypes2["Anvil"] = "minecraft:anvil";
+  MinecraftItemTypes2["Apple"] = "minecraft:apple";
+  MinecraftItemTypes2["ArcherPotterySherd"] = "minecraft:archer_pottery_sherd";
+  MinecraftItemTypes2["ArmadilloScute"] = "minecraft:armadillo_scute";
+  MinecraftItemTypes2["ArmadilloSpawnEgg"] = "minecraft:armadillo_spawn_egg";
+  MinecraftItemTypes2["ArmorStand"] = "minecraft:armor_stand";
+  MinecraftItemTypes2["ArmsUpPotterySherd"] = "minecraft:arms_up_pottery_sherd";
+  MinecraftItemTypes2["Arrow"] = "minecraft:arrow";
+  MinecraftItemTypes2["AxolotlBucket"] = "minecraft:axolotl_bucket";
+  MinecraftItemTypes2["AxolotlSpawnEgg"] = "minecraft:axolotl_spawn_egg";
+  MinecraftItemTypes2["Azalea"] = "minecraft:azalea";
+  MinecraftItemTypes2["AzaleaLeaves"] = "minecraft:azalea_leaves";
+  MinecraftItemTypes2["AzaleaLeavesFlowered"] = "minecraft:azalea_leaves_flowered";
+  MinecraftItemTypes2["AzureBluet"] = "minecraft:azure_bluet";
+  MinecraftItemTypes2["BakedPotato"] = "minecraft:baked_potato";
+  MinecraftItemTypes2["Bamboo"] = "minecraft:bamboo";
+  MinecraftItemTypes2["BambooBlock"] = "minecraft:bamboo_block";
+  MinecraftItemTypes2["BambooButton"] = "minecraft:bamboo_button";
+  MinecraftItemTypes2["BambooChestRaft"] = "minecraft:bamboo_chest_raft";
+  MinecraftItemTypes2["BambooDoor"] = "minecraft:bamboo_door";
+  MinecraftItemTypes2["BambooFence"] = "minecraft:bamboo_fence";
+  MinecraftItemTypes2["BambooFenceGate"] = "minecraft:bamboo_fence_gate";
+  MinecraftItemTypes2["BambooHangingSign"] = "minecraft:bamboo_hanging_sign";
+  MinecraftItemTypes2["BambooMosaic"] = "minecraft:bamboo_mosaic";
+  MinecraftItemTypes2["BambooMosaicSlab"] = "minecraft:bamboo_mosaic_slab";
+  MinecraftItemTypes2["BambooMosaicStairs"] = "minecraft:bamboo_mosaic_stairs";
+  MinecraftItemTypes2["BambooPlanks"] = "minecraft:bamboo_planks";
+  MinecraftItemTypes2["BambooPressurePlate"] = "minecraft:bamboo_pressure_plate";
+  MinecraftItemTypes2["BambooRaft"] = "minecraft:bamboo_raft";
+  MinecraftItemTypes2["BambooShelf"] = "minecraft:bamboo_shelf";
+  MinecraftItemTypes2["BambooSign"] = "minecraft:bamboo_sign";
+  MinecraftItemTypes2["BambooSlab"] = "minecraft:bamboo_slab";
+  MinecraftItemTypes2["BambooStairs"] = "minecraft:bamboo_stairs";
+  MinecraftItemTypes2["BambooTrapdoor"] = "minecraft:bamboo_trapdoor";
+  MinecraftItemTypes2["Banner"] = "minecraft:banner";
+  MinecraftItemTypes2["Barrel"] = "minecraft:barrel";
+  MinecraftItemTypes2["Barrier"] = "minecraft:barrier";
+  MinecraftItemTypes2["Basalt"] = "minecraft:basalt";
+  MinecraftItemTypes2["BatSpawnEgg"] = "minecraft:bat_spawn_egg";
+  MinecraftItemTypes2["Beacon"] = "minecraft:beacon";
+  MinecraftItemTypes2["Bed"] = "minecraft:bed";
+  MinecraftItemTypes2["Bedrock"] = "minecraft:bedrock";
+  MinecraftItemTypes2["BeeNest"] = "minecraft:bee_nest";
+  MinecraftItemTypes2["BeeSpawnEgg"] = "minecraft:bee_spawn_egg";
+  MinecraftItemTypes2["Beef"] = "minecraft:beef";
+  MinecraftItemTypes2["Beehive"] = "minecraft:beehive";
+  MinecraftItemTypes2["Beetroot"] = "minecraft:beetroot";
+  MinecraftItemTypes2["BeetrootSeeds"] = "minecraft:beetroot_seeds";
+  MinecraftItemTypes2["BeetrootSoup"] = "minecraft:beetroot_soup";
+  MinecraftItemTypes2["Bell"] = "minecraft:bell";
+  MinecraftItemTypes2["BigDripleaf"] = "minecraft:big_dripleaf";
+  MinecraftItemTypes2["BirchBoat"] = "minecraft:birch_boat";
+  MinecraftItemTypes2["BirchButton"] = "minecraft:birch_button";
+  MinecraftItemTypes2["BirchChestBoat"] = "minecraft:birch_chest_boat";
+  MinecraftItemTypes2["BirchDoor"] = "minecraft:birch_door";
+  MinecraftItemTypes2["BirchFence"] = "minecraft:birch_fence";
+  MinecraftItemTypes2["BirchFenceGate"] = "minecraft:birch_fence_gate";
+  MinecraftItemTypes2["BirchHangingSign"] = "minecraft:birch_hanging_sign";
+  MinecraftItemTypes2["BirchLeaves"] = "minecraft:birch_leaves";
+  MinecraftItemTypes2["BirchLog"] = "minecraft:birch_log";
+  MinecraftItemTypes2["BirchPlanks"] = "minecraft:birch_planks";
+  MinecraftItemTypes2["BirchPressurePlate"] = "minecraft:birch_pressure_plate";
+  MinecraftItemTypes2["BirchSapling"] = "minecraft:birch_sapling";
+  MinecraftItemTypes2["BirchShelf"] = "minecraft:birch_shelf";
+  MinecraftItemTypes2["BirchSign"] = "minecraft:birch_sign";
+  MinecraftItemTypes2["BirchSlab"] = "minecraft:birch_slab";
+  MinecraftItemTypes2["BirchStairs"] = "minecraft:birch_stairs";
+  MinecraftItemTypes2["BirchTrapdoor"] = "minecraft:birch_trapdoor";
+  MinecraftItemTypes2["BirchWood"] = "minecraft:birch_wood";
+  MinecraftItemTypes2["BlackBundle"] = "minecraft:black_bundle";
+  MinecraftItemTypes2["BlackCandle"] = "minecraft:black_candle";
+  MinecraftItemTypes2["BlackCarpet"] = "minecraft:black_carpet";
+  MinecraftItemTypes2["BlackConcrete"] = "minecraft:black_concrete";
+  MinecraftItemTypes2["BlackConcretePowder"] = "minecraft:black_concrete_powder";
+  MinecraftItemTypes2["BlackDye"] = "minecraft:black_dye";
+  MinecraftItemTypes2["BlackGlazedTerracotta"] = "minecraft:black_glazed_terracotta";
+  MinecraftItemTypes2["BlackHarness"] = "minecraft:black_harness";
+  MinecraftItemTypes2["BlackShulkerBox"] = "minecraft:black_shulker_box";
+  MinecraftItemTypes2["BlackStainedGlass"] = "minecraft:black_stained_glass";
+  MinecraftItemTypes2["BlackStainedGlassPane"] = "minecraft:black_stained_glass_pane";
+  MinecraftItemTypes2["BlackTerracotta"] = "minecraft:black_terracotta";
+  MinecraftItemTypes2["BlackWool"] = "minecraft:black_wool";
+  MinecraftItemTypes2["Blackstone"] = "minecraft:blackstone";
+  MinecraftItemTypes2["BlackstoneSlab"] = "minecraft:blackstone_slab";
+  MinecraftItemTypes2["BlackstoneStairs"] = "minecraft:blackstone_stairs";
+  MinecraftItemTypes2["BlackstoneWall"] = "minecraft:blackstone_wall";
+  MinecraftItemTypes2["BladePotterySherd"] = "minecraft:blade_pottery_sherd";
+  MinecraftItemTypes2["BlastFurnace"] = "minecraft:blast_furnace";
+  MinecraftItemTypes2["BlazePowder"] = "minecraft:blaze_powder";
+  MinecraftItemTypes2["BlazeRod"] = "minecraft:blaze_rod";
+  MinecraftItemTypes2["BlazeSpawnEgg"] = "minecraft:blaze_spawn_egg";
+  MinecraftItemTypes2["BlueBundle"] = "minecraft:blue_bundle";
+  MinecraftItemTypes2["BlueCandle"] = "minecraft:blue_candle";
+  MinecraftItemTypes2["BlueCarpet"] = "minecraft:blue_carpet";
+  MinecraftItemTypes2["BlueConcrete"] = "minecraft:blue_concrete";
+  MinecraftItemTypes2["BlueConcretePowder"] = "minecraft:blue_concrete_powder";
+  MinecraftItemTypes2["BlueDye"] = "minecraft:blue_dye";
+  MinecraftItemTypes2["BlueEgg"] = "minecraft:blue_egg";
+  MinecraftItemTypes2["BlueGlazedTerracotta"] = "minecraft:blue_glazed_terracotta";
+  MinecraftItemTypes2["BlueHarness"] = "minecraft:blue_harness";
+  MinecraftItemTypes2["BlueIce"] = "minecraft:blue_ice";
+  MinecraftItemTypes2["BlueOrchid"] = "minecraft:blue_orchid";
+  MinecraftItemTypes2["BlueShulkerBox"] = "minecraft:blue_shulker_box";
+  MinecraftItemTypes2["BlueStainedGlass"] = "minecraft:blue_stained_glass";
+  MinecraftItemTypes2["BlueStainedGlassPane"] = "minecraft:blue_stained_glass_pane";
+  MinecraftItemTypes2["BlueTerracotta"] = "minecraft:blue_terracotta";
+  MinecraftItemTypes2["BlueWool"] = "minecraft:blue_wool";
+  MinecraftItemTypes2["BoggedSpawnEgg"] = "minecraft:bogged_spawn_egg";
+  MinecraftItemTypes2["BoltArmorTrimSmithingTemplate"] = "minecraft:bolt_armor_trim_smithing_template";
+  MinecraftItemTypes2["Bone"] = "minecraft:bone";
+  MinecraftItemTypes2["BoneBlock"] = "minecraft:bone_block";
+  MinecraftItemTypes2["BoneMeal"] = "minecraft:bone_meal";
+  MinecraftItemTypes2["Book"] = "minecraft:book";
+  MinecraftItemTypes2["Bookshelf"] = "minecraft:bookshelf";
+  MinecraftItemTypes2["BorderBlock"] = "minecraft:border_block";
+  MinecraftItemTypes2["BordureIndentedBannerPattern"] = "minecraft:bordure_indented_banner_pattern";
+  MinecraftItemTypes2["Bow"] = "minecraft:bow";
+  MinecraftItemTypes2["Bowl"] = "minecraft:bowl";
+  MinecraftItemTypes2["BrainCoral"] = "minecraft:brain_coral";
+  MinecraftItemTypes2["BrainCoralBlock"] = "minecraft:brain_coral_block";
+  MinecraftItemTypes2["BrainCoralFan"] = "minecraft:brain_coral_fan";
+  MinecraftItemTypes2["Bread"] = "minecraft:bread";
+  MinecraftItemTypes2["BreezeRod"] = "minecraft:breeze_rod";
+  MinecraftItemTypes2["BreezeSpawnEgg"] = "minecraft:breeze_spawn_egg";
+  MinecraftItemTypes2["BrewerPotterySherd"] = "minecraft:brewer_pottery_sherd";
+  MinecraftItemTypes2["BrewingStand"] = "minecraft:brewing_stand";
+  MinecraftItemTypes2["Brick"] = "minecraft:brick";
+  MinecraftItemTypes2["BrickBlock"] = "minecraft:brick_block";
+  MinecraftItemTypes2["BrickSlab"] = "minecraft:brick_slab";
+  MinecraftItemTypes2["BrickStairs"] = "minecraft:brick_stairs";
+  MinecraftItemTypes2["BrickWall"] = "minecraft:brick_wall";
+  MinecraftItemTypes2["BrownBundle"] = "minecraft:brown_bundle";
+  MinecraftItemTypes2["BrownCandle"] = "minecraft:brown_candle";
+  MinecraftItemTypes2["BrownCarpet"] = "minecraft:brown_carpet";
+  MinecraftItemTypes2["BrownConcrete"] = "minecraft:brown_concrete";
+  MinecraftItemTypes2["BrownConcretePowder"] = "minecraft:brown_concrete_powder";
+  MinecraftItemTypes2["BrownDye"] = "minecraft:brown_dye";
+  MinecraftItemTypes2["BrownEgg"] = "minecraft:brown_egg";
+  MinecraftItemTypes2["BrownGlazedTerracotta"] = "minecraft:brown_glazed_terracotta";
+  MinecraftItemTypes2["BrownHarness"] = "minecraft:brown_harness";
+  MinecraftItemTypes2["BrownMushroom"] = "minecraft:brown_mushroom";
+  MinecraftItemTypes2["BrownMushroomBlock"] = "minecraft:brown_mushroom_block";
+  MinecraftItemTypes2["BrownShulkerBox"] = "minecraft:brown_shulker_box";
+  MinecraftItemTypes2["BrownStainedGlass"] = "minecraft:brown_stained_glass";
+  MinecraftItemTypes2["BrownStainedGlassPane"] = "minecraft:brown_stained_glass_pane";
+  MinecraftItemTypes2["BrownTerracotta"] = "minecraft:brown_terracotta";
+  MinecraftItemTypes2["BrownWool"] = "minecraft:brown_wool";
+  MinecraftItemTypes2["Brush"] = "minecraft:brush";
+  MinecraftItemTypes2["BubbleCoral"] = "minecraft:bubble_coral";
+  MinecraftItemTypes2["BubbleCoralBlock"] = "minecraft:bubble_coral_block";
+  MinecraftItemTypes2["BubbleCoralFan"] = "minecraft:bubble_coral_fan";
+  MinecraftItemTypes2["Bucket"] = "minecraft:bucket";
+  MinecraftItemTypes2["BuddingAmethyst"] = "minecraft:budding_amethyst";
+  MinecraftItemTypes2["Bundle"] = "minecraft:bundle";
+  MinecraftItemTypes2["BurnPotterySherd"] = "minecraft:burn_pottery_sherd";
+  MinecraftItemTypes2["Bush"] = "minecraft:bush";
+  MinecraftItemTypes2["Cactus"] = "minecraft:cactus";
+  MinecraftItemTypes2["CactusFlower"] = "minecraft:cactus_flower";
+  MinecraftItemTypes2["Cake"] = "minecraft:cake";
+  MinecraftItemTypes2["Calcite"] = "minecraft:calcite";
+  MinecraftItemTypes2["CalibratedSculkSensor"] = "minecraft:calibrated_sculk_sensor";
+  MinecraftItemTypes2["CamelHuskSpawnEgg"] = "minecraft:camel_husk_spawn_egg";
+  MinecraftItemTypes2["CamelSpawnEgg"] = "minecraft:camel_spawn_egg";
+  MinecraftItemTypes2["Campfire"] = "minecraft:campfire";
+  MinecraftItemTypes2["Candle"] = "minecraft:candle";
+  MinecraftItemTypes2["Carrot"] = "minecraft:carrot";
+  MinecraftItemTypes2["CarrotOnAStick"] = "minecraft:carrot_on_a_stick";
+  MinecraftItemTypes2["CartographyTable"] = "minecraft:cartography_table";
+  MinecraftItemTypes2["CarvedPumpkin"] = "minecraft:carved_pumpkin";
+  MinecraftItemTypes2["CatSpawnEgg"] = "minecraft:cat_spawn_egg";
+  MinecraftItemTypes2["Cauldron"] = "minecraft:cauldron";
+  MinecraftItemTypes2["CaveSpiderSpawnEgg"] = "minecraft:cave_spider_spawn_egg";
+  MinecraftItemTypes2["ChainCommandBlock"] = "minecraft:chain_command_block";
+  MinecraftItemTypes2["ChainmailBoots"] = "minecraft:chainmail_boots";
+  MinecraftItemTypes2["ChainmailChestplate"] = "minecraft:chainmail_chestplate";
+  MinecraftItemTypes2["ChainmailHelmet"] = "minecraft:chainmail_helmet";
+  MinecraftItemTypes2["ChainmailLeggings"] = "minecraft:chainmail_leggings";
+  MinecraftItemTypes2["Charcoal"] = "minecraft:charcoal";
+  MinecraftItemTypes2["CherryBoat"] = "minecraft:cherry_boat";
+  MinecraftItemTypes2["CherryButton"] = "minecraft:cherry_button";
+  MinecraftItemTypes2["CherryChestBoat"] = "minecraft:cherry_chest_boat";
+  MinecraftItemTypes2["CherryDoor"] = "minecraft:cherry_door";
+  MinecraftItemTypes2["CherryFence"] = "minecraft:cherry_fence";
+  MinecraftItemTypes2["CherryFenceGate"] = "minecraft:cherry_fence_gate";
+  MinecraftItemTypes2["CherryHangingSign"] = "minecraft:cherry_hanging_sign";
+  MinecraftItemTypes2["CherryLeaves"] = "minecraft:cherry_leaves";
+  MinecraftItemTypes2["CherryLog"] = "minecraft:cherry_log";
+  MinecraftItemTypes2["CherryPlanks"] = "minecraft:cherry_planks";
+  MinecraftItemTypes2["CherryPressurePlate"] = "minecraft:cherry_pressure_plate";
+  MinecraftItemTypes2["CherrySapling"] = "minecraft:cherry_sapling";
+  MinecraftItemTypes2["CherryShelf"] = "minecraft:cherry_shelf";
+  MinecraftItemTypes2["CherrySign"] = "minecraft:cherry_sign";
+  MinecraftItemTypes2["CherrySlab"] = "minecraft:cherry_slab";
+  MinecraftItemTypes2["CherryStairs"] = "minecraft:cherry_stairs";
+  MinecraftItemTypes2["CherryTrapdoor"] = "minecraft:cherry_trapdoor";
+  MinecraftItemTypes2["CherryWood"] = "minecraft:cherry_wood";
+  MinecraftItemTypes2["Chest"] = "minecraft:chest";
+  MinecraftItemTypes2["ChestMinecart"] = "minecraft:chest_minecart";
+  MinecraftItemTypes2["Chicken"] = "minecraft:chicken";
+  MinecraftItemTypes2["ChickenSpawnEgg"] = "minecraft:chicken_spawn_egg";
+  MinecraftItemTypes2["ChippedAnvil"] = "minecraft:chipped_anvil";
+  MinecraftItemTypes2["ChiseledBookshelf"] = "minecraft:chiseled_bookshelf";
+  MinecraftItemTypes2["ChiseledCopper"] = "minecraft:chiseled_copper";
+  MinecraftItemTypes2["ChiseledDeepslate"] = "minecraft:chiseled_deepslate";
+  MinecraftItemTypes2["ChiseledNetherBricks"] = "minecraft:chiseled_nether_bricks";
+  MinecraftItemTypes2["ChiseledPolishedBlackstone"] = "minecraft:chiseled_polished_blackstone";
+  MinecraftItemTypes2["ChiseledQuartzBlock"] = "minecraft:chiseled_quartz_block";
+  MinecraftItemTypes2["ChiseledRedSandstone"] = "minecraft:chiseled_red_sandstone";
+  MinecraftItemTypes2["ChiseledResinBricks"] = "minecraft:chiseled_resin_bricks";
+  MinecraftItemTypes2["ChiseledSandstone"] = "minecraft:chiseled_sandstone";
+  MinecraftItemTypes2["ChiseledStoneBricks"] = "minecraft:chiseled_stone_bricks";
+  MinecraftItemTypes2["ChiseledTuff"] = "minecraft:chiseled_tuff";
+  MinecraftItemTypes2["ChiseledTuffBricks"] = "minecraft:chiseled_tuff_bricks";
+  MinecraftItemTypes2["ChorusFlower"] = "minecraft:chorus_flower";
+  MinecraftItemTypes2["ChorusFruit"] = "minecraft:chorus_fruit";
+  MinecraftItemTypes2["ChorusPlant"] = "minecraft:chorus_plant";
+  MinecraftItemTypes2["Clay"] = "minecraft:clay";
+  MinecraftItemTypes2["ClayBall"] = "minecraft:clay_ball";
+  MinecraftItemTypes2["Clock"] = "minecraft:clock";
+  MinecraftItemTypes2["ClosedEyeblossom"] = "minecraft:closed_eyeblossom";
+  MinecraftItemTypes2["Coal"] = "minecraft:coal";
+  MinecraftItemTypes2["CoalBlock"] = "minecraft:coal_block";
+  MinecraftItemTypes2["CoalOre"] = "minecraft:coal_ore";
+  MinecraftItemTypes2["CoarseDirt"] = "minecraft:coarse_dirt";
+  MinecraftItemTypes2["CoastArmorTrimSmithingTemplate"] = "minecraft:coast_armor_trim_smithing_template";
+  MinecraftItemTypes2["CobbledDeepslate"] = "minecraft:cobbled_deepslate";
+  MinecraftItemTypes2["CobbledDeepslateSlab"] = "minecraft:cobbled_deepslate_slab";
+  MinecraftItemTypes2["CobbledDeepslateStairs"] = "minecraft:cobbled_deepslate_stairs";
+  MinecraftItemTypes2["CobbledDeepslateWall"] = "minecraft:cobbled_deepslate_wall";
+  MinecraftItemTypes2["Cobblestone"] = "minecraft:cobblestone";
+  MinecraftItemTypes2["CobblestoneSlab"] = "minecraft:cobblestone_slab";
+  MinecraftItemTypes2["CobblestoneWall"] = "minecraft:cobblestone_wall";
+  MinecraftItemTypes2["CocoaBeans"] = "minecraft:cocoa_beans";
+  MinecraftItemTypes2["Cod"] = "minecraft:cod";
+  MinecraftItemTypes2["CodBucket"] = "minecraft:cod_bucket";
+  MinecraftItemTypes2["CodSpawnEgg"] = "minecraft:cod_spawn_egg";
+  MinecraftItemTypes2["CommandBlock"] = "minecraft:command_block";
+  MinecraftItemTypes2["CommandBlockMinecart"] = "minecraft:command_block_minecart";
+  MinecraftItemTypes2["Comparator"] = "minecraft:comparator";
+  MinecraftItemTypes2["Compass"] = "minecraft:compass";
+  MinecraftItemTypes2["Composter"] = "minecraft:composter";
+  MinecraftItemTypes2["Conduit"] = "minecraft:conduit";
+  MinecraftItemTypes2["CookedBeef"] = "minecraft:cooked_beef";
+  MinecraftItemTypes2["CookedChicken"] = "minecraft:cooked_chicken";
+  MinecraftItemTypes2["CookedCod"] = "minecraft:cooked_cod";
+  MinecraftItemTypes2["CookedMutton"] = "minecraft:cooked_mutton";
+  MinecraftItemTypes2["CookedPorkchop"] = "minecraft:cooked_porkchop";
+  MinecraftItemTypes2["CookedRabbit"] = "minecraft:cooked_rabbit";
+  MinecraftItemTypes2["CookedSalmon"] = "minecraft:cooked_salmon";
+  MinecraftItemTypes2["Cookie"] = "minecraft:cookie";
+  MinecraftItemTypes2["CopperAxe"] = "minecraft:copper_axe";
+  MinecraftItemTypes2["CopperBars"] = "minecraft:copper_bars";
+  MinecraftItemTypes2["CopperBlock"] = "minecraft:copper_block";
+  MinecraftItemTypes2["CopperBoots"] = "minecraft:copper_boots";
+  MinecraftItemTypes2["CopperBulb"] = "minecraft:copper_bulb";
+  MinecraftItemTypes2["CopperChain"] = "minecraft:copper_chain";
+  MinecraftItemTypes2["CopperChest"] = "minecraft:copper_chest";
+  MinecraftItemTypes2["CopperChestplate"] = "minecraft:copper_chestplate";
+  MinecraftItemTypes2["CopperDoor"] = "minecraft:copper_door";
+  MinecraftItemTypes2["CopperGolemSpawnEgg"] = "minecraft:copper_golem_spawn_egg";
+  MinecraftItemTypes2["CopperGolemStatue"] = "minecraft:copper_golem_statue";
+  MinecraftItemTypes2["CopperGrate"] = "minecraft:copper_grate";
+  MinecraftItemTypes2["CopperHelmet"] = "minecraft:copper_helmet";
+  MinecraftItemTypes2["CopperHoe"] = "minecraft:copper_hoe";
+  MinecraftItemTypes2["CopperHorseArmor"] = "minecraft:copper_horse_armor";
+  MinecraftItemTypes2["CopperIngot"] = "minecraft:copper_ingot";
+  MinecraftItemTypes2["CopperLantern"] = "minecraft:copper_lantern";
+  MinecraftItemTypes2["CopperLeggings"] = "minecraft:copper_leggings";
+  MinecraftItemTypes2["CopperNautilusArmor"] = "minecraft:copper_nautilus_armor";
+  MinecraftItemTypes2["CopperNugget"] = "minecraft:copper_nugget";
+  MinecraftItemTypes2["CopperOre"] = "minecraft:copper_ore";
+  MinecraftItemTypes2["CopperPickaxe"] = "minecraft:copper_pickaxe";
+  MinecraftItemTypes2["CopperShovel"] = "minecraft:copper_shovel";
+  MinecraftItemTypes2["CopperSpear"] = "minecraft:copper_spear";
+  MinecraftItemTypes2["CopperSword"] = "minecraft:copper_sword";
+  MinecraftItemTypes2["CopperTorch"] = "minecraft:copper_torch";
+  MinecraftItemTypes2["CopperTrapdoor"] = "minecraft:copper_trapdoor";
+  MinecraftItemTypes2["Cornflower"] = "minecraft:cornflower";
+  MinecraftItemTypes2["CowSpawnEgg"] = "minecraft:cow_spawn_egg";
+  MinecraftItemTypes2["CrackedDeepslateBricks"] = "minecraft:cracked_deepslate_bricks";
+  MinecraftItemTypes2["CrackedDeepslateTiles"] = "minecraft:cracked_deepslate_tiles";
+  MinecraftItemTypes2["CrackedNetherBricks"] = "minecraft:cracked_nether_bricks";
+  MinecraftItemTypes2["CrackedPolishedBlackstoneBricks"] = "minecraft:cracked_polished_blackstone_bricks";
+  MinecraftItemTypes2["CrackedStoneBricks"] = "minecraft:cracked_stone_bricks";
+  MinecraftItemTypes2["Crafter"] = "minecraft:crafter";
+  MinecraftItemTypes2["CraftingTable"] = "minecraft:crafting_table";
+  MinecraftItemTypes2["CreakingHeart"] = "minecraft:creaking_heart";
+  MinecraftItemTypes2["CreakingSpawnEgg"] = "minecraft:creaking_spawn_egg";
+  MinecraftItemTypes2["CreeperBannerPattern"] = "minecraft:creeper_banner_pattern";
+  MinecraftItemTypes2["CreeperHead"] = "minecraft:creeper_head";
+  MinecraftItemTypes2["CreeperSpawnEgg"] = "minecraft:creeper_spawn_egg";
+  MinecraftItemTypes2["CrimsonButton"] = "minecraft:crimson_button";
+  MinecraftItemTypes2["CrimsonDoor"] = "minecraft:crimson_door";
+  MinecraftItemTypes2["CrimsonFence"] = "minecraft:crimson_fence";
+  MinecraftItemTypes2["CrimsonFenceGate"] = "minecraft:crimson_fence_gate";
+  MinecraftItemTypes2["CrimsonFungus"] = "minecraft:crimson_fungus";
+  MinecraftItemTypes2["CrimsonHangingSign"] = "minecraft:crimson_hanging_sign";
+  MinecraftItemTypes2["CrimsonHyphae"] = "minecraft:crimson_hyphae";
+  MinecraftItemTypes2["CrimsonNylium"] = "minecraft:crimson_nylium";
+  MinecraftItemTypes2["CrimsonPlanks"] = "minecraft:crimson_planks";
+  MinecraftItemTypes2["CrimsonPressurePlate"] = "minecraft:crimson_pressure_plate";
+  MinecraftItemTypes2["CrimsonRoots"] = "minecraft:crimson_roots";
+  MinecraftItemTypes2["CrimsonShelf"] = "minecraft:crimson_shelf";
+  MinecraftItemTypes2["CrimsonSign"] = "minecraft:crimson_sign";
+  MinecraftItemTypes2["CrimsonSlab"] = "minecraft:crimson_slab";
+  MinecraftItemTypes2["CrimsonStairs"] = "minecraft:crimson_stairs";
+  MinecraftItemTypes2["CrimsonStem"] = "minecraft:crimson_stem";
+  MinecraftItemTypes2["CrimsonTrapdoor"] = "minecraft:crimson_trapdoor";
+  MinecraftItemTypes2["Crossbow"] = "minecraft:crossbow";
+  MinecraftItemTypes2["CryingObsidian"] = "minecraft:crying_obsidian";
+  MinecraftItemTypes2["CutCopper"] = "minecraft:cut_copper";
+  MinecraftItemTypes2["CutCopperSlab"] = "minecraft:cut_copper_slab";
+  MinecraftItemTypes2["CutCopperStairs"] = "minecraft:cut_copper_stairs";
+  MinecraftItemTypes2["CutRedSandstone"] = "minecraft:cut_red_sandstone";
+  MinecraftItemTypes2["CutRedSandstoneSlab"] = "minecraft:cut_red_sandstone_slab";
+  MinecraftItemTypes2["CutSandstone"] = "minecraft:cut_sandstone";
+  MinecraftItemTypes2["CutSandstoneSlab"] = "minecraft:cut_sandstone_slab";
+  MinecraftItemTypes2["CyanBundle"] = "minecraft:cyan_bundle";
+  MinecraftItemTypes2["CyanCandle"] = "minecraft:cyan_candle";
+  MinecraftItemTypes2["CyanCarpet"] = "minecraft:cyan_carpet";
+  MinecraftItemTypes2["CyanConcrete"] = "minecraft:cyan_concrete";
+  MinecraftItemTypes2["CyanConcretePowder"] = "minecraft:cyan_concrete_powder";
+  MinecraftItemTypes2["CyanDye"] = "minecraft:cyan_dye";
+  MinecraftItemTypes2["CyanGlazedTerracotta"] = "minecraft:cyan_glazed_terracotta";
+  MinecraftItemTypes2["CyanHarness"] = "minecraft:cyan_harness";
+  MinecraftItemTypes2["CyanShulkerBox"] = "minecraft:cyan_shulker_box";
+  MinecraftItemTypes2["CyanStainedGlass"] = "minecraft:cyan_stained_glass";
+  MinecraftItemTypes2["CyanStainedGlassPane"] = "minecraft:cyan_stained_glass_pane";
+  MinecraftItemTypes2["CyanTerracotta"] = "minecraft:cyan_terracotta";
+  MinecraftItemTypes2["CyanWool"] = "minecraft:cyan_wool";
+  MinecraftItemTypes2["DamagedAnvil"] = "minecraft:damaged_anvil";
+  MinecraftItemTypes2["Dandelion"] = "minecraft:dandelion";
+  MinecraftItemTypes2["DangerPotterySherd"] = "minecraft:danger_pottery_sherd";
+  MinecraftItemTypes2["DarkOakBoat"] = "minecraft:dark_oak_boat";
+  MinecraftItemTypes2["DarkOakButton"] = "minecraft:dark_oak_button";
+  MinecraftItemTypes2["DarkOakChestBoat"] = "minecraft:dark_oak_chest_boat";
+  MinecraftItemTypes2["DarkOakDoor"] = "minecraft:dark_oak_door";
+  MinecraftItemTypes2["DarkOakFence"] = "minecraft:dark_oak_fence";
+  MinecraftItemTypes2["DarkOakFenceGate"] = "minecraft:dark_oak_fence_gate";
+  MinecraftItemTypes2["DarkOakHangingSign"] = "minecraft:dark_oak_hanging_sign";
+  MinecraftItemTypes2["DarkOakLeaves"] = "minecraft:dark_oak_leaves";
+  MinecraftItemTypes2["DarkOakLog"] = "minecraft:dark_oak_log";
+  MinecraftItemTypes2["DarkOakPlanks"] = "minecraft:dark_oak_planks";
+  MinecraftItemTypes2["DarkOakPressurePlate"] = "minecraft:dark_oak_pressure_plate";
+  MinecraftItemTypes2["DarkOakSapling"] = "minecraft:dark_oak_sapling";
+  MinecraftItemTypes2["DarkOakShelf"] = "minecraft:dark_oak_shelf";
+  MinecraftItemTypes2["DarkOakSign"] = "minecraft:dark_oak_sign";
+  MinecraftItemTypes2["DarkOakSlab"] = "minecraft:dark_oak_slab";
+  MinecraftItemTypes2["DarkOakStairs"] = "minecraft:dark_oak_stairs";
+  MinecraftItemTypes2["DarkOakTrapdoor"] = "minecraft:dark_oak_trapdoor";
+  MinecraftItemTypes2["DarkOakWood"] = "minecraft:dark_oak_wood";
+  MinecraftItemTypes2["DarkPrismarine"] = "minecraft:dark_prismarine";
+  MinecraftItemTypes2["DarkPrismarineSlab"] = "minecraft:dark_prismarine_slab";
+  MinecraftItemTypes2["DarkPrismarineStairs"] = "minecraft:dark_prismarine_stairs";
+  MinecraftItemTypes2["DaylightDetector"] = "minecraft:daylight_detector";
+  MinecraftItemTypes2["DeadBrainCoral"] = "minecraft:dead_brain_coral";
+  MinecraftItemTypes2["DeadBrainCoralBlock"] = "minecraft:dead_brain_coral_block";
+  MinecraftItemTypes2["DeadBrainCoralFan"] = "minecraft:dead_brain_coral_fan";
+  MinecraftItemTypes2["DeadBubbleCoral"] = "minecraft:dead_bubble_coral";
+  MinecraftItemTypes2["DeadBubbleCoralBlock"] = "minecraft:dead_bubble_coral_block";
+  MinecraftItemTypes2["DeadBubbleCoralFan"] = "minecraft:dead_bubble_coral_fan";
+  MinecraftItemTypes2["DeadFireCoral"] = "minecraft:dead_fire_coral";
+  MinecraftItemTypes2["DeadFireCoralBlock"] = "minecraft:dead_fire_coral_block";
+  MinecraftItemTypes2["DeadFireCoralFan"] = "minecraft:dead_fire_coral_fan";
+  MinecraftItemTypes2["DeadHornCoral"] = "minecraft:dead_horn_coral";
+  MinecraftItemTypes2["DeadHornCoralBlock"] = "minecraft:dead_horn_coral_block";
+  MinecraftItemTypes2["DeadHornCoralFan"] = "minecraft:dead_horn_coral_fan";
+  MinecraftItemTypes2["DeadTubeCoral"] = "minecraft:dead_tube_coral";
+  MinecraftItemTypes2["DeadTubeCoralBlock"] = "minecraft:dead_tube_coral_block";
+  MinecraftItemTypes2["DeadTubeCoralFan"] = "minecraft:dead_tube_coral_fan";
+  MinecraftItemTypes2["Deadbush"] = "minecraft:deadbush";
+  MinecraftItemTypes2["DecoratedPot"] = "minecraft:decorated_pot";
+  MinecraftItemTypes2["Deepslate"] = "minecraft:deepslate";
+  MinecraftItemTypes2["DeepslateBrickSlab"] = "minecraft:deepslate_brick_slab";
+  MinecraftItemTypes2["DeepslateBrickStairs"] = "minecraft:deepslate_brick_stairs";
+  MinecraftItemTypes2["DeepslateBrickWall"] = "minecraft:deepslate_brick_wall";
+  MinecraftItemTypes2["DeepslateBricks"] = "minecraft:deepslate_bricks";
+  MinecraftItemTypes2["DeepslateCoalOre"] = "minecraft:deepslate_coal_ore";
+  MinecraftItemTypes2["DeepslateCopperOre"] = "minecraft:deepslate_copper_ore";
+  MinecraftItemTypes2["DeepslateDiamondOre"] = "minecraft:deepslate_diamond_ore";
+  MinecraftItemTypes2["DeepslateEmeraldOre"] = "minecraft:deepslate_emerald_ore";
+  MinecraftItemTypes2["DeepslateGoldOre"] = "minecraft:deepslate_gold_ore";
+  MinecraftItemTypes2["DeepslateIronOre"] = "minecraft:deepslate_iron_ore";
+  MinecraftItemTypes2["DeepslateLapisOre"] = "minecraft:deepslate_lapis_ore";
+  MinecraftItemTypes2["DeepslateRedstoneOre"] = "minecraft:deepslate_redstone_ore";
+  MinecraftItemTypes2["DeepslateTileSlab"] = "minecraft:deepslate_tile_slab";
+  MinecraftItemTypes2["DeepslateTileStairs"] = "minecraft:deepslate_tile_stairs";
+  MinecraftItemTypes2["DeepslateTileWall"] = "minecraft:deepslate_tile_wall";
+  MinecraftItemTypes2["DeepslateTiles"] = "minecraft:deepslate_tiles";
+  MinecraftItemTypes2["Deny"] = "minecraft:deny";
+  MinecraftItemTypes2["DetectorRail"] = "minecraft:detector_rail";
+  MinecraftItemTypes2["Diamond"] = "minecraft:diamond";
+  MinecraftItemTypes2["DiamondAxe"] = "minecraft:diamond_axe";
+  MinecraftItemTypes2["DiamondBlock"] = "minecraft:diamond_block";
+  MinecraftItemTypes2["DiamondBoots"] = "minecraft:diamond_boots";
+  MinecraftItemTypes2["DiamondChestplate"] = "minecraft:diamond_chestplate";
+  MinecraftItemTypes2["DiamondHelmet"] = "minecraft:diamond_helmet";
+  MinecraftItemTypes2["DiamondHoe"] = "minecraft:diamond_hoe";
+  MinecraftItemTypes2["DiamondHorseArmor"] = "minecraft:diamond_horse_armor";
+  MinecraftItemTypes2["DiamondLeggings"] = "minecraft:diamond_leggings";
+  MinecraftItemTypes2["DiamondNautilusArmor"] = "minecraft:diamond_nautilus_armor";
+  MinecraftItemTypes2["DiamondOre"] = "minecraft:diamond_ore";
+  MinecraftItemTypes2["DiamondPickaxe"] = "minecraft:diamond_pickaxe";
+  MinecraftItemTypes2["DiamondShovel"] = "minecraft:diamond_shovel";
+  MinecraftItemTypes2["DiamondSpear"] = "minecraft:diamond_spear";
+  MinecraftItemTypes2["DiamondSword"] = "minecraft:diamond_sword";
+  MinecraftItemTypes2["Diorite"] = "minecraft:diorite";
+  MinecraftItemTypes2["DioriteSlab"] = "minecraft:diorite_slab";
+  MinecraftItemTypes2["DioriteStairs"] = "minecraft:diorite_stairs";
+  MinecraftItemTypes2["DioriteWall"] = "minecraft:diorite_wall";
+  MinecraftItemTypes2["Dirt"] = "minecraft:dirt";
+  MinecraftItemTypes2["DirtWithRoots"] = "minecraft:dirt_with_roots";
+  MinecraftItemTypes2["DiscFragment5"] = "minecraft:disc_fragment_5";
+  MinecraftItemTypes2["Dispenser"] = "minecraft:dispenser";
+  MinecraftItemTypes2["DolphinSpawnEgg"] = "minecraft:dolphin_spawn_egg";
+  MinecraftItemTypes2["DonkeySpawnEgg"] = "minecraft:donkey_spawn_egg";
+  MinecraftItemTypes2["DragonBreath"] = "minecraft:dragon_breath";
+  MinecraftItemTypes2["DragonEgg"] = "minecraft:dragon_egg";
+  MinecraftItemTypes2["DragonHead"] = "minecraft:dragon_head";
+  MinecraftItemTypes2["DriedGhast"] = "minecraft:dried_ghast";
+  MinecraftItemTypes2["DriedKelp"] = "minecraft:dried_kelp";
+  MinecraftItemTypes2["DriedKelpBlock"] = "minecraft:dried_kelp_block";
+  MinecraftItemTypes2["DripstoneBlock"] = "minecraft:dripstone_block";
+  MinecraftItemTypes2["Dropper"] = "minecraft:dropper";
+  MinecraftItemTypes2["DrownedSpawnEgg"] = "minecraft:drowned_spawn_egg";
+  MinecraftItemTypes2["DuneArmorTrimSmithingTemplate"] = "minecraft:dune_armor_trim_smithing_template";
+  MinecraftItemTypes2["EchoShard"] = "minecraft:echo_shard";
+  MinecraftItemTypes2["Egg"] = "minecraft:egg";
+  MinecraftItemTypes2["ElderGuardianSpawnEgg"] = "minecraft:elder_guardian_spawn_egg";
+  MinecraftItemTypes2["Elytra"] = "minecraft:elytra";
+  MinecraftItemTypes2["Emerald"] = "minecraft:emerald";
+  MinecraftItemTypes2["EmeraldBlock"] = "minecraft:emerald_block";
+  MinecraftItemTypes2["EmeraldOre"] = "minecraft:emerald_ore";
+  MinecraftItemTypes2["EmptyMap"] = "minecraft:empty_map";
+  MinecraftItemTypes2["EnchantedBook"] = "minecraft:enchanted_book";
+  MinecraftItemTypes2["EnchantedGoldenApple"] = "minecraft:enchanted_golden_apple";
+  MinecraftItemTypes2["EnchantingTable"] = "minecraft:enchanting_table";
+  MinecraftItemTypes2["EndBrickStairs"] = "minecraft:end_brick_stairs";
+  MinecraftItemTypes2["EndBricks"] = "minecraft:end_bricks";
+  MinecraftItemTypes2["EndCrystal"] = "minecraft:end_crystal";
+  MinecraftItemTypes2["EndPortalFrame"] = "minecraft:end_portal_frame";
+  MinecraftItemTypes2["EndRod"] = "minecraft:end_rod";
+  MinecraftItemTypes2["EndStone"] = "minecraft:end_stone";
+  MinecraftItemTypes2["EndStoneBrickSlab"] = "minecraft:end_stone_brick_slab";
+  MinecraftItemTypes2["EndStoneBrickWall"] = "minecraft:end_stone_brick_wall";
+  MinecraftItemTypes2["EnderChest"] = "minecraft:ender_chest";
+  MinecraftItemTypes2["EnderDragonSpawnEgg"] = "minecraft:ender_dragon_spawn_egg";
+  MinecraftItemTypes2["EnderEye"] = "minecraft:ender_eye";
+  MinecraftItemTypes2["EnderPearl"] = "minecraft:ender_pearl";
+  MinecraftItemTypes2["EndermanSpawnEgg"] = "minecraft:enderman_spawn_egg";
+  MinecraftItemTypes2["EndermiteSpawnEgg"] = "minecraft:endermite_spawn_egg";
+  MinecraftItemTypes2["EvokerSpawnEgg"] = "minecraft:evoker_spawn_egg";
+  MinecraftItemTypes2["ExperienceBottle"] = "minecraft:experience_bottle";
+  MinecraftItemTypes2["ExplorerPotterySherd"] = "minecraft:explorer_pottery_sherd";
+  MinecraftItemTypes2["ExposedChiseledCopper"] = "minecraft:exposed_chiseled_copper";
+  MinecraftItemTypes2["ExposedCopper"] = "minecraft:exposed_copper";
+  MinecraftItemTypes2["ExposedCopperBars"] = "minecraft:exposed_copper_bars";
+  MinecraftItemTypes2["ExposedCopperBulb"] = "minecraft:exposed_copper_bulb";
+  MinecraftItemTypes2["ExposedCopperChain"] = "minecraft:exposed_copper_chain";
+  MinecraftItemTypes2["ExposedCopperChest"] = "minecraft:exposed_copper_chest";
+  MinecraftItemTypes2["ExposedCopperDoor"] = "minecraft:exposed_copper_door";
+  MinecraftItemTypes2["ExposedCopperGolemStatue"] = "minecraft:exposed_copper_golem_statue";
+  MinecraftItemTypes2["ExposedCopperGrate"] = "minecraft:exposed_copper_grate";
+  MinecraftItemTypes2["ExposedCopperLantern"] = "minecraft:exposed_copper_lantern";
+  MinecraftItemTypes2["ExposedCopperTrapdoor"] = "minecraft:exposed_copper_trapdoor";
+  MinecraftItemTypes2["ExposedCutCopper"] = "minecraft:exposed_cut_copper";
+  MinecraftItemTypes2["ExposedCutCopperSlab"] = "minecraft:exposed_cut_copper_slab";
+  MinecraftItemTypes2["ExposedCutCopperStairs"] = "minecraft:exposed_cut_copper_stairs";
+  MinecraftItemTypes2["ExposedLightningRod"] = "minecraft:exposed_lightning_rod";
+  MinecraftItemTypes2["EyeArmorTrimSmithingTemplate"] = "minecraft:eye_armor_trim_smithing_template";
+  MinecraftItemTypes2["Farmland"] = "minecraft:farmland";
+  MinecraftItemTypes2["Feather"] = "minecraft:feather";
+  MinecraftItemTypes2["FenceGate"] = "minecraft:fence_gate";
+  MinecraftItemTypes2["FermentedSpiderEye"] = "minecraft:fermented_spider_eye";
+  MinecraftItemTypes2["Fern"] = "minecraft:fern";
+  MinecraftItemTypes2["FieldMasonedBannerPattern"] = "minecraft:field_masoned_banner_pattern";
+  MinecraftItemTypes2["FilledMap"] = "minecraft:filled_map";
+  MinecraftItemTypes2["FireCharge"] = "minecraft:fire_charge";
+  MinecraftItemTypes2["FireCoral"] = "minecraft:fire_coral";
+  MinecraftItemTypes2["FireCoralBlock"] = "minecraft:fire_coral_block";
+  MinecraftItemTypes2["FireCoralFan"] = "minecraft:fire_coral_fan";
+  MinecraftItemTypes2["FireflyBush"] = "minecraft:firefly_bush";
+  MinecraftItemTypes2["FireworkRocket"] = "minecraft:firework_rocket";
+  MinecraftItemTypes2["FireworkStar"] = "minecraft:firework_star";
+  MinecraftItemTypes2["FishingRod"] = "minecraft:fishing_rod";
+  MinecraftItemTypes2["FletchingTable"] = "minecraft:fletching_table";
+  MinecraftItemTypes2["Flint"] = "minecraft:flint";
+  MinecraftItemTypes2["FlintAndSteel"] = "minecraft:flint_and_steel";
+  MinecraftItemTypes2["FlowArmorTrimSmithingTemplate"] = "minecraft:flow_armor_trim_smithing_template";
+  MinecraftItemTypes2["FlowBannerPattern"] = "minecraft:flow_banner_pattern";
+  MinecraftItemTypes2["FlowPotterySherd"] = "minecraft:flow_pottery_sherd";
+  MinecraftItemTypes2["FlowerBannerPattern"] = "minecraft:flower_banner_pattern";
+  MinecraftItemTypes2["FlowerPot"] = "minecraft:flower_pot";
+  MinecraftItemTypes2["FloweringAzalea"] = "minecraft:flowering_azalea";
+  MinecraftItemTypes2["FoxSpawnEgg"] = "minecraft:fox_spawn_egg";
+  MinecraftItemTypes2["Frame"] = "minecraft:frame";
+  MinecraftItemTypes2["FriendPotterySherd"] = "minecraft:friend_pottery_sherd";
+  MinecraftItemTypes2["FrogSpawn"] = "minecraft:frog_spawn";
+  MinecraftItemTypes2["FrogSpawnEgg"] = "minecraft:frog_spawn_egg";
+  MinecraftItemTypes2["FrostedIce"] = "minecraft:frosted_ice";
+  MinecraftItemTypes2["Furnace"] = "minecraft:furnace";
+  MinecraftItemTypes2["GhastSpawnEgg"] = "minecraft:ghast_spawn_egg";
+  MinecraftItemTypes2["GhastTear"] = "minecraft:ghast_tear";
+  MinecraftItemTypes2["GildedBlackstone"] = "minecraft:gilded_blackstone";
+  MinecraftItemTypes2["Glass"] = "minecraft:glass";
+  MinecraftItemTypes2["GlassBottle"] = "minecraft:glass_bottle";
+  MinecraftItemTypes2["GlassPane"] = "minecraft:glass_pane";
+  MinecraftItemTypes2["GlisteringMelonSlice"] = "minecraft:glistering_melon_slice";
+  MinecraftItemTypes2["GlobeBannerPattern"] = "minecraft:globe_banner_pattern";
+  MinecraftItemTypes2["GlowBerries"] = "minecraft:glow_berries";
+  MinecraftItemTypes2["GlowFrame"] = "minecraft:glow_frame";
+  MinecraftItemTypes2["GlowInkSac"] = "minecraft:glow_ink_sac";
+  MinecraftItemTypes2["GlowLichen"] = "minecraft:glow_lichen";
+  MinecraftItemTypes2["GlowSquidSpawnEgg"] = "minecraft:glow_squid_spawn_egg";
+  MinecraftItemTypes2["Glowstone"] = "minecraft:glowstone";
+  MinecraftItemTypes2["GlowstoneDust"] = "minecraft:glowstone_dust";
+  MinecraftItemTypes2["GoatHorn"] = "minecraft:goat_horn";
+  MinecraftItemTypes2["GoatSpawnEgg"] = "minecraft:goat_spawn_egg";
+  MinecraftItemTypes2["GoldBlock"] = "minecraft:gold_block";
+  MinecraftItemTypes2["GoldIngot"] = "minecraft:gold_ingot";
+  MinecraftItemTypes2["GoldNugget"] = "minecraft:gold_nugget";
+  MinecraftItemTypes2["GoldOre"] = "minecraft:gold_ore";
+  MinecraftItemTypes2["GoldenApple"] = "minecraft:golden_apple";
+  MinecraftItemTypes2["GoldenAxe"] = "minecraft:golden_axe";
+  MinecraftItemTypes2["GoldenBoots"] = "minecraft:golden_boots";
+  MinecraftItemTypes2["GoldenCarrot"] = "minecraft:golden_carrot";
+  MinecraftItemTypes2["GoldenChestplate"] = "minecraft:golden_chestplate";
+  MinecraftItemTypes2["GoldenHelmet"] = "minecraft:golden_helmet";
+  MinecraftItemTypes2["GoldenHoe"] = "minecraft:golden_hoe";
+  MinecraftItemTypes2["GoldenHorseArmor"] = "minecraft:golden_horse_armor";
+  MinecraftItemTypes2["GoldenLeggings"] = "minecraft:golden_leggings";
+  MinecraftItemTypes2["GoldenNautilusArmor"] = "minecraft:golden_nautilus_armor";
+  MinecraftItemTypes2["GoldenPickaxe"] = "minecraft:golden_pickaxe";
+  MinecraftItemTypes2["GoldenRail"] = "minecraft:golden_rail";
+  MinecraftItemTypes2["GoldenShovel"] = "minecraft:golden_shovel";
+  MinecraftItemTypes2["GoldenSpear"] = "minecraft:golden_spear";
+  MinecraftItemTypes2["GoldenSword"] = "minecraft:golden_sword";
+  MinecraftItemTypes2["Granite"] = "minecraft:granite";
+  MinecraftItemTypes2["GraniteSlab"] = "minecraft:granite_slab";
+  MinecraftItemTypes2["GraniteStairs"] = "minecraft:granite_stairs";
+  MinecraftItemTypes2["GraniteWall"] = "minecraft:granite_wall";
+  MinecraftItemTypes2["GrassBlock"] = "minecraft:grass_block";
+  MinecraftItemTypes2["GrassPath"] = "minecraft:grass_path";
+  MinecraftItemTypes2["Gravel"] = "minecraft:gravel";
+  MinecraftItemTypes2["GrayBundle"] = "minecraft:gray_bundle";
+  MinecraftItemTypes2["GrayCandle"] = "minecraft:gray_candle";
+  MinecraftItemTypes2["GrayCarpet"] = "minecraft:gray_carpet";
+  MinecraftItemTypes2["GrayConcrete"] = "minecraft:gray_concrete";
+  MinecraftItemTypes2["GrayConcretePowder"] = "minecraft:gray_concrete_powder";
+  MinecraftItemTypes2["GrayDye"] = "minecraft:gray_dye";
+  MinecraftItemTypes2["GrayGlazedTerracotta"] = "minecraft:gray_glazed_terracotta";
+  MinecraftItemTypes2["GrayHarness"] = "minecraft:gray_harness";
+  MinecraftItemTypes2["GrayShulkerBox"] = "minecraft:gray_shulker_box";
+  MinecraftItemTypes2["GrayStainedGlass"] = "minecraft:gray_stained_glass";
+  MinecraftItemTypes2["GrayStainedGlassPane"] = "minecraft:gray_stained_glass_pane";
+  MinecraftItemTypes2["GrayTerracotta"] = "minecraft:gray_terracotta";
+  MinecraftItemTypes2["GrayWool"] = "minecraft:gray_wool";
+  MinecraftItemTypes2["GreenBundle"] = "minecraft:green_bundle";
+  MinecraftItemTypes2["GreenCandle"] = "minecraft:green_candle";
+  MinecraftItemTypes2["GreenCarpet"] = "minecraft:green_carpet";
+  MinecraftItemTypes2["GreenConcrete"] = "minecraft:green_concrete";
+  MinecraftItemTypes2["GreenConcretePowder"] = "minecraft:green_concrete_powder";
+  MinecraftItemTypes2["GreenDye"] = "minecraft:green_dye";
+  MinecraftItemTypes2["GreenGlazedTerracotta"] = "minecraft:green_glazed_terracotta";
+  MinecraftItemTypes2["GreenHarness"] = "minecraft:green_harness";
+  MinecraftItemTypes2["GreenShulkerBox"] = "minecraft:green_shulker_box";
+  MinecraftItemTypes2["GreenStainedGlass"] = "minecraft:green_stained_glass";
+  MinecraftItemTypes2["GreenStainedGlassPane"] = "minecraft:green_stained_glass_pane";
+  MinecraftItemTypes2["GreenTerracotta"] = "minecraft:green_terracotta";
+  MinecraftItemTypes2["GreenWool"] = "minecraft:green_wool";
+  MinecraftItemTypes2["Grindstone"] = "minecraft:grindstone";
+  MinecraftItemTypes2["GuardianSpawnEgg"] = "minecraft:guardian_spawn_egg";
+  MinecraftItemTypes2["Gunpowder"] = "minecraft:gunpowder";
+  MinecraftItemTypes2["GusterBannerPattern"] = "minecraft:guster_banner_pattern";
+  MinecraftItemTypes2["GusterPotterySherd"] = "minecraft:guster_pottery_sherd";
+  MinecraftItemTypes2["HangingRoots"] = "minecraft:hanging_roots";
+  MinecraftItemTypes2["HappyGhastSpawnEgg"] = "minecraft:happy_ghast_spawn_egg";
+  MinecraftItemTypes2["HardenedClay"] = "minecraft:hardened_clay";
+  MinecraftItemTypes2["HayBlock"] = "minecraft:hay_block";
+  MinecraftItemTypes2["HeartOfTheSea"] = "minecraft:heart_of_the_sea";
+  MinecraftItemTypes2["HeartPotterySherd"] = "minecraft:heart_pottery_sherd";
+  MinecraftItemTypes2["HeartbreakPotterySherd"] = "minecraft:heartbreak_pottery_sherd";
+  MinecraftItemTypes2["HeavyCore"] = "minecraft:heavy_core";
+  MinecraftItemTypes2["HeavyWeightedPressurePlate"] = "minecraft:heavy_weighted_pressure_plate";
+  MinecraftItemTypes2["HoglinSpawnEgg"] = "minecraft:hoglin_spawn_egg";
+  MinecraftItemTypes2["HoneyBlock"] = "minecraft:honey_block";
+  MinecraftItemTypes2["HoneyBottle"] = "minecraft:honey_bottle";
+  MinecraftItemTypes2["Honeycomb"] = "minecraft:honeycomb";
+  MinecraftItemTypes2["HoneycombBlock"] = "minecraft:honeycomb_block";
+  MinecraftItemTypes2["Hopper"] = "minecraft:hopper";
+  MinecraftItemTypes2["HopperMinecart"] = "minecraft:hopper_minecart";
+  MinecraftItemTypes2["HornCoral"] = "minecraft:horn_coral";
+  MinecraftItemTypes2["HornCoralBlock"] = "minecraft:horn_coral_block";
+  MinecraftItemTypes2["HornCoralFan"] = "minecraft:horn_coral_fan";
+  MinecraftItemTypes2["HorseSpawnEgg"] = "minecraft:horse_spawn_egg";
+  MinecraftItemTypes2["HostArmorTrimSmithingTemplate"] = "minecraft:host_armor_trim_smithing_template";
+  MinecraftItemTypes2["HowlPotterySherd"] = "minecraft:howl_pottery_sherd";
+  MinecraftItemTypes2["HuskSpawnEgg"] = "minecraft:husk_spawn_egg";
+  MinecraftItemTypes2["Ice"] = "minecraft:ice";
+  MinecraftItemTypes2["InfestedChiseledStoneBricks"] = "minecraft:infested_chiseled_stone_bricks";
+  MinecraftItemTypes2["InfestedCobblestone"] = "minecraft:infested_cobblestone";
+  MinecraftItemTypes2["InfestedCrackedStoneBricks"] = "minecraft:infested_cracked_stone_bricks";
+  MinecraftItemTypes2["InfestedDeepslate"] = "minecraft:infested_deepslate";
+  MinecraftItemTypes2["InfestedMossyStoneBricks"] = "minecraft:infested_mossy_stone_bricks";
+  MinecraftItemTypes2["InfestedStone"] = "minecraft:infested_stone";
+  MinecraftItemTypes2["InfestedStoneBricks"] = "minecraft:infested_stone_bricks";
+  MinecraftItemTypes2["InkSac"] = "minecraft:ink_sac";
+  MinecraftItemTypes2["IronAxe"] = "minecraft:iron_axe";
+  MinecraftItemTypes2["IronBars"] = "minecraft:iron_bars";
+  MinecraftItemTypes2["IronBlock"] = "minecraft:iron_block";
+  MinecraftItemTypes2["IronBoots"] = "minecraft:iron_boots";
+  MinecraftItemTypes2["IronChain"] = "minecraft:iron_chain";
+  MinecraftItemTypes2["IronChestplate"] = "minecraft:iron_chestplate";
+  MinecraftItemTypes2["IronDoor"] = "minecraft:iron_door";
+  MinecraftItemTypes2["IronGolemSpawnEgg"] = "minecraft:iron_golem_spawn_egg";
+  MinecraftItemTypes2["IronHelmet"] = "minecraft:iron_helmet";
+  MinecraftItemTypes2["IronHoe"] = "minecraft:iron_hoe";
+  MinecraftItemTypes2["IronHorseArmor"] = "minecraft:iron_horse_armor";
+  MinecraftItemTypes2["IronIngot"] = "minecraft:iron_ingot";
+  MinecraftItemTypes2["IronLeggings"] = "minecraft:iron_leggings";
+  MinecraftItemTypes2["IronNautilusArmor"] = "minecraft:iron_nautilus_armor";
+  MinecraftItemTypes2["IronNugget"] = "minecraft:iron_nugget";
+  MinecraftItemTypes2["IronOre"] = "minecraft:iron_ore";
+  MinecraftItemTypes2["IronPickaxe"] = "minecraft:iron_pickaxe";
+  MinecraftItemTypes2["IronShovel"] = "minecraft:iron_shovel";
+  MinecraftItemTypes2["IronSpear"] = "minecraft:iron_spear";
+  MinecraftItemTypes2["IronSword"] = "minecraft:iron_sword";
+  MinecraftItemTypes2["IronTrapdoor"] = "minecraft:iron_trapdoor";
+  MinecraftItemTypes2["Jigsaw"] = "minecraft:jigsaw";
+  MinecraftItemTypes2["Jukebox"] = "minecraft:jukebox";
+  MinecraftItemTypes2["JungleBoat"] = "minecraft:jungle_boat";
+  MinecraftItemTypes2["JungleButton"] = "minecraft:jungle_button";
+  MinecraftItemTypes2["JungleChestBoat"] = "minecraft:jungle_chest_boat";
+  MinecraftItemTypes2["JungleDoor"] = "minecraft:jungle_door";
+  MinecraftItemTypes2["JungleFence"] = "minecraft:jungle_fence";
+  MinecraftItemTypes2["JungleFenceGate"] = "minecraft:jungle_fence_gate";
+  MinecraftItemTypes2["JungleHangingSign"] = "minecraft:jungle_hanging_sign";
+  MinecraftItemTypes2["JungleLeaves"] = "minecraft:jungle_leaves";
+  MinecraftItemTypes2["JungleLog"] = "minecraft:jungle_log";
+  MinecraftItemTypes2["JunglePlanks"] = "minecraft:jungle_planks";
+  MinecraftItemTypes2["JunglePressurePlate"] = "minecraft:jungle_pressure_plate";
+  MinecraftItemTypes2["JungleSapling"] = "minecraft:jungle_sapling";
+  MinecraftItemTypes2["JungleShelf"] = "minecraft:jungle_shelf";
+  MinecraftItemTypes2["JungleSign"] = "minecraft:jungle_sign";
+  MinecraftItemTypes2["JungleSlab"] = "minecraft:jungle_slab";
+  MinecraftItemTypes2["JungleStairs"] = "minecraft:jungle_stairs";
+  MinecraftItemTypes2["JungleTrapdoor"] = "minecraft:jungle_trapdoor";
+  MinecraftItemTypes2["JungleWood"] = "minecraft:jungle_wood";
+  MinecraftItemTypes2["Kelp"] = "minecraft:kelp";
+  MinecraftItemTypes2["Ladder"] = "minecraft:ladder";
+  MinecraftItemTypes2["Lantern"] = "minecraft:lantern";
+  MinecraftItemTypes2["LapisBlock"] = "minecraft:lapis_block";
+  MinecraftItemTypes2["LapisLazuli"] = "minecraft:lapis_lazuli";
+  MinecraftItemTypes2["LapisOre"] = "minecraft:lapis_ore";
+  MinecraftItemTypes2["LargeAmethystBud"] = "minecraft:large_amethyst_bud";
+  MinecraftItemTypes2["LargeFern"] = "minecraft:large_fern";
+  MinecraftItemTypes2["LavaBucket"] = "minecraft:lava_bucket";
+  MinecraftItemTypes2["Lead"] = "minecraft:lead";
+  MinecraftItemTypes2["LeafLitter"] = "minecraft:leaf_litter";
+  MinecraftItemTypes2["Leather"] = "minecraft:leather";
+  MinecraftItemTypes2["LeatherBoots"] = "minecraft:leather_boots";
+  MinecraftItemTypes2["LeatherChestplate"] = "minecraft:leather_chestplate";
+  MinecraftItemTypes2["LeatherHelmet"] = "minecraft:leather_helmet";
+  MinecraftItemTypes2["LeatherHorseArmor"] = "minecraft:leather_horse_armor";
+  MinecraftItemTypes2["LeatherLeggings"] = "minecraft:leather_leggings";
+  MinecraftItemTypes2["Lectern"] = "minecraft:lectern";
+  MinecraftItemTypes2["Lever"] = "minecraft:lever";
+  MinecraftItemTypes2["LightBlock0"] = "minecraft:light_block_0";
+  MinecraftItemTypes2["LightBlock1"] = "minecraft:light_block_1";
+  MinecraftItemTypes2["LightBlock10"] = "minecraft:light_block_10";
+  MinecraftItemTypes2["LightBlock11"] = "minecraft:light_block_11";
+  MinecraftItemTypes2["LightBlock12"] = "minecraft:light_block_12";
+  MinecraftItemTypes2["LightBlock13"] = "minecraft:light_block_13";
+  MinecraftItemTypes2["LightBlock14"] = "minecraft:light_block_14";
+  MinecraftItemTypes2["LightBlock15"] = "minecraft:light_block_15";
+  MinecraftItemTypes2["LightBlock2"] = "minecraft:light_block_2";
+  MinecraftItemTypes2["LightBlock3"] = "minecraft:light_block_3";
+  MinecraftItemTypes2["LightBlock4"] = "minecraft:light_block_4";
+  MinecraftItemTypes2["LightBlock5"] = "minecraft:light_block_5";
+  MinecraftItemTypes2["LightBlock6"] = "minecraft:light_block_6";
+  MinecraftItemTypes2["LightBlock7"] = "minecraft:light_block_7";
+  MinecraftItemTypes2["LightBlock8"] = "minecraft:light_block_8";
+  MinecraftItemTypes2["LightBlock9"] = "minecraft:light_block_9";
+  MinecraftItemTypes2["LightBlueBundle"] = "minecraft:light_blue_bundle";
+  MinecraftItemTypes2["LightBlueCandle"] = "minecraft:light_blue_candle";
+  MinecraftItemTypes2["LightBlueCarpet"] = "minecraft:light_blue_carpet";
+  MinecraftItemTypes2["LightBlueConcrete"] = "minecraft:light_blue_concrete";
+  MinecraftItemTypes2["LightBlueConcretePowder"] = "minecraft:light_blue_concrete_powder";
+  MinecraftItemTypes2["LightBlueDye"] = "minecraft:light_blue_dye";
+  MinecraftItemTypes2["LightBlueGlazedTerracotta"] = "minecraft:light_blue_glazed_terracotta";
+  MinecraftItemTypes2["LightBlueHarness"] = "minecraft:light_blue_harness";
+  MinecraftItemTypes2["LightBlueShulkerBox"] = "minecraft:light_blue_shulker_box";
+  MinecraftItemTypes2["LightBlueStainedGlass"] = "minecraft:light_blue_stained_glass";
+  MinecraftItemTypes2["LightBlueStainedGlassPane"] = "minecraft:light_blue_stained_glass_pane";
+  MinecraftItemTypes2["LightBlueTerracotta"] = "minecraft:light_blue_terracotta";
+  MinecraftItemTypes2["LightBlueWool"] = "minecraft:light_blue_wool";
+  MinecraftItemTypes2["LightGrayBundle"] = "minecraft:light_gray_bundle";
+  MinecraftItemTypes2["LightGrayCandle"] = "minecraft:light_gray_candle";
+  MinecraftItemTypes2["LightGrayCarpet"] = "minecraft:light_gray_carpet";
+  MinecraftItemTypes2["LightGrayConcrete"] = "minecraft:light_gray_concrete";
+  MinecraftItemTypes2["LightGrayConcretePowder"] = "minecraft:light_gray_concrete_powder";
+  MinecraftItemTypes2["LightGrayDye"] = "minecraft:light_gray_dye";
+  MinecraftItemTypes2["LightGrayHarness"] = "minecraft:light_gray_harness";
+  MinecraftItemTypes2["LightGrayShulkerBox"] = "minecraft:light_gray_shulker_box";
+  MinecraftItemTypes2["LightGrayStainedGlass"] = "minecraft:light_gray_stained_glass";
+  MinecraftItemTypes2["LightGrayStainedGlassPane"] = "minecraft:light_gray_stained_glass_pane";
+  MinecraftItemTypes2["LightGrayTerracotta"] = "minecraft:light_gray_terracotta";
+  MinecraftItemTypes2["LightGrayWool"] = "minecraft:light_gray_wool";
+  MinecraftItemTypes2["LightWeightedPressurePlate"] = "minecraft:light_weighted_pressure_plate";
+  MinecraftItemTypes2["LightningRod"] = "minecraft:lightning_rod";
+  MinecraftItemTypes2["Lilac"] = "minecraft:lilac";
+  MinecraftItemTypes2["LilyOfTheValley"] = "minecraft:lily_of_the_valley";
+  MinecraftItemTypes2["LimeBundle"] = "minecraft:lime_bundle";
+  MinecraftItemTypes2["LimeCandle"] = "minecraft:lime_candle";
+  MinecraftItemTypes2["LimeCarpet"] = "minecraft:lime_carpet";
+  MinecraftItemTypes2["LimeConcrete"] = "minecraft:lime_concrete";
+  MinecraftItemTypes2["LimeConcretePowder"] = "minecraft:lime_concrete_powder";
+  MinecraftItemTypes2["LimeDye"] = "minecraft:lime_dye";
+  MinecraftItemTypes2["LimeGlazedTerracotta"] = "minecraft:lime_glazed_terracotta";
+  MinecraftItemTypes2["LimeHarness"] = "minecraft:lime_harness";
+  MinecraftItemTypes2["LimeShulkerBox"] = "minecraft:lime_shulker_box";
+  MinecraftItemTypes2["LimeStainedGlass"] = "minecraft:lime_stained_glass";
+  MinecraftItemTypes2["LimeStainedGlassPane"] = "minecraft:lime_stained_glass_pane";
+  MinecraftItemTypes2["LimeTerracotta"] = "minecraft:lime_terracotta";
+  MinecraftItemTypes2["LimeWool"] = "minecraft:lime_wool";
+  MinecraftItemTypes2["LingeringPotion"] = "minecraft:lingering_potion";
+  MinecraftItemTypes2["LitPumpkin"] = "minecraft:lit_pumpkin";
+  MinecraftItemTypes2["LlamaSpawnEgg"] = "minecraft:llama_spawn_egg";
+  MinecraftItemTypes2["Lodestone"] = "minecraft:lodestone";
+  MinecraftItemTypes2["LodestoneCompass"] = "minecraft:lodestone_compass";
+  MinecraftItemTypes2["Loom"] = "minecraft:loom";
+  MinecraftItemTypes2["Mace"] = "minecraft:mace";
+  MinecraftItemTypes2["MagentaBundle"] = "minecraft:magenta_bundle";
+  MinecraftItemTypes2["MagentaCandle"] = "minecraft:magenta_candle";
+  MinecraftItemTypes2["MagentaCarpet"] = "minecraft:magenta_carpet";
+  MinecraftItemTypes2["MagentaConcrete"] = "minecraft:magenta_concrete";
+  MinecraftItemTypes2["MagentaConcretePowder"] = "minecraft:magenta_concrete_powder";
+  MinecraftItemTypes2["MagentaDye"] = "minecraft:magenta_dye";
+  MinecraftItemTypes2["MagentaGlazedTerracotta"] = "minecraft:magenta_glazed_terracotta";
+  MinecraftItemTypes2["MagentaHarness"] = "minecraft:magenta_harness";
+  MinecraftItemTypes2["MagentaShulkerBox"] = "minecraft:magenta_shulker_box";
+  MinecraftItemTypes2["MagentaStainedGlass"] = "minecraft:magenta_stained_glass";
+  MinecraftItemTypes2["MagentaStainedGlassPane"] = "minecraft:magenta_stained_glass_pane";
+  MinecraftItemTypes2["MagentaTerracotta"] = "minecraft:magenta_terracotta";
+  MinecraftItemTypes2["MagentaWool"] = "minecraft:magenta_wool";
+  MinecraftItemTypes2["Magma"] = "minecraft:magma";
+  MinecraftItemTypes2["MagmaCream"] = "minecraft:magma_cream";
+  MinecraftItemTypes2["MagmaCubeSpawnEgg"] = "minecraft:magma_cube_spawn_egg";
+  MinecraftItemTypes2["MangroveBoat"] = "minecraft:mangrove_boat";
+  MinecraftItemTypes2["MangroveButton"] = "minecraft:mangrove_button";
+  MinecraftItemTypes2["MangroveChestBoat"] = "minecraft:mangrove_chest_boat";
+  MinecraftItemTypes2["MangroveDoor"] = "minecraft:mangrove_door";
+  MinecraftItemTypes2["MangroveFence"] = "minecraft:mangrove_fence";
+  MinecraftItemTypes2["MangroveFenceGate"] = "minecraft:mangrove_fence_gate";
+  MinecraftItemTypes2["MangroveHangingSign"] = "minecraft:mangrove_hanging_sign";
+  MinecraftItemTypes2["MangroveLeaves"] = "minecraft:mangrove_leaves";
+  MinecraftItemTypes2["MangroveLog"] = "minecraft:mangrove_log";
+  MinecraftItemTypes2["MangrovePlanks"] = "minecraft:mangrove_planks";
+  MinecraftItemTypes2["MangrovePressurePlate"] = "minecraft:mangrove_pressure_plate";
+  MinecraftItemTypes2["MangrovePropagule"] = "minecraft:mangrove_propagule";
+  MinecraftItemTypes2["MangroveRoots"] = "minecraft:mangrove_roots";
+  MinecraftItemTypes2["MangroveShelf"] = "minecraft:mangrove_shelf";
+  MinecraftItemTypes2["MangroveSign"] = "minecraft:mangrove_sign";
+  MinecraftItemTypes2["MangroveSlab"] = "minecraft:mangrove_slab";
+  MinecraftItemTypes2["MangroveStairs"] = "minecraft:mangrove_stairs";
+  MinecraftItemTypes2["MangroveTrapdoor"] = "minecraft:mangrove_trapdoor";
+  MinecraftItemTypes2["MangroveWood"] = "minecraft:mangrove_wood";
+  MinecraftItemTypes2["MediumAmethystBud"] = "minecraft:medium_amethyst_bud";
+  MinecraftItemTypes2["MelonBlock"] = "minecraft:melon_block";
+  MinecraftItemTypes2["MelonSeeds"] = "minecraft:melon_seeds";
+  MinecraftItemTypes2["MelonSlice"] = "minecraft:melon_slice";
+  MinecraftItemTypes2["MilkBucket"] = "minecraft:milk_bucket";
+  MinecraftItemTypes2["Minecart"] = "minecraft:minecart";
+  MinecraftItemTypes2["MinerPotterySherd"] = "minecraft:miner_pottery_sherd";
+  MinecraftItemTypes2["MobSpawner"] = "minecraft:mob_spawner";
+  MinecraftItemTypes2["MojangBannerPattern"] = "minecraft:mojang_banner_pattern";
+  MinecraftItemTypes2["MooshroomSpawnEgg"] = "minecraft:mooshroom_spawn_egg";
+  MinecraftItemTypes2["MossBlock"] = "minecraft:moss_block";
+  MinecraftItemTypes2["MossCarpet"] = "minecraft:moss_carpet";
+  MinecraftItemTypes2["MossyCobblestone"] = "minecraft:mossy_cobblestone";
+  MinecraftItemTypes2["MossyCobblestoneSlab"] = "minecraft:mossy_cobblestone_slab";
+  MinecraftItemTypes2["MossyCobblestoneStairs"] = "minecraft:mossy_cobblestone_stairs";
+  MinecraftItemTypes2["MossyCobblestoneWall"] = "minecraft:mossy_cobblestone_wall";
+  MinecraftItemTypes2["MossyStoneBrickSlab"] = "minecraft:mossy_stone_brick_slab";
+  MinecraftItemTypes2["MossyStoneBrickStairs"] = "minecraft:mossy_stone_brick_stairs";
+  MinecraftItemTypes2["MossyStoneBrickWall"] = "minecraft:mossy_stone_brick_wall";
+  MinecraftItemTypes2["MossyStoneBricks"] = "minecraft:mossy_stone_bricks";
+  MinecraftItemTypes2["MournerPotterySherd"] = "minecraft:mourner_pottery_sherd";
+  MinecraftItemTypes2["Mud"] = "minecraft:mud";
+  MinecraftItemTypes2["MudBrickSlab"] = "minecraft:mud_brick_slab";
+  MinecraftItemTypes2["MudBrickStairs"] = "minecraft:mud_brick_stairs";
+  MinecraftItemTypes2["MudBrickWall"] = "minecraft:mud_brick_wall";
+  MinecraftItemTypes2["MudBricks"] = "minecraft:mud_bricks";
+  MinecraftItemTypes2["MuddyMangroveRoots"] = "minecraft:muddy_mangrove_roots";
+  MinecraftItemTypes2["MuleSpawnEgg"] = "minecraft:mule_spawn_egg";
+  MinecraftItemTypes2["MushroomStem"] = "minecraft:mushroom_stem";
+  MinecraftItemTypes2["MushroomStew"] = "minecraft:mushroom_stew";
+  MinecraftItemTypes2["MusicDisc11"] = "minecraft:music_disc_11";
+  MinecraftItemTypes2["MusicDisc13"] = "minecraft:music_disc_13";
+  MinecraftItemTypes2["MusicDisc5"] = "minecraft:music_disc_5";
+  MinecraftItemTypes2["MusicDiscBlocks"] = "minecraft:music_disc_blocks";
+  MinecraftItemTypes2["MusicDiscCat"] = "minecraft:music_disc_cat";
+  MinecraftItemTypes2["MusicDiscChirp"] = "minecraft:music_disc_chirp";
+  MinecraftItemTypes2["MusicDiscCreator"] = "minecraft:music_disc_creator";
+  MinecraftItemTypes2["MusicDiscCreatorMusicBox"] = "minecraft:music_disc_creator_music_box";
+  MinecraftItemTypes2["MusicDiscFar"] = "minecraft:music_disc_far";
+  MinecraftItemTypes2["MusicDiscLavaChicken"] = "minecraft:music_disc_lava_chicken";
+  MinecraftItemTypes2["MusicDiscMall"] = "minecraft:music_disc_mall";
+  MinecraftItemTypes2["MusicDiscMellohi"] = "minecraft:music_disc_mellohi";
+  MinecraftItemTypes2["MusicDiscOtherside"] = "minecraft:music_disc_otherside";
+  MinecraftItemTypes2["MusicDiscPigstep"] = "minecraft:music_disc_pigstep";
+  MinecraftItemTypes2["MusicDiscPrecipice"] = "minecraft:music_disc_precipice";
+  MinecraftItemTypes2["MusicDiscRelic"] = "minecraft:music_disc_relic";
+  MinecraftItemTypes2["MusicDiscStal"] = "minecraft:music_disc_stal";
+  MinecraftItemTypes2["MusicDiscStrad"] = "minecraft:music_disc_strad";
+  MinecraftItemTypes2["MusicDiscTears"] = "minecraft:music_disc_tears";
+  MinecraftItemTypes2["MusicDiscWait"] = "minecraft:music_disc_wait";
+  MinecraftItemTypes2["MusicDiscWard"] = "minecraft:music_disc_ward";
+  MinecraftItemTypes2["Mutton"] = "minecraft:mutton";
+  MinecraftItemTypes2["Mycelium"] = "minecraft:mycelium";
+  MinecraftItemTypes2["NameTag"] = "minecraft:name_tag";
+  MinecraftItemTypes2["NautilusShell"] = "minecraft:nautilus_shell";
+  MinecraftItemTypes2["NautilusSpawnEgg"] = "minecraft:nautilus_spawn_egg";
+  MinecraftItemTypes2["NetherBrick"] = "minecraft:nether_brick";
+  MinecraftItemTypes2["NetherBrickFence"] = "minecraft:nether_brick_fence";
+  MinecraftItemTypes2["NetherBrickSlab"] = "minecraft:nether_brick_slab";
+  MinecraftItemTypes2["NetherBrickStairs"] = "minecraft:nether_brick_stairs";
+  MinecraftItemTypes2["NetherBrickWall"] = "minecraft:nether_brick_wall";
+  MinecraftItemTypes2["NetherGoldOre"] = "minecraft:nether_gold_ore";
+  MinecraftItemTypes2["NetherSprouts"] = "minecraft:nether_sprouts";
+  MinecraftItemTypes2["NetherStar"] = "minecraft:nether_star";
+  MinecraftItemTypes2["NetherWart"] = "minecraft:nether_wart";
+  MinecraftItemTypes2["NetherWartBlock"] = "minecraft:nether_wart_block";
+  MinecraftItemTypes2["Netherbrick"] = "minecraft:netherbrick";
+  MinecraftItemTypes2["NetheriteAxe"] = "minecraft:netherite_axe";
+  MinecraftItemTypes2["NetheriteBlock"] = "minecraft:netherite_block";
+  MinecraftItemTypes2["NetheriteBoots"] = "minecraft:netherite_boots";
+  MinecraftItemTypes2["NetheriteChestplate"] = "minecraft:netherite_chestplate";
+  MinecraftItemTypes2["NetheriteHelmet"] = "minecraft:netherite_helmet";
+  MinecraftItemTypes2["NetheriteHoe"] = "minecraft:netherite_hoe";
+  MinecraftItemTypes2["NetheriteHorseArmor"] = "minecraft:netherite_horse_armor";
+  MinecraftItemTypes2["NetheriteIngot"] = "minecraft:netherite_ingot";
+  MinecraftItemTypes2["NetheriteLeggings"] = "minecraft:netherite_leggings";
+  MinecraftItemTypes2["NetheriteNautilusArmor"] = "minecraft:netherite_nautilus_armor";
+  MinecraftItemTypes2["NetheritePickaxe"] = "minecraft:netherite_pickaxe";
+  MinecraftItemTypes2["NetheriteScrap"] = "minecraft:netherite_scrap";
+  MinecraftItemTypes2["NetheriteShovel"] = "minecraft:netherite_shovel";
+  MinecraftItemTypes2["NetheriteSpear"] = "minecraft:netherite_spear";
+  MinecraftItemTypes2["NetheriteSword"] = "minecraft:netherite_sword";
+  MinecraftItemTypes2["NetheriteUpgradeSmithingTemplate"] = "minecraft:netherite_upgrade_smithing_template";
+  MinecraftItemTypes2["Netherrack"] = "minecraft:netherrack";
+  MinecraftItemTypes2["NormalStoneSlab"] = "minecraft:normal_stone_slab";
+  MinecraftItemTypes2["NormalStoneStairs"] = "minecraft:normal_stone_stairs";
+  MinecraftItemTypes2["Noteblock"] = "minecraft:noteblock";
+  MinecraftItemTypes2["OakBoat"] = "minecraft:oak_boat";
+  MinecraftItemTypes2["OakChestBoat"] = "minecraft:oak_chest_boat";
+  MinecraftItemTypes2["OakFence"] = "minecraft:oak_fence";
+  MinecraftItemTypes2["OakHangingSign"] = "minecraft:oak_hanging_sign";
+  MinecraftItemTypes2["OakLeaves"] = "minecraft:oak_leaves";
+  MinecraftItemTypes2["OakLog"] = "minecraft:oak_log";
+  MinecraftItemTypes2["OakPlanks"] = "minecraft:oak_planks";
+  MinecraftItemTypes2["OakSapling"] = "minecraft:oak_sapling";
+  MinecraftItemTypes2["OakShelf"] = "minecraft:oak_shelf";
+  MinecraftItemTypes2["OakSign"] = "minecraft:oak_sign";
+  MinecraftItemTypes2["OakSlab"] = "minecraft:oak_slab";
+  MinecraftItemTypes2["OakStairs"] = "minecraft:oak_stairs";
+  MinecraftItemTypes2["OakWood"] = "minecraft:oak_wood";
+  MinecraftItemTypes2["Observer"] = "minecraft:observer";
+  MinecraftItemTypes2["Obsidian"] = "minecraft:obsidian";
+  MinecraftItemTypes2["OcelotSpawnEgg"] = "minecraft:ocelot_spawn_egg";
+  MinecraftItemTypes2["OchreFroglight"] = "minecraft:ochre_froglight";
+  MinecraftItemTypes2["OminousBottle"] = "minecraft:ominous_bottle";
+  MinecraftItemTypes2["OminousTrialKey"] = "minecraft:ominous_trial_key";
+  MinecraftItemTypes2["OpenEyeblossom"] = "minecraft:open_eyeblossom";
+  MinecraftItemTypes2["OrangeBundle"] = "minecraft:orange_bundle";
+  MinecraftItemTypes2["OrangeCandle"] = "minecraft:orange_candle";
+  MinecraftItemTypes2["OrangeCarpet"] = "minecraft:orange_carpet";
+  MinecraftItemTypes2["OrangeConcrete"] = "minecraft:orange_concrete";
+  MinecraftItemTypes2["OrangeConcretePowder"] = "minecraft:orange_concrete_powder";
+  MinecraftItemTypes2["OrangeDye"] = "minecraft:orange_dye";
+  MinecraftItemTypes2["OrangeGlazedTerracotta"] = "minecraft:orange_glazed_terracotta";
+  MinecraftItemTypes2["OrangeHarness"] = "minecraft:orange_harness";
+  MinecraftItemTypes2["OrangeShulkerBox"] = "minecraft:orange_shulker_box";
+  MinecraftItemTypes2["OrangeStainedGlass"] = "minecraft:orange_stained_glass";
+  MinecraftItemTypes2["OrangeStainedGlassPane"] = "minecraft:orange_stained_glass_pane";
+  MinecraftItemTypes2["OrangeTerracotta"] = "minecraft:orange_terracotta";
+  MinecraftItemTypes2["OrangeTulip"] = "minecraft:orange_tulip";
+  MinecraftItemTypes2["OrangeWool"] = "minecraft:orange_wool";
+  MinecraftItemTypes2["OxeyeDaisy"] = "minecraft:oxeye_daisy";
+  MinecraftItemTypes2["OxidizedChiseledCopper"] = "minecraft:oxidized_chiseled_copper";
+  MinecraftItemTypes2["OxidizedCopper"] = "minecraft:oxidized_copper";
+  MinecraftItemTypes2["OxidizedCopperBars"] = "minecraft:oxidized_copper_bars";
+  MinecraftItemTypes2["OxidizedCopperBulb"] = "minecraft:oxidized_copper_bulb";
+  MinecraftItemTypes2["OxidizedCopperChain"] = "minecraft:oxidized_copper_chain";
+  MinecraftItemTypes2["OxidizedCopperChest"] = "minecraft:oxidized_copper_chest";
+  MinecraftItemTypes2["OxidizedCopperDoor"] = "minecraft:oxidized_copper_door";
+  MinecraftItemTypes2["OxidizedCopperGolemStatue"] = "minecraft:oxidized_copper_golem_statue";
+  MinecraftItemTypes2["OxidizedCopperGrate"] = "minecraft:oxidized_copper_grate";
+  MinecraftItemTypes2["OxidizedCopperLantern"] = "minecraft:oxidized_copper_lantern";
+  MinecraftItemTypes2["OxidizedCopperTrapdoor"] = "minecraft:oxidized_copper_trapdoor";
+  MinecraftItemTypes2["OxidizedCutCopper"] = "minecraft:oxidized_cut_copper";
+  MinecraftItemTypes2["OxidizedCutCopperSlab"] = "minecraft:oxidized_cut_copper_slab";
+  MinecraftItemTypes2["OxidizedCutCopperStairs"] = "minecraft:oxidized_cut_copper_stairs";
+  MinecraftItemTypes2["OxidizedLightningRod"] = "minecraft:oxidized_lightning_rod";
+  MinecraftItemTypes2["PackedIce"] = "minecraft:packed_ice";
+  MinecraftItemTypes2["PackedMud"] = "minecraft:packed_mud";
+  MinecraftItemTypes2["Painting"] = "minecraft:painting";
+  MinecraftItemTypes2["PaleHangingMoss"] = "minecraft:pale_hanging_moss";
+  MinecraftItemTypes2["PaleMossBlock"] = "minecraft:pale_moss_block";
+  MinecraftItemTypes2["PaleMossCarpet"] = "minecraft:pale_moss_carpet";
+  MinecraftItemTypes2["PaleOakBoat"] = "minecraft:pale_oak_boat";
+  MinecraftItemTypes2["PaleOakButton"] = "minecraft:pale_oak_button";
+  MinecraftItemTypes2["PaleOakChestBoat"] = "minecraft:pale_oak_chest_boat";
+  MinecraftItemTypes2["PaleOakDoor"] = "minecraft:pale_oak_door";
+  MinecraftItemTypes2["PaleOakFence"] = "minecraft:pale_oak_fence";
+  MinecraftItemTypes2["PaleOakFenceGate"] = "minecraft:pale_oak_fence_gate";
+  MinecraftItemTypes2["PaleOakHangingSign"] = "minecraft:pale_oak_hanging_sign";
+  MinecraftItemTypes2["PaleOakLeaves"] = "minecraft:pale_oak_leaves";
+  MinecraftItemTypes2["PaleOakLog"] = "minecraft:pale_oak_log";
+  MinecraftItemTypes2["PaleOakPlanks"] = "minecraft:pale_oak_planks";
+  MinecraftItemTypes2["PaleOakPressurePlate"] = "minecraft:pale_oak_pressure_plate";
+  MinecraftItemTypes2["PaleOakSapling"] = "minecraft:pale_oak_sapling";
+  MinecraftItemTypes2["PaleOakShelf"] = "minecraft:pale_oak_shelf";
+  MinecraftItemTypes2["PaleOakSign"] = "minecraft:pale_oak_sign";
+  MinecraftItemTypes2["PaleOakSlab"] = "minecraft:pale_oak_slab";
+  MinecraftItemTypes2["PaleOakStairs"] = "minecraft:pale_oak_stairs";
+  MinecraftItemTypes2["PaleOakTrapdoor"] = "minecraft:pale_oak_trapdoor";
+  MinecraftItemTypes2["PaleOakWood"] = "minecraft:pale_oak_wood";
+  MinecraftItemTypes2["PandaSpawnEgg"] = "minecraft:panda_spawn_egg";
+  MinecraftItemTypes2["Paper"] = "minecraft:paper";
+  MinecraftItemTypes2["ParchedSpawnEgg"] = "minecraft:parched_spawn_egg";
+  MinecraftItemTypes2["ParrotSpawnEgg"] = "minecraft:parrot_spawn_egg";
+  MinecraftItemTypes2["PearlescentFroglight"] = "minecraft:pearlescent_froglight";
+  MinecraftItemTypes2["Peony"] = "minecraft:peony";
+  MinecraftItemTypes2["PetrifiedOakSlab"] = "minecraft:petrified_oak_slab";
+  MinecraftItemTypes2["PhantomMembrane"] = "minecraft:phantom_membrane";
+  MinecraftItemTypes2["PhantomSpawnEgg"] = "minecraft:phantom_spawn_egg";
+  MinecraftItemTypes2["PigSpawnEgg"] = "minecraft:pig_spawn_egg";
+  MinecraftItemTypes2["PiglinBannerPattern"] = "minecraft:piglin_banner_pattern";
+  MinecraftItemTypes2["PiglinBruteSpawnEgg"] = "minecraft:piglin_brute_spawn_egg";
+  MinecraftItemTypes2["PiglinHead"] = "minecraft:piglin_head";
+  MinecraftItemTypes2["PiglinSpawnEgg"] = "minecraft:piglin_spawn_egg";
+  MinecraftItemTypes2["PillagerSpawnEgg"] = "minecraft:pillager_spawn_egg";
+  MinecraftItemTypes2["PinkBundle"] = "minecraft:pink_bundle";
+  MinecraftItemTypes2["PinkCandle"] = "minecraft:pink_candle";
+  MinecraftItemTypes2["PinkCarpet"] = "minecraft:pink_carpet";
+  MinecraftItemTypes2["PinkConcrete"] = "minecraft:pink_concrete";
+  MinecraftItemTypes2["PinkConcretePowder"] = "minecraft:pink_concrete_powder";
+  MinecraftItemTypes2["PinkDye"] = "minecraft:pink_dye";
+  MinecraftItemTypes2["PinkGlazedTerracotta"] = "minecraft:pink_glazed_terracotta";
+  MinecraftItemTypes2["PinkHarness"] = "minecraft:pink_harness";
+  MinecraftItemTypes2["PinkPetals"] = "minecraft:pink_petals";
+  MinecraftItemTypes2["PinkShulkerBox"] = "minecraft:pink_shulker_box";
+  MinecraftItemTypes2["PinkStainedGlass"] = "minecraft:pink_stained_glass";
+  MinecraftItemTypes2["PinkStainedGlassPane"] = "minecraft:pink_stained_glass_pane";
+  MinecraftItemTypes2["PinkTerracotta"] = "minecraft:pink_terracotta";
+  MinecraftItemTypes2["PinkTulip"] = "minecraft:pink_tulip";
+  MinecraftItemTypes2["PinkWool"] = "minecraft:pink_wool";
+  MinecraftItemTypes2["Piston"] = "minecraft:piston";
+  MinecraftItemTypes2["PitcherPlant"] = "minecraft:pitcher_plant";
+  MinecraftItemTypes2["PitcherPod"] = "minecraft:pitcher_pod";
+  MinecraftItemTypes2["PlayerHead"] = "minecraft:player_head";
+  MinecraftItemTypes2["PlentyPotterySherd"] = "minecraft:plenty_pottery_sherd";
+  MinecraftItemTypes2["Podzol"] = "minecraft:podzol";
+  MinecraftItemTypes2["PointedDripstone"] = "minecraft:pointed_dripstone";
+  MinecraftItemTypes2["PoisonousPotato"] = "minecraft:poisonous_potato";
+  MinecraftItemTypes2["PolarBearSpawnEgg"] = "minecraft:polar_bear_spawn_egg";
+  MinecraftItemTypes2["PolishedAndesite"] = "minecraft:polished_andesite";
+  MinecraftItemTypes2["PolishedAndesiteSlab"] = "minecraft:polished_andesite_slab";
+  MinecraftItemTypes2["PolishedAndesiteStairs"] = "minecraft:polished_andesite_stairs";
+  MinecraftItemTypes2["PolishedBasalt"] = "minecraft:polished_basalt";
+  MinecraftItemTypes2["PolishedBlackstone"] = "minecraft:polished_blackstone";
+  MinecraftItemTypes2["PolishedBlackstoneBrickSlab"] = "minecraft:polished_blackstone_brick_slab";
+  MinecraftItemTypes2["PolishedBlackstoneBrickStairs"] = "minecraft:polished_blackstone_brick_stairs";
+  MinecraftItemTypes2["PolishedBlackstoneBrickWall"] = "minecraft:polished_blackstone_brick_wall";
+  MinecraftItemTypes2["PolishedBlackstoneBricks"] = "minecraft:polished_blackstone_bricks";
+  MinecraftItemTypes2["PolishedBlackstoneButton"] = "minecraft:polished_blackstone_button";
+  MinecraftItemTypes2["PolishedBlackstonePressurePlate"] = "minecraft:polished_blackstone_pressure_plate";
+  MinecraftItemTypes2["PolishedBlackstoneSlab"] = "minecraft:polished_blackstone_slab";
+  MinecraftItemTypes2["PolishedBlackstoneStairs"] = "minecraft:polished_blackstone_stairs";
+  MinecraftItemTypes2["PolishedBlackstoneWall"] = "minecraft:polished_blackstone_wall";
+  MinecraftItemTypes2["PolishedDeepslate"] = "minecraft:polished_deepslate";
+  MinecraftItemTypes2["PolishedDeepslateSlab"] = "minecraft:polished_deepslate_slab";
+  MinecraftItemTypes2["PolishedDeepslateStairs"] = "minecraft:polished_deepslate_stairs";
+  MinecraftItemTypes2["PolishedDeepslateWall"] = "minecraft:polished_deepslate_wall";
+  MinecraftItemTypes2["PolishedDiorite"] = "minecraft:polished_diorite";
+  MinecraftItemTypes2["PolishedDioriteSlab"] = "minecraft:polished_diorite_slab";
+  MinecraftItemTypes2["PolishedDioriteStairs"] = "minecraft:polished_diorite_stairs";
+  MinecraftItemTypes2["PolishedGranite"] = "minecraft:polished_granite";
+  MinecraftItemTypes2["PolishedGraniteSlab"] = "minecraft:polished_granite_slab";
+  MinecraftItemTypes2["PolishedGraniteStairs"] = "minecraft:polished_granite_stairs";
+  MinecraftItemTypes2["PolishedTuff"] = "minecraft:polished_tuff";
+  MinecraftItemTypes2["PolishedTuffSlab"] = "minecraft:polished_tuff_slab";
+  MinecraftItemTypes2["PolishedTuffStairs"] = "minecraft:polished_tuff_stairs";
+  MinecraftItemTypes2["PolishedTuffWall"] = "minecraft:polished_tuff_wall";
+  MinecraftItemTypes2["PoppedChorusFruit"] = "minecraft:popped_chorus_fruit";
+  MinecraftItemTypes2["Poppy"] = "minecraft:poppy";
+  MinecraftItemTypes2["Porkchop"] = "minecraft:porkchop";
+  MinecraftItemTypes2["Potato"] = "minecraft:potato";
+  MinecraftItemTypes2["Potion"] = "minecraft:potion";
+  MinecraftItemTypes2["PowderSnowBucket"] = "minecraft:powder_snow_bucket";
+  MinecraftItemTypes2["Prismarine"] = "minecraft:prismarine";
+  MinecraftItemTypes2["PrismarineBrickSlab"] = "minecraft:prismarine_brick_slab";
+  MinecraftItemTypes2["PrismarineBricks"] = "minecraft:prismarine_bricks";
+  MinecraftItemTypes2["PrismarineBricksStairs"] = "minecraft:prismarine_bricks_stairs";
+  MinecraftItemTypes2["PrismarineCrystals"] = "minecraft:prismarine_crystals";
+  MinecraftItemTypes2["PrismarineShard"] = "minecraft:prismarine_shard";
+  MinecraftItemTypes2["PrismarineSlab"] = "minecraft:prismarine_slab";
+  MinecraftItemTypes2["PrismarineStairs"] = "minecraft:prismarine_stairs";
+  MinecraftItemTypes2["PrismarineWall"] = "minecraft:prismarine_wall";
+  MinecraftItemTypes2["PrizePotterySherd"] = "minecraft:prize_pottery_sherd";
+  MinecraftItemTypes2["Pufferfish"] = "minecraft:pufferfish";
+  MinecraftItemTypes2["PufferfishBucket"] = "minecraft:pufferfish_bucket";
+  MinecraftItemTypes2["PufferfishSpawnEgg"] = "minecraft:pufferfish_spawn_egg";
+  MinecraftItemTypes2["Pumpkin"] = "minecraft:pumpkin";
+  MinecraftItemTypes2["PumpkinPie"] = "minecraft:pumpkin_pie";
+  MinecraftItemTypes2["PumpkinSeeds"] = "minecraft:pumpkin_seeds";
+  MinecraftItemTypes2["PurpleBundle"] = "minecraft:purple_bundle";
+  MinecraftItemTypes2["PurpleCandle"] = "minecraft:purple_candle";
+  MinecraftItemTypes2["PurpleCarpet"] = "minecraft:purple_carpet";
+  MinecraftItemTypes2["PurpleConcrete"] = "minecraft:purple_concrete";
+  MinecraftItemTypes2["PurpleConcretePowder"] = "minecraft:purple_concrete_powder";
+  MinecraftItemTypes2["PurpleDye"] = "minecraft:purple_dye";
+  MinecraftItemTypes2["PurpleGlazedTerracotta"] = "minecraft:purple_glazed_terracotta";
+  MinecraftItemTypes2["PurpleHarness"] = "minecraft:purple_harness";
+  MinecraftItemTypes2["PurpleShulkerBox"] = "minecraft:purple_shulker_box";
+  MinecraftItemTypes2["PurpleStainedGlass"] = "minecraft:purple_stained_glass";
+  MinecraftItemTypes2["PurpleStainedGlassPane"] = "minecraft:purple_stained_glass_pane";
+  MinecraftItemTypes2["PurpleTerracotta"] = "minecraft:purple_terracotta";
+  MinecraftItemTypes2["PurpleWool"] = "minecraft:purple_wool";
+  MinecraftItemTypes2["PurpurBlock"] = "minecraft:purpur_block";
+  MinecraftItemTypes2["PurpurPillar"] = "minecraft:purpur_pillar";
+  MinecraftItemTypes2["PurpurSlab"] = "minecraft:purpur_slab";
+  MinecraftItemTypes2["PurpurStairs"] = "minecraft:purpur_stairs";
+  MinecraftItemTypes2["Quartz"] = "minecraft:quartz";
+  MinecraftItemTypes2["QuartzBlock"] = "minecraft:quartz_block";
+  MinecraftItemTypes2["QuartzBricks"] = "minecraft:quartz_bricks";
+  MinecraftItemTypes2["QuartzOre"] = "minecraft:quartz_ore";
+  MinecraftItemTypes2["QuartzPillar"] = "minecraft:quartz_pillar";
+  MinecraftItemTypes2["QuartzSlab"] = "minecraft:quartz_slab";
+  MinecraftItemTypes2["QuartzStairs"] = "minecraft:quartz_stairs";
+  MinecraftItemTypes2["Rabbit"] = "minecraft:rabbit";
+  MinecraftItemTypes2["RabbitFoot"] = "minecraft:rabbit_foot";
+  MinecraftItemTypes2["RabbitHide"] = "minecraft:rabbit_hide";
+  MinecraftItemTypes2["RabbitSpawnEgg"] = "minecraft:rabbit_spawn_egg";
+  MinecraftItemTypes2["RabbitStew"] = "minecraft:rabbit_stew";
+  MinecraftItemTypes2["Rail"] = "minecraft:rail";
+  MinecraftItemTypes2["RaiserArmorTrimSmithingTemplate"] = "minecraft:raiser_armor_trim_smithing_template";
+  MinecraftItemTypes2["RavagerSpawnEgg"] = "minecraft:ravager_spawn_egg";
+  MinecraftItemTypes2["RawCopper"] = "minecraft:raw_copper";
+  MinecraftItemTypes2["RawCopperBlock"] = "minecraft:raw_copper_block";
+  MinecraftItemTypes2["RawGold"] = "minecraft:raw_gold";
+  MinecraftItemTypes2["RawGoldBlock"] = "minecraft:raw_gold_block";
+  MinecraftItemTypes2["RawIron"] = "minecraft:raw_iron";
+  MinecraftItemTypes2["RawIronBlock"] = "minecraft:raw_iron_block";
+  MinecraftItemTypes2["RecoveryCompass"] = "minecraft:recovery_compass";
+  MinecraftItemTypes2["RedBundle"] = "minecraft:red_bundle";
+  MinecraftItemTypes2["RedCandle"] = "minecraft:red_candle";
+  MinecraftItemTypes2["RedCarpet"] = "minecraft:red_carpet";
+  MinecraftItemTypes2["RedConcrete"] = "minecraft:red_concrete";
+  MinecraftItemTypes2["RedConcretePowder"] = "minecraft:red_concrete_powder";
+  MinecraftItemTypes2["RedDye"] = "minecraft:red_dye";
+  MinecraftItemTypes2["RedGlazedTerracotta"] = "minecraft:red_glazed_terracotta";
+  MinecraftItemTypes2["RedHarness"] = "minecraft:red_harness";
+  MinecraftItemTypes2["RedMushroom"] = "minecraft:red_mushroom";
+  MinecraftItemTypes2["RedMushroomBlock"] = "minecraft:red_mushroom_block";
+  MinecraftItemTypes2["RedNetherBrick"] = "minecraft:red_nether_brick";
+  MinecraftItemTypes2["RedNetherBrickSlab"] = "minecraft:red_nether_brick_slab";
+  MinecraftItemTypes2["RedNetherBrickStairs"] = "minecraft:red_nether_brick_stairs";
+  MinecraftItemTypes2["RedNetherBrickWall"] = "minecraft:red_nether_brick_wall";
+  MinecraftItemTypes2["RedSand"] = "minecraft:red_sand";
+  MinecraftItemTypes2["RedSandstone"] = "minecraft:red_sandstone";
+  MinecraftItemTypes2["RedSandstoneSlab"] = "minecraft:red_sandstone_slab";
+  MinecraftItemTypes2["RedSandstoneStairs"] = "minecraft:red_sandstone_stairs";
+  MinecraftItemTypes2["RedSandstoneWall"] = "minecraft:red_sandstone_wall";
+  MinecraftItemTypes2["RedShulkerBox"] = "minecraft:red_shulker_box";
+  MinecraftItemTypes2["RedStainedGlass"] = "minecraft:red_stained_glass";
+  MinecraftItemTypes2["RedStainedGlassPane"] = "minecraft:red_stained_glass_pane";
+  MinecraftItemTypes2["RedTerracotta"] = "minecraft:red_terracotta";
+  MinecraftItemTypes2["RedTulip"] = "minecraft:red_tulip";
+  MinecraftItemTypes2["RedWool"] = "minecraft:red_wool";
+  MinecraftItemTypes2["Redstone"] = "minecraft:redstone";
+  MinecraftItemTypes2["RedstoneBlock"] = "minecraft:redstone_block";
+  MinecraftItemTypes2["RedstoneLamp"] = "minecraft:redstone_lamp";
+  MinecraftItemTypes2["RedstoneOre"] = "minecraft:redstone_ore";
+  MinecraftItemTypes2["RedstoneTorch"] = "minecraft:redstone_torch";
+  MinecraftItemTypes2["ReinforcedDeepslate"] = "minecraft:reinforced_deepslate";
+  MinecraftItemTypes2["Repeater"] = "minecraft:repeater";
+  MinecraftItemTypes2["RepeatingCommandBlock"] = "minecraft:repeating_command_block";
+  MinecraftItemTypes2["ResinBlock"] = "minecraft:resin_block";
+  MinecraftItemTypes2["ResinBrick"] = "minecraft:resin_brick";
+  MinecraftItemTypes2["ResinBrickSlab"] = "minecraft:resin_brick_slab";
+  MinecraftItemTypes2["ResinBrickStairs"] = "minecraft:resin_brick_stairs";
+  MinecraftItemTypes2["ResinBrickWall"] = "minecraft:resin_brick_wall";
+  MinecraftItemTypes2["ResinBricks"] = "minecraft:resin_bricks";
+  MinecraftItemTypes2["ResinClump"] = "minecraft:resin_clump";
+  MinecraftItemTypes2["RespawnAnchor"] = "minecraft:respawn_anchor";
+  MinecraftItemTypes2["RibArmorTrimSmithingTemplate"] = "minecraft:rib_armor_trim_smithing_template";
+  MinecraftItemTypes2["RoseBush"] = "minecraft:rose_bush";
+  MinecraftItemTypes2["RottenFlesh"] = "minecraft:rotten_flesh";
+  MinecraftItemTypes2["Saddle"] = "minecraft:saddle";
+  MinecraftItemTypes2["Salmon"] = "minecraft:salmon";
+  MinecraftItemTypes2["SalmonBucket"] = "minecraft:salmon_bucket";
+  MinecraftItemTypes2["SalmonSpawnEgg"] = "minecraft:salmon_spawn_egg";
+  MinecraftItemTypes2["Sand"] = "minecraft:sand";
+  MinecraftItemTypes2["Sandstone"] = "minecraft:sandstone";
+  MinecraftItemTypes2["SandstoneSlab"] = "minecraft:sandstone_slab";
+  MinecraftItemTypes2["SandstoneStairs"] = "minecraft:sandstone_stairs";
+  MinecraftItemTypes2["SandstoneWall"] = "minecraft:sandstone_wall";
+  MinecraftItemTypes2["Scaffolding"] = "minecraft:scaffolding";
+  MinecraftItemTypes2["ScrapePotterySherd"] = "minecraft:scrape_pottery_sherd";
+  MinecraftItemTypes2["Sculk"] = "minecraft:sculk";
+  MinecraftItemTypes2["SculkCatalyst"] = "minecraft:sculk_catalyst";
+  MinecraftItemTypes2["SculkSensor"] = "minecraft:sculk_sensor";
+  MinecraftItemTypes2["SculkShrieker"] = "minecraft:sculk_shrieker";
+  MinecraftItemTypes2["SculkVein"] = "minecraft:sculk_vein";
+  MinecraftItemTypes2["SeaLantern"] = "minecraft:sea_lantern";
+  MinecraftItemTypes2["SeaPickle"] = "minecraft:sea_pickle";
+  MinecraftItemTypes2["Seagrass"] = "minecraft:seagrass";
+  MinecraftItemTypes2["SentryArmorTrimSmithingTemplate"] = "minecraft:sentry_armor_trim_smithing_template";
+  MinecraftItemTypes2["ShaperArmorTrimSmithingTemplate"] = "minecraft:shaper_armor_trim_smithing_template";
+  MinecraftItemTypes2["SheafPotterySherd"] = "minecraft:sheaf_pottery_sherd";
+  MinecraftItemTypes2["Shears"] = "minecraft:shears";
+  MinecraftItemTypes2["SheepSpawnEgg"] = "minecraft:sheep_spawn_egg";
+  MinecraftItemTypes2["ShelterPotterySherd"] = "minecraft:shelter_pottery_sherd";
+  MinecraftItemTypes2["Shield"] = "minecraft:shield";
+  MinecraftItemTypes2["ShortDryGrass"] = "minecraft:short_dry_grass";
+  MinecraftItemTypes2["ShortGrass"] = "minecraft:short_grass";
+  MinecraftItemTypes2["Shroomlight"] = "minecraft:shroomlight";
+  MinecraftItemTypes2["ShulkerShell"] = "minecraft:shulker_shell";
+  MinecraftItemTypes2["ShulkerSpawnEgg"] = "minecraft:shulker_spawn_egg";
+  MinecraftItemTypes2["SilenceArmorTrimSmithingTemplate"] = "minecraft:silence_armor_trim_smithing_template";
+  MinecraftItemTypes2["SilverGlazedTerracotta"] = "minecraft:silver_glazed_terracotta";
+  MinecraftItemTypes2["SilverfishSpawnEgg"] = "minecraft:silverfish_spawn_egg";
+  MinecraftItemTypes2["SkeletonHorseSpawnEgg"] = "minecraft:skeleton_horse_spawn_egg";
+  MinecraftItemTypes2["SkeletonSkull"] = "minecraft:skeleton_skull";
+  MinecraftItemTypes2["SkeletonSpawnEgg"] = "minecraft:skeleton_spawn_egg";
+  MinecraftItemTypes2["SkullBannerPattern"] = "minecraft:skull_banner_pattern";
+  MinecraftItemTypes2["SkullPotterySherd"] = "minecraft:skull_pottery_sherd";
+  MinecraftItemTypes2["Slime"] = "minecraft:slime";
+  MinecraftItemTypes2["SlimeBall"] = "minecraft:slime_ball";
+  MinecraftItemTypes2["SlimeSpawnEgg"] = "minecraft:slime_spawn_egg";
+  MinecraftItemTypes2["SmallAmethystBud"] = "minecraft:small_amethyst_bud";
+  MinecraftItemTypes2["SmallDripleafBlock"] = "minecraft:small_dripleaf_block";
+  MinecraftItemTypes2["SmithingTable"] = "minecraft:smithing_table";
+  MinecraftItemTypes2["Smoker"] = "minecraft:smoker";
+  MinecraftItemTypes2["SmoothBasalt"] = "minecraft:smooth_basalt";
+  MinecraftItemTypes2["SmoothQuartz"] = "minecraft:smooth_quartz";
+  MinecraftItemTypes2["SmoothQuartzSlab"] = "minecraft:smooth_quartz_slab";
+  MinecraftItemTypes2["SmoothQuartzStairs"] = "minecraft:smooth_quartz_stairs";
+  MinecraftItemTypes2["SmoothRedSandstone"] = "minecraft:smooth_red_sandstone";
+  MinecraftItemTypes2["SmoothRedSandstoneSlab"] = "minecraft:smooth_red_sandstone_slab";
+  MinecraftItemTypes2["SmoothRedSandstoneStairs"] = "minecraft:smooth_red_sandstone_stairs";
+  MinecraftItemTypes2["SmoothSandstone"] = "minecraft:smooth_sandstone";
+  MinecraftItemTypes2["SmoothSandstoneSlab"] = "minecraft:smooth_sandstone_slab";
+  MinecraftItemTypes2["SmoothSandstoneStairs"] = "minecraft:smooth_sandstone_stairs";
+  MinecraftItemTypes2["SmoothStone"] = "minecraft:smooth_stone";
+  MinecraftItemTypes2["SmoothStoneSlab"] = "minecraft:smooth_stone_slab";
+  MinecraftItemTypes2["SnifferEgg"] = "minecraft:sniffer_egg";
+  MinecraftItemTypes2["SnifferSpawnEgg"] = "minecraft:sniffer_spawn_egg";
+  MinecraftItemTypes2["SnortPotterySherd"] = "minecraft:snort_pottery_sherd";
+  MinecraftItemTypes2["SnoutArmorTrimSmithingTemplate"] = "minecraft:snout_armor_trim_smithing_template";
+  MinecraftItemTypes2["Snow"] = "minecraft:snow";
+  MinecraftItemTypes2["SnowGolemSpawnEgg"] = "minecraft:snow_golem_spawn_egg";
+  MinecraftItemTypes2["SnowLayer"] = "minecraft:snow_layer";
+  MinecraftItemTypes2["Snowball"] = "minecraft:snowball";
+  MinecraftItemTypes2["SoulCampfire"] = "minecraft:soul_campfire";
+  MinecraftItemTypes2["SoulLantern"] = "minecraft:soul_lantern";
+  MinecraftItemTypes2["SoulSand"] = "minecraft:soul_sand";
+  MinecraftItemTypes2["SoulSoil"] = "minecraft:soul_soil";
+  MinecraftItemTypes2["SoulTorch"] = "minecraft:soul_torch";
+  MinecraftItemTypes2["SpiderEye"] = "minecraft:spider_eye";
+  MinecraftItemTypes2["SpiderSpawnEgg"] = "minecraft:spider_spawn_egg";
+  MinecraftItemTypes2["SpireArmorTrimSmithingTemplate"] = "minecraft:spire_armor_trim_smithing_template";
+  MinecraftItemTypes2["SplashPotion"] = "minecraft:splash_potion";
+  MinecraftItemTypes2["Sponge"] = "minecraft:sponge";
+  MinecraftItemTypes2["SporeBlossom"] = "minecraft:spore_blossom";
+  MinecraftItemTypes2["SpruceBoat"] = "minecraft:spruce_boat";
+  MinecraftItemTypes2["SpruceButton"] = "minecraft:spruce_button";
+  MinecraftItemTypes2["SpruceChestBoat"] = "minecraft:spruce_chest_boat";
+  MinecraftItemTypes2["SpruceDoor"] = "minecraft:spruce_door";
+  MinecraftItemTypes2["SpruceFence"] = "minecraft:spruce_fence";
+  MinecraftItemTypes2["SpruceFenceGate"] = "minecraft:spruce_fence_gate";
+  MinecraftItemTypes2["SpruceHangingSign"] = "minecraft:spruce_hanging_sign";
+  MinecraftItemTypes2["SpruceLeaves"] = "minecraft:spruce_leaves";
+  MinecraftItemTypes2["SpruceLog"] = "minecraft:spruce_log";
+  MinecraftItemTypes2["SprucePlanks"] = "minecraft:spruce_planks";
+  MinecraftItemTypes2["SprucePressurePlate"] = "minecraft:spruce_pressure_plate";
+  MinecraftItemTypes2["SpruceSapling"] = "minecraft:spruce_sapling";
+  MinecraftItemTypes2["SpruceShelf"] = "minecraft:spruce_shelf";
+  MinecraftItemTypes2["SpruceSign"] = "minecraft:spruce_sign";
+  MinecraftItemTypes2["SpruceSlab"] = "minecraft:spruce_slab";
+  MinecraftItemTypes2["SpruceStairs"] = "minecraft:spruce_stairs";
+  MinecraftItemTypes2["SpruceTrapdoor"] = "minecraft:spruce_trapdoor";
+  MinecraftItemTypes2["SpruceWood"] = "minecraft:spruce_wood";
+  MinecraftItemTypes2["Spyglass"] = "minecraft:spyglass";
+  MinecraftItemTypes2["SquidSpawnEgg"] = "minecraft:squid_spawn_egg";
+  MinecraftItemTypes2["Stick"] = "minecraft:stick";
+  MinecraftItemTypes2["StickyPiston"] = "minecraft:sticky_piston";
+  MinecraftItemTypes2["Stone"] = "minecraft:stone";
+  MinecraftItemTypes2["StoneAxe"] = "minecraft:stone_axe";
+  MinecraftItemTypes2["StoneBrickSlab"] = "minecraft:stone_brick_slab";
+  MinecraftItemTypes2["StoneBrickStairs"] = "minecraft:stone_brick_stairs";
+  MinecraftItemTypes2["StoneBrickWall"] = "minecraft:stone_brick_wall";
+  MinecraftItemTypes2["StoneBricks"] = "minecraft:stone_bricks";
+  MinecraftItemTypes2["StoneButton"] = "minecraft:stone_button";
+  MinecraftItemTypes2["StoneHoe"] = "minecraft:stone_hoe";
+  MinecraftItemTypes2["StonePickaxe"] = "minecraft:stone_pickaxe";
+  MinecraftItemTypes2["StonePressurePlate"] = "minecraft:stone_pressure_plate";
+  MinecraftItemTypes2["StoneShovel"] = "minecraft:stone_shovel";
+  MinecraftItemTypes2["StoneSpear"] = "minecraft:stone_spear";
+  MinecraftItemTypes2["StoneStairs"] = "minecraft:stone_stairs";
+  MinecraftItemTypes2["StoneSword"] = "minecraft:stone_sword";
+  MinecraftItemTypes2["StonecutterBlock"] = "minecraft:stonecutter_block";
+  MinecraftItemTypes2["StraySpawnEgg"] = "minecraft:stray_spawn_egg";
+  MinecraftItemTypes2["StriderSpawnEgg"] = "minecraft:strider_spawn_egg";
+  MinecraftItemTypes2["String"] = "minecraft:string";
+  MinecraftItemTypes2["StrippedAcaciaLog"] = "minecraft:stripped_acacia_log";
+  MinecraftItemTypes2["StrippedAcaciaWood"] = "minecraft:stripped_acacia_wood";
+  MinecraftItemTypes2["StrippedBambooBlock"] = "minecraft:stripped_bamboo_block";
+  MinecraftItemTypes2["StrippedBirchLog"] = "minecraft:stripped_birch_log";
+  MinecraftItemTypes2["StrippedBirchWood"] = "minecraft:stripped_birch_wood";
+  MinecraftItemTypes2["StrippedCherryLog"] = "minecraft:stripped_cherry_log";
+  MinecraftItemTypes2["StrippedCherryWood"] = "minecraft:stripped_cherry_wood";
+  MinecraftItemTypes2["StrippedCrimsonHyphae"] = "minecraft:stripped_crimson_hyphae";
+  MinecraftItemTypes2["StrippedCrimsonStem"] = "minecraft:stripped_crimson_stem";
+  MinecraftItemTypes2["StrippedDarkOakLog"] = "minecraft:stripped_dark_oak_log";
+  MinecraftItemTypes2["StrippedDarkOakWood"] = "minecraft:stripped_dark_oak_wood";
+  MinecraftItemTypes2["StrippedJungleLog"] = "minecraft:stripped_jungle_log";
+  MinecraftItemTypes2["StrippedJungleWood"] = "minecraft:stripped_jungle_wood";
+  MinecraftItemTypes2["StrippedMangroveLog"] = "minecraft:stripped_mangrove_log";
+  MinecraftItemTypes2["StrippedMangroveWood"] = "minecraft:stripped_mangrove_wood";
+  MinecraftItemTypes2["StrippedOakLog"] = "minecraft:stripped_oak_log";
+  MinecraftItemTypes2["StrippedOakWood"] = "minecraft:stripped_oak_wood";
+  MinecraftItemTypes2["StrippedPaleOakLog"] = "minecraft:stripped_pale_oak_log";
+  MinecraftItemTypes2["StrippedPaleOakWood"] = "minecraft:stripped_pale_oak_wood";
+  MinecraftItemTypes2["StrippedSpruceLog"] = "minecraft:stripped_spruce_log";
+  MinecraftItemTypes2["StrippedSpruceWood"] = "minecraft:stripped_spruce_wood";
+  MinecraftItemTypes2["StrippedWarpedHyphae"] = "minecraft:stripped_warped_hyphae";
+  MinecraftItemTypes2["StrippedWarpedStem"] = "minecraft:stripped_warped_stem";
+  MinecraftItemTypes2["StructureBlock"] = "minecraft:structure_block";
+  MinecraftItemTypes2["StructureVoid"] = "minecraft:structure_void";
+  MinecraftItemTypes2["Sugar"] = "minecraft:sugar";
+  MinecraftItemTypes2["SugarCane"] = "minecraft:sugar_cane";
+  MinecraftItemTypes2["Sunflower"] = "minecraft:sunflower";
+  MinecraftItemTypes2["SuspiciousGravel"] = "minecraft:suspicious_gravel";
+  MinecraftItemTypes2["SuspiciousSand"] = "minecraft:suspicious_sand";
+  MinecraftItemTypes2["SuspiciousStew"] = "minecraft:suspicious_stew";
+  MinecraftItemTypes2["SweetBerries"] = "minecraft:sweet_berries";
+  MinecraftItemTypes2["TadpoleBucket"] = "minecraft:tadpole_bucket";
+  MinecraftItemTypes2["TadpoleSpawnEgg"] = "minecraft:tadpole_spawn_egg";
+  MinecraftItemTypes2["TallDryGrass"] = "minecraft:tall_dry_grass";
+  MinecraftItemTypes2["TallGrass"] = "minecraft:tall_grass";
+  MinecraftItemTypes2["Target"] = "minecraft:target";
+  MinecraftItemTypes2["TideArmorTrimSmithingTemplate"] = "minecraft:tide_armor_trim_smithing_template";
+  MinecraftItemTypes2["TintedGlass"] = "minecraft:tinted_glass";
+  MinecraftItemTypes2["Tnt"] = "minecraft:tnt";
+  MinecraftItemTypes2["TntMinecart"] = "minecraft:tnt_minecart";
+  MinecraftItemTypes2["Torch"] = "minecraft:torch";
+  MinecraftItemTypes2["Torchflower"] = "minecraft:torchflower";
+  MinecraftItemTypes2["TorchflowerSeeds"] = "minecraft:torchflower_seeds";
+  MinecraftItemTypes2["TotemOfUndying"] = "minecraft:totem_of_undying";
+  MinecraftItemTypes2["TraderLlamaSpawnEgg"] = "minecraft:trader_llama_spawn_egg";
+  MinecraftItemTypes2["Trapdoor"] = "minecraft:trapdoor";
+  MinecraftItemTypes2["TrappedChest"] = "minecraft:trapped_chest";
+  MinecraftItemTypes2["TrialKey"] = "minecraft:trial_key";
+  MinecraftItemTypes2["TrialSpawner"] = "minecraft:trial_spawner";
+  MinecraftItemTypes2["Trident"] = "minecraft:trident";
+  MinecraftItemTypes2["TripwireHook"] = "minecraft:tripwire_hook";
+  MinecraftItemTypes2["TropicalFish"] = "minecraft:tropical_fish";
+  MinecraftItemTypes2["TropicalFishBucket"] = "minecraft:tropical_fish_bucket";
+  MinecraftItemTypes2["TropicalFishSpawnEgg"] = "minecraft:tropical_fish_spawn_egg";
+  MinecraftItemTypes2["TubeCoral"] = "minecraft:tube_coral";
+  MinecraftItemTypes2["TubeCoralBlock"] = "minecraft:tube_coral_block";
+  MinecraftItemTypes2["TubeCoralFan"] = "minecraft:tube_coral_fan";
+  MinecraftItemTypes2["Tuff"] = "minecraft:tuff";
+  MinecraftItemTypes2["TuffBrickSlab"] = "minecraft:tuff_brick_slab";
+  MinecraftItemTypes2["TuffBrickStairs"] = "minecraft:tuff_brick_stairs";
+  MinecraftItemTypes2["TuffBrickWall"] = "minecraft:tuff_brick_wall";
+  MinecraftItemTypes2["TuffBricks"] = "minecraft:tuff_bricks";
+  MinecraftItemTypes2["TuffSlab"] = "minecraft:tuff_slab";
+  MinecraftItemTypes2["TuffStairs"] = "minecraft:tuff_stairs";
+  MinecraftItemTypes2["TuffWall"] = "minecraft:tuff_wall";
+  MinecraftItemTypes2["TurtleEgg"] = "minecraft:turtle_egg";
+  MinecraftItemTypes2["TurtleHelmet"] = "minecraft:turtle_helmet";
+  MinecraftItemTypes2["TurtleScute"] = "minecraft:turtle_scute";
+  MinecraftItemTypes2["TurtleSpawnEgg"] = "minecraft:turtle_spawn_egg";
+  MinecraftItemTypes2["TwistingVines"] = "minecraft:twisting_vines";
+  MinecraftItemTypes2["UndyedShulkerBox"] = "minecraft:undyed_shulker_box";
+  MinecraftItemTypes2["Vault"] = "minecraft:vault";
+  MinecraftItemTypes2["VerdantFroglight"] = "minecraft:verdant_froglight";
+  MinecraftItemTypes2["VexArmorTrimSmithingTemplate"] = "minecraft:vex_armor_trim_smithing_template";
+  MinecraftItemTypes2["VexSpawnEgg"] = "minecraft:vex_spawn_egg";
+  MinecraftItemTypes2["VillagerSpawnEgg"] = "minecraft:villager_spawn_egg";
+  MinecraftItemTypes2["VindicatorSpawnEgg"] = "minecraft:vindicator_spawn_egg";
+  MinecraftItemTypes2["Vine"] = "minecraft:vine";
+  MinecraftItemTypes2["WanderingTraderSpawnEgg"] = "minecraft:wandering_trader_spawn_egg";
+  MinecraftItemTypes2["WardArmorTrimSmithingTemplate"] = "minecraft:ward_armor_trim_smithing_template";
+  MinecraftItemTypes2["WardenSpawnEgg"] = "minecraft:warden_spawn_egg";
+  MinecraftItemTypes2["WarpedButton"] = "minecraft:warped_button";
+  MinecraftItemTypes2["WarpedDoor"] = "minecraft:warped_door";
+  MinecraftItemTypes2["WarpedFence"] = "minecraft:warped_fence";
+  MinecraftItemTypes2["WarpedFenceGate"] = "minecraft:warped_fence_gate";
+  MinecraftItemTypes2["WarpedFungus"] = "minecraft:warped_fungus";
+  MinecraftItemTypes2["WarpedFungusOnAStick"] = "minecraft:warped_fungus_on_a_stick";
+  MinecraftItemTypes2["WarpedHangingSign"] = "minecraft:warped_hanging_sign";
+  MinecraftItemTypes2["WarpedHyphae"] = "minecraft:warped_hyphae";
+  MinecraftItemTypes2["WarpedNylium"] = "minecraft:warped_nylium";
+  MinecraftItemTypes2["WarpedPlanks"] = "minecraft:warped_planks";
+  MinecraftItemTypes2["WarpedPressurePlate"] = "minecraft:warped_pressure_plate";
+  MinecraftItemTypes2["WarpedRoots"] = "minecraft:warped_roots";
+  MinecraftItemTypes2["WarpedShelf"] = "minecraft:warped_shelf";
+  MinecraftItemTypes2["WarpedSign"] = "minecraft:warped_sign";
+  MinecraftItemTypes2["WarpedSlab"] = "minecraft:warped_slab";
+  MinecraftItemTypes2["WarpedStairs"] = "minecraft:warped_stairs";
+  MinecraftItemTypes2["WarpedStem"] = "minecraft:warped_stem";
+  MinecraftItemTypes2["WarpedTrapdoor"] = "minecraft:warped_trapdoor";
+  MinecraftItemTypes2["WarpedWartBlock"] = "minecraft:warped_wart_block";
+  MinecraftItemTypes2["WaterBucket"] = "minecraft:water_bucket";
+  MinecraftItemTypes2["Waterlily"] = "minecraft:waterlily";
+  MinecraftItemTypes2["WaxedChiseledCopper"] = "minecraft:waxed_chiseled_copper";
+  MinecraftItemTypes2["WaxedCopper"] = "minecraft:waxed_copper";
+  MinecraftItemTypes2["WaxedCopperBars"] = "minecraft:waxed_copper_bars";
+  MinecraftItemTypes2["WaxedCopperBulb"] = "minecraft:waxed_copper_bulb";
+  MinecraftItemTypes2["WaxedCopperChain"] = "minecraft:waxed_copper_chain";
+  MinecraftItemTypes2["WaxedCopperChest"] = "minecraft:waxed_copper_chest";
+  MinecraftItemTypes2["WaxedCopperDoor"] = "minecraft:waxed_copper_door";
+  MinecraftItemTypes2["WaxedCopperGolemStatue"] = "minecraft:waxed_copper_golem_statue";
+  MinecraftItemTypes2["WaxedCopperGrate"] = "minecraft:waxed_copper_grate";
+  MinecraftItemTypes2["WaxedCopperLantern"] = "minecraft:waxed_copper_lantern";
+  MinecraftItemTypes2["WaxedCopperTrapdoor"] = "minecraft:waxed_copper_trapdoor";
+  MinecraftItemTypes2["WaxedCutCopper"] = "minecraft:waxed_cut_copper";
+  MinecraftItemTypes2["WaxedCutCopperSlab"] = "minecraft:waxed_cut_copper_slab";
+  MinecraftItemTypes2["WaxedCutCopperStairs"] = "minecraft:waxed_cut_copper_stairs";
+  MinecraftItemTypes2["WaxedExposedChiseledCopper"] = "minecraft:waxed_exposed_chiseled_copper";
+  MinecraftItemTypes2["WaxedExposedCopper"] = "minecraft:waxed_exposed_copper";
+  MinecraftItemTypes2["WaxedExposedCopperBars"] = "minecraft:waxed_exposed_copper_bars";
+  MinecraftItemTypes2["WaxedExposedCopperBulb"] = "minecraft:waxed_exposed_copper_bulb";
+  MinecraftItemTypes2["WaxedExposedCopperChain"] = "minecraft:waxed_exposed_copper_chain";
+  MinecraftItemTypes2["WaxedExposedCopperChest"] = "minecraft:waxed_exposed_copper_chest";
+  MinecraftItemTypes2["WaxedExposedCopperDoor"] = "minecraft:waxed_exposed_copper_door";
+  MinecraftItemTypes2["WaxedExposedCopperGolemStatue"] = "minecraft:waxed_exposed_copper_golem_statue";
+  MinecraftItemTypes2["WaxedExposedCopperGrate"] = "minecraft:waxed_exposed_copper_grate";
+  MinecraftItemTypes2["WaxedExposedCopperLantern"] = "minecraft:waxed_exposed_copper_lantern";
+  MinecraftItemTypes2["WaxedExposedCopperTrapdoor"] = "minecraft:waxed_exposed_copper_trapdoor";
+  MinecraftItemTypes2["WaxedExposedCutCopper"] = "minecraft:waxed_exposed_cut_copper";
+  MinecraftItemTypes2["WaxedExposedCutCopperSlab"] = "minecraft:waxed_exposed_cut_copper_slab";
+  MinecraftItemTypes2["WaxedExposedCutCopperStairs"] = "minecraft:waxed_exposed_cut_copper_stairs";
+  MinecraftItemTypes2["WaxedExposedLightningRod"] = "minecraft:waxed_exposed_lightning_rod";
+  MinecraftItemTypes2["WaxedLightningRod"] = "minecraft:waxed_lightning_rod";
+  MinecraftItemTypes2["WaxedOxidizedChiseledCopper"] = "minecraft:waxed_oxidized_chiseled_copper";
+  MinecraftItemTypes2["WaxedOxidizedCopper"] = "minecraft:waxed_oxidized_copper";
+  MinecraftItemTypes2["WaxedOxidizedCopperBars"] = "minecraft:waxed_oxidized_copper_bars";
+  MinecraftItemTypes2["WaxedOxidizedCopperBulb"] = "minecraft:waxed_oxidized_copper_bulb";
+  MinecraftItemTypes2["WaxedOxidizedCopperChain"] = "minecraft:waxed_oxidized_copper_chain";
+  MinecraftItemTypes2["WaxedOxidizedCopperChest"] = "minecraft:waxed_oxidized_copper_chest";
+  MinecraftItemTypes2["WaxedOxidizedCopperDoor"] = "minecraft:waxed_oxidized_copper_door";
+  MinecraftItemTypes2["WaxedOxidizedCopperGolemStatue"] = "minecraft:waxed_oxidized_copper_golem_statue";
+  MinecraftItemTypes2["WaxedOxidizedCopperGrate"] = "minecraft:waxed_oxidized_copper_grate";
+  MinecraftItemTypes2["WaxedOxidizedCopperLantern"] = "minecraft:waxed_oxidized_copper_lantern";
+  MinecraftItemTypes2["WaxedOxidizedCopperTrapdoor"] = "minecraft:waxed_oxidized_copper_trapdoor";
+  MinecraftItemTypes2["WaxedOxidizedCutCopper"] = "minecraft:waxed_oxidized_cut_copper";
+  MinecraftItemTypes2["WaxedOxidizedCutCopperSlab"] = "minecraft:waxed_oxidized_cut_copper_slab";
+  MinecraftItemTypes2["WaxedOxidizedCutCopperStairs"] = "minecraft:waxed_oxidized_cut_copper_stairs";
+  MinecraftItemTypes2["WaxedOxidizedLightningRod"] = "minecraft:waxed_oxidized_lightning_rod";
+  MinecraftItemTypes2["WaxedWeatheredChiseledCopper"] = "minecraft:waxed_weathered_chiseled_copper";
+  MinecraftItemTypes2["WaxedWeatheredCopper"] = "minecraft:waxed_weathered_copper";
+  MinecraftItemTypes2["WaxedWeatheredCopperBars"] = "minecraft:waxed_weathered_copper_bars";
+  MinecraftItemTypes2["WaxedWeatheredCopperBulb"] = "minecraft:waxed_weathered_copper_bulb";
+  MinecraftItemTypes2["WaxedWeatheredCopperChain"] = "minecraft:waxed_weathered_copper_chain";
+  MinecraftItemTypes2["WaxedWeatheredCopperChest"] = "minecraft:waxed_weathered_copper_chest";
+  MinecraftItemTypes2["WaxedWeatheredCopperDoor"] = "minecraft:waxed_weathered_copper_door";
+  MinecraftItemTypes2["WaxedWeatheredCopperGolemStatue"] = "minecraft:waxed_weathered_copper_golem_statue";
+  MinecraftItemTypes2["WaxedWeatheredCopperGrate"] = "minecraft:waxed_weathered_copper_grate";
+  MinecraftItemTypes2["WaxedWeatheredCopperLantern"] = "minecraft:waxed_weathered_copper_lantern";
+  MinecraftItemTypes2["WaxedWeatheredCopperTrapdoor"] = "minecraft:waxed_weathered_copper_trapdoor";
+  MinecraftItemTypes2["WaxedWeatheredCutCopper"] = "minecraft:waxed_weathered_cut_copper";
+  MinecraftItemTypes2["WaxedWeatheredCutCopperSlab"] = "minecraft:waxed_weathered_cut_copper_slab";
+  MinecraftItemTypes2["WaxedWeatheredCutCopperStairs"] = "minecraft:waxed_weathered_cut_copper_stairs";
+  MinecraftItemTypes2["WaxedWeatheredLightningRod"] = "minecraft:waxed_weathered_lightning_rod";
+  MinecraftItemTypes2["WayfinderArmorTrimSmithingTemplate"] = "minecraft:wayfinder_armor_trim_smithing_template";
+  MinecraftItemTypes2["WeatheredChiseledCopper"] = "minecraft:weathered_chiseled_copper";
+  MinecraftItemTypes2["WeatheredCopper"] = "minecraft:weathered_copper";
+  MinecraftItemTypes2["WeatheredCopperBars"] = "minecraft:weathered_copper_bars";
+  MinecraftItemTypes2["WeatheredCopperBulb"] = "minecraft:weathered_copper_bulb";
+  MinecraftItemTypes2["WeatheredCopperChain"] = "minecraft:weathered_copper_chain";
+  MinecraftItemTypes2["WeatheredCopperChest"] = "minecraft:weathered_copper_chest";
+  MinecraftItemTypes2["WeatheredCopperDoor"] = "minecraft:weathered_copper_door";
+  MinecraftItemTypes2["WeatheredCopperGolemStatue"] = "minecraft:weathered_copper_golem_statue";
+  MinecraftItemTypes2["WeatheredCopperGrate"] = "minecraft:weathered_copper_grate";
+  MinecraftItemTypes2["WeatheredCopperLantern"] = "minecraft:weathered_copper_lantern";
+  MinecraftItemTypes2["WeatheredCopperTrapdoor"] = "minecraft:weathered_copper_trapdoor";
+  MinecraftItemTypes2["WeatheredCutCopper"] = "minecraft:weathered_cut_copper";
+  MinecraftItemTypes2["WeatheredCutCopperSlab"] = "minecraft:weathered_cut_copper_slab";
+  MinecraftItemTypes2["WeatheredCutCopperStairs"] = "minecraft:weathered_cut_copper_stairs";
+  MinecraftItemTypes2["WeatheredLightningRod"] = "minecraft:weathered_lightning_rod";
+  MinecraftItemTypes2["Web"] = "minecraft:web";
+  MinecraftItemTypes2["WeepingVines"] = "minecraft:weeping_vines";
+  MinecraftItemTypes2["WetSponge"] = "minecraft:wet_sponge";
+  MinecraftItemTypes2["Wheat"] = "minecraft:wheat";
+  MinecraftItemTypes2["WheatSeeds"] = "minecraft:wheat_seeds";
+  MinecraftItemTypes2["WhiteBundle"] = "minecraft:white_bundle";
+  MinecraftItemTypes2["WhiteCandle"] = "minecraft:white_candle";
+  MinecraftItemTypes2["WhiteCarpet"] = "minecraft:white_carpet";
+  MinecraftItemTypes2["WhiteConcrete"] = "minecraft:white_concrete";
+  MinecraftItemTypes2["WhiteConcretePowder"] = "minecraft:white_concrete_powder";
+  MinecraftItemTypes2["WhiteDye"] = "minecraft:white_dye";
+  MinecraftItemTypes2["WhiteGlazedTerracotta"] = "minecraft:white_glazed_terracotta";
+  MinecraftItemTypes2["WhiteHarness"] = "minecraft:white_harness";
+  MinecraftItemTypes2["WhiteShulkerBox"] = "minecraft:white_shulker_box";
+  MinecraftItemTypes2["WhiteStainedGlass"] = "minecraft:white_stained_glass";
+  MinecraftItemTypes2["WhiteStainedGlassPane"] = "minecraft:white_stained_glass_pane";
+  MinecraftItemTypes2["WhiteTerracotta"] = "minecraft:white_terracotta";
+  MinecraftItemTypes2["WhiteTulip"] = "minecraft:white_tulip";
+  MinecraftItemTypes2["WhiteWool"] = "minecraft:white_wool";
+  MinecraftItemTypes2["WildArmorTrimSmithingTemplate"] = "minecraft:wild_armor_trim_smithing_template";
+  MinecraftItemTypes2["Wildflowers"] = "minecraft:wildflowers";
+  MinecraftItemTypes2["WindCharge"] = "minecraft:wind_charge";
+  MinecraftItemTypes2["WitchSpawnEgg"] = "minecraft:witch_spawn_egg";
+  MinecraftItemTypes2["WitherRose"] = "minecraft:wither_rose";
+  MinecraftItemTypes2["WitherSkeletonSkull"] = "minecraft:wither_skeleton_skull";
+  MinecraftItemTypes2["WitherSkeletonSpawnEgg"] = "minecraft:wither_skeleton_spawn_egg";
+  MinecraftItemTypes2["WitherSpawnEgg"] = "minecraft:wither_spawn_egg";
+  MinecraftItemTypes2["WolfArmor"] = "minecraft:wolf_armor";
+  MinecraftItemTypes2["WolfSpawnEgg"] = "minecraft:wolf_spawn_egg";
+  MinecraftItemTypes2["WoodenAxe"] = "minecraft:wooden_axe";
+  MinecraftItemTypes2["WoodenButton"] = "minecraft:wooden_button";
+  MinecraftItemTypes2["WoodenDoor"] = "minecraft:wooden_door";
+  MinecraftItemTypes2["WoodenHoe"] = "minecraft:wooden_hoe";
+  MinecraftItemTypes2["WoodenPickaxe"] = "minecraft:wooden_pickaxe";
+  MinecraftItemTypes2["WoodenPressurePlate"] = "minecraft:wooden_pressure_plate";
+  MinecraftItemTypes2["WoodenShovel"] = "minecraft:wooden_shovel";
+  MinecraftItemTypes2["WoodenSpear"] = "minecraft:wooden_spear";
+  MinecraftItemTypes2["WoodenSword"] = "minecraft:wooden_sword";
+  MinecraftItemTypes2["WritableBook"] = "minecraft:writable_book";
+  MinecraftItemTypes2["YellowBundle"] = "minecraft:yellow_bundle";
+  MinecraftItemTypes2["YellowCandle"] = "minecraft:yellow_candle";
+  MinecraftItemTypes2["YellowCarpet"] = "minecraft:yellow_carpet";
+  MinecraftItemTypes2["YellowConcrete"] = "minecraft:yellow_concrete";
+  MinecraftItemTypes2["YellowConcretePowder"] = "minecraft:yellow_concrete_powder";
+  MinecraftItemTypes2["YellowDye"] = "minecraft:yellow_dye";
+  MinecraftItemTypes2["YellowGlazedTerracotta"] = "minecraft:yellow_glazed_terracotta";
+  MinecraftItemTypes2["YellowHarness"] = "minecraft:yellow_harness";
+  MinecraftItemTypes2["YellowShulkerBox"] = "minecraft:yellow_shulker_box";
+  MinecraftItemTypes2["YellowStainedGlass"] = "minecraft:yellow_stained_glass";
+  MinecraftItemTypes2["YellowStainedGlassPane"] = "minecraft:yellow_stained_glass_pane";
+  MinecraftItemTypes2["YellowTerracotta"] = "minecraft:yellow_terracotta";
+  MinecraftItemTypes2["YellowWool"] = "minecraft:yellow_wool";
+  MinecraftItemTypes2["ZoglinSpawnEgg"] = "minecraft:zoglin_spawn_egg";
+  MinecraftItemTypes2["ZombieHead"] = "minecraft:zombie_head";
+  MinecraftItemTypes2["ZombieHorseSpawnEgg"] = "minecraft:zombie_horse_spawn_egg";
+  MinecraftItemTypes2["ZombieNautilusSpawnEgg"] = "minecraft:zombie_nautilus_spawn_egg";
+  MinecraftItemTypes2["ZombiePigmanSpawnEgg"] = "minecraft:zombie_pigman_spawn_egg";
+  MinecraftItemTypes2["ZombieSpawnEgg"] = "minecraft:zombie_spawn_egg";
+  MinecraftItemTypes2["ZombieVillagerSpawnEgg"] = "minecraft:zombie_villager_spawn_egg";
+  return MinecraftItemTypes2;
 })(MinecraftItemTypes || {});
 var MinecraftPotionDeliveryTypes = ((MinecraftPotionDeliveryTypes2) => {
   MinecraftPotionDeliveryTypes2["Consume"] = "Consume";
@@ -3211,15 +3208,244 @@ var MinecraftPotionEffectTypes = ((MinecraftPotionEffectTypes2) => {
   return MinecraftPotionEffectTypes2;
 })(MinecraftPotionEffectTypes || {});
 
-// behaviour_pack/scripts-dev/components/fungus_spread.ts
-function load_fungus_spreading_component() {
+// behaviour_pack/scripts-dev/api/sacrifice.ts
+import { http, HttpHeader, HttpRequest, HttpRequestMethod } from "@minecraft/server-net";
+var Item = class _Item {
+  constructor(data) {
+    this.item_id = data.item_id;
+    this.value = data.value;
+    this.max_uses = data.max_uses;
+    this.depreciation = data.depreciation;
+    this.current_uses = data.current_uses;
+  }
+  static async get_item(item_id) {
+    try {
+      const item_response = await http.get(`http://nexuscore:8000/api/v0.2/server/items/${item_id}`);
+      const item_data = JSON.parse(item_response.body);
+      return new _Item(item_data);
+    } catch (error) {
+      console.error("Error fetching item:", error);
+      throw error;
+    }
+  }
+  async update_item() {
+    const request = new HttpRequest(`http://nexuscore:8000/api/v0.2/server/items/${this.item_id}`);
+    request.method = HttpRequestMethod.Put;
+    request.headers = [
+      new HttpHeader("Content-Type", "application/json"),
+      new HttpHeader("auth", "my-auth-token")
+    ];
+    request.body = JSON.stringify({
+      current_uses: this.current_uses
+    });
+    await http.request(request);
+  }
+};
+var World = class _World {
+  constructor(data) {
+    this.guild_id = data.guild_id;
+    this.overworld_border = data.overworld_border;
+    this.nether_border = data.nether_border;
+    this.end_border = data.end_border;
+  }
+  static async get_world(guild_id2) {
+    try {
+      const world_response = await http.get(`http://nexuscore:8000/api/v0.2/server/world/${guild_id2}`);
+      const world_data = JSON.parse(world_response.body);
+      world_data.guild_id = guild_id2;
+      return new _World(world_data);
+    } catch (error) {
+      console.error("Error fetching world:", error);
+      throw error;
+    }
+  }
+  async update_world() {
+    const request = new HttpRequest(`http://nexuscore:8000/api/v0.2/server/world/${this.guild_id}`);
+    request.method = HttpRequestMethod.Put;
+    request.headers = [
+      new HttpHeader("Content-Type", "application/json"),
+      new HttpHeader("auth", "my-auth-token")
+    ];
+    request.body = JSON.stringify({
+      overworld_border: this.overworld_border,
+      nether_border: this.nether_border,
+      end_border: this.end_border
+    });
+    await http.request(request);
+  }
+};
+var WorldCache = class _WorldCache {
+  static async load_world(guild_id2) {
+    _WorldCache.world = await World.get_world(guild_id2);
+  }
+};
+
+// behaviour_pack/scripts-dev/features/border.ts
+function borderCheck(player, dimensionID, border_size, warning_range, outside) {
+  const position = player.location;
+  const distance_2d = Math.sqrt(position.x ** 2 + position.z ** 2);
+  if (border_size < distance_2d && outside.indexOf(player.name) == -1) {
+    outside.push(player.name);
+    console.log(`[Plugin] [Border] Player ${player.name} is outside of the ${dimensionID} border.`);
+  } else if (border_size > distance_2d && outside.indexOf(player.name) != -1) {
+    outside.splice(outside.indexOf(player.name), 1);
+    console.log(`[Plugin] [Border] Player ${player.name} has re-entered the ${dimensionID} border.`);
+  }
+  if (border_size < distance_2d) {
+    world.getDimension(dimensionID).runCommand(`title "${player.name}" actionbar \xA7o\xA7iI shouldn't go any further. It's too dangerous here.`);
+    world.getDimension(dimensionID).runCommand(`effect "${player.name}" blindness 4 2`);
+    player.applyDamage(1.3, { cause: EntityDamageCause.void });
+  } else if (border_size - 20 < distance_2d) {
+    world.getDimension(dimensionID).runCommand(`title "${player.name}" actionbar \xA7o\xA7iThe Monolith's protection is wearing off. I can feel it...`);
+  }
+  if (border_size - 100 < distance_2d && warning_range.indexOf(player.name) == -1) {
+    warning_range.push(player.name);
+    world.getDimension(dimensionID).runCommand(`title "${player.name}" actionbar \xA7o\xA7iMaybe I should start heading back now...`);
+  } else if (border_size - 100 > distance_2d && warning_range.indexOf(player.name) != -1) {
+    warning_range.splice(warning_range.indexOf(player.name), 1);
+  }
+}
+function loadWorldBorder(guild_id2) {
+  WorldCache.load_world(guild_id2).then();
+  let players_100_blocks_away = { overworld: [], nether: [], end: [] };
+  let players_outside_border = { overworld: [], nether: [], end: [] };
+  system.runInterval(() => {
+    let players = {
+      overworld: world.getDimension(MinecraftDimensionTypes.Overworld).getPlayers(),
+      nether: world.getDimension(MinecraftDimensionTypes.Nether).getPlayers(),
+      end: world.getDimension(MinecraftDimensionTypes.TheEnd).getPlayers()
+    };
+    players.overworld.forEach((player) => {
+      borderCheck(player, MinecraftDimensionTypes.Overworld, WorldCache.world.overworld_border, players_100_blocks_away.overworld, players_outside_border.overworld);
+    });
+    players.nether.forEach((player) => {
+      borderCheck(player, MinecraftDimensionTypes.Nether, WorldCache.world.nether_border, players_100_blocks_away.nether, players_outside_border.nether);
+    });
+    players.end.forEach((player) => {
+      borderCheck(player, MinecraftDimensionTypes.TheEnd, WorldCache.world.end_border, players_100_blocks_away.end, players_outside_border.end);
+    });
+  }, 20);
+}
+
+// behaviour_pack/scripts-dev/features/items/elytra-mending.ts
+import { EquipmentSlot, world as world2, system as system2, EntityComponentTypes, ItemComponentTypes, EnchantmentType } from "@minecraft/server";
+function elytraCheck(player) {
+  const player_equipment = player.getComponent(EntityComponentTypes.Equippable);
+  const item = player_equipment?.getEquipment(EquipmentSlot.Chest);
+  if (item) {
+    const enchantments = item?.getComponent(ItemComponentTypes.Enchantable);
+    const has_mending = enchantments?.hasEnchantment(MinecraftEnchantmentTypes.Mending);
+    if (has_mending && item?.typeId == MinecraftItemTypes.Elytra) {
+      if (!enchantments?.hasEnchantment(MinecraftEnchantmentTypes.Vanishing)) {
+        enchantments?.addEnchantment(
+          {
+            type: new EnchantmentType(MinecraftEnchantmentTypes.Vanishing),
+            level: 1
+          }
+        );
+      }
+      enchantments?.removeEnchantment(MinecraftEnchantmentTypes.Mending);
+      const durability_component = item.getComponent(ItemComponentTypes.Durability);
+      if (durability_component) {
+        durability_component.damage = durability_component.maxDurability;
+      }
+      item.setLore([`
+\xA7o"My wings are cursed!"`]);
+      world2.getDimension("overworld").runCommand(`title "${player.name}" actionbar \xA7o\xA7iMy Elytra feels different...`);
+      player_equipment?.setEquipment(EquipmentSlot.Chest, item);
+      console.log(`[ElytraCheck] Player ${player.name} has elytra with mending. Removing Mending.`);
+    }
+  }
+}
+function loadRemoveMendingFromElytraLoop() {
+  system2.runInterval(() => {
+    let playerlist = world2.getPlayers();
+    playerlist.forEach((player) => {
+      elytraCheck(player);
+    });
+  }, 20);
+}
+
+// behaviour_pack/scripts-dev/features/items/champion-set.ts
+import { EntityComponentTypes as EntityComponentTypes2, EquipmentSlot as EquipmentSlot2, MolangVariableMap, system as system3, world as world3 } from "@minecraft/server";
+function champion(player) {
+  const molang = new MolangVariableMap();
+  molang.setColorRGB("variable.color", { red: 1, green: 0.913, blue: 0.576 });
+  const position = player.location;
+  const equippable = player.getComponent(EntityComponentTypes2.Equippable);
+  let equipped = 0;
+  equippable?.getEquipment(EquipmentSlot2.Head)?.hasTag("amethyst:champion") ? equipped++ : null;
+  equippable?.getEquipment(EquipmentSlot2.Chest)?.hasTag("amethyst:champion") ? equipped++ : null;
+  equippable?.getEquipment(EquipmentSlot2.Legs)?.hasTag("amethyst:champion") ? equipped++ : null;
+  equippable?.getEquipment(EquipmentSlot2.Feet)?.hasTag("amethyst:champion") ? equipped++ : null;
+  if (equipped > 0 && Math.random() <= equipped / 5) {
+    const radius = 3;
+    let random_location = {
+      x: position.x + Math.floor(Math.random() * radius) * (Math.random() < 0.5 ? -1 : 1),
+      y: position.y + 0.5 + Math.floor(Math.random() * radius),
+      z: position.z + Math.floor(Math.random() * radius) * (Math.random() < 0.5 ? -1 : 1)
+    };
+    player.dimension.spawnParticle("minecraft:glow_particle", random_location, molang);
+  }
+}
+function loadChampionSet() {
+  system3.runInterval(() => {
+    let playerlist = world3.getPlayers();
+    playerlist.forEach((player) => {
+      champion(player);
+    });
+  }, 4);
+}
+
+// behaviour_pack/scripts-dev/features/items/totem-of-togetherness.ts
+import { EntityComponentTypes as EntityComponentTypes3, EquipmentSlot as EquipmentSlot3, system as system4, world as world4 } from "@minecraft/server";
+var healthboost = MinecraftEffectTypes.HealthBoost;
+function togetherness(player) {
+  const position = player.location;
+  const equippable = player.getComponent(EntityComponentTypes3.Equippable);
+  const offhand = equippable?.getEquipment(EquipmentSlot3.Offhand);
+  const mainhand = equippable?.getEquipment(EquipmentSlot3.Mainhand);
+  if (offhand?.hasTag("amethyst:togetherness") || mainhand?.hasTag("amethyst:togetherness")) {
+    const uniqueplayerslist = player.dimension.getPlayers({
+      location: position,
+      maxDistance: 16,
+      excludeNames: [player.name]
+    });
+    const effect_level = Math.min(5, uniqueplayerslist.length);
+    if (effect_level - 1 >= 0) {
+      player.addEffect(healthboost, 40, { amplifier: effect_level - 1, showParticles: false });
+    }
+  }
+}
+function loadTotemOfTogethernessLoop() {
+  system4.runInterval(() => {
+    let playerlist = world4.getPlayers();
+    playerlist.forEach((player) => {
+      togetherness(player);
+    });
+  }, 20);
+}
+
+// behaviour_pack/scripts-dev/features/items/index.ts
+function loadItemComponents() {
+  loadRemoveMendingFromElytraLoop();
+  loadChampionSet();
+  loadTotemOfTogethernessLoop();
+}
+
+// behaviour_pack/scripts-dev/features/blocks/fungus-spread.ts
+import {
+  system as system5,
+  TicksPerSecond
+} from "@minecraft/server";
+function loadFungusSpreadComponent() {
   function fungus_spread(event) {
     if (Math.random() < 0.5) {
       const adjacent_blocks = [event.block.above(), event.block.below(), event.block.south(), event.block.west(), event.block.north(), event.block.east()];
       const random_index = Math.floor(Math.random() * adjacent_blocks.length);
       const random_adjacent_block = adjacent_blocks[random_index];
       if (random_adjacent_block?.typeId == MinecraftBlockTypes.Air) {
-        random_adjacent_block.setType("amethyst:fungus_block");
+        random_adjacent_block.setType(event.block.typeId);
       }
     }
   }
@@ -3252,7 +3478,7 @@ function load_fungus_spreading_component() {
         mobs[Math.floor(Math.random() * mobs.length)],
         event.block.location
       );
-      system.runTimeout(() => {
+      system5.runTimeout(() => {
         if (entity.isValid) {
           entity.kill();
         }
@@ -3264,7 +3490,7 @@ function load_fungus_spreading_component() {
       );
     }
   }
-  system.beforeEvents.startup.subscribe((initEvent) => {
+  system5.beforeEvents.startup.subscribe((initEvent) => {
     initEvent.blockComponentRegistry.registerCustomComponent(
       "amethyst:fungus_spread",
       {
@@ -3279,8 +3505,8 @@ function load_fungus_spreading_component() {
   });
 }
 
-// behaviour_pack/scripts-dev/components/glitch.ts
-import { system as system4 } from "@minecraft/server";
+// behaviour_pack/scripts-dev/features/blocks/glitch-block.ts
+import { system as system8 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/utils/death_messages.ts
 var DeathMessage = class {
@@ -3497,7 +3723,7 @@ var secondsInWeek = secondsInDay * 7;
 var secondsInYear = secondsInDay * daysInYear;
 var secondsInMonth = secondsInYear / 12;
 var secondsInQuarter = secondsInMonth * 3;
-var constructFromSymbol = /* @__PURE__ */ Symbol.for("constructDateFrom");
+var constructFromSymbol = Symbol.for("constructDateFrom");
 
 // node_modules/date-fns/constructFrom.js
 function constructFrom(date, value) {
@@ -3552,7 +3778,7 @@ var checks = {
 var checks_default = checks;
 
 // behaviour_pack/scripts-dev/utils/motd.ts
-import { world as world2 } from "@minecraft/server";
+import { world as world6 } from "@minecraft/server";
 function send_motd(player, quest_progress) {
   const motd_shorts = [
     "You're a star! \uE107",
@@ -3592,7 +3818,7 @@ function send_motd(player, quest_progress) {
 ---------
 `;
   }
-  world2.getDimension(MinecraftDimensionTypes.Overworld).runCommand(
+  world6.getDimension(MinecraftDimensionTypes.Overworld).runCommand(
     `title "${player.name}" actionbar \xA7a\xA7lWelcome to Everthorn!\xA7r ${randomShort}`
   );
   player.sendMessage(
@@ -3606,56 +3832,56 @@ ${questReminder}`
 
 // behaviour_pack/scripts-dev/utils/commands.ts
 import {
-  EntityComponentTypes,
-  system as system2,
+  EntityComponentTypes as EntityComponentTypes4,
+  system as system6,
   TicksPerSecond as TicksPerSecond2,
-  world as world3
+  world as world7
 } from "@minecraft/server";
 function send_message(dimension, target, message) {
   const msg = { "rawtext": [{ "text": message }] };
   if (!target.startsWith("@")) {
     target = `"${target}"`;
   }
-  world3.getDimension(dimension).runCommand(`tellraw ${target} ${JSON.stringify(msg)}`);
+  world7.getDimension(dimension).runCommand(`tellraw ${target} ${JSON.stringify(msg)}`);
 }
 function play_quest_progress_sound(gamertag) {
-  let player = world3.getPlayers({ name: gamertag })[0];
+  let player = world7.getPlayers({ name: gamertag })[0];
   player.playSound(
     "quest.objective.progress",
     { volume: 100, location: player.location }
   );
 }
 function play_quest_complete_sound(gamertag) {
-  let player = world3.getPlayers({ name: gamertag })[0];
+  let player = world7.getPlayers({ name: gamertag })[0];
   player.playSound(
     "quest.complete",
     { volume: 100, location: player.location }
   );
   for (let i = 0; i < 5; i++) {
-    system2.runTimeout(() => {
+    system6.runTimeout(() => {
       player.runCommand(`particle minecraft:totem_particle ~ ~2 ~`);
     }, 10);
   }
 }
 function play_objective_complete_sound(gamertag) {
-  let player = world3.getPlayers({ name: gamertag })[0];
+  let player = world7.getPlayers({ name: gamertag })[0];
   player.playSound(
     "quest.objective.complete",
     { volume: 100, location: player.location }
   );
 }
 function play_quest_fail_sound(gamertag) {
-  let player = world3.getPlayers({ name: gamertag })[0];
+  let player = world7.getPlayers({ name: gamertag })[0];
   player.playSound(
     "quest.fail",
     { volume: 100, location: player.location }
   );
 }
 function send_title(dimension, target, type, message) {
-  world3.getDimension(dimension).runCommand(`title "${target}" ${type} ${message}`);
+  world7.getDimension(dimension).runCommand(`title "${target}" ${type} ${message}`);
 }
 function add_or_spawn_item(player, item) {
-  const player_container = player.getComponent(EntityComponentTypes.Inventory)?.container;
+  const player_container = player.getComponent(EntityComponentTypes4.Inventory)?.container;
   if (!player_container) {
     throw new Error(`Could not get inventory container for "${player.name}"`);
   }
@@ -3669,7 +3895,7 @@ function give_item(gamertag, count, item) {
   const item_stack = item;
   let stack_amount = Math.trunc(count / item_stack.maxAmount);
   let amount = count;
-  const player = world3.getPlayers({ name: gamertag })[0];
+  const player = world7.getPlayers({ name: gamertag })[0];
   if (stack_amount >= 1) {
     item_stack.amount = item_stack.maxAmount;
     for (let i = 1; i <= stack_amount; i++) {
@@ -3703,7 +3929,7 @@ function noise_glitch(player) {
   ];
   const noise = noises[Math.floor(Math.random() * noises.length)];
   for (const noise_instance of noise) {
-    system2.runTimeout(
+    system6.runTimeout(
       () => {
         player.playSound(noise_instance.name, noise_instance.options);
       },
@@ -3730,17 +3956,17 @@ function vision_entity_glitch(player) {
   location.x -= facing.x * 2;
   location.z -= facing.z * 2;
   let current_entity = player.dimension.spawnEntity(entity, location);
-  let sysid = system2.runInterval(() => {
+  let sysid = system6.runInterval(() => {
     if (current_entity.isValid) {
       current_entity.teleport(location);
-      current_entity.getComponent(EntityComponentTypes.Health)?.resetToMaxValue();
+      current_entity.getComponent(EntityComponentTypes4.Health)?.resetToMaxValue();
     } else {
-      system2.clearRun(sysid);
+      system6.clearRun(sysid);
       current_entity.remove();
     }
   });
-  system2.waitTicks(TicksPerSecond2 * 15).then(() => {
-    system2.clearRun(sysid);
+  system6.waitTicks(TicksPerSecond2 * 15).then(() => {
+    system6.clearRun(sysid);
     current_entity.remove();
   });
 }
@@ -3762,7 +3988,7 @@ function vision_block_glitch(player) {
   let random_block = player.dimension.getBlock(location);
   if (random_block?.typeId === MinecraftBlockTypes.Air && player.dimension.getEntitiesAtBlockLocation(location).length === 0) {
     random_block.setType(block);
-    system2.waitTicks(TicksPerSecond2).then(() => {
+    system6.waitTicks(TicksPerSecond2).then(() => {
       random_block.setType(MinecraftBlockTypes.Air);
     });
   }
@@ -3777,7 +4003,7 @@ function effect_glitch(player) {
     MinecraftEffectTypes.Hunger
   ];
   const effect = effects[Math.floor(Math.random() * effects.length)];
-  system2.run(
+  system6.run(
     () => {
       player.addEffect(effect, TicksPerSecond2 * 20);
     }
@@ -3936,7 +4162,7 @@ var AltarMessage = class {
 };
 
 // behaviour_pack/scripts-dev/utils/dragon_messages.ts
-import { world as world4 } from "@minecraft/server";
+import { world as world8 } from "@minecraft/server";
 var DragonHeartMessage = class {
   static heart_mined(heartsMined) {
     const heartMessages = {
@@ -3993,7 +4219,7 @@ var DragonHeartMessage = class {
       "amethyst:the_breath": 1.4
     };
     const radius = 30;
-    const dimension = world4.getDimension(MinecraftDimensionTypes.TheEnd);
+    const dimension = world8.getDimension(MinecraftDimensionTypes.TheEnd);
     const player_count = dimension.getPlayers().length;
     const totalMobs = Object.values(mob_counts).reduce((sum, count) => sum + count * player_count, 0);
     const angleIncrement = 2 * Math.PI / totalMobs;
@@ -4013,7 +4239,7 @@ var DragonHeartMessage = class {
 };
 
 // behaviour_pack/scripts-dev/utils/evil_acts.ts
-import { EntityDamageCause, TicksPerSecond as TicksPerSecond3, world as world5 } from "@minecraft/server";
+import { EntityDamageCause as EntityDamageCause2, TicksPerSecond as TicksPerSecond3, world as world9 } from "@minecraft/server";
 var EvilActs = class {
   constructor() {
     this.punishments = /* @__PURE__ */ new Map();
@@ -4078,7 +4304,7 @@ var EvilActs = class {
     player.dimension.spawnEntity("lightning_bolt", location);
   }
   teleportToOverworld(player) {
-    const overworld = world5.getDimension("overworld");
+    const overworld = world9.getDimension("overworld");
     player.teleport({ x: 10, y: 100, z: 0 }, { dimension: overworld });
   }
   spawnHostileMobs(player) {
@@ -4096,7 +4322,7 @@ var EvilActs = class {
   }
   // Physical
   dealDamage(player, amount = 4) {
-    player.applyDamage(amount, { cause: EntityDamageCause.freezing });
+    player.applyDamage(amount, { cause: EntityDamageCause2.freezing });
   }
   applyKnockback(player) {
     const direction = {
@@ -4148,7 +4374,7 @@ var EvilActs = class {
 };
 
 // behaviour_pack/scripts-dev/utils/glitches.ts
-import { EntityComponentTypes as EntityComponentTypes2, system as system3, TicksPerSecond as TicksPerSecond4 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes5, system as system7, TicksPerSecond as TicksPerSecond4 } from "@minecraft/server";
 var Glitches = class {
   constructor() {
     this.glitches = /* @__PURE__ */ new Map();
@@ -4215,7 +4441,7 @@ var Glitches = class {
     ];
     const noise = noises[Math.floor(Math.random() * noises.length)];
     for (const noise_instance of noise) {
-      system3.runTimeout(
+      system7.runTimeout(
         () => {
           player.playSound(noise_instance.name, noise_instance.options);
         },
@@ -4233,7 +4459,7 @@ var Glitches = class {
     const sound = sounds[Math.floor(Math.random() * sounds.length)];
     const pitches = [0.1, 0.3, 1.5, 2];
     pitches.forEach((pitch, index) => {
-      system3.runTimeout(() => {
+      system7.runTimeout(() => {
         player.playSound(sound, { volume: 50, pitch });
       }, index * 10);
     });
@@ -4268,17 +4494,17 @@ var Glitches = class {
     location.x -= facing.x * 2;
     location.z -= facing.z * 2;
     let current_entity = player.dimension.spawnEntity(entity, location);
-    let sysid = system3.runInterval(() => {
+    let sysid = system7.runInterval(() => {
       if (current_entity.isValid) {
         current_entity.teleport(location);
-        current_entity.getComponent(EntityComponentTypes2.Health)?.resetToMaxValue();
+        current_entity.getComponent(EntityComponentTypes5.Health)?.resetToMaxValue();
       } else {
-        system3.clearRun(sysid);
+        system7.clearRun(sysid);
         current_entity.remove();
       }
     });
-    system3.waitTicks(TicksPerSecond4 * 15).then(() => {
-      system3.clearRun(sysid);
+    system7.waitTicks(TicksPerSecond4 * 15).then(() => {
+      system7.clearRun(sysid);
       current_entity.remove();
     });
   }
@@ -4300,7 +4526,7 @@ var Glitches = class {
     let random_block = player.dimension.getBlock(location);
     if (random_block?.typeId === MinecraftBlockTypes.Air && player.dimension.getEntitiesAtBlockLocation(location).length === 0) {
       random_block.setType(block);
-      system3.waitTicks(TicksPerSecond4).then(() => {
+      system7.waitTicks(TicksPerSecond4).then(() => {
         random_block.setType(MinecraftBlockTypes.Air);
       });
     }
@@ -4308,7 +4534,7 @@ var Glitches = class {
   particleSwarmGlitch(player) {
     const location = player.location;
     for (let i = 0; i < 20; i++) {
-      system3.runTimeout(() => {
+      system7.runTimeout(() => {
         const particleLocation = {
           x: location.x + (Math.random() - 0.5) * 4,
           y: location.y + Math.random() * 3,
@@ -4334,7 +4560,7 @@ var Glitches = class {
       MinecraftEffectTypes.Hunger
     ];
     const effect = effects[Math.floor(Math.random() * effects.length)];
-    system3.run(() => {
+    system7.run(() => {
       player.addEffect(effect, TicksPerSecond4 * 20);
     });
   }
@@ -4347,7 +4573,7 @@ var Glitches = class {
     ];
     const sound = echoSounds[Math.floor(Math.random() * echoSounds.length)];
     for (let i = 0; i < 3; i++) {
-      system3.runTimeout(() => {
+      system7.runTimeout(() => {
         player.playSound(sound, { volume: 50, pitch: 0.5 + i * 0.2 });
       }, i * 30);
     }
@@ -4459,8 +4685,8 @@ var utils = {
 };
 var utils_default = utils;
 
-// behaviour_pack/scripts-dev/components/glitch.ts
-function load_glitch_component() {
+// behaviour_pack/scripts-dev/features/blocks/glitch-block.ts
+function loadGlitchBlockComponent() {
   const glitches = new utils_default.Glitches();
   function glitch(event) {
     if (Math.random() < 0.07 && event.block.isValid) {
@@ -4486,7 +4712,7 @@ function load_glitch_component() {
       }
     }
   }
-  system4.beforeEvents.startup.subscribe((initEvent) => {
+  system8.beforeEvents.startup.subscribe((initEvent) => {
     initEvent.blockComponentRegistry.registerCustomComponent(
       "amethyst:glitch",
       {
@@ -4499,17 +4725,106 @@ function load_glitch_component() {
   });
 }
 
-// behaviour_pack/scripts-dev/components/sacrifice.ts
+// behaviour_pack/scripts-dev/features/blocks/monolithic-reactor.ts
 import {
-  system as system5,
-  EntityComponentTypes as EntityComponentTypes3,
-  EquipmentSlot,
+  BlockPermutation,
+  EntityComponentTypes as EntityComponentTypes6,
+  EquipmentSlot as EquipmentSlot4,
+  system as system9
+} from "@minecraft/server";
+function loadMonolithicReactorComponent() {
+  const GLITCHES = [
+    utils_default.commands.noise_glitch,
+    utils_default.commands.vision_block_glitch,
+    utils_default.commands.vision_entity_glitch,
+    utils_default.commands.effect_glitch,
+    utils_default.commands.noise_glitch,
+    utils_default.commands.noise_glitch,
+    utils_default.commands.noise_glitch
+  ];
+  function on_interact(event) {
+    const mainhand = event.player?.getComponent(EntityComponentTypes6.Equippable)?.getEquipment(EquipmentSlot4.Mainhand);
+    if (mainhand?.typeId == "amethyst:glitch_core") {
+      const active = event.block.permutation.getState("amethyst:reactor_active_state");
+      if (event.block.isValid && !active) {
+        event.block.setPermutation(BlockPermutation.resolve("amethyst:reactor", { "amethyst:reactor_active_state": true }));
+        event.player?.getComponent(EntityComponentTypes6.Equippable)?.setEquipment(EquipmentSlot4.Mainhand);
+        event.dimension.playSound("beacon.activate", event.block.center());
+        event.block.dimension.getPlayers().forEach((player) => {
+          GLITCHES.forEach((glitch) => {
+            glitch(player);
+          });
+        });
+      }
+    }
+  }
+  system9.beforeEvents.startup.subscribe((initEvent) => {
+    initEvent.blockComponentRegistry.registerCustomComponent(
+      "amethyst:reactor_activate",
+      {
+        onPlayerInteract(event) {
+          on_interact(event);
+        }
+      }
+    );
+  });
+}
+
+// behaviour_pack/scripts-dev/features/blocks/whoopie-cushion.ts
+import {
+  BlockPermutation as BlockPermutation2,
+  system as system10
+} from "@minecraft/server";
+function loadWhoopieCushionComponent() {
+  function play_fart(dimension, location) {
+    dimension.playSound("fart", location, { volume: 3, pitch: Math.max(0.45, Math.random() * 1.5) });
+    location.y += 0.65;
+    dimension.spawnParticle("minecraft:explosion_particle", location);
+  }
+  function on_interact(event) {
+    play_fart(event.dimension, event.block.center());
+  }
+  function on_redstone(event) {
+    const powered = event.block.permutation.getState("amethyst:powered_bit");
+    if (event.block.isValid && event.block.getRedstonePower() && !powered) {
+      event.block.setPermutation(BlockPermutation2.resolve("amethyst:whoopee_cushion", { "amethyst:powered_bit": true }));
+      play_fart(event.dimension, event.block.center());
+    } else if (event.block.isValid && !event.block.getRedstonePower() && powered) {
+      event.block.setPermutation(BlockPermutation2.resolve("amethyst:whoopee_cushion", { "amethyst:powered_bit": false }));
+    }
+  }
+  system10.beforeEvents.startup.subscribe((initEvent) => {
+    initEvent.blockComponentRegistry.registerCustomComponent(
+      "amethyst:whoop",
+      {
+        onTick(event) {
+          on_redstone(event);
+        },
+        onPlayerInteract(event) {
+          on_interact(event);
+        },
+        onStepOn(event) {
+          on_interact(event);
+        },
+        beforeOnPlayerPlace(event) {
+          on_interact(event);
+        }
+      }
+    );
+  });
+}
+
+// behaviour_pack/scripts-dev/features/blocks/altar.ts
+import {
+  system as system11,
+  EntityComponentTypes as EntityComponentTypes7,
+  EquipmentSlot as EquipmentSlot5,
   TicksPerSecond as TicksPerSecond5,
-  ItemComponentTypes as ItemComponentTypes3
+  ItemComponentTypes as ItemComponentTypes4
 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/api/user.ts
-import { HttpRequest, HttpHeader, HttpRequestMethod, http } from "@minecraft/server-net";
+import { HttpRequest as HttpRequest2, HttpHeader as HttpHeader2, HttpRequestMethod as HttpRequestMethod2, http as http2 } from "@minecraft/server-net";
 var ThornyUser = class _ThornyUser {
   static {
     this.thorny_user_map = {};
@@ -4540,7 +4855,7 @@ var ThornyUser = class _ThornyUser {
     this.hidden = api_data.hidden;
   }
   static async get_user_from_api(guild_id2, gamertag) {
-    const response = await http.get(`http://nexuscore:8000/api/v0.2/users/guild/${guild_id2}/${gamertag.replace(" ", "%20")}`);
+    const response = await http2.get(`http://nexuscore:8000/api/v0.2/users/guild/${guild_id2}/${gamertag.replace(" ", "%20")}`);
     const thorny_user = new _ThornyUser(JSON.parse(response.body));
     _ThornyUser.thorny_user_map[gamertag] = thorny_user;
     _ThornyUser.thorny_id_map[thorny_user.thorny_id] = thorny_user;
@@ -4558,8 +4873,8 @@ var ThornyUser = class _ThornyUser {
    * Currently only updates balance.
    */
   async update() {
-    const request = new HttpRequest(`http://nexuscore:8000/api/v0.2/users/${this.thorny_id}`);
-    request.method = HttpRequestMethod.Put;
+    const request = new HttpRequest2(`http://nexuscore:8000/api/v0.2/users/${this.thorny_id}`);
+    request.method = HttpRequestMethod2.Put;
     request.body = JSON.stringify({
       "balance": this.balance,
       "whitelist": this.whitelist || this.gamertag,
@@ -4568,25 +4883,25 @@ var ThornyUser = class _ThornyUser {
       "hidden": this.hidden
     });
     request.headers = [
-      new HttpHeader("Content-Type", "application/json"),
-      new HttpHeader("auth", "my-auth-token")
+      new HttpHeader2("Content-Type", "application/json"),
+      new HttpHeader2("auth", "my-auth-token")
     ];
-    await http.request(request);
+    await http2.request(request);
   }
   /**
    * Send a connection event to NexusCore, either
    * connect or disconnect
    */
   send_connect_event(event_type) {
-    const request = new HttpRequest(`http://nexuscore:8000/api/v0.2/events/connection`);
-    request.method = HttpRequestMethod.Post;
+    const request = new HttpRequest2(`http://nexuscore:8000/api/v0.2/events/connection`);
+    request.method = HttpRequestMethod2.Post;
     request.headers = [
-      new HttpHeader("Content-Type", "application/json"),
-      new HttpHeader("auth", "my-auth-token")
+      new HttpHeader2("Content-Type", "application/json"),
+      new HttpHeader2("auth", "my-auth-token")
     ];
     request.body = JSON.stringify({ "type": event_type, "thorny_id": this.thorny_id, "ignored": false });
     console.log(`[CONNECTION] Sending ${event_type} to NexusCore for ThornyID ${this.thorny_id} (${this.whitelist} / ${this.gamertag})`);
-    http.request(request);
+    http2.request(request);
   }
   /**
    * Returns a decorated role string for chat decoration
@@ -4633,11 +4948,11 @@ var ThornyUser = class _ThornyUser {
 };
 
 // behaviour_pack/scripts-dev/api/relay.ts
-import { HttpRequest as HttpRequest2, HttpHeader as HttpHeader2, HttpRequestMethod as HttpRequestMethod2, http as http2 } from "@minecraft/server-net";
+import { HttpRequest as HttpRequest3, HttpHeader as HttpHeader3, HttpRequestMethod as HttpRequestMethod3, http as http3 } from "@minecraft/server-net";
 var Relay = class {
   static message(nametag, content) {
-    const request = new HttpRequest2("http://nexuscore:8000/api/v0.2/events/relay");
-    request.method = HttpRequestMethod2.Post;
+    const request = new HttpRequest3("http://nexuscore:8000/api/v0.2/events/relay");
+    request.method = HttpRequestMethod3.Post;
     request.body = JSON.stringify({
       "type": "message",
       "content": content,
@@ -4646,14 +4961,14 @@ var Relay = class {
       "name": nametag
     });
     request.headers = [
-      new HttpHeader2("Content-Type", "application/json"),
-      new HttpHeader2("auth", "my-auth-token")
+      new HttpHeader3("Content-Type", "application/json"),
+      new HttpHeader3("auth", "my-auth-token")
     ];
-    http2.request(request);
+    http3.request(request);
   }
   static event(title, content, event_type) {
-    const request = new HttpRequest2("http://nexuscore:8000/api/v0.2/events/relay");
-    request.method = HttpRequestMethod2.Post;
+    const request = new HttpRequest3("http://nexuscore:8000/api/v0.2/events/relay");
+    request.method = HttpRequestMethod3.Post;
     request.body = JSON.stringify({
       "type": event_type,
       "content": "",
@@ -4662,15 +4977,15 @@ var Relay = class {
       "name": "Server"
     });
     request.headers = [
-      new HttpHeader2("Content-Type", "application/json"),
-      new HttpHeader2("auth", "my-auth-token")
+      new HttpHeader3("Content-Type", "application/json"),
+      new HttpHeader3("auth", "my-auth-token")
     ];
-    http2.request(request);
+    http3.request(request);
   }
 };
 
 // behaviour_pack/scripts-dev/api/interaction.ts
-import { HttpRequest as HttpRequest3, HttpHeader as HttpHeader3, HttpRequestMethod as HttpRequestMethod3, http as http3 } from "@minecraft/server-net";
+import { HttpRequest as HttpRequest4, HttpHeader as HttpHeader4, HttpRequestMethod as HttpRequestMethod4, http as http4 } from "@minecraft/server-net";
 var Interaction = class _Interaction {
   static {
     this.queue = [];
@@ -4691,14 +5006,14 @@ var Interaction = class _Interaction {
    * Post interaction to NexusCore
    */
   async post_interaction() {
-    const request = new HttpRequest3(`http://nexuscore:8000/api/v0.2/events/interaction`);
-    request.method = HttpRequestMethod3.Post;
+    const request = new HttpRequest4(`http://nexuscore:8000/api/v0.2/events/interaction`);
+    request.method = HttpRequestMethod4.Post;
     request.body = JSON.stringify(this);
     request.headers = [
-      new HttpHeader3("Content-Type", "application/json"),
-      new HttpHeader3("auth", "my-auth-token")
+      new HttpHeader4("Content-Type", "application/json"),
+      new HttpHeader4("auth", "my-auth-token")
     ];
-    await http3.request(request);
+    await http4.request(request);
   }
   static set_processing(value) {
     _Interaction.processing = value;
@@ -4714,83 +5029,11 @@ var Interaction = class _Interaction {
   }
 };
 
-// behaviour_pack/scripts-dev/api/sacrifice.ts
-import { http as http4, HttpHeader as HttpHeader4, HttpRequest as HttpRequest4, HttpRequestMethod as HttpRequestMethod4 } from "@minecraft/server-net";
-var Item = class _Item {
-  constructor(data) {
-    this.item_id = data.item_id;
-    this.value = data.value;
-    this.max_uses = data.max_uses;
-    this.depreciation = data.depreciation;
-    this.current_uses = data.current_uses;
-  }
-  static async get_item(item_id) {
-    try {
-      const item_response = await http4.get(`http://nexuscore:8000/api/v0.2/server/items/${item_id}`);
-      const item_data = JSON.parse(item_response.body);
-      return new _Item(item_data);
-    } catch (error) {
-      console.error("Error fetching item:", error);
-      throw error;
-    }
-  }
-  async update_item() {
-    const request = new HttpRequest4(`http://nexuscore:8000/api/v0.2/server/items/${this.item_id}`);
-    request.method = HttpRequestMethod4.Put;
-    request.headers = [
-      new HttpHeader4("Content-Type", "application/json"),
-      new HttpHeader4("auth", "my-auth-token")
-    ];
-    request.body = JSON.stringify({
-      current_uses: this.current_uses
-    });
-    await http4.request(request);
-  }
-};
-var World = class _World {
-  constructor(data) {
-    this.guild_id = data.guild_id;
-    this.overworld_border = data.overworld_border;
-    this.nether_border = data.nether_border;
-    this.end_border = data.end_border;
-  }
-  static async get_world(guild_id2) {
-    try {
-      const world_response = await http4.get(`http://nexuscore:8000/api/v0.2/server/world/${guild_id2}`);
-      const world_data = JSON.parse(world_response.body);
-      world_data.guild_id = guild_id2;
-      return new _World(world_data);
-    } catch (error) {
-      console.error("Error fetching world:", error);
-      throw error;
-    }
-  }
-  async update_world() {
-    const request = new HttpRequest4(`http://nexuscore:8000/api/v0.2/server/world/${this.guild_id}`);
-    request.method = HttpRequestMethod4.Put;
-    request.headers = [
-      new HttpHeader4("Content-Type", "application/json"),
-      new HttpHeader4("auth", "my-auth-token")
-    ];
-    request.body = JSON.stringify({
-      overworld_border: this.overworld_border,
-      nether_border: this.nether_border,
-      end_border: this.end_border
-    });
-    await http4.request(request);
-  }
-};
-var WorldCache = class _WorldCache {
-  static async load_world(guild_id2) {
-    _WorldCache.world = await World.get_world(guild_id2);
-  }
-};
-
 // behaviour_pack/scripts-dev/api/quests/quest.ts
 import { http as http6 } from "@minecraft/server-net";
 
 // behaviour_pack/scripts-dev/api/quests/reward.ts
-import { ItemComponentTypes as ItemComponentTypes2, ItemStack as ItemStack2 } from "@minecraft/server";
+import { ItemComponentTypes as ItemComponentTypes3, ItemStack as ItemStack2 } from "@minecraft/server";
 var Reward = class {
   constructor(data) {
     Object.assign(this, data);
@@ -4827,7 +5070,7 @@ var Reward = class {
           item_stack.setLore(data.item_lore);
           break;
         case "damage":
-          const durability = item_stack.getComponent(ItemComponentTypes2.Durability);
+          const durability = item_stack.getComponent(ItemComponentTypes3.Durability);
           const max_damage = durability?.maxDurability ?? 0;
           if (durability) {
             durability.damage = max_damage * data.damage_percentage;
@@ -5371,8 +5614,8 @@ var api = {
 };
 var api_default = api;
 
-// behaviour_pack/scripts-dev/components/sacrifice.ts
-function load_altar_component(guild_id2) {
+// behaviour_pack/scripts-dev/features/blocks/altar.ts
+function loadAltarComponent() {
   const sacrificeTimers = /* @__PURE__ */ new Map();
   const sacrificeTotals = /* @__PURE__ */ new Map();
   const evil_acts = new utils_default.EvilActs();
@@ -5387,14 +5630,14 @@ function load_altar_component(guild_id2) {
   async function sacrifice(event) {
     if (event.player) {
       const playerName = event.player.name;
-      const mainhand = event.player.getComponent(EntityComponentTypes3.Equippable)?.getEquipment(EquipmentSlot.Mainhand);
+      const mainhand = event.player.getComponent(EntityComponentTypes7.Equippable)?.getEquipment(EquipmentSlot5.Mainhand);
       const border = WorldCache.world;
       if (mainhand && !banned_gamertags.includes(playerName)) {
         if (mainhand.amount == 1) {
-          event.player.getComponent(EntityComponentTypes3.Equippable)?.setEquipment(EquipmentSlot.Mainhand);
+          event.player.getComponent(EntityComponentTypes7.Equippable)?.setEquipment(EquipmentSlot5.Mainhand);
         } else {
           mainhand.amount -= 1;
-          event.player.getComponent(EntityComponentTypes3.Equippable)?.setEquipment(EquipmentSlot.Mainhand, mainhand);
+          event.player.getComponent(EntityComponentTypes7.Equippable)?.setEquipment(EquipmentSlot5.Mainhand, mainhand);
         }
         event.dimension.playSound("random.pop", event.player.location, { volume: 0.5 });
         try {
@@ -5403,12 +5646,12 @@ function load_altar_component(guild_id2) {
           let modifier = 0;
           let enchantment_levels = 0;
           let enchantments = 0;
-          mainhand.getComponent(ItemComponentTypes3.Enchantable)?.getEnchantments().forEach((enchantment) => {
+          mainhand.getComponent(ItemComponentTypes4.Enchantable)?.getEnchantments().forEach((enchantment) => {
             enchantment_levels += enchantment.level;
             enchantments += 1;
           });
           modifier += enchantment_levels * enchantments * 0.3 / 100 + (mainhand.nameTag ? 0.1 : 0);
-          const durability = mainhand.getComponent(ItemComponentTypes3.Durability);
+          const durability = mainhand.getComponent(ItemComponentTypes4.Durability);
           if (durability) {
             modifier -= durability.damage / durability.maxDurability;
           }
@@ -5429,9 +5672,9 @@ function load_altar_component(guild_id2) {
             sacrificeTotals.set(playerName, { val: block_value, orig: original_block_value });
           }
           if (sacrificeTimers.has(playerName)) {
-            system5.clearRun(sacrificeTimers.get(playerName));
+            system11.clearRun(sacrificeTimers.get(playerName));
           }
-          const timeoutId = system5.runTimeout(() => {
+          const timeoutId = system11.runTimeout(() => {
             ambient(event);
             event.dimension.playSound("altar.sacrifice", event.block.center(), { volume: 6 });
             const total_value2 = Math.round(sacrificeTotals.get(playerName)?.val);
@@ -5483,7 +5726,7 @@ function load_altar_component(guild_id2) {
       event.dimension.playSound("altar.ambient", location, { volume: 3 });
     }
   }
-  system5.beforeEvents.startup.subscribe((initEvent) => {
+  system11.beforeEvents.startup.subscribe((initEvent) => {
     initEvent.blockComponentRegistry.registerCustomComponent(
       "amethyst:sacrifice",
       {
@@ -5498,107 +5741,68 @@ function load_altar_component(guild_id2) {
   });
 }
 
-// behaviour_pack/scripts-dev/components/whoop.ts
-import {
-  BlockPermutation,
-  system as system6
-} from "@minecraft/server";
-function load_whoop_component() {
-  function play_fart(dimension, location) {
-    dimension.playSound("fart", location, { volume: 3, pitch: Math.max(0.45, Math.random() * 1.5) });
-    location.y += 0.65;
-    dimension.spawnParticle("minecraft:explosion_particle", location);
-  }
-  function on_interact(event) {
-    play_fart(event.dimension, event.block.center());
-  }
-  function on_redstone(event) {
-    const powered = event.block.permutation.getState("amethyst:powered_bit");
-    if (event.block.isValid && event.block.getRedstonePower() && !powered) {
-      event.block.setPermutation(BlockPermutation.resolve("amethyst:whoopee_cushion", { "amethyst:powered_bit": true }));
-      play_fart(event.dimension, event.block.center());
-    } else if (event.block.isValid && !event.block.getRedstonePower() && powered) {
-      event.block.setPermutation(BlockPermutation.resolve("amethyst:whoopee_cushion", { "amethyst:powered_bit": false }));
-    }
-  }
-  system6.beforeEvents.startup.subscribe((initEvent) => {
-    initEvent.blockComponentRegistry.registerCustomComponent(
-      "amethyst:whoop",
-      {
-        onTick(event) {
-          on_redstone(event);
-        },
-        onPlayerInteract(event) {
-          on_interact(event);
-        },
-        onStepOn(event) {
-          on_interact(event);
-        },
-        beforeOnPlayerPlace(event) {
-          on_interact(event);
-        }
-      }
-    );
-  });
+// behaviour_pack/scripts-dev/features/blocks/index.ts
+function loadBlockComponents() {
+  loadFungusSpreadComponent();
+  loadGlitchBlockComponent();
+  loadMonolithicReactorComponent();
+  loadWhoopieCushionComponent();
+  loadAltarComponent();
 }
 
-// behaviour_pack/scripts-dev/components/reactor_activate.ts
-import {
-  BlockPermutation as BlockPermutation2,
-  EntityComponentTypes as EntityComponentTypes4,
-  EquipmentSlot as EquipmentSlot2,
-  system as system7
-} from "@minecraft/server";
-function load_reactor_activate_component() {
-  function on_interact(event) {
-    const mainhand = event.player?.getComponent(EntityComponentTypes4.Equippable)?.getEquipment(EquipmentSlot2.Mainhand);
-    if (mainhand?.typeId == "amethyst:glitch_core") {
-      const active = event.block.permutation.getState("amethyst:reactor_active_state");
-      if (event.block.isValid && !active) {
-        event.block.setPermutation(BlockPermutation2.resolve("amethyst:reactor", { "amethyst:reactor_active_state": true }));
-        event.player?.getComponent(EntityComponentTypes4.Equippable)?.setEquipment(EquipmentSlot2.Mainhand);
-        event.dimension.playSound("beacon.activate", event.block.center());
-        const glitches_type = [
-          utils_default.commands.noise_glitch,
-          utils_default.commands.vision_block_glitch,
-          utils_default.commands.vision_entity_glitch,
-          utils_default.commands.effect_glitch,
-          utils_default.commands.noise_glitch,
-          utils_default.commands.noise_glitch,
-          utils_default.commands.noise_glitch
-        ];
-        event.block.dimension.getPlayers().forEach((player) => {
-          glitches_type.forEach((glitch) => {
-            glitch(player);
-          });
-        });
-      }
+// behaviour_pack/scripts-dev/features/dragon-fight/health-manager.ts
+import { EntityComponentTypes as EntityComponentTypes8, world as world12 } from "@minecraft/server";
+function loadHealthManager() {
+  let first_stage = false;
+  let second_stage = false;
+  function react_to_dragon_damage(event) {
+    const health_component = event.hurtEntity.getComponent(EntityComponentTypes8.Health);
+    if (health_component && !first_stage && health_component?.currentValue / health_component?.effectiveMax <= 0.75) {
+      first_stage = true;
+      const message = utils_default.DragonHeartMessage.health_stage_message(1);
+      utils_default.commands.send_message(
+        event.hurtEntity.dimension.id,
+        "@a",
+        message
+      );
+      utils_default.DragonHeartMessage.summon_minions();
+    } else if (health_component && !second_stage && health_component?.currentValue / health_component?.effectiveMax <= 0.25) {
+      second_stage = true;
+      const message = utils_default.DragonHeartMessage.health_stage_message(2);
+      utils_default.commands.send_message(
+        event.hurtEntity.dimension.id,
+        "@a",
+        message
+      );
+      utils_default.DragonHeartMessage.summon_minions();
     }
   }
-  system7.beforeEvents.startup.subscribe((initEvent) => {
-    initEvent.blockComponentRegistry.registerCustomComponent(
-      "amethyst:reactor_activate",
-      {
-        onPlayerInteract(event) {
-          on_interact(event);
-        }
-      }
-    );
-  });
+  function reset_health_stage(event) {
+    first_stage = false;
+    second_stage = false;
+  }
+  world12.afterEvents.entityHurt.subscribe(
+    react_to_dragon_damage,
+    { entityTypes: [MinecraftEntityTypes.EnderDragon] }
+  );
+  world12.afterEvents.entityDie.subscribe(
+    reset_health_stage,
+    { entityTypes: [MinecraftEntityTypes.EnderDragon] }
+  );
 }
 
-// behaviour_pack/scripts-dev/components/heal_dragon.ts
+// behaviour_pack/scripts-dev/features/dragon-fight/draconic-heart.ts
 import {
-  system as system8,
-  EntityComponentTypes as EntityComponentTypes5
+  system as system12,
+  EntityComponentTypes as EntityComponentTypes9
 } from "@minecraft/server";
-function load_heal_dragon_component() {
+function loadDraconicHeartComponents() {
   let mined_blocks = 0;
   function heal_dragon(event) {
     if (event.block.isValid) {
       const dragon = event.block.dimension.getEntities({ type: MinecraftEntityTypes.EnderDragon })[0];
       if (dragon && dragon.isValid) {
-        dragon.getComponent(EntityComponentTypes5.Health)?.resetToMaxValue();
+        dragon.getComponent(EntityComponentTypes9.Health)?.resetToMaxValue();
       }
       event.dimension.playSound("mob.warden.heartbeat", event.block.location);
     }
@@ -5629,7 +5833,7 @@ function load_heal_dragon_component() {
       message
     );
   }
-  system8.beforeEvents.startup.subscribe((initEvent) => {
+  system12.beforeEvents.startup.subscribe((initEvent) => {
     initEvent.blockComponentRegistry.registerCustomComponent(
       "amethyst:heal_dragon",
       {
@@ -5644,11 +5848,75 @@ function load_heal_dragon_component() {
   });
 }
 
-// behaviour_pack/scripts-dev/components/alcohol.ts
+// behaviour_pack/scripts-dev/features/dragon-fight/index.ts
+function loadDragonFightFeature() {
+  loadHealthManager();
+  loadDraconicHeartComponents();
+}
+
+// behaviour_pack/scripts-dev/features/commands/lore.ts
 import {
-  system as system9
+  CommandPermissionLevel,
+  CustomCommandParamType,
+  CustomCommandStatus,
+  EntityComponentTypes as EntityComponentTypes10,
+  EquipmentSlot as EquipmentSlot6,
+  system as system13
 } from "@minecraft/server";
-function load_alcohol_component() {
+function loreCommand() {
+  system13.beforeEvents.startup.subscribe((initEvent) => {
+    system13.run(() => {
+      api_default.Relay.event(
+        "Amethyst successfully loaded",
+        "Don't see this on server startup? Ping a CM! It's important!",
+        "other"
+      );
+    });
+    const loreCommand2 = {
+      name: "amethyst:lore",
+      description: "Add a line to the lore, or remove all lore if blank",
+      permissionLevel: CommandPermissionLevel.GameDirectors,
+      optionalParameters: [{ type: CustomCommandParamType.String, name: "text" }]
+    };
+    initEvent.customCommandRegistry.registerCommand(
+      loreCommand2,
+      (origin, ...args) => {
+        try {
+          const mainhand = origin.sourceEntity?.getComponent(EntityComponentTypes10.Equippable)?.getEquipment(EquipmentSlot6.Mainhand);
+          system13.run(() => {
+            if (args[0] === null || args[0] === void 0 || args[0] === "") {
+              mainhand?.setLore();
+            } else {
+              const lore = mainhand?.getLore();
+              lore?.push(args[0]);
+              mainhand?.setLore(lore);
+            }
+            origin.sourceEntity?.getComponent(EntityComponentTypes10.Equippable)?.setEquipment(EquipmentSlot6.Mainhand, mainhand);
+          });
+        } catch (e) {
+          return {
+            status: CustomCommandStatus.Failure,
+            message: e.message
+          };
+        }
+        return {
+          status: CustomCommandStatus.Success
+        };
+      }
+    );
+  });
+}
+
+// behaviour_pack/scripts-dev/features/commands/index.ts
+function loadCommands() {
+  loreCommand();
+}
+
+// behaviour_pack/scripts-dev/features/wine-n-beer/components.ts
+import {
+  system as system14
+} from "@minecraft/server";
+function loadOnDrinkComponent() {
   async function on_drink(event) {
     const player = event.source;
     const drunk_data_string = player.getDynamicProperty("amethyst:drunk_data");
@@ -5661,7 +5929,7 @@ function load_alcohol_component() {
       player.setDynamicProperty("amethyst:drunk_data", JSON.stringify(drunk_data));
     }
   }
-  system9.beforeEvents.startup.subscribe((initEvent) => {
+  system14.beforeEvents.startup.subscribe((initEvent) => {
     initEvent.itemComponentRegistry.registerCustomComponent(
       "amethyst:alcohol",
       {
@@ -5673,271 +5941,8 @@ function load_alcohol_component() {
   });
 }
 
-// behaviour_pack/scripts-dev/components/index.ts
-function load_custom_components(guild_id2) {
-  load_fungus_spreading_component();
-  load_glitch_component();
-  load_whoop_component();
-  load_altar_component(guild_id2);
-  load_reactor_activate_component();
-  load_heal_dragon_component();
-  load_alcohol_component();
-}
-
-// behaviour_pack/scripts-dev/loops/elytra_no_mending.ts
-import { EquipmentSlot as EquipmentSlot3, world as world8, system as system10, EntityComponentTypes as EntityComponentTypes6, ItemComponentTypes as ItemComponentTypes4, EnchantmentType } from "@minecraft/server";
-function elytraCheck(player) {
-  const player_equipment = player.getComponent(EntityComponentTypes6.Equippable);
-  const item = player_equipment?.getEquipment(EquipmentSlot3.Chest);
-  if (item) {
-    const enchantments = item?.getComponent(ItemComponentTypes4.Enchantable);
-    const has_mending = enchantments?.hasEnchantment(MinecraftEnchantmentTypes.Mending);
-    if (has_mending && item?.typeId == MinecraftItemTypes.Elytra) {
-      if (!enchantments?.hasEnchantment(MinecraftEnchantmentTypes.Vanishing)) {
-        enchantments?.addEnchantment(
-          {
-            type: new EnchantmentType(MinecraftEnchantmentTypes.Vanishing),
-            level: 1
-          }
-        );
-      }
-      enchantments?.removeEnchantment(MinecraftEnchantmentTypes.Mending);
-      const durability_component = item.getComponent(ItemComponentTypes4.Durability);
-      if (durability_component) {
-        durability_component.damage = durability_component.maxDurability;
-      }
-      item.setLore([`
-\xA7o"My wings are cursed!"`]);
-      world8.getDimension("overworld").runCommand(`title "${player.name}" actionbar \xA7o\xA7iMy Elytra feels different...`);
-      player_equipment?.setEquipment(EquipmentSlot3.Chest, item);
-      console.log(`[ElytraCheck] Player ${player.name} has elytra with mending. Removing Mending.`);
-    }
-  }
-}
-function load_elytra_mending_checker() {
-  system10.runInterval(() => {
-    let playerlist = world8.getPlayers();
-    playerlist.forEach((player) => {
-      elytraCheck(player);
-    });
-  }, 20);
-  console.log("[Loops] Loaded Elytra Checker Loop");
-}
-
-// behaviour_pack/scripts-dev/loops/border.ts
-import { world as world9, system as system11, EntityDamageCause as EntityDamageCause2 } from "@minecraft/server";
-function borderCheck(player, dimensionID, border_size, warning_range, outside) {
-  const position = player.location;
-  const distance_2d = Math.sqrt(position.x ** 2 + position.z ** 2);
-  if (border_size < distance_2d && outside.indexOf(player.name) == -1) {
-    outside.push(player.name);
-    console.log(`[Plugin] [Border] Player ${player.name} is outside of the ${dimensionID} border.`);
-  } else if (border_size > distance_2d && outside.indexOf(player.name) != -1) {
-    outside.splice(outside.indexOf(player.name), 1);
-    console.log(`[Plugin] [Border] Player ${player.name} has re-entered the ${dimensionID} border.`);
-  }
-  if (border_size < distance_2d) {
-    world9.getDimension(dimensionID).runCommand(`title "${player.name}" actionbar \xA7o\xA7iI shouldn't go any further. It's too dangerous here.`);
-    world9.getDimension(dimensionID).runCommand(`effect "${player.name}" blindness 4 2`);
-    player.applyDamage(1.3, { cause: EntityDamageCause2.void });
-  } else if (border_size - 20 < distance_2d) {
-    world9.getDimension(dimensionID).runCommand(`title "${player.name}" actionbar \xA7o\xA7iThe Monolith's protection is wearing off. I can feel it...`);
-  }
-  if (border_size - 100 < distance_2d && warning_range.indexOf(player.name) == -1) {
-    warning_range.push(player.name);
-    world9.getDimension(dimensionID).runCommand(`title "${player.name}" actionbar \xA7o\xA7iMaybe I should start heading back now...`);
-  } else if (border_size - 100 > distance_2d && warning_range.indexOf(player.name) != -1) {
-    warning_range.splice(warning_range.indexOf(player.name), 1);
-  }
-}
-function load_world_border() {
-  let players_100_blocks_away = { overworld: [], nether: [], end: [] };
-  let players_outside_border = { overworld: [], nether: [], end: [] };
-  system11.runInterval(() => {
-    let players = {
-      overworld: world9.getDimension(MinecraftDimensionTypes.Overworld).getPlayers(),
-      nether: world9.getDimension(MinecraftDimensionTypes.Nether).getPlayers(),
-      end: world9.getDimension(MinecraftDimensionTypes.TheEnd).getPlayers()
-    };
-    players.overworld.forEach((player) => {
-      borderCheck(player, MinecraftDimensionTypes.Overworld, WorldCache.world.overworld_border, players_100_blocks_away.overworld, players_outside_border.overworld);
-    });
-    players.nether.forEach((player) => {
-      borderCheck(player, MinecraftDimensionTypes.Nether, WorldCache.world.nether_border, players_100_blocks_away.nether, players_outside_border.nether);
-    });
-    players.end.forEach((player) => {
-      borderCheck(player, MinecraftDimensionTypes.TheEnd, WorldCache.world.end_border, players_100_blocks_away.end, players_outside_border.end);
-    });
-  }, 20);
-  console.log("[Loops] Loaded World Border Loop");
-}
-
-// behaviour_pack/scripts-dev/loops/quests.ts
-import { system as system12, world as world10 } from "@minecraft/server";
-async function check_quests() {
-  try {
-    if (!api_default.Interaction.is_processing()) {
-      api_default.Interaction.set_processing(true);
-      let interaction = api_default.Interaction.dequeue();
-      while (interaction) {
-        let thorny_user = api_default.ThornyUser.fetch_user_by_id(interaction.thorny_id);
-        let quest_progress = await api_default.QuestProgress.get_quest_progress(thorny_user);
-        if (quest_progress && await quest_progress.increment_active_objective(interaction)) {
-          await quest_progress.update_user_quest();
-          await thorny_user.update();
-          if (quest_progress.status == "completed") {
-            api_default.Relay.event(
-              `${thorny_user.gamertag} has completed *${quest_progress.quest.title}!*`,
-              "Run `/quests view` to start it and reap the rewards!",
-              "other"
-            );
-            api_default.QuestProgress.clear_cache(thorny_user);
-          }
-        } else if (quest_progress && quest_progress.status == "failed") {
-          api_default.Relay.event(
-            `${thorny_user.gamertag} has failed *${quest_progress.quest.title}!*`,
-            "Better luck next time!",
-            "other"
-          );
-          await quest_progress.fail_quest(thorny_user.thorny_id);
-          api_default.QuestProgress.clear_cache(thorny_user);
-        }
-        interaction = api_default.Interaction.dequeue();
-      }
-      api_default.Interaction.set_processing(false);
-    }
-  } catch (e) {
-    api_default.Interaction.set_processing(false);
-    throw e;
-  }
-}
-async function display_timer() {
-  for (let questCacheKey in api_default.QuestProgress.quest_cache) {
-    let active_objective = api_default.QuestProgress.quest_cache[questCacheKey].get_active_objective();
-    if (active_objective && active_objective.start_time && active_objective.objective.customizations.timer) {
-      let elapsed_seconds = Math.floor(((/* @__PURE__ */ new Date()).getTime() - active_objective.start_time.getTime()) / 1e3);
-      const timer_seconds = active_objective.objective.customizations.timer.seconds;
-      let remaining_seconds = Math.max(0, timer_seconds - elapsed_seconds);
-      let minutes = Math.floor(remaining_seconds / 60);
-      let seconds = remaining_seconds % 60;
-      let player = world10.getPlayers({ name: active_objective.thorny_user.gamertag })[0];
-      utils_default.commands.send_title(
-        player.dimension.id,
-        player.name,
-        "actionbar",
-        `\xA7l\xA7sObjective ${active_objective.objective.order_index + 1}\xA7r | ${minutes.toString().padStart(2, "0")}m${seconds.toString().padStart(2, "0")}s`
-      );
-    }
-  }
-}
-function load_quest_loop() {
-  system12.runInterval(async () => {
-    await check_quests();
-  }, 1);
-  system12.runInterval(async () => {
-    await display_timer();
-  }, 10);
-  console.log("[Loops] Loaded Quests Loop");
-}
-
-// behaviour_pack/scripts-dev/loops/totem_of_togetherness.ts
-import { EntityComponentTypes as EntityComponentTypes7, EquipmentSlot as EquipmentSlot4, system as system13, world as world11 } from "@minecraft/server";
-var healthboost = MinecraftEffectTypes.HealthBoost;
-function togetherness(player) {
-  const position = player.location;
-  const equippable = player.getComponent(EntityComponentTypes7.Equippable);
-  const offhand = equippable?.getEquipment(EquipmentSlot4.Offhand);
-  const mainhand = equippable?.getEquipment(EquipmentSlot4.Mainhand);
-  if (offhand?.hasTag("amethyst:togetherness") || mainhand?.hasTag("amethyst:togetherness")) {
-    const uniqueplayerslist = player.dimension.getPlayers({
-      location: position,
-      maxDistance: 16,
-      excludeNames: [player.name]
-    });
-    const effect_level = Math.min(5, uniqueplayerslist.length);
-    if (effect_level - 1 >= 0) {
-      player.addEffect(healthboost, 40, { amplifier: effect_level - 1, showParticles: false });
-    }
-  }
-}
-function load_totem_o_togetherness() {
-  system13.runInterval(() => {
-    let playerlist = world11.getPlayers();
-    playerlist.forEach((player) => {
-      togetherness(player);
-    });
-  }, 20);
-  console.log("[Loops] Loaded Totem Of Togetherness Loop");
-}
-
-// behaviour_pack/scripts-dev/loops/location.ts
-import { EntityComponentTypes as EntityComponentTypes8, EquipmentSlot as EquipmentSlot5, system as system14, world as world12, TicksPerSecond as TicksPerSecond8 } from "@minecraft/server";
-function location_log(player) {
-  const head_gear = player.getComponent(EntityComponentTypes8.Equippable)?.getEquipment(EquipmentSlot5.Head);
-  const check_list = [
-    MinecraftItemTypes.SkeletonSkull,
-    MinecraftItemTypes.WitherSkeletonSkull,
-    MinecraftItemTypes.CarvedPumpkin,
-    MinecraftItemTypes.PlayerHead,
-    MinecraftItemTypes.PiglinHead,
-    MinecraftItemTypes.CreeperHead,
-    MinecraftItemTypes.ZombieHead,
-    MinecraftItemTypes.DragonHead
-  ];
-  let hidden = (head_gear?.typeId ? check_list.includes(head_gear.typeId) : false) || player.isSneaking;
-  const location = [Math.round(player.location.x), Math.round(player.location.y), Math.round(player.location.z)];
-  const thorny_user = api_default.ThornyUser.fetch_user(player.name);
-  if (thorny_user) {
-    thorny_user.location = location;
-    thorny_user.dimension = player.dimension.id;
-    thorny_user.hidden = hidden;
-    thorny_user.update().then();
-  }
-}
-function load_location_logger() {
-  system14.runInterval(() => {
-    let playerlist = world12.getPlayers();
-    playerlist.forEach((player) => {
-      location_log(player);
-    });
-  }, TicksPerSecond8 * 5);
-  console.log("[Loops] Loaded Location Loop");
-}
-
-// behaviour_pack/scripts-dev/loops/champion_set.ts
-import { EntityComponentTypes as EntityComponentTypes9, EquipmentSlot as EquipmentSlot6, MolangVariableMap, system as system15, world as world13 } from "@minecraft/server";
-function champion(player) {
-  const molang = new MolangVariableMap();
-  molang.setColorRGB("variable.color", { red: 1, green: 0.913, blue: 0.576 });
-  const position = player.location;
-  const equippable = player.getComponent(EntityComponentTypes9.Equippable);
-  let equipped = 0;
-  equippable?.getEquipment(EquipmentSlot6.Head)?.hasTag("amethyst:champion") ? equipped++ : null;
-  equippable?.getEquipment(EquipmentSlot6.Chest)?.hasTag("amethyst:champion") ? equipped++ : null;
-  equippable?.getEquipment(EquipmentSlot6.Legs)?.hasTag("amethyst:champion") ? equipped++ : null;
-  equippable?.getEquipment(EquipmentSlot6.Feet)?.hasTag("amethyst:champion") ? equipped++ : null;
-  if (equipped > 0 && Math.random() <= equipped / 5) {
-    const radius = 3;
-    let random_location = {
-      x: position.x + Math.floor(Math.random() * radius) * (Math.random() < 0.5 ? -1 : 1),
-      y: position.y + 0.5 + Math.floor(Math.random() * radius),
-      z: position.z + Math.floor(Math.random() * radius) * (Math.random() < 0.5 ? -1 : 1)
-    };
-    player.dimension.spawnParticle("minecraft:glow_particle", random_location, molang);
-  }
-}
-function load_champion_set() {
-  system15.runInterval(() => {
-    let playerlist = world13.getPlayers();
-    playerlist.forEach((player) => {
-      champion(player);
-    });
-  }, 4);
-  console.log("[Loops] Loaded Champion Set Loop");
-}
-
-// behaviour_pack/scripts-dev/loops/drunk.ts
-import { system as system16, TicksPerSecond as TicksPerSecond9, world as world14 } from "@minecraft/server";
+// behaviour_pack/scripts-dev/features/wine-n-beer/loops.ts
+import { system as system15, TicksPerSecond as TicksPerSecond7, world as world13 } from "@minecraft/server";
 function sober_up(drunk_data) {
   const sober_chance = 0.06;
   const drunk_up_chance = 5e-3 * drunk_data.drinks;
@@ -5949,15 +5954,15 @@ function sober_up(drunk_data) {
   return drunk_data;
 }
 function cumulative_drunk_effects(player, drunk_data) {
-  player.addEffect(MinecraftEffectTypes.Oozing, TicksPerSecond9 * 2);
+  player.addEffect(MinecraftEffectTypes.Oozing, TicksPerSecond7 * 2);
   if (drunk_data.drinks > 4) {
-    player.addEffect(MinecraftEffectTypes.Hunger, TicksPerSecond9 * drunk_data.drinks);
+    player.addEffect(MinecraftEffectTypes.Hunger, TicksPerSecond7 * drunk_data.drinks);
   }
   if (drunk_data.drinks > 18) {
-    player.addEffect(MinecraftEffectTypes.Slowness, TicksPerSecond9 * 2, { amplifier: 3 });
+    player.addEffect(MinecraftEffectTypes.Slowness, TicksPerSecond7 * 2, { amplifier: 3 });
   }
   if (drunk_data.drinks > 20) {
-    player.addEffect(MinecraftEffectTypes.FatalPoison, TicksPerSecond9 * 2);
+    player.addEffect(MinecraftEffectTypes.FatalPoison, TicksPerSecond7 * 2);
   }
 }
 function drunk(player) {
@@ -6028,48 +6033,207 @@ function drunk_effects(player, drunk_data, effect_choices) {
     } else if (chosen_effect === "blink") {
       player.camera.fade({ fadeTime: { fadeInTime: 0.5, holdTime: 0.1, fadeOutTime: 0.25 } });
     } else if (chosen_effect === "nausea") {
-      player.addEffect(MinecraftEffectTypes.Nausea, TicksPerSecond9 * drunk_data.drinks * 2.5);
+      player.addEffect(MinecraftEffectTypes.Nausea, TicksPerSecond7 * drunk_data.drinks * 2.5);
     } else if (chosen_effect === "slowness") {
-      player.addEffect(MinecraftEffectTypes.Slowness, TicksPerSecond9 * drunk_data.drinks);
+      player.addEffect(MinecraftEffectTypes.Slowness, TicksPerSecond7 * drunk_data.drinks);
     } else if (chosen_effect === "night_vision") {
-      player.addEffect(MinecraftEffectTypes.NightVision, TicksPerSecond9 * drunk_data.drinks);
+      player.addEffect(MinecraftEffectTypes.NightVision, TicksPerSecond7 * drunk_data.drinks);
     } else if (chosen_effect === "speed") {
-      player.addEffect(MinecraftEffectTypes.Speed, TicksPerSecond9 * drunk_data.drinks);
+      player.addEffect(MinecraftEffectTypes.Speed, TicksPerSecond7 * drunk_data.drinks);
     }
   }
   return drunk_data;
 }
-function load_drunk() {
-  system16.runInterval(() => {
-    let playerlist = world14.getPlayers();
+function drunkDataManager() {
+  system15.runInterval(() => {
+    let playerlist = world13.getPlayers();
     playerlist.forEach((player) => {
       drunk(player);
     });
-  }, TicksPerSecond9);
-  world14.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
+  }, TicksPerSecond7);
+  world13.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
     let player = spawn_event.player;
     if (player.getDynamicProperty("amethyst:drunk_data")) {
       player.camera.setFov();
       player.setDynamicProperty("amethyst:drunk_data", void 0);
     }
   });
-  console.log("[Loops] Loaded Drunk Loop");
 }
 
-// behaviour_pack/scripts-dev/loops/index.ts
-function load_loops() {
-  load_elytra_mending_checker();
-  load_world_border();
-  load_quest_loop();
-  load_totem_o_togetherness();
-  load_location_logger();
-  load_champion_set();
-  load_drunk();
+// behaviour_pack/scripts-dev/features/wine-n-beer/index.ts
+function loadWineAndBeerFeature() {
+  loadOnDrinkComponent();
+  drunkDataManager();
 }
 
-// behaviour_pack/scripts-dev/events/blocks.ts
+// behaviour_pack/scripts-dev/features/chat.ts
+import { system as system16, world as world14 } from "@minecraft/server";
+function loadChatDecorationFeature() {
+  world14.beforeEvents.chatSend.subscribe((chat_event) => {
+    const gamertag = chat_event.sender.name;
+    const thorny_user = api_default.ThornyUser.fetch_user(gamertag);
+    world14.sendMessage({
+      rawtext: [{ text: `${thorny_user?.get_role_display()} \xA77${gamertag}:\xA7r ${chat_event.message}` }]
+    });
+    system16.run(() => {
+      api_default.Relay.message(gamertag, chat_event.message);
+    });
+    chat_event.cancel = true;
+  });
+}
+
+// behaviour_pack/scripts-dev/features/interactions/block-interact.ts
 import { world as world15, system as system17 } from "@minecraft/server";
-import { EntityComponentTypes as EntityComponentTypes11, EquipmentSlot as EquipmentSlot8 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes11, EquipmentSlot as EquipmentSlot7 } from "@minecraft/server";
+function blockInteract() {
+  const LOGGABLE_BLOCKS = [
+    // Containers
+    MinecraftBlockTypes.Chest,
+    MinecraftBlockTypes.Barrel,
+    MinecraftBlockTypes.EnderChest,
+    MinecraftBlockTypes.TrappedChest,
+    MinecraftBlockTypes.CopperChest,
+    MinecraftBlockTypes.ExposedCopperChest,
+    MinecraftBlockTypes.WeatheredCopperChest,
+    MinecraftBlockTypes.OxidizedCopperChest,
+    MinecraftBlockTypes.WaxedCopperChest,
+    MinecraftBlockTypes.WaxedExposedCopperChest,
+    MinecraftBlockTypes.WaxedOxidizedCopperChest,
+    MinecraftBlockTypes.WaxedWeatheredCopperChest,
+    // Shulkers
+    MinecraftBlockTypes.RedShulkerBox,
+    MinecraftBlockTypes.LightGrayShulkerBox,
+    MinecraftBlockTypes.LightBlueShulkerBox,
+    MinecraftBlockTypes.BlueShulkerBox,
+    MinecraftBlockTypes.CyanShulkerBox,
+    MinecraftBlockTypes.GrayShulkerBox,
+    MinecraftBlockTypes.LimeShulkerBox,
+    MinecraftBlockTypes.PinkShulkerBox,
+    MinecraftBlockTypes.BlackShulkerBox,
+    MinecraftBlockTypes.BrownShulkerBox,
+    MinecraftBlockTypes.GreenShulkerBox,
+    MinecraftBlockTypes.WhiteShulkerBox,
+    MinecraftBlockTypes.OrangeShulkerBox,
+    MinecraftBlockTypes.PurpleShulkerBox,
+    MinecraftBlockTypes.UndyedShulkerBox,
+    MinecraftBlockTypes.YellowShulkerBox,
+    MinecraftBlockTypes.MagentaShulkerBox,
+    // Other Blocks
+    MinecraftBlockTypes.Crafter,
+    MinecraftBlockTypes.CraftingTable,
+    MinecraftBlockTypes.Furnace,
+    MinecraftBlockTypes.BlastFurnace,
+    MinecraftBlockTypes.LitFurnace,
+    MinecraftBlockTypes.LitBlastFurnace,
+    MinecraftBlockTypes.LitSmoker,
+    MinecraftBlockTypes.Smoker,
+    MinecraftBlockTypes.Hopper,
+    MinecraftBlockTypes.EnchantingTable,
+    MinecraftBlockTypes.Anvil,
+    MinecraftBlockTypes.ChippedAnvil,
+    MinecraftBlockTypes.DamagedAnvil,
+    MinecraftBlockTypes.BrewingStand,
+    MinecraftBlockTypes.Beacon,
+    MinecraftBlockTypes.CartographyTable,
+    MinecraftBlockTypes.Grindstone,
+    MinecraftBlockTypes.Lectern,
+    MinecraftBlockTypes.Loom,
+    MinecraftBlockTypes.SmithingTable,
+    MinecraftBlockTypes.StonecutterBlock,
+    MinecraftBlockTypes.ChiseledBookshelf,
+    MinecraftBlockTypes.Jukebox,
+    // Buttons
+    MinecraftBlockTypes.Lever,
+    MinecraftBlockTypes.WoodenButton,
+    MinecraftBlockTypes.SpruceButton,
+    MinecraftBlockTypes.BirchButton,
+    MinecraftBlockTypes.JungleButton,
+    MinecraftBlockTypes.AcaciaButton,
+    MinecraftBlockTypes.DarkOakButton,
+    MinecraftBlockTypes.MangroveButton,
+    MinecraftBlockTypes.CherryButton,
+    MinecraftBlockTypes.PaleOakButton,
+    MinecraftBlockTypes.BambooButton,
+    MinecraftBlockTypes.CrimsonButton,
+    MinecraftBlockTypes.WarpedButton,
+    MinecraftBlockTypes.PolishedBlackstoneButton,
+    MinecraftBlockTypes.StoneButton,
+    // Doors
+    MinecraftBlockTypes.WoodenDoor,
+    MinecraftBlockTypes.SpruceDoor,
+    MinecraftBlockTypes.BirchDoor,
+    MinecraftBlockTypes.JungleDoor,
+    MinecraftBlockTypes.AcaciaDoor,
+    MinecraftBlockTypes.DarkOakDoor,
+    MinecraftBlockTypes.MangroveDoor,
+    MinecraftBlockTypes.CherryDoor,
+    MinecraftBlockTypes.PaleOakDoor,
+    MinecraftBlockTypes.BambooDoor,
+    MinecraftBlockTypes.CrimsonDoor,
+    MinecraftBlockTypes.WarpedDoor,
+    MinecraftBlockTypes.IronDoor,
+    MinecraftBlockTypes.CopperDoor,
+    MinecraftBlockTypes.ExposedCopperDoor,
+    MinecraftBlockTypes.WeatheredCopperDoor,
+    MinecraftBlockTypes.OxidizedCopperDoor,
+    MinecraftBlockTypes.WaxedCopperDoor,
+    MinecraftBlockTypes.WaxedExposedCopperDoor,
+    MinecraftBlockTypes.WaxedOxidizedCopperDoor,
+    MinecraftBlockTypes.WaxedWeatheredCopperDoor,
+    // Trapdoors
+    MinecraftBlockTypes.Trapdoor,
+    MinecraftBlockTypes.SpruceTrapdoor,
+    MinecraftBlockTypes.BirchTrapdoor,
+    MinecraftBlockTypes.JungleTrapdoor,
+    MinecraftBlockTypes.AcaciaTrapdoor,
+    MinecraftBlockTypes.DarkOakTrapdoor,
+    MinecraftBlockTypes.MangroveTrapdoor,
+    MinecraftBlockTypes.CherryTrapdoor,
+    MinecraftBlockTypes.PaleOakTrapdoor,
+    MinecraftBlockTypes.BambooTrapdoor,
+    MinecraftBlockTypes.CrimsonTrapdoor,
+    MinecraftBlockTypes.WarpedTrapdoor,
+    MinecraftBlockTypes.IronTrapdoor,
+    MinecraftBlockTypes.CopperTrapdoor,
+    MinecraftBlockTypes.ExposedCopperTrapdoor,
+    MinecraftBlockTypes.WeatheredCopperTrapdoor,
+    MinecraftBlockTypes.OxidizedCopperTrapdoor,
+    MinecraftBlockTypes.WaxedCopperTrapdoor,
+    MinecraftBlockTypes.WaxedExposedCopperTrapdoor,
+    MinecraftBlockTypes.WaxedOxidizedCopperTrapdoor,
+    MinecraftBlockTypes.WaxedWeatheredCopperTrapdoor
+  ];
+  function blockInteraction(event) {
+    const block_id = event.block.typeId;
+    const block_location = [event.block.x, event.block.y, event.block.z];
+    const dimension = event.player.dimension;
+    const mainhand = event.player.getComponent(EntityComponentTypes11.Equippable)?.getEquipment(EquipmentSlot7.Mainhand);
+    const isPlacing = event.beforeItemStack?.typeId === block_id && event.itemStack?.amount !== event.beforeItemStack?.amount;
+    if (!isPlacing) {
+      system17.run(() => {
+        const interaction = new api_default.Interaction(
+          {
+            thorny_id: api_default.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
+            type: "use",
+            coordinates: block_location,
+            reference: block_id,
+            mainhand: mainhand?.typeId ?? null,
+            dimension: dimension.id
+          }
+        );
+        interaction.post_interaction();
+      });
+    }
+  }
+  world15.afterEvents.playerInteractWithBlock.subscribe((event) => {
+    if (LOGGABLE_BLOCKS.includes(event.block.typeId)) {
+      blockInteraction(event);
+    }
+  });
+}
+
+// behaviour_pack/scripts-dev/features/interactions/block-break.ts
+import { EntityComponentTypes as EntityComponentTypes12, EquipmentSlot as EquipmentSlot8, system as system18, world as world16 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/utils/interaction_preprocess.ts
 function interaction_preprocess(interaction, quest) {
@@ -6081,16 +6245,16 @@ function interaction_preprocess(interaction, quest) {
   return matchingTargets.length > 0;
 }
 
-// behaviour_pack/scripts-dev/events/blocks.ts
-function load_block_event_handler() {
-  world15.beforeEvents.playerBreakBlock.subscribe(async (event) => {
+// behaviour_pack/scripts-dev/features/interactions/block-break.ts
+function blockBreak() {
+  world16.beforeEvents.playerBreakBlock.subscribe(async (event) => {
     const block_id = event.block.typeId;
     const block_location = [event.block.x, event.block.y, event.block.z];
     const dimension = event.player.dimension;
-    const mainhand = event.player.getComponent(EntityComponentTypes11.Equippable)?.getEquipment(EquipmentSlot8.Mainhand);
+    const mainhand = event.player.getComponent(EntityComponentTypes12.Equippable)?.getEquipment(EquipmentSlot8.Mainhand);
     const thorny_user = api_default.ThornyUser.fetch_user(event.player.name);
     const active_quest = await api_default.QuestProgress.get_quest_progress(thorny_user);
-    system17.run(() => {
+    system18.run(() => {
       const interaction = new api_default.Interaction(
         {
           thorny_id: thorny_user?.thorny_id ?? 0,
@@ -6107,12 +6271,17 @@ function load_block_event_handler() {
       }
     });
   });
-  world15.afterEvents.playerPlaceBlock.subscribe((event) => {
+}
+
+// behaviour_pack/scripts-dev/features/interactions/block-place.ts
+import { EntityComponentTypes as EntityComponentTypes13, EquipmentSlot as EquipmentSlot9, system as system19, world as world17 } from "@minecraft/server";
+function blockPlace() {
+  world17.afterEvents.playerPlaceBlock.subscribe((event) => {
     const block_id = event.block.typeId;
     const block_location = [event.block.x, event.block.y, event.block.z];
     const dimension = event.player.dimension;
-    const mainhand = event.player.getComponent(EntityComponentTypes11.Equippable)?.getEquipment(EquipmentSlot8.Mainhand);
-    system17.run(() => {
+    const mainhand = event.player.getComponent(EntityComponentTypes13.Equippable)?.getEquipment(EquipmentSlot9.Mainhand);
+    system19.run(() => {
       const interaction = new api_default.Interaction(
         {
           thorny_id: api_default.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
@@ -6126,170 +6295,176 @@ function load_block_event_handler() {
       interaction.post_interaction();
     });
   });
-  world15.afterEvents.playerInteractWithBlock.subscribe((event) => {
-    const block_id = event.block.typeId;
-    const block_location = [event.block.x, event.block.y, event.block.z];
+}
+
+// behaviour_pack/scripts-dev/features/interactions/entity-interact.ts
+import { EntityComponentTypes as EntityComponentTypes14, EquipmentSlot as EquipmentSlot10, system as system20, world as world18 } from "@minecraft/server";
+function entityInteract() {
+  const LOGGABLE_ENTITIES = [
+    // Villagers
+    MinecraftEntityTypes.VillagerV2,
+    MinecraftEntityTypes.WanderingTrader,
+    // Rideable Entities
+    MinecraftEntityTypes.Horse,
+    MinecraftEntityTypes.Donkey,
+    MinecraftEntityTypes.Mule,
+    MinecraftEntityTypes.Minecart,
+    MinecraftEntityTypes.Strider,
+    MinecraftEntityTypes.Pig,
+    MinecraftEntityTypes.Boat,
+    MinecraftEntityTypes.Camel,
+    MinecraftEntityTypes.ZombieHorse,
+    MinecraftEntityTypes.SkeletonHorse,
+    MinecraftEntityTypes.Nautilus,
+    MinecraftEntityTypes.ZombieNautilus,
+    MinecraftEntityTypes.CamelHusk,
+    MinecraftEntityTypes.HappyGhast,
+    MinecraftEntityTypes.Llama,
+    MinecraftEntityTypes.TraderLlama,
+    // Entity Containers
+    MinecraftEntityTypes.ChestBoat,
+    MinecraftEntityTypes.ChestMinecart,
+    MinecraftEntityTypes.HopperMinecart,
+    // Amethyst Entities
+    "amethyst:james_collector"
+  ];
+  function entityInteraction(event) {
+    const entity_id = event.target.typeId;
+    const entity_location = [event.target.location.x, event.target.location.y, event.target.location.z];
     const dimension = event.player.dimension;
-    const mainhand = event.player.getComponent(EntityComponentTypes11.Equippable)?.getEquipment(EquipmentSlot8.Mainhand);
-    const all_blocks = [
-      // Containers
-      MinecraftBlockTypes.Chest,
-      MinecraftBlockTypes.Barrel,
-      MinecraftBlockTypes.EnderChest,
-      MinecraftBlockTypes.TrappedChest,
-      MinecraftBlockTypes.CopperChest,
-      MinecraftBlockTypes.ExposedCopperChest,
-      MinecraftBlockTypes.WeatheredCopperChest,
-      MinecraftBlockTypes.OxidizedCopperChest,
-      MinecraftBlockTypes.WaxedCopperChest,
-      MinecraftBlockTypes.WaxedExposedCopperChest,
-      MinecraftBlockTypes.WaxedOxidizedCopperChest,
-      MinecraftBlockTypes.WaxedWeatheredCopperChest,
-      // Shulkers
-      MinecraftBlockTypes.RedShulkerBox,
-      MinecraftBlockTypes.LightGrayShulkerBox,
-      MinecraftBlockTypes.LightBlueShulkerBox,
-      MinecraftBlockTypes.BlueShulkerBox,
-      MinecraftBlockTypes.CyanShulkerBox,
-      MinecraftBlockTypes.GrayShulkerBox,
-      MinecraftBlockTypes.LimeShulkerBox,
-      MinecraftBlockTypes.PinkShulkerBox,
-      MinecraftBlockTypes.BlackShulkerBox,
-      MinecraftBlockTypes.BrownShulkerBox,
-      MinecraftBlockTypes.GreenShulkerBox,
-      MinecraftBlockTypes.WhiteShulkerBox,
-      MinecraftBlockTypes.OrangeShulkerBox,
-      MinecraftBlockTypes.PurpleShulkerBox,
-      MinecraftBlockTypes.UndyedShulkerBox,
-      MinecraftBlockTypes.YellowShulkerBox,
-      MinecraftBlockTypes.MagentaShulkerBox,
-      // Other Blocks
-      MinecraftBlockTypes.Crafter,
-      MinecraftBlockTypes.CraftingTable,
-      MinecraftBlockTypes.Furnace,
-      MinecraftBlockTypes.BlastFurnace,
-      MinecraftBlockTypes.LitFurnace,
-      MinecraftBlockTypes.LitBlastFurnace,
-      MinecraftBlockTypes.LitSmoker,
-      MinecraftBlockTypes.Smoker,
-      MinecraftBlockTypes.Hopper,
-      MinecraftBlockTypes.EnchantingTable,
-      MinecraftBlockTypes.Anvil,
-      MinecraftBlockTypes.ChippedAnvil,
-      MinecraftBlockTypes.DamagedAnvil,
-      MinecraftBlockTypes.BrewingStand,
-      MinecraftBlockTypes.Beacon,
-      MinecraftBlockTypes.CartographyTable,
-      MinecraftBlockTypes.Grindstone,
-      MinecraftBlockTypes.Lectern,
-      MinecraftBlockTypes.Loom,
-      MinecraftBlockTypes.SmithingTable,
-      MinecraftBlockTypes.StonecutterBlock,
-      MinecraftBlockTypes.ChiseledBookshelf,
-      MinecraftBlockTypes.Jukebox,
-      // Buttons
-      MinecraftBlockTypes.Lever,
-      MinecraftBlockTypes.WoodenButton,
-      MinecraftBlockTypes.SpruceButton,
-      MinecraftBlockTypes.BirchButton,
-      MinecraftBlockTypes.JungleButton,
-      MinecraftBlockTypes.AcaciaButton,
-      MinecraftBlockTypes.DarkOakButton,
-      MinecraftBlockTypes.MangroveButton,
-      MinecraftBlockTypes.CherryButton,
-      MinecraftBlockTypes.PaleOakButton,
-      MinecraftBlockTypes.BambooButton,
-      MinecraftBlockTypes.CrimsonButton,
-      MinecraftBlockTypes.WarpedButton,
-      MinecraftBlockTypes.PolishedBlackstoneButton,
-      MinecraftBlockTypes.StoneButton,
-      // Doors
-      MinecraftBlockTypes.WoodenDoor,
-      MinecraftBlockTypes.SpruceDoor,
-      MinecraftBlockTypes.BirchDoor,
-      MinecraftBlockTypes.JungleDoor,
-      MinecraftBlockTypes.AcaciaDoor,
-      MinecraftBlockTypes.DarkOakDoor,
-      MinecraftBlockTypes.MangroveDoor,
-      MinecraftBlockTypes.CherryDoor,
-      MinecraftBlockTypes.PaleOakDoor,
-      MinecraftBlockTypes.BambooDoor,
-      MinecraftBlockTypes.CrimsonDoor,
-      MinecraftBlockTypes.WarpedDoor,
-      MinecraftBlockTypes.IronDoor,
-      MinecraftBlockTypes.CopperDoor,
-      MinecraftBlockTypes.ExposedCopperDoor,
-      MinecraftBlockTypes.WeatheredCopperDoor,
-      MinecraftBlockTypes.OxidizedCopperDoor,
-      MinecraftBlockTypes.WaxedCopperDoor,
-      MinecraftBlockTypes.WaxedExposedCopperDoor,
-      MinecraftBlockTypes.WaxedOxidizedCopperDoor,
-      MinecraftBlockTypes.WaxedWeatheredCopperDoor,
-      // Trapdoors
-      MinecraftBlockTypes.Trapdoor,
-      MinecraftBlockTypes.SpruceTrapdoor,
-      MinecraftBlockTypes.BirchTrapdoor,
-      MinecraftBlockTypes.JungleTrapdoor,
-      MinecraftBlockTypes.AcaciaTrapdoor,
-      MinecraftBlockTypes.DarkOakTrapdoor,
-      MinecraftBlockTypes.MangroveTrapdoor,
-      MinecraftBlockTypes.CherryTrapdoor,
-      MinecraftBlockTypes.PaleOakTrapdoor,
-      MinecraftBlockTypes.BambooTrapdoor,
-      MinecraftBlockTypes.CrimsonTrapdoor,
-      MinecraftBlockTypes.WarpedTrapdoor,
-      MinecraftBlockTypes.IronTrapdoor,
-      MinecraftBlockTypes.CopperTrapdoor,
-      MinecraftBlockTypes.ExposedCopperTrapdoor,
-      MinecraftBlockTypes.WeatheredCopperTrapdoor,
-      MinecraftBlockTypes.OxidizedCopperTrapdoor,
-      MinecraftBlockTypes.WaxedCopperTrapdoor,
-      MinecraftBlockTypes.WaxedExposedCopperTrapdoor,
-      MinecraftBlockTypes.WaxedOxidizedCopperTrapdoor,
-      MinecraftBlockTypes.WaxedWeatheredCopperTrapdoor
-    ];
-    if (all_blocks.includes(block_id) && !(event.beforeItemStack?.typeId === block_id && event.itemStack?.amount !== event.beforeItemStack?.amount)) {
-      system17.run(() => {
-        const interaction = new api_default.Interaction(
-          {
-            thorny_id: api_default.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
-            type: "use",
-            coordinates: block_location,
-            reference: block_id,
-            mainhand: mainhand?.typeId ?? null,
-            dimension: dimension.id
-          }
-        );
-        interaction.post_interaction();
-      });
+    const mainhand = event.player.getComponent(EntityComponentTypes14.Equippable)?.getEquipment(EquipmentSlot10.Mainhand);
+    system20.run(() => {
+      const interaction = new api_default.Interaction(
+        {
+          thorny_id: api_default.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
+          type: "use",
+          coordinates: entity_location,
+          reference: entity_id,
+          mainhand: mainhand?.typeId ?? null,
+          dimension: dimension.id
+        }
+      );
+      interaction.post_interaction();
+    });
+  }
+  world18.afterEvents.playerInteractWithEntity.subscribe((event) => {
+    if (LOGGABLE_ENTITIES.includes(event.target.typeId)) {
+      entityInteraction(event);
     }
   });
 }
 
-// behaviour_pack/scripts-dev/events/chat.ts
-import { system as system18, world as world16 } from "@minecraft/server";
-function load_chat_handler() {
-  world16.beforeEvents.chatSend.subscribe((chat_event) => {
-    const gamertag = chat_event.sender.name;
-    const thorny_user = api_default.ThornyUser.fetch_user(gamertag);
-    world16.sendMessage({
-      rawtext: [{ text: `${thorny_user?.get_role_display()} \xA77${gamertag}:\xA7r ${chat_event.message}` }]
-    });
-    system18.run(() => {
-      api_default.Relay.message(gamertag, chat_event.message);
-    });
-    chat_event.cancel = true;
+// behaviour_pack/scripts-dev/features/interactions/entity-die.ts
+import { world as world19 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes15, EquipmentSlot as EquipmentSlot11, Player as Player13 } from "@minecraft/server";
+function entityDie() {
+  async function playerKillEntity(player, entity) {
+    const dimension = player.dimension;
+    const mainhand = player.getComponent(EntityComponentTypes15.Equippable)?.getEquipment(EquipmentSlot11.Mainhand);
+    const thorny_user = api_default.ThornyUser.fetch_user(player.name);
+    const active_quest = await api_default.QuestProgress.get_quest_progress(thorny_user);
+    const interaction = new api_default.Interaction(
+      {
+        thorny_id: thorny_user?.thorny_id ?? 0,
+        type: "kill",
+        coordinates: [entity.location.x, entity.location.y, entity.location.z],
+        reference: entity.typeId,
+        mainhand: mainhand?.typeId ?? null,
+        dimension: dimension.id
+      }
+    );
+    await interaction.post_interaction();
+    if (interaction_preprocess(interaction, active_quest)) {
+      api_default.Interaction.enqueue(interaction);
+    }
+  }
+  async function playerDieByPlayer(killer_player, dead_player) {
+    const dimension = killer_player.dimension;
+    const entity_mainhand = dead_player.getComponent(EntityComponentTypes15.Equippable)?.getEquipment(EquipmentSlot11.Mainhand);
+    const dead_thorny_user = api_default.ThornyUser.fetch_user(dead_player.name);
+    const death_interaction = new api_default.Interaction(
+      {
+        thorny_id: dead_thorny_user?.thorny_id ?? 0,
+        type: "die",
+        coordinates: [dead_player.location.x, dead_player.location.y, dead_player.location.z],
+        reference: killer_player.name,
+        mainhand: entity_mainhand?.typeId ?? null,
+        dimension: dimension.id
+      }
+    );
+    await death_interaction.post_interaction();
+    api_default.Interaction.enqueue(death_interaction);
+    api_default.Relay.event(utils_default.DeathMessage.random_pvp(killer_player.name, dead_player.name), "", "other");
+  }
+  async function playerDieByEntity(player, entity) {
+    const dimension = player.dimension;
+    const mainhand = player.getComponent(EntityComponentTypes15.Equippable)?.getEquipment(EquipmentSlot11.Mainhand);
+    const thorny_user = api_default.ThornyUser.fetch_user(player.name);
+    const death_interaction = new api_default.Interaction(
+      {
+        thorny_id: thorny_user?.thorny_id ?? 0,
+        type: "die",
+        coordinates: [player.location.x, player.location.y, player.location.z],
+        reference: entity.typeId,
+        mainhand: mainhand?.typeId ?? null,
+        dimension: dimension.id
+      }
+    );
+    await death_interaction.post_interaction();
+    api_default.Interaction.enqueue(death_interaction);
+    api_default.Relay.event(utils_default.DeathMessage.random_pve(player.name, entity.typeId), "", "other");
+  }
+  async function playerDieByOther(player, damageCause) {
+    const dimension = player.dimension;
+    const mainhand = player.getComponent(EntityComponentTypes15.Equippable)?.getEquipment(EquipmentSlot11.Mainhand);
+    const thorny_user = api_default.ThornyUser.fetch_user(player.name);
+    const death_interaction = new api_default.Interaction(
+      {
+        thorny_id: thorny_user?.thorny_id ?? 0,
+        type: "die",
+        coordinates: [player.location.x, player.location.y, player.location.z],
+        reference: damageCause,
+        mainhand: mainhand?.typeId ?? null,
+        dimension: dimension.id
+      }
+    );
+    await death_interaction.post_interaction();
+    api_default.Interaction.enqueue(death_interaction);
+    api_default.Relay.event(utils_default.DeathMessage.random_suicide(player.name, damageCause), "", "other");
+  }
+  world19.afterEvents.entityDie.subscribe(async (event) => {
+    const damage_cause = event.damageSource.cause;
+    const damaging_entity = event.damageSource.damagingEntity;
+    const dead_entity = event.deadEntity;
+    if (damaging_entity instanceof Player13) {
+      await playerKillEntity(damaging_entity, dead_entity);
+      if (dead_entity instanceof Player13) {
+        await playerDieByPlayer(damaging_entity, dead_entity);
+      }
+    } else if (dead_entity instanceof Player13 && damaging_entity) {
+      await playerDieByEntity(dead_entity, damaging_entity);
+    } else if (dead_entity instanceof Player13 && !damaging_entity) {
+      await playerDieByOther(dead_entity, damage_cause);
+    }
   });
 }
 
-// behaviour_pack/scripts-dev/events/connections.ts
-import { world as world17 } from "@minecraft/server";
-import { beforeEvents } from "@minecraft/server-admin";
-function load_connections_handler(guild_id2) {
-  world17.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
+// behaviour_pack/scripts-dev/features/interactions/index.ts
+function loadInteractionHandlers() {
+  blockInteract();
+  blockBreak();
+  blockPlace();
+  entityInteract();
+  entityDie();
+}
+
+// behaviour_pack/scripts-dev/features/connections.ts
+import { world as world20 } from "@minecraft/server";
+function loadConnectionsFeature() {
+  world20.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
     if (spawn_event.initialSpawn) {
       try {
-        const thorny_user = await api_default.ThornyUser.get_user_from_api(guild_id2, spawn_event.player.name);
+        const thorny_user = api_default.ThornyUser.fetch_user(spawn_event.player.name);
         thorny_user.send_connect_event("connect");
         api_default.Relay.event(`${spawn_event.player.name} has joined the server`, "", "join");
         const quest = await api_default.QuestProgress.get_quest_progress(thorny_user);
@@ -6303,7 +6478,7 @@ function load_connections_handler(guild_id2) {
       }
     }
   });
-  world17.afterEvents.playerLeave.subscribe((leave_event) => {
+  world20.afterEvents.playerLeave.subscribe((leave_event) => {
     const thorny_user = api_default.ThornyUser.fetch_user(leave_event.playerName);
     if (thorny_user) {
       api_default.QuestProgress.clear_cache(thorny_user);
@@ -6312,500 +6487,165 @@ function load_connections_handler(guild_id2) {
     api_default.Relay.event(`${leave_event.playerName} has left the server`, "", "leave");
   });
 }
-function load_admin_connections_handler(guild_id2) {
-  const BlockMessageMap = {
-    "no_whitelist": "You are not whitelisted. Check the guidelines to see how to whitelist yourself.",
-    "not_active": "WAIT! Don't go!\n\nCouldn't resist a peek, could you? We don't blame you. Let's get you back to where you belong.\n\nRejoin us at everthorn.net/apply or reach out on Discord. We'll get you right back in!",
-    "only_gamertag": "Almost there! Your gamertag is set up correctly. Now, just ask a CM to add you to the whitelist and you'll be good to go!",
-    "other": "You are not whitelisted."
-  };
-  async function blockJoin(join_event, reason = "other") {
-    join_event.disallowJoin(BlockMessageMap[reason] || "You are not whitelisted.");
-    api_default.Relay.event(
-      `${join_event.name} blocked from joining`,
-      BlockMessageMap[reason] || "You are not whitelisted.",
-      "other"
-    );
-    console.log(`[Admin] ${join_event.name} blocked from joining. Reason: ${reason}`);
+
+// behaviour_pack/scripts-dev/features/location-logger.ts
+import { EntityComponentTypes as EntityComponentTypes16, EquipmentSlot as EquipmentSlot12, system as system22, world as world21, TicksPerSecond as TicksPerSecond8 } from "@minecraft/server";
+var HEAD_GEAR = [
+  MinecraftItemTypes.SkeletonSkull,
+  MinecraftItemTypes.WitherSkeletonSkull,
+  MinecraftItemTypes.CarvedPumpkin,
+  MinecraftItemTypes.PlayerHead,
+  MinecraftItemTypes.PiglinHead,
+  MinecraftItemTypes.CreeperHead,
+  MinecraftItemTypes.ZombieHead,
+  MinecraftItemTypes.DragonHead
+];
+function location_log(player) {
+  const head_gear = player.getComponent(EntityComponentTypes16.Equippable)?.getEquipment(EquipmentSlot12.Head);
+  let hidden = (head_gear?.typeId ? HEAD_GEAR.includes(head_gear.typeId) : false) || player.isSneaking;
+  const location = [Math.round(player.location.x), Math.round(player.location.y), Math.round(player.location.z)];
+  const thorny_user = api_default.ThornyUser.fetch_user(player.name);
+  if (thorny_user) {
+    thorny_user.location = location;
+    thorny_user.dimension = player.dimension.id;
+    thorny_user.hidden = hidden;
+    thorny_user.update().then();
   }
-  beforeEvents.asyncPlayerJoin.subscribe(async (join_event) => {
-    try {
-      const thorny_user = await api_default.ThornyUser.get_user_from_api(guild_id2, join_event.name);
-      if (!thorny_user.active) {
-        await blockJoin(join_event, "not_active");
-      }
-      if (thorny_user.whitelist !== join_event.name) {
-        await blockJoin(join_event, "only_gamertag");
-      }
-      join_event.allowJoin();
-    } catch (e) {
-      await blockJoin(join_event, "no_whitelist");
-    }
-  });
+}
+function loadLocationLogger() {
+  system22.runInterval(() => {
+    let playerlist = world21.getPlayers();
+    playerlist.forEach((player) => {
+      location_log(player);
+    });
+  }, TicksPerSecond8 * 5);
 }
 
-// behaviour_pack/scripts-dev/events/entities.ts
-import { system as system19, world as world18 } from "@minecraft/server";
-import { EntityComponentTypes as EntityComponentTypes13, EquipmentSlot as EquipmentSlot10, Player as Player14 } from "@minecraft/server";
-function load_entity_event_handler() {
-  world18.afterEvents.entityDie.subscribe(async (event) => {
-    if (event.damageSource.damagingEntity instanceof Player14) {
-      const player = event.damageSource.damagingEntity;
-      const dimension = player.dimension;
-      const mainhand = player.getComponent(EntityComponentTypes13.Equippable)?.getEquipment(EquipmentSlot10.Mainhand);
-      const killer_thorny_user = api_default.ThornyUser.fetch_user(player.name);
-      const killer_active_quest = await api_default.QuestProgress.get_quest_progress(killer_thorny_user);
-      const interaction = new api_default.Interaction(
-        {
-          thorny_id: killer_thorny_user?.thorny_id ?? 0,
-          type: "kill",
-          coordinates: [event.deadEntity.location.x, event.deadEntity.location.y, event.deadEntity.location.z],
-          reference: event.deadEntity.typeId,
-          mainhand: mainhand?.typeId ?? null,
-          dimension: dimension.id
-        }
-      );
-      if (event.deadEntity instanceof Player14) {
-        const dead_player = event.deadEntity;
-        const dead_mainhand = dead_player.getComponent(EntityComponentTypes13.Equippable)?.getEquipment(EquipmentSlot10.Mainhand);
-        const dead_thorny_user = api_default.ThornyUser.fetch_user(dead_player.name);
-        interaction.reference = dead_player.name;
-        const death_interaction = new api_default.Interaction(
-          {
-            thorny_id: dead_thorny_user?.thorny_id ?? 0,
-            type: "die",
-            coordinates: [dead_player.location.x, dead_player.location.y, dead_player.location.z],
-            reference: player.name,
-            mainhand: dead_mainhand?.typeId ?? null,
-            dimension: dimension.id
+// behaviour_pack/scripts-dev/features/quests.ts
+import { system as system23, world as world22 } from "@minecraft/server";
+async function check_quests() {
+  try {
+    if (!api_default.Interaction.is_processing()) {
+      api_default.Interaction.set_processing(true);
+      let interaction = api_default.Interaction.dequeue();
+      while (interaction) {
+        let thorny_user = api_default.ThornyUser.fetch_user_by_id(interaction.thorny_id);
+        let quest_progress = await api_default.QuestProgress.get_quest_progress(thorny_user);
+        if (quest_progress && await quest_progress.increment_active_objective(interaction)) {
+          await quest_progress.update_user_quest();
+          await thorny_user.update();
+          if (quest_progress.status == "completed") {
+            api_default.Relay.event(
+              `${thorny_user.gamertag} has completed *${quest_progress.quest.title}!*`,
+              "Run `/quests view` to start it and reap the rewards!",
+              "other"
+            );
+            api_default.QuestProgress.clear_cache(thorny_user);
           }
-        );
-        interaction.reference = MinecraftEntityTypes.Player;
-        interaction.post_interaction();
-        death_interaction.post_interaction();
-        api_default.Interaction.enqueue(death_interaction);
-        api_default.Relay.event(utils_default.DeathMessage.random_pvp(player.name, dead_player.name), "", "other");
-      } else {
-        interaction.post_interaction();
-      }
-      if (interaction_preprocess(interaction, killer_active_quest)) {
-        api_default.Interaction.enqueue(interaction);
-      }
-    } else if (event.deadEntity instanceof Player14 && event.damageSource.damagingEntity) {
-      const killer = event.damageSource.damagingEntity;
-      const player = event.deadEntity;
-      const dimension = player.dimension;
-      const mainhand = player.getComponent(EntityComponentTypes13.Equippable)?.getEquipment(EquipmentSlot10.Mainhand);
-      const thorny_user = api_default.ThornyUser.fetch_user(player.name);
-      const active_quest = await api_default.QuestProgress.get_quest_progress(thorny_user);
-      const death_interaction = new api_default.Interaction(
-        {
-          thorny_id: thorny_user?.thorny_id ?? 0,
-          type: "die",
-          coordinates: [player.location.x, player.location.y, player.location.z],
-          reference: killer.typeId,
-          mainhand: mainhand?.typeId ?? null,
-          dimension: dimension.id
-        }
-      );
-      death_interaction.post_interaction();
-      api_default.Interaction.enqueue(death_interaction);
-      api_default.Relay.event(utils_default.DeathMessage.random_pve(player.name, killer.typeId), "", "other");
-    } else if (event.deadEntity instanceof Player14 && !event.damageSource.damagingEntity) {
-      const player = event.deadEntity;
-      const dimension = player.dimension;
-      const mainhand = player.getComponent(EntityComponentTypes13.Equippable)?.getEquipment(EquipmentSlot10.Mainhand);
-      const thorny_user = api_default.ThornyUser.fetch_user(player.name);
-      const active_quest = await api_default.QuestProgress.get_quest_progress(thorny_user);
-      const death_interaction = new api_default.Interaction(
-        {
-          thorny_id: thorny_user?.thorny_id ?? 0,
-          type: "die",
-          coordinates: [player.location.x, player.location.y, player.location.z],
-          reference: event.damageSource.cause,
-          mainhand: mainhand?.typeId ?? null,
-          dimension: dimension.id
-        }
-      );
-      death_interaction.post_interaction();
-      api_default.Interaction.enqueue(death_interaction);
-      api_default.Relay.event(utils_default.DeathMessage.random_suicide(player.name, event.damageSource.cause), "", "other");
-    }
-  });
-  world18.afterEvents.playerInteractWithEntity.subscribe((event) => {
-    const entity_id = event.target.typeId;
-    const entity_location = [event.target.location.x, event.target.location.y, event.target.location.z];
-    const dimension = event.player.dimension;
-    const mainhand = event.player.getComponent(EntityComponentTypes13.Equippable)?.getEquipment(EquipmentSlot10.Mainhand);
-    const all_entities = [
-      // Villagers
-      MinecraftEntityTypes.Villager,
-      MinecraftEntityTypes.VillagerV2,
-      MinecraftEntityTypes.WanderingTrader,
-      // Rideable Entities
-      MinecraftEntityTypes.Horse,
-      MinecraftEntityTypes.Donkey,
-      MinecraftEntityTypes.Mule,
-      MinecraftEntityTypes.Minecart,
-      MinecraftEntityTypes.Strider,
-      MinecraftEntityTypes.Pig,
-      MinecraftEntityTypes.Boat,
-      MinecraftEntityTypes.Camel,
-      // Entity Containers
-      MinecraftEntityTypes.ChestBoat,
-      MinecraftEntityTypes.ChestMinecart,
-      MinecraftEntityTypes.HopperMinecart,
-      "amethyst:james_collector"
-    ];
-    if (all_entities.includes(entity_id)) {
-      system19.run(() => {
-        const interaction = new api_default.Interaction(
-          {
-            thorny_id: api_default.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
-            type: "use",
-            coordinates: entity_location,
-            reference: entity_id,
-            mainhand: mainhand?.typeId ?? null,
-            dimension: dimension.id
-          }
-        );
-        interaction.post_interaction();
-      });
-    }
-  });
-  let first_stage = false;
-  let second_stage = false;
-  world18.afterEvents.entityHurt.subscribe((event) => {
-    if (event.hurtEntity.typeId === MinecraftEntityTypes.EnderDragon) {
-      const health_component = event.hurtEntity.getComponent(EntityComponentTypes13.Health);
-      if (health_component && !first_stage && health_component?.currentValue / health_component?.effectiveMax <= 0.75) {
-        first_stage = true;
-        const message = utils_default.DragonHeartMessage.health_stage_message(1);
-        utils_default.commands.send_message(
-          event.hurtEntity.dimension.id,
-          "@a",
-          message
-        );
-        utils_default.DragonHeartMessage.summon_minions();
-      } else if (health_component && !second_stage && health_component?.currentValue / health_component?.effectiveMax <= 0.25) {
-        second_stage = true;
-        const message = utils_default.DragonHeartMessage.health_stage_message(2);
-        utils_default.commands.send_message(
-          event.hurtEntity.dimension.id,
-          "@a",
-          message
-        );
-        utils_default.DragonHeartMessage.summon_minions();
-      }
-    }
-  });
-}
-
-// behaviour_pack/scripts-dev/events/script_events.ts
-import { system as system20, world as world19 } from "@minecraft/server";
-function load_script_event_handler() {
-  system20.afterEvents.scriptEventReceive.subscribe((script_event) => {
-    const thorny_user = api_default.ThornyUser.fetch_user(script_event.message);
-    const player = world19.getPlayers({ name: script_event.message })[0];
-    if (thorny_user) {
-      const interaction = new api_default.Interaction(
-        {
-          thorny_id: thorny_user.thorny_id,
-          type: "scriptevent",
-          coordinates: [player.location.x, player.location.y, player.location.z],
-          reference: script_event.id,
-          mainhand: null,
-          dimension: MinecraftDimensionTypes.Overworld
-        }
-      );
-      api_default.Interaction.enqueue(interaction);
-      interaction.post_interaction().then();
-    }
-  });
-}
-
-// behaviour_pack/scripts-dev/events/eliana_trade.ts
-import {
-  EntityComponentTypes as EntityComponentTypes14,
-  EquipmentSlot as EquipmentSlot11,
-  ItemStack as ItemStack3,
-  system as system21,
-  world as world20
-} from "@minecraft/server";
-var fishing_trades = {
-  // --- Rare / Special ---
-  "amethyst:nemo": {
-    name: "\xA7vN\xA7je\xA7vm\xA7jo\xA7r",
-    sizes: {
-      "23cm": { count: 30, item: "amethyst:diamond_nugget" }
-    }
-  },
-  "amethyst:cheeky_fish": {
-    name: "Cheeky Bugger",
-    sizes: {
-      "60cm": { count: 8, item: "amethyst:diamond_nugget" },
-      "57cm": { count: 6, item: "amethyst:diamond_nugget" },
-      "54cm": { count: 4, item: "amethyst:diamond_nugget" }
-    }
-  },
-  "amethyst:void_fish": {
-    name: "Voidswimmer",
-    sizes: {
-      "124cm": { count: 10, item: "amethyst:diamond_nugget" },
-      "112cm": { count: 8, item: "amethyst:diamond_nugget" },
-      "101cm": { count: 6, item: "amethyst:diamond_nugget" },
-      "90cm": { count: 4, item: "amethyst:diamond_nugget" }
-    }
-  },
-  // --- High Tier ---
-  "amethyst:blue_dwarf_fish": {
-    name: "Blue Dwarf Fish",
-    sizes: {
-      "8cm": { count: 9, item: "amethyst:diamond_nugget" },
-      "10cm": { count: 6, item: "amethyst:diamond_nugget" },
-      "13cm": { count: 4, item: "amethyst:diamond_nugget" }
-    }
-  },
-  "amethyst:thorn_fish": {
-    name: "Thornfish",
-    sizes: {
-      "113cm": { count: 10, item: "amethyst:diamond_nugget" },
-      "100cm": { count: 8, item: "amethyst:diamond_nugget" },
-      "84cm": { count: 6, item: "amethyst:diamond_nugget" },
-      "78cm": { count: 4, item: "amethyst:diamond_nugget" },
-      "66cm": { count: 3, item: "amethyst:diamond_nugget" },
-      "57cm": { count: 3, item: "amethyst:diamond_nugget" }
-    }
-  },
-  "amethyst:tuff_fish": {
-    name: "Tuffback Minnow",
-    sizes: {
-      "110cm": { count: 3, item: "amethyst:diamond_nugget" },
-      "104cm": { count: 1, item: "amethyst:diamond_nugget" },
-      "98cm": { count: 5, item: "amethyst:sea_urchin" },
-      "91cm": { count: 3, item: "amethyst:sea_urchin" }
-    }
-  },
-  // --- Medium Tier ---
-  "amethyst:dwarf_fish": {
-    name: "Dwarf Fish",
-    sizes: {
-      "8cm": { count: 4, item: "amethyst:sea_urchin" },
-      "11cm": { count: 2, item: "amethyst:sea_urchin" },
-      "14cm": { count: 2, item: "amethyst:sea_urchin" },
-      "20cm": { count: 1, item: "amethyst:sea_urchin" }
-    }
-  },
-  "amethyst:ever_fish": {
-    name: "Everfish",
-    sizes: {
-      "100cm": { count: 2, item: "amethyst:diamond_nugget" },
-      "94cm": { count: 1, item: "amethyst:diamond_nugget" },
-      "86cm": { count: 4, item: "amethyst:sea_urchin" },
-      "82cm": { count: 3, item: "amethyst:sea_urchin" },
-      "74cm": { count: 2, item: "amethyst:sea_urchin" }
-    }
-  },
-  "amethyst:night_fish": {
-    name: "Night Trout",
-    sizes: {
-      "66cm": { count: 2, item: "amethyst:diamond_nugget" },
-      "61cm": { count: 1, item: "amethyst:diamond_nugget" },
-      "56cm": { count: 4, item: "amethyst:sea_urchin" },
-      "52cm": { count: 2, item: "amethyst:sea_urchin" }
-    }
-  },
-  "amethyst:slime_fish": {
-    name: "Slimey Bass",
-    sizes: {
-      "78cm": { count: 2, item: "amethyst:diamond_nugget" },
-      "72cm": { count: 1, item: "amethyst:diamond_nugget" },
-      "67cm": { count: 4, item: "amethyst:sea_urchin" },
-      "62cm": { count: 2, item: "amethyst:sea_urchin" }
-    }
-  },
-  // --- Common Tier ---
-  "amethyst:ember_minnow": {
-    name: "Ember Minnow",
-    sizes: {
-      "84cm": { count: 1, item: "amethyst:sea_urchin" },
-      "78cm": { count: 1, item: "amethyst:sea_urchin" },
-      "75cm": { count: 1, item: "amethyst:sea_urchin" },
-      "73cm": { count: 2, item: "amethyst:sea_urchin" },
-      "70cm": { count: 3, item: "amethyst:sea_urchin" },
-      "68cm": { count: 2, item: "amethyst:sea_urchin" }
-    }
-  },
-  "amethyst:northern_chomper": {
-    name: "Northern Chomper",
-    sizes: {
-      "70cm": { count: 3, item: "amethyst:sea_urchin" },
-      "65cm": { count: 2, item: "amethyst:sea_urchin" },
-      "63cm": { count: 2, item: "amethyst:sea_urchin" },
-      "54cm": { count: 1, item: "amethyst:sea_urchin" },
-      "50cm": { count: 1, item: "amethyst:sea_urchin" }
-    }
-  }
-};
-function trade_fish(eliana, player, item) {
-  const size = item.getLore()[0].split(" ")[1];
-  const trade_count = Math.min(4, item.amount);
-  const trade_info = fishing_trades[item.typeId].sizes[size];
-  const total_item_count = trade_info.count * trade_count;
-  const item_stack = new ItemStack3(trade_info.item);
-  utils_default.commands.give_item(player.name, total_item_count, item_stack);
-  if (item.amount <= trade_count) {
-    player.getComponent(EntityComponentTypes14.Equippable)?.setEquipment(EquipmentSlot11.Mainhand, void 0);
-  } else {
-    item.amount -= trade_count;
-    player.getComponent(EntityComponentTypes14.Equippable)?.setEquipment(EquipmentSlot11.Mainhand, item);
-  }
-  player.playSound("mob.villager.yes", { location: eliana.location });
-  if (Math.random() < 0.45) {
-    const reward_name = trade_info.item === "amethyst:sea_urchin" ? "\xA75Sea Urchin" : "\xA7bDiamond Nugget";
-    const reward_label = total_item_count === 1 ? reward_name : `${reward_name}s`;
-    const fish_label = trade_count === 1 ? `the \xA7l${fishing_trades[item.typeId].name}\xA7r` : `${trade_count}x \xA7l${fishing_trades[item.typeId].name}\xA7r`;
-    player.sendMessage(
-      `\xA7l\xA78[\xA7eEliana\xA78]\xA7r Thanks for ${fish_label}! That haul was worth \xA7l${total_item_count} ${reward_label}\xA7r.`
-    );
-  }
-  return { trade_count, fish_type: item.typeId };
-}
-function load_eliana_handler() {
-  let speaking_to = [];
-  world20.afterEvents.playerInteractWithEntity.subscribe(async (event) => {
-    const entity_id = event.target.typeId;
-    if (entity_id !== "amethyst:eliana_fisherman") return;
-    const entity_location = [event.target.location.x, event.target.location.y, event.target.location.z];
-    const dimension = event.player.dimension;
-    const mainhand = event.player.getComponent(EntityComponentTypes14.Equippable)?.getEquipment(EquipmentSlot11.Mainhand);
-    if (mainhand && mainhand.getLore().length === 1 && Object.keys(fishing_trades).includes(mainhand.typeId)) {
-      const trade_result = trade_fish(event.target, event.player, mainhand);
-      system21.run(() => {
-        for (let i = 0; i < trade_result.trade_count; i += 1) {
-          const interaction = new api_default.Interaction(
-            {
-              thorny_id: api_default.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
-              type: "use",
-              coordinates: entity_location,
-              reference: entity_id,
-              mainhand: trade_result.fish_type,
-              dimension: dimension.id
-            }
+        } else if (quest_progress && quest_progress.status == "failed") {
+          api_default.Relay.event(
+            `${thorny_user.gamertag} has failed *${quest_progress.quest.title}!*`,
+            "Better luck next time!",
+            "other"
           );
-          interaction.post_interaction();
+          await quest_progress.fail_quest(thorny_user.thorny_id);
+          api_default.QuestProgress.clear_cache(thorny_user);
         }
-      });
-    } else if (!speaking_to.includes(event.player.name)) {
-      speaking_to.push(event.player.name);
-      event.player.playSound("mob.villager.haggle", { location: event.target.location });
-      event.player.sendMessage(
-        `\xA7l\xA78[\xA7eEliana\xA78]\xA7r Hey, ${event.player.name}! I'm Eliana. I \xA7lloove\xA7r collecting fishes!`
-      );
-      await system21.waitTicks(40);
-      event.player.playSound("mob.villager.yes", { location: event.target.location });
-      event.player.sendMessage(
-        `\xA7l\xA78[\xA7eEliana\xA78]\xA7r Believe it or not, it's currently \xA7efish migration season\xA7r! It happens once every 10 years, and you're able to catch some totally rare fish during this period!`
-      );
-      await system21.waitTicks(100);
-      event.player.playSound("mob.villager.haggle", { location: event.target.location });
-      event.player.sendMessage(
-        `\xA7l\xA78[\xA7eEliana\xA78]\xA7r Let me know if you catch any, cause I'll buy them off of ya!`
-      );
-      await system21.waitTicks(30);
-      delete speaking_to[speaking_to.indexOf(event.player.name)];
+        interaction = api_default.Interaction.dequeue();
+      }
+      api_default.Interaction.set_processing(false);
     }
-  });
-  world20.afterEvents.itemUse.subscribe((event) => {
-    const item_id = event.itemStack.typeId;
-    const player = event.source;
-    const player_location = [player.location.x, player.location.y, player.location.z];
-    const dimension = player.dimension;
-    const mainhand = player.getComponent(EntityComponentTypes14.Equippable)?.getEquipment(EquipmentSlot11.Mainhand);
-    if (item_id === MinecraftItemTypes.FishingRod) {
-      system21.run(() => {
-        const interaction = new api_default.Interaction(
-          {
-            thorny_id: api_default.ThornyUser.fetch_user(player.name)?.thorny_id ?? 0,
-            type: "use",
-            coordinates: player_location,
-            reference: item_id,
-            mainhand: mainhand?.typeId ?? null,
-            dimension: dimension.id
-          }
-        );
-        interaction.post_interaction();
-      });
+  } catch (e) {
+    api_default.Interaction.set_processing(false);
+    throw e;
+  }
+}
+async function display_timer() {
+  for (let questCacheKey in api_default.QuestProgress.quest_cache) {
+    let active_objective = api_default.QuestProgress.quest_cache[questCacheKey].get_active_objective();
+    if (active_objective && active_objective.start_time && active_objective.objective.customizations.timer) {
+      let elapsed_seconds = Math.floor(((/* @__PURE__ */ new Date()).getTime() - active_objective.start_time.getTime()) / 1e3);
+      const timer_seconds = active_objective.objective.customizations.timer.seconds;
+      let remaining_seconds = Math.max(0, timer_seconds - elapsed_seconds);
+      let minutes = Math.floor(remaining_seconds / 60);
+      let seconds = remaining_seconds % 60;
+      let player = world22.getPlayers({ name: active_objective.thorny_user.gamertag })[0];
+      utils_default.commands.send_title(
+        player.dimension.id,
+        player.name,
+        "actionbar",
+        `\xA7l\xA7sObjective ${active_objective.objective.order_index + 1}\xA7r | ${minutes.toString().padStart(2, "0")}m${seconds.toString().padStart(2, "0")}s`
+      );
     }
-  });
+  }
+}
+function load_quest_loop() {
+  system23.runInterval(async () => {
+    await check_quests();
+  }, 1);
+  system23.runInterval(async () => {
+    await display_timer();
+  }, 10);
 }
 
-// behaviour_pack/scripts-dev/events/index.ts
-function load_world_event_handlers(guild_id2) {
-  load_block_event_handler();
-  load_chat_handler();
-  load_connections_handler(guild_id2);
-  load_entity_event_handler();
-  load_script_event_handler();
-  load_eliana_handler();
+// behaviour_pack/scripts-dev/features/whitelist.ts
+import { beforeEvents } from "@minecraft/server-admin";
+import { world as world23 } from "@minecraft/server";
+var BlockMessageMap = {
+  "no_whitelist": "You are not whitelisted. Check the guidelines to see how to whitelist yourself.",
+  "not_active": "WAIT! Don't go!\n\nCouldn't resist a peek, could you? We don't blame you. Let's get you back to where you belong.\n\nRejoin us at everthorn.net/apply or reach out on Discord. We'll get you right back in!",
+  "only_gamertag": "Almost there! Your gamertag is set up correctly. Now, just ask a CM to add you to the whitelist and you'll be good to go!",
+  "other": "You are not whitelisted."
+};
+async function blockJoin(join_event, reason = "other") {
+  join_event.disallowJoin(BlockMessageMap[reason] || "You are not whitelisted.");
+  api_default.Relay.event(
+    `${join_event.name} blocked from joining`,
+    BlockMessageMap[reason] || "You are not whitelisted.",
+    "other"
+  );
+  console.log(`[Admin] ${join_event.name} blocked from joining. Reason: ${reason}`);
+}
+function loadWhitelistFeature(guild_id2) {
+  world23.afterEvents.worldLoad.subscribe(() => {
+    beforeEvents.asyncPlayerJoin.subscribe(async (join_event) => {
+      try {
+        const thorny_user = await api_default.ThornyUser.get_user_from_api(guild_id2, join_event.name);
+        if (!thorny_user.active) {
+          await blockJoin(join_event, "not_active");
+          return;
+        }
+        if (thorny_user.whitelist !== join_event.name) {
+          await blockJoin(join_event, "only_gamertag");
+          return;
+        }
+        join_event.allowJoin();
+      } catch (e) {
+        await blockJoin(join_event, "no_whitelist");
+      }
+    });
+  });
 }
 
 // behaviour_pack/scripts-dev/main.ts
-import {
-  CommandPermissionLevel,
-  CustomCommandParamType,
-  CustomCommandStatus,
-  EntityComponentTypes as EntityComponentTypes15,
-  EquipmentSlot as EquipmentSlot12,
-  system as system22,
-  world as world21
-} from "@minecraft/server";
 var guild_id = "1213827104945471538";
-WorldCache.load_world(guild_id).then();
-load_loops();
-load_custom_components(guild_id);
-load_world_event_handlers(guild_id);
-system22.beforeEvents.startup.subscribe((initEvent) => {
-  system22.run(() => {
-    api_default.Relay.event(
-      "Amethyst successfully loaded",
-      "Don't see this on server startup? Ping a CM! It's important!",
-      "other"
-    );
-  });
-  const loreCommand = {
-    name: "amethyst:lore",
-    description: "Add a line to the lore, or remove all lore if blank",
-    permissionLevel: CommandPermissionLevel.GameDirectors,
-    optionalParameters: [{ type: CustomCommandParamType.String, name: "text" }]
-  };
-  initEvent.customCommandRegistry.registerCommand(
-    loreCommand,
-    (origin, ...args) => {
-      try {
-        const mainhand = origin.sourceEntity?.getComponent(EntityComponentTypes15.Equippable)?.getEquipment(EquipmentSlot12.Mainhand);
-        system22.run(() => {
-          if (args[0] === null || args[0] === void 0 || args[0] === "") {
-            mainhand?.setLore();
-          } else {
-            const lore = mainhand?.getLore();
-            lore?.push(args[0]);
-            mainhand?.setLore(lore);
-          }
-          origin.sourceEntity?.getComponent(EntityComponentTypes15.Equippable)?.setEquipment(EquipmentSlot12.Mainhand, mainhand);
-        });
-      } catch (e) {
-        return {
-          status: CustomCommandStatus.Failure,
-          message: e.message
-        };
-      }
-      return {
-        status: CustomCommandStatus.Success
-      };
-    }
-  );
-});
-world21.afterEvents.worldLoad.subscribe(() => {
-  load_admin_connections_handler(guild_id);
-});
+function load(name, fn, ...args) {
+  try {
+    fn(...args);
+    console.log(`[Amethyst] Loaded ${name}`);
+  } catch (e) {
+    console.log(`[Amethyst] Error loading ${name}: ${e}`);
+  }
+}
+load("Block Components", loadBlockComponents);
+load("Commands", loadCommands);
+load("Dragon Fight Feature", loadDragonFightFeature);
+load("Interactions Logging Feature", loadInteractionHandlers);
+load("Item Components", loadItemComponents);
+load("Wine And Beer Update Features", loadWineAndBeerFeature);
+load("World Border Feature", loadWorldBorder, guild_id);
+load("Chat Decoration Feature", loadChatDecorationFeature);
+load("Connection Logging Feature", loadConnectionsFeature);
+load("Location Logging Feature", loadLocationLogger);
+load("Quests Feature", load_quest_loop);
+load("Whitelist Feature", loadWhitelistFeature, guild_id);

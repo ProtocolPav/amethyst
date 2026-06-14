@@ -1,0 +1,76 @@
+{
+    "format_version": "1.21.0",
+    "minecraft:block": {
+        "description": {
+            "identifier": "amethyst:copper_pipe",
+            "traits": {
+                "minecraft:placement_direction": {
+                    "enabled_states": [
+                        "minecraft:facing_direction"
+                    ]
+                }
+            }
+        },
+        "components": {
+            "minecraft:geometry": {
+                "identifier": "geometry.copper_pipe"
+            },
+            "minecraft:material_instances": {
+                "*": {
+                    "texture": "copper_pipe",
+                    "render_method": "opaque"
+                },
+                "connector": {
+                    "texture": "copper_pipe_front",
+                    "render_method": "opaque"
+                }
+            },
+            "minecraft:collision_box": {
+                "origin": [-4, 4, -8],
+                "size": [8, 8, 16]
+            },
+            "minecraft:selection_box": {
+                "origin": [-4, 4, -8],
+                "size": [8, 8, 16]
+            }
+        },
+        "permutations": [
+            {
+                "condition": "q.block_state('minecraft:facing_direction') == 'north'",
+                "components": {
+                    "minecraft:transformation": { "rotation": [0, 0, 0] }
+                }
+            },
+            {
+                "condition": "q.block_state('minecraft:facing_direction') == 'south'",
+                "components": {
+                    "minecraft:transformation": { "rotation": [0, 180, 0] }
+                }
+            },
+            {
+                "condition": "q.block_state('minecraft:facing_direction') == 'east'",
+                "components": {
+                    "minecraft:transformation": { "rotation": [0, -90, 0] }
+                }
+            },
+            {
+                "condition": "q.block_state('minecraft:facing_direction') == 'west'",
+                "components": {
+                    "minecraft:transformation": { "rotation": [0, 90, 0] }
+                }
+            },
+            {
+                "condition": "q.block_state('minecraft:facing_direction') == 'up'",
+                "components": {
+                    "minecraft:transformation": { "rotation": [-90, 0, 0] }
+                }
+            },
+            {
+                "condition": "q.block_state('minecraft:facing_direction') == 'down'",
+                "components": {
+                    "minecraft:transformation": { "rotation": [90, 0, 0] }
+                }
+            }
+        ]
+    }
+}
