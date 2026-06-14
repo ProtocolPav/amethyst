@@ -2,7 +2,7 @@
 	"format_version": "1.21.50",
 	"minecraft:block": {
 		"description": {
-			"identifier": "amethyst:everthorn_e",
+			"identifier": "amethyst:prism_e",
 			"menu_category": {
 				"category": "construction"
 			},
@@ -16,7 +16,7 @@
 			}
 		},
 		"components": {
-			"minecraft:display_name": "Thornite E",
+			"minecraft:display_name": "Prism E",
             "tag:amethyst:everthorn_e": {},
 			"minecraft:collision_box": {
 				"origin": [-8, 0, 7],
@@ -28,10 +28,10 @@
 			},
 			"minecraft:destructible_by_mining": true,
 			"minecraft:destructible_by_explosion": true,
-			"minecraft:geometry": "geometry.everthorn_e",
+			"minecraft:geometry": "geometry.prism_e",
 			"minecraft:material_instances": {
 				"*": {
-					"texture": "thornite_e",
+					"texture": "prism_e",
 					"render_method": "alpha_test"
 				}
 			},
