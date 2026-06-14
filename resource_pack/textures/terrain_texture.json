@@ -27,6 +27,30 @@
 		},
 		"draconic_heart": {
 			"textures": "textures/blocks/draconic_heart.png"
-		}
-	}
+		},
+        "beam_energizer": {
+            "textures": "textures/blocks/beam_energizer_turret.png"
+        },
+        "computer": {
+            "textures": "textures/blocks/control_panel.png"
+        },
+        "copper_pipe": {
+            "textures": "textures/blocks/copper_pipe.png"
+        },
+        "copper_pipe_front": {
+            "textures": "textures/blocks/copper_pipe_front.png"
+        },
+        "tesla_coil": {
+            "textures": "textures/blocks/transformer_hv.png"
+        },
+        "computer_battery_side": {
+            "textures": "textures/blocks/computer_battery_side.png"
+        },
+        "computer_battery_top": {
+            "textures": "textures/blocks/computer_battery_top.png"
+        },
+        "molecule_combinator": {
+            "textures": "textures/blocks/molecule_combinator.png"
+        }
+    }
 }

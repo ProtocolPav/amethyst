@@ -1,0 +1,62 @@
+{
+	"format_version": "1.21.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.copper_pipe",
+				"texture_width": 16,
+				"texture_height": 16,
+				"visible_bounds_width": 2,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "bone",
+					"pivot": [8, 0, -8],
+					"cubes": [
+						{
+							"origin": [-4, 4, -6],
+							"size": [8, 8, 9],
+							"uv": {
+								"east": {"uv": [16, 5], "uv_size": [-8, 9], "uv_rotation": 90},
+								"west": {"uv": [8, 14], "uv_size": [8, -9], "uv_rotation": 90},
+								"up": {"uv": [8, 14], "uv_size": [8, -9]},
+								"down": {"uv": [16, 5], "uv_size": [-8, 9]}
+							}
+						},
+						{
+							"origin": [-4, 4, 3],
+							"size": [8, 8, 5],
+							"uv": {
+								"east": {"uv": [8, 8], "uv_size": [-8, 5], "uv_rotation": 90},
+								"south": {"uv": [0, 0], "uv_size": [8, 8]},
+								"west": {"uv": [0, 13], "uv_size": [8, -5], "uv_rotation": 90},
+								"up": {"uv": [0, 13], "uv_size": [8, -5]},
+								"down": {"uv": [8, 8], "uv_size": [-8, 5]}
+							}
+						}
+					]
+				},
+				{
+					"name": "connector",
+					"pivot": [8, 0, -8],
+					"cubes": [
+						{
+							"origin": [-5, 3, -8],
+							"size": [10, 10, 2],
+							"uv": {
+								"north": {"uv": [2, 0], "uv_size": [10, 10]},
+								"east": {"uv": [0, 0], "uv_size": [2, 10]},
+								"south": {"uv": [2, 0], "uv_size": [10, 10]},
+								"west": {"uv": [2, 0], "uv_size": [-2, 10]},
+								"up": {"uv": [0, 10], "uv_size": [2, -10], "uv_rotation": 90},
+								"down": {"uv": [2, 10], "uv_size": [-2, -10], "uv_rotation": 90}
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}
