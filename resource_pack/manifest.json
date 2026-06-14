@@ -7,7 +7,7 @@
 		]
 	},
 	"header": {
-		"name": "Amethyst RP v2.17.0",
+		"name": "Amethyst RP v2.18.0",
 		"description": "Extends Geode's capabilities with in-game access",
 		"min_engine_version": [ 1, 21, 70 ],
 		"uuid": "1ced0423-4bcf-4970-9749-b047e89d365c",
