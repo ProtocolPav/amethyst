@@ -48,6 +48,9 @@
         },
         "computer_battery_top": {
             "textures": "textures/blocks/computer_battery_top.png"
+        },
+        "molecule_combinator": {
+            "textures": "textures/blocks/molecule_combinator.png"
         }
     }
 }
