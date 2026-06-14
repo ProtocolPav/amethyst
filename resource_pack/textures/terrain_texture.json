@@ -42,6 +42,12 @@
         },
         "tesla_coil": {
             "textures": "textures/blocks/transformer_hv.png"
+        },
+        "computer_battery_side": {
+            "textures": "textures/blocks/computer_battery_side.png"
+        },
+        "computer_battery_top": {
+            "textures": "textures/blocks/computer_battery_top.png"
         }
     }
 }
