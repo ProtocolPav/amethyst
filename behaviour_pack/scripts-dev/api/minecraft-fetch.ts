@@ -38,6 +38,8 @@ export const minecraftFetch = async <T>(
 
     if (options.body) {
         request.body = options.body.toString();
+    } else if (request.method === HttpRequestMethod.Delete) {
+        request.body = '';
     }
 
     const response = await http.request(request);

@@ -3313,6 +3313,8 @@ var minecraftFetch = async (url, options = {}) => {
   ];
   if (options.body) {
     request.body = options.body.toString();
+  } else if (request.method === HttpRequestMethod2.Delete) {
+    request.body = "";
   }
   const response = await http2.request(request);
   if (response.status < 200 || response.status >= 300) {
