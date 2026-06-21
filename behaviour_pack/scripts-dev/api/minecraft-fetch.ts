@@ -25,8 +25,6 @@ export const minecraftFetch = async <T>(
     if (options.headers) {
         if (Array.isArray(options.headers)) {
             extraHeaders = options.headers as Array<[string, string]>;
-        } else if (options.headers instanceof Headers) {
-            options.headers.forEach((v, k) => extraHeaders.push([k, v]));
         } else {
             extraHeaders = Object.entries(options.headers as Record<string, string>);
         }
