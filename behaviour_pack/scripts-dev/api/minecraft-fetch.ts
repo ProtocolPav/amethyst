@@ -1,7 +1,7 @@
 import {http, HttpHeader, HttpRequest, HttpRequestMethod,} from '@minecraft/server-net';
 import {getAccessToken} from "./token";
 
-const BASE_URL = 'http://nexuscore:8000';
+const BASE_URL = 'http://nexuscore:8000/api';
 
 const METHOD_MAP: Record<string, HttpRequestMethod> = {
     GET:    HttpRequestMethod.Get,
@@ -13,27 +13,32 @@ const METHOD_MAP: Record<string, HttpRequestMethod> = {
 
 export const minecraftFetch = async <T>(
     url: string,
-    options: {
-        method?: string;
-        headers?: Record<string, string>;
-        body?: string;
-    } = {},
+    options: RequestInit = {},
 ): Promise<T> => {
     const token = await getAccessToken();
     const request = new HttpRequest(`${BASE_URL}${url}`);
 
-    request.method = METHOD_MAP[options.method?.toUpperCase() ?? 'GET'] ?? HttpRequestMethod.Get;
+    request.method = METHOD_MAP[(options.method ?? 'GET').toUpperCase()] ?? HttpRequestMethod.Get;
+
+    let extraHeaders: Array<[string, string]> = [];
+    if (options.headers) {
+        if (Array.isArray(options.headers)) {
+            extraHeaders = options.headers as Array<[string, string]>;
+        } else if (options.headers instanceof Headers) {
+            options.headers.forEach((v, k) => extraHeaders.push([k, v]));
+        } else {
+            extraHeaders = Object.entries(options.headers as Record<string, string>);
+        }
+    }
 
     request.headers = [
         new HttpHeader('Content-Type', 'application/json'),
         new HttpHeader('Authorization', `Bearer ${token}`),
-        ...Object.entries(options.headers ?? {}).map(
-            ([k, v]) => new HttpHeader(k, v)
-        ),
+        ...extraHeaders.map(([k, v]) => new HttpHeader(k, v)),
     ];
 
     if (options.body) {
-        request.body = options.body;
+        request.body = options.body.toString();
     }
 
     const response = await http.request(request);

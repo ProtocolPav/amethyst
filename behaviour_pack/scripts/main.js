@@ -1,3 +1,48 @@
+// behaviour_pack/scripts-dev/polyfills/url-search-params.ts
+if (typeof globalThis.URLSearchParams === "undefined") {
+  globalThis.URLSearchParams = class URLSearchParams {
+    constructor(init) {
+      this.params = [];
+      if (!init) return;
+      if (typeof init === "string") {
+        init.replace(/^\?/, "").split("&").forEach((pair) => {
+          const [k, v] = pair.split("=");
+          if (k) this.params.push([decodeURIComponent(k), decodeURIComponent(v ?? "")]);
+        });
+      } else if (Array.isArray(init)) {
+        this.params = init.map(([k, v]) => [k, v]);
+      } else {
+        this.params = Object.entries(init);
+      }
+    }
+    append(key, value) {
+      this.params.push([key, value]);
+    }
+    delete(key) {
+      this.params = this.params.filter(([k]) => k !== key);
+    }
+    get(key) {
+      return this.params.find(([k]) => k === key)?.[1] ?? null;
+    }
+    getAll(key) {
+      return this.params.filter(([k]) => k === key).map(([, v]) => v);
+    }
+    has(key) {
+      return this.params.some(([k]) => k === key);
+    }
+    set(key, value) {
+      this.delete(key);
+      this.params.push([key, value]);
+    }
+    toString() {
+      return this.params.map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join("&");
+    }
+    forEach(cb) {
+      this.params.forEach(([k, v]) => cb(v, k));
+    }
+  };
+}
+
 // behaviour_pack/scripts-dev/features/border.ts
 import { world, system, EntityDamageCause } from "@minecraft/server";
 
@@ -3723,7 +3768,7 @@ var secondsInWeek = secondsInDay * 7;
 var secondsInYear = secondsInDay * daysInYear;
 var secondsInMonth = secondsInYear / 12;
 var secondsInQuarter = secondsInMonth * 3;
-var constructFromSymbol = Symbol.for("constructDateFrom");
+var constructFromSymbol = /* @__PURE__ */ Symbol.for("constructDateFrom");
 
 // node_modules/date-fns/constructFrom.js
 function constructFrom(date, value) {
@@ -6460,8 +6505,104 @@ function loadInteractionHandlers() {
 
 // behaviour_pack/scripts-dev/features/connections.ts
 import { world as world20 } from "@minecraft/server";
+
+// behaviour_pack/scripts-dev/api/minecraft-fetch.ts
+import { http as http10, HttpHeader as HttpHeader8, HttpRequest as HttpRequest8, HttpRequestMethod as HttpRequestMethod8 } from "@minecraft/server-net";
+
+// behaviour_pack/scripts-dev/api/token.ts
+import { secrets } from "@minecraft/server-admin";
+import { http as http9, HttpHeader as HttpHeader7, HttpRequest as HttpRequest7, HttpRequestMethod as HttpRequestMethod7 } from "@minecraft/server-net";
+var BASE_URL = "http://nexuscore:8000/api";
+var cachedToken = null;
+var tokenExpiresAt = 0;
+async function getAccessToken() {
+  if (cachedToken && Date.now() < tokenExpiresAt) {
+    return cachedToken;
+  }
+  const clientCredentials = secrets.get("NEXUSCORE_CLIENT_CREDENTIALS_B64");
+  const request = new HttpRequest7(`${BASE_URL}/auth/token`);
+  request.method = HttpRequestMethod7.Post;
+  request.headers = [
+    new HttpHeader7("Content-Type", "application/x-www-form-urlencoded"),
+    new HttpHeader7("Authorization", clientCredentials ? clientCredentials : "")
+  ];
+  request.body = new URLSearchParams({ grant_type: "client_credentials" }).toString();
+  const response = await http9.request(request);
+  if (response.status !== 200) {
+    throw new Error(`OAuth token fetch failed: ${response.status} ${response.body}`);
+  }
+  const data = JSON.parse(response.body);
+  cachedToken = data.access_token;
+  tokenExpiresAt = Date.now() + (data.expires_in - 30) * 1e3;
+  return cachedToken;
+}
+
+// behaviour_pack/scripts-dev/api/minecraft-fetch.ts
+var BASE_URL2 = "http://nexuscore:8000/api";
+var METHOD_MAP = {
+  GET: HttpRequestMethod8.Get,
+  POST: HttpRequestMethod8.Post,
+  PUT: HttpRequestMethod8.Put,
+  DELETE: HttpRequestMethod8.Delete,
+  HEAD: HttpRequestMethod8.Head
+};
+var minecraftFetch = async (url, options = {}) => {
+  const token = await getAccessToken();
+  const request = new HttpRequest8(`${BASE_URL2}${url}`);
+  request.method = METHOD_MAP[(options.method ?? "GET").toUpperCase()] ?? HttpRequestMethod8.Get;
+  let extraHeaders = [];
+  if (options.headers) {
+    if (Array.isArray(options.headers)) {
+      extraHeaders = options.headers;
+    } else if (options.headers instanceof Headers) {
+      options.headers.forEach((v, k) => extraHeaders.push([k, v]));
+    } else {
+      extraHeaders = Object.entries(options.headers);
+    }
+  }
+  request.headers = [
+    new HttpHeader8("Content-Type", "application/json"),
+    new HttpHeader8("Authorization", `Bearer ${token}`),
+    ...extraHeaders.map(([k, v]) => new HttpHeader8(k, v))
+  ];
+  if (options.body) {
+    request.body = options.body.toString();
+  }
+  const response = await http10.request(request);
+  if (response.status < 200 || response.status >= 300) {
+    throw new Error(`HTTP ${response.status}: ${response.body}`);
+  }
+  return JSON.parse(response.body);
+};
+
+// behaviour_pack/scripts-dev/api/nexuscore/users/users.ts
+var getLookupUserV1GuildsMeUsersLookupGetUrl = (params) => {
+  const normalizedParams = new URLSearchParams();
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== void 0) {
+      normalizedParams.append(key, value === null ? "null" : String(value));
+    }
+  });
+  const stringifiedParams = normalizedParams.toString();
+  return stringifiedParams.length > 0 ? `/v1/guilds/me/users/lookup?${stringifiedParams}` : `/v1/guilds/me/users/lookup`;
+};
+var lookupUserV1GuildsMeUsersLookupGet = async (params, options) => {
+  return minecraftFetch(
+    getLookupUserV1GuildsMeUsersLookupGetUrl(params),
+    {
+      ...options,
+      method: "GET"
+    }
+  );
+};
+
+// behaviour_pack/scripts-dev/features/connections.ts
 function loadConnectionsFeature() {
   world20.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
+    const newThornyTest = await lookupUserV1GuildsMeUsersLookupGet(
+      { gamertag: spawn_event.player.name }
+    );
+    spawn_event.player.sendMessage(newThornyTest.role);
     if (spawn_event.initialSpawn) {
       try {
         const thorny_user = api_default.ThornyUser.fetch_user(spawn_event.player.name);
@@ -6588,47 +6729,8 @@ function load_quest_loop() {
   }, 10);
 }
 
-// behaviour_pack/scripts-dev/features/whitelist.ts
-import { beforeEvents } from "@minecraft/server-admin";
-import { world as world23 } from "@minecraft/server";
-var BlockMessageMap = {
-  "no_whitelist": "You are not whitelisted. Check the guidelines to see how to whitelist yourself.",
-  "not_active": "WAIT! Don't go!\n\nCouldn't resist a peek, could you? We don't blame you. Let's get you back to where you belong.\n\nRejoin us at everthorn.net/apply or reach out on Discord. We'll get you right back in!",
-  "only_gamertag": "Almost there! Your gamertag is set up correctly. Now, just ask a CM to add you to the whitelist and you'll be good to go!",
-  "other": "You are not whitelisted."
-};
-async function blockJoin(join_event, reason = "other") {
-  join_event.disallowJoin(BlockMessageMap[reason] || "You are not whitelisted.");
-  api_default.Relay.event(
-    `${join_event.name} blocked from joining`,
-    BlockMessageMap[reason] || "You are not whitelisted.",
-    "other"
-  );
-  console.log(`[Admin] ${join_event.name} blocked from joining. Reason: ${reason}`);
-}
-function loadWhitelistFeature(guild_id2) {
-  world23.afterEvents.worldLoad.subscribe(() => {
-    beforeEvents.asyncPlayerJoin.subscribe(async (join_event) => {
-      try {
-        const thorny_user = await api_default.ThornyUser.get_user_from_api(guild_id2, join_event.name);
-        if (!thorny_user.active) {
-          await blockJoin(join_event, "not_active");
-          return;
-        }
-        if (thorny_user.whitelist !== join_event.name) {
-          await blockJoin(join_event, "only_gamertag");
-          return;
-        }
-        join_event.allowJoin();
-      } catch (e) {
-        await blockJoin(join_event, "no_whitelist");
-      }
-    });
-  });
-}
-
 // behaviour_pack/scripts-dev/main.ts
-var guild_id = "1213827104945471538";
+var guild_id = "611008530077712395";
 function load(name, fn, ...args) {
   try {
     fn(...args);
@@ -6648,4 +6750,3 @@ load("Chat Decoration Feature", loadChatDecorationFeature);
 load("Connection Logging Feature", loadConnectionsFeature);
 load("Location Logging Feature", loadLocationLogger);
 load("Quests Feature", load_quest_loop);
-load("Whitelist Feature", loadWhitelistFeature, guild_id);

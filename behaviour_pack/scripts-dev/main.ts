@@ -1,3 +1,5 @@
+import './polyfills/url-search-params';
+
 import loadWorldBorder from "./features/border";
 import loadItemComponents from "./features/items";
 import loadBlockComponents from "./features/blocks";
