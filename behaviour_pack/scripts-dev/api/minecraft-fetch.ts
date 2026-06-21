@@ -4,11 +4,12 @@ import {getAccessToken} from "./token";
 const BASE_URL = 'http://nexuscore:8000/api';
 
 const METHOD_MAP: Record<string, HttpRequestMethod> = {
-    GET:    HttpRequestMethod.Get,
-    POST:   HttpRequestMethod.Post,
-    PUT:    HttpRequestMethod.Put,
+    GET: HttpRequestMethod.Get,
+    POST: HttpRequestMethod.Post,
+    PUT: HttpRequestMethod.Put,
+    PATCH: HttpRequestMethod.Put,
     DELETE: HttpRequestMethod.Delete,
-    HEAD:   HttpRequestMethod.Head,
+    HEAD: HttpRequestMethod.Head,
 };
 
 export const minecraftFetch = async <T>(
