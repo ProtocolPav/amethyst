@@ -1,5 +1,8 @@
 import utils from "../utils";
-import {lookupUserV1GuildsMeUsersLookupGet, partialUpdateUserV1GuildsMeUsersThornyIdPut} from "./nexuscore/users/users";
+import {
+    lookupUserV1GuildsMeUsersLookupGet,
+    partialUpdateUserV1GuildsMeUsersThornyIdPatch, partialUpdateUserV1GuildsMeUsersThornyIdPut
+} from "./nexuscore/users/users";
 import {createConnectionV1GuildsMeConnectionPost} from "./nexuscore/guilds/guilds";
 
 interface IThornyUser {
@@ -98,7 +101,7 @@ export default class ThornyUser implements IThornyUser {
      * Currently only updates balance.
      */
     public async update() {
-        await partialUpdateUserV1GuildsMeUsersThornyIdPut(this.thorny_id, {
+        await partialUpdateUserV1GuildsMeUsersThornyIdPatch(this.thorny_id, {
             "balance": this.balance,
             "location": this.location as [number, number, number],
             "dimension": this.dimension,
