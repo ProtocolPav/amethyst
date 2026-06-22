@@ -8,6 +8,7 @@ export default defineConfig({
             target: './behaviour_pack/scripts-dev/api/nexuscore/client.ts',
             schemas: './behaviour_pack/scripts-dev/api/nexuscore/model',
             client: 'fetch',
+            clean: true,
             override: {
                 fetch: {
                     includeHttpResponseReturnType: false,
