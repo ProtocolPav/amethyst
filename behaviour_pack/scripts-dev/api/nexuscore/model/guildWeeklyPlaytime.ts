@@ -6,7 +6,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface WeeklyPlaytime {
+export interface GuildWeeklyPlaytime {
   /** The week of the year this data is about */
   week: number;
   /** The total playtime that week in seconds */

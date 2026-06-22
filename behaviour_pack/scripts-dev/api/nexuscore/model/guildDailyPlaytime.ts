@@ -6,7 +6,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface SrcModelsGuildsPlaytimeDailyPlaytime {
+export interface GuildDailyPlaytime {
   /** The day this data is about */
   day: string;
   /** The total playtime that day in seconds */

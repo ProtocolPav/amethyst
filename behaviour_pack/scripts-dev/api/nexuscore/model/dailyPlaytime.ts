@@ -6,7 +6,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface SrcModelsUsersPlaytimeDailyPlaytime {
+export interface DailyPlaytime {
   /** Total playtime in seconds */
   day: string;
   /** The day's playtime in seconds */

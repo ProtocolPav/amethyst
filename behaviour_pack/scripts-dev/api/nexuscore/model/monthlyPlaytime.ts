@@ -6,7 +6,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface SrcModelsUsersPlaytimeMonthlyPlaytime {
+export interface MonthlyPlaytime {
   /** Total playtime in seconds */
   month: string;
   /** The month's playtime in seconds */

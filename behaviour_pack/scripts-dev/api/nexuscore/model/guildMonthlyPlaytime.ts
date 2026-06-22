@@ -6,7 +6,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface SrcModelsGuildsPlaytimeMonthlyPlaytime {
+export interface GuildMonthlyPlaytime {
   /** The month this data is about. Always the first day of that month */
   month: string;
   /** The total playtime that month in seconds */
