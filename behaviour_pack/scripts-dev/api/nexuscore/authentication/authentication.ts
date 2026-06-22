@@ -25,18 +25,22 @@ export const getGetTokenAuthTokenPostUrl = () => {
 /**
  * @summary Get Token
  */
-export const getTokenAuthTokenPost = async (bodyGetTokenAuthTokenPost: BodyGetTokenAuthTokenPost, options?: RequestInit): Promise<TokenResponse> => {
+export const getTokenAuthTokenPost = async (bodyGetTokenAuthTokenPost?: BodyGetTokenAuthTokenPost, options?: RequestInit): Promise<TokenResponse> => {
     const formUrlEncoded = new URLSearchParams();
-if(bodyGetTokenAuthTokenPost.grant_type !== undefined) {
+if(bodyGetTokenAuthTokenPost?.grant_type !== undefined) {
  formUrlEncoded.append(`grant_type`, bodyGetTokenAuthTokenPost.grant_type);
  }
-formUrlEncoded.append(`client_id`, bodyGetTokenAuthTokenPost.client_id);
-formUrlEncoded.append(`client_secret`, bodyGetTokenAuthTokenPost.client_secret);
-if(bodyGetTokenAuthTokenPost.scope !== undefined) {
+if(bodyGetTokenAuthTokenPost?.scope !== undefined) {
  formUrlEncoded.append(`scope`, bodyGetTokenAuthTokenPost.scope);
  }
-if(bodyGetTokenAuthTokenPost.guild_id !== undefined && bodyGetTokenAuthTokenPost.guild_id !== null) {
+if(bodyGetTokenAuthTokenPost?.guild_id !== undefined && bodyGetTokenAuthTokenPost.guild_id !== null) {
  formUrlEncoded.append(`guild_id`, bodyGetTokenAuthTokenPost.guild_id.toString())
+ }
+if(bodyGetTokenAuthTokenPost?.client_id !== undefined && bodyGetTokenAuthTokenPost.client_id !== null) {
+ formUrlEncoded.append(`client_id`, bodyGetTokenAuthTokenPost.client_id);
+ }
+if(bodyGetTokenAuthTokenPost?.client_secret !== undefined && bodyGetTokenAuthTokenPost.client_secret !== null) {
+ formUrlEncoded.append(`client_secret`, bodyGetTokenAuthTokenPost.client_secret);
  }
 
   return minecraftFetch<TokenResponse>(getGetTokenAuthTokenPostUrl(),

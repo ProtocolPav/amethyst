@@ -6,7 +6,7 @@ import Interaction from "../interaction";
 import utils from "../../utils";
 import QuestProgress from "./quest_progress";
 import {ITarget} from "../../types/objective";
-import {partialUpdateQuestProgressV1GuildsMeQuestsRouterProgressProgressIdPatch} from "../nexuscore/quests/quests";
+import {partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch} from "../nexuscore/quests/quests";
 
 interface RequirementCheck {
     increment_progress: boolean;
@@ -38,7 +38,7 @@ export class ObjectiveProgress {
     }
 
     public async update_user_objective() {
-        await partialUpdateQuestProgressV1GuildsMeQuestsRouterProgressProgressIdPatch(this.progress_id, {
+        await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch(this.progress_id, {
             objectives: [
                 {
                     objective_id: this.objective_id,

@@ -6,9 +6,9 @@ import {IQuest} from "../../types/quest";
 import {ObjectiveProgress} from "./objective_progress";
 import Interaction from "../interaction";
 import {
-    failActiveQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdActiveDelete,
-    getActiveQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdActiveGet, getQuestV1GuildsMeQuestsRouterQuestIdGet,
-    partialUpdateQuestProgressV1GuildsMeQuestsRouterProgressProgressIdPatch
+    failActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDelete,
+    getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet, getQuestV1GuildsMeQuestsQuestIdGet,
+    partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch
 } from "../nexuscore/quests/quests";
 
 export default class QuestProgress {
@@ -43,7 +43,7 @@ export default class QuestProgress {
      * Updates the user's Quest and Objective Progress
      */
     public async update_user_quest() {
-        await partialUpdateQuestProgressV1GuildsMeQuestsRouterProgressProgressIdPatch(this.progress_id, {
+        await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch(this.progress_id, {
             "start_time": this.start_time ? this.start_time.toISOString() : null,
             "end_time": this.end_time ? this.end_time.toISOString() : null,
             "status": this.status
@@ -58,7 +58,7 @@ export default class QuestProgress {
     public async fail_quest(thorny_id: number): Promise<void> {
         this.status = 'failed'
 
-        await failActiveQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdActiveDelete(thorny_id)
+        await failActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDelete(thorny_id)
     }
 
     /**
@@ -81,7 +81,7 @@ export default class QuestProgress {
         try {
             const thorny_id = thorny_user.thorny_id
 
-            const quest_progress_response = await getActiveQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdActiveGet(thorny_id)
+            const quest_progress_response = await getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet(thorny_id)
 
             if (quest_progress_response) {
                 const quest_progress_data: IQuestProgress = quest_progress_response as unknown as IQuestProgress;
@@ -93,7 +93,7 @@ export default class QuestProgress {
                 }
 
                 // Otherwise, create the QuestProgress object and cache it
-                const quest_response = await getQuestV1GuildsMeQuestsRouterQuestIdGet(quest_id)
+                const quest_response = await getQuestV1GuildsMeQuestsQuestIdGet(quest_id)
 
                 const quest = new Quest( quest_response as unknown as IQuest )
 

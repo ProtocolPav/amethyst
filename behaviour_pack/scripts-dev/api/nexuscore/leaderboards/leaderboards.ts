@@ -83,21 +83,21 @@ export const getLevelsLeaderboardV1GuildsMeLeaderboardLevelsGet = async ( option
 );}
 
 
-export const getGetQuestsLeaderboardV1GuildsMeLeaderboardQuestsRouterGetUrl = () => {
+export const getGetQuestsLeaderboardV1GuildsMeLeaderboardQuestsGetUrl = () => {
 
 
 
 
-  return `/v1/guilds/me/leaderboard/quests_router`
+  return `/v1/guilds/me/leaderboard/quests`
 }
 
 /**
  * Returns the guild's playtime leaderboard, in order. Playtime is in seconds.
  * @summary Get Quests Leaderboard
  */
-export const getQuestsLeaderboardV1GuildsMeLeaderboardQuestsRouterGet = async ( options?: RequestInit): Promise<LeaderboardModel> => {
+export const getQuestsLeaderboardV1GuildsMeLeaderboardQuestsGet = async ( options?: RequestInit): Promise<LeaderboardModel> => {
 
-  return minecraftFetch<LeaderboardModel>(getGetQuestsLeaderboardV1GuildsMeLeaderboardQuestsRouterGetUrl(),
+  return minecraftFetch<LeaderboardModel>(getGetQuestsLeaderboardV1GuildsMeLeaderboardQuestsGetUrl(),
   {
     ...options,
     method: 'GET'

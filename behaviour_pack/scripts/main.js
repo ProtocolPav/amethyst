@@ -5464,48 +5464,48 @@ ${this.get_requirements_string()}
 };
 
 // behaviour_pack/scripts-dev/api/nexuscore/quests/quests.ts
-var getGetQuestV1GuildsMeQuestsRouterQuestIdGetUrl = (questId) => {
-  return `/v1/guilds/me/quests_router/${questId}`;
+var getGetQuestV1GuildsMeQuestsQuestIdGetUrl = (questId) => {
+  return `/v1/guilds/me/quests/${questId}`;
 };
-var getQuestV1GuildsMeQuestsRouterQuestIdGet = async (questId, options) => {
+var getQuestV1GuildsMeQuestsQuestIdGet = async (questId, options) => {
   return minecraftFetch(
-    getGetQuestV1GuildsMeQuestsRouterQuestIdGetUrl(questId),
+    getGetQuestV1GuildsMeQuestsQuestIdGetUrl(questId),
     {
       ...options,
       method: "GET"
     }
   );
 };
-var getGetActiveQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdActiveGetUrl = (thornyId) => {
-  return `/v1/guilds/me/quests_router/progress/user/${thornyId}/active`;
+var getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl = (thornyId) => {
+  return `/v1/guilds/me/quests/progress/user/${thornyId}/active`;
 };
-var getActiveQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdActiveGet = async (thornyId, options) => {
+var getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet = async (thornyId, options) => {
   return minecraftFetch(
-    getGetActiveQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdActiveGetUrl(thornyId),
+    getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl(thornyId),
     {
       ...options,
       method: "GET"
     }
   );
 };
-var getFailActiveQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdActiveDeleteUrl = (thornyId) => {
-  return `/v1/guilds/me/quests_router/progress/user/${thornyId}/active`;
+var getFailActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDeleteUrl = (thornyId) => {
+  return `/v1/guilds/me/quests/progress/user/${thornyId}/active`;
 };
-var failActiveQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdActiveDelete = async (thornyId, options) => {
+var failActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDelete = async (thornyId, options) => {
   return minecraftFetch(
-    getFailActiveQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdActiveDeleteUrl(thornyId),
+    getFailActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDeleteUrl(thornyId),
     {
       ...options,
       method: "DELETE"
     }
   );
 };
-var getPartialUpdateQuestProgressV1GuildsMeQuestsRouterProgressProgressIdPatchUrl = (progressId) => {
-  return `/v1/guilds/me/quests_router/progress/${progressId}`;
+var getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatchUrl = (progressId) => {
+  return `/v1/guilds/me/quests/progress/${progressId}`;
 };
-var partialUpdateQuestProgressV1GuildsMeQuestsRouterProgressProgressIdPatch = async (progressId, questProgressUpdate, options) => {
+var partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch = async (progressId, questProgressUpdate, options) => {
   return minecraftFetch(
-    getPartialUpdateQuestProgressV1GuildsMeQuestsRouterProgressProgressIdPatchUrl(progressId),
+    getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatchUrl(progressId),
     {
       ...options,
       method: "PATCH",
@@ -5525,7 +5525,7 @@ var Quest = class _Quest {
   }
   static async get_quest(quest_id) {
     try {
-      const quest_response = await getQuestV1GuildsMeQuestsRouterQuestIdGet(quest_id);
+      const quest_response = await getQuestV1GuildsMeQuestsQuestIdGet(quest_id);
       const quest_data = quest_response;
       return new _Quest(quest_data);
     } catch (error) {
@@ -5545,7 +5545,7 @@ var ObjectiveProgress = class {
     this.objective = quest.objectives.find((o) => o.objective_id == this.objective_id);
   }
   async update_user_objective() {
-    await partialUpdateQuestProgressV1GuildsMeQuestsRouterProgressProgressIdPatch(this.progress_id, {
+    await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch(this.progress_id, {
       objectives: [
         {
           objective_id: this.objective_id,
@@ -5725,7 +5725,7 @@ var QuestProgress = class _QuestProgress {
    * Updates the user's Quest and Objective Progress
    */
   async update_user_quest() {
-    await partialUpdateQuestProgressV1GuildsMeQuestsRouterProgressProgressIdPatch(this.progress_id, {
+    await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch(this.progress_id, {
       "start_time": this.start_time ? this.start_time.toISOString() : null,
       "end_time": this.end_time ? this.end_time.toISOString() : null,
       "status": this.status
@@ -5737,7 +5737,7 @@ var QuestProgress = class _QuestProgress {
   /** Fails the QuestProgress **/
   async fail_quest(thorny_id) {
     this.status = "failed";
-    await failActiveQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdActiveDelete(thorny_id);
+    await failActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDelete(thorny_id);
   }
   /**
    * Clears the QuestProgress cache.
@@ -5757,14 +5757,14 @@ var QuestProgress = class _QuestProgress {
   static async get_quest_progress(thorny_user) {
     try {
       const thorny_id = thorny_user.thorny_id;
-      const quest_progress_response = await getActiveQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdActiveGet(thorny_id);
+      const quest_progress_response = await getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet(thorny_id);
       if (quest_progress_response) {
         const quest_progress_data = quest_progress_response;
         const quest_id = quest_progress_data.quest_id;
         if (this.quest_cache[thorny_id] && this.quest_cache[thorny_id].quest_id === quest_id) {
           return this.quest_cache[thorny_id];
         }
-        const quest_response = await getQuestV1GuildsMeQuestsRouterQuestIdGet(quest_id);
+        const quest_response = await getQuestV1GuildsMeQuestsQuestIdGet(quest_id);
         const quest = new Quest(quest_response);
         const quest_progress = new _QuestProgress(
           quest_progress_data,

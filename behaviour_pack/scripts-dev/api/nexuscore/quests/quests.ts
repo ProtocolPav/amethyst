@@ -6,7 +6,7 @@
  * OpenAPI spec version: 1.0.0
  */
 import type {
-  ListQuestsV1GuildsMeQuestsRouterGetParams,
+  ListQuestsV1GuildsMeQuestsGetParams,
   QuestIn,
   QuestOut,
   QuestProgressIn,
@@ -17,12 +17,12 @@ import type {
 
 import { minecraftFetch } from '../../minecraft-fetch';
 
-export const getCreateQuestV1GuildsMeQuestsRouterPostUrl = () => {
+export const getCreateQuestV1GuildsMeQuestsPostUrl = () => {
 
 
 
 
-  return `/v1/guilds/me/quests_router`
+  return `/v1/guilds/me/quests`
 }
 
 /**
@@ -33,9 +33,9 @@ export const getCreateQuestV1GuildsMeQuestsRouterPostUrl = () => {
  * Check the schema for more info on that.
  * @summary Create Quest
  */
-export const createQuestV1GuildsMeQuestsRouterPost = async (questIn: QuestIn, options?: RequestInit): Promise<QuestOut> => {
+export const createQuestV1GuildsMeQuestsPost = async (questIn: QuestIn, options?: RequestInit): Promise<QuestOut> => {
 
-  return minecraftFetch<QuestOut>(getCreateQuestV1GuildsMeQuestsRouterPostUrl(),
+  return minecraftFetch<QuestOut>(getCreateQuestV1GuildsMeQuestsPostUrl(),
   {
     ...options,
     method: 'POST',
@@ -45,7 +45,7 @@ export const createQuestV1GuildsMeQuestsRouterPost = async (questIn: QuestIn, op
 );}
 
 
-export const getListQuestsV1GuildsMeQuestsRouterGetUrl = (params?: ListQuestsV1GuildsMeQuestsRouterGetParams,) => {
+export const getListQuestsV1GuildsMeQuestsGetUrl = (params?: ListQuestsV1GuildsMeQuestsGetParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -57,16 +57,16 @@ export const getListQuestsV1GuildsMeQuestsRouterGetUrl = (params?: ListQuestsV1G
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/v1/guilds/me/quests_router?${stringifiedParams}` : `/v1/guilds/me/quests_router`
+  return stringifiedParams.length > 0 ? `/v1/guilds/me/quests?${stringifiedParams}` : `/v1/guilds/me/quests`
 }
 
 /**
  * Get a list of Quests
  * @summary List Quests
  */
-export const listQuestsV1GuildsMeQuestsRouterGet = async (params?: ListQuestsV1GuildsMeQuestsRouterGetParams, options?: RequestInit): Promise<QuestOut[]> => {
+export const listQuestsV1GuildsMeQuestsGet = async (params?: ListQuestsV1GuildsMeQuestsGetParams, options?: RequestInit): Promise<QuestOut[]> => {
 
-  return minecraftFetch<QuestOut[]>(getListQuestsV1GuildsMeQuestsRouterGetUrl(params),
+  return minecraftFetch<QuestOut[]>(getListQuestsV1GuildsMeQuestsGetUrl(params),
   {
     ...options,
     method: 'GET'
@@ -76,12 +76,12 @@ export const listQuestsV1GuildsMeQuestsRouterGet = async (params?: ListQuestsV1G
 );}
 
 
-export const getGetQuestV1GuildsMeQuestsRouterQuestIdGetUrl = (questId: number,) => {
+export const getGetQuestV1GuildsMeQuestsQuestIdGetUrl = (questId: number,) => {
 
 
 
 
-  return `/v1/guilds/me/quests_router/${questId}`
+  return `/v1/guilds/me/quests/${questId}`
 }
 
 /**
@@ -90,9 +90,9 @@ export const getGetQuestV1GuildsMeQuestsRouterQuestIdGetUrl = (questId: number,)
  * Returns a specific quest, objectives and rewards
  * @summary Get Quest
  */
-export const getQuestV1GuildsMeQuestsRouterQuestIdGet = async (questId: number, options?: RequestInit): Promise<QuestOut> => {
+export const getQuestV1GuildsMeQuestsQuestIdGet = async (questId: number, options?: RequestInit): Promise<QuestOut> => {
 
-  return minecraftFetch<QuestOut>(getGetQuestV1GuildsMeQuestsRouterQuestIdGetUrl(questId),
+  return minecraftFetch<QuestOut>(getGetQuestV1GuildsMeQuestsQuestIdGetUrl(questId),
   {
     ...options,
     method: 'GET'
@@ -102,12 +102,12 @@ export const getQuestV1GuildsMeQuestsRouterQuestIdGet = async (questId: number, 
 );}
 
 
-export const getPartialUpdateQuestV1GuildsMeQuestsRouterQuestIdPutUrl = (questId: number,) => {
+export const getPartialUpdateQuestV1GuildsMeQuestsQuestIdPutUrl = (questId: number,) => {
 
 
 
 
-  return `/v1/guilds/me/quests_router/${questId}`
+  return `/v1/guilds/me/quests/${questId}`
 }
 
 /**
@@ -116,10 +116,10 @@ export const getPartialUpdateQuestV1GuildsMeQuestsRouterQuestIdPutUrl = (questId
  * Existing objectives and rewards not present in the payload are left untouched.
  * @summary Partial Update Quest
  */
-export const partialUpdateQuestV1GuildsMeQuestsRouterQuestIdPut = async (questId: number,
+export const partialUpdateQuestV1GuildsMeQuestsQuestIdPut = async (questId: number,
     questUpdate: QuestUpdate, options?: RequestInit): Promise<QuestOut> => {
 
-  return minecraftFetch<QuestOut>(getPartialUpdateQuestV1GuildsMeQuestsRouterQuestIdPutUrl(questId),
+  return minecraftFetch<QuestOut>(getPartialUpdateQuestV1GuildsMeQuestsQuestIdPutUrl(questId),
   {
     ...options,
     method: 'PUT',
@@ -129,12 +129,12 @@ export const partialUpdateQuestV1GuildsMeQuestsRouterQuestIdPut = async (questId
 );}
 
 
-export const getPartialUpdateQuestV1GuildsMeQuestsRouterQuestIdPatchUrl = (questId: number,) => {
+export const getPartialUpdateQuestV1GuildsMeQuestsQuestIdPatchUrl = (questId: number,) => {
 
 
 
 
-  return `/v1/guilds/me/quests_router/${questId}`
+  return `/v1/guilds/me/quests/${questId}`
 }
 
 /**
@@ -143,10 +143,10 @@ export const getPartialUpdateQuestV1GuildsMeQuestsRouterQuestIdPatchUrl = (quest
  * Existing objectives and rewards not present in the payload are left untouched.
  * @summary Partial Update Quest
  */
-export const partialUpdateQuestV1GuildsMeQuestsRouterQuestIdPatch = async (questId: number,
+export const partialUpdateQuestV1GuildsMeQuestsQuestIdPatch = async (questId: number,
     questUpdate: QuestUpdate, options?: RequestInit): Promise<QuestOut> => {
 
-  return minecraftFetch<QuestOut>(getPartialUpdateQuestV1GuildsMeQuestsRouterQuestIdPatchUrl(questId),
+  return minecraftFetch<QuestOut>(getPartialUpdateQuestV1GuildsMeQuestsQuestIdPatchUrl(questId),
   {
     ...options,
     method: 'PATCH',
@@ -156,12 +156,12 @@ export const partialUpdateQuestV1GuildsMeQuestsRouterQuestIdPatch = async (quest
 );}
 
 
-export const getCreateQuestProgressV1GuildsMeQuestsRouterProgressPostUrl = () => {
+export const getCreateQuestProgressV1GuildsMeQuestsProgressPostUrl = () => {
 
 
 
 
-  return `/v1/guilds/me/quests_router/progress`
+  return `/v1/guilds/me/quests/progress`
 }
 
 /**
@@ -171,9 +171,9 @@ export const getCreateQuestProgressV1GuildsMeQuestsRouterProgressPostUrl = () =>
  * Automatically sets the quest progress to "active".
  * @summary Create Quest Progress
  */
-export const createQuestProgressV1GuildsMeQuestsRouterProgressPost = async (questProgressIn: QuestProgressIn, options?: RequestInit): Promise<QuestProgressOut> => {
+export const createQuestProgressV1GuildsMeQuestsProgressPost = async (questProgressIn: QuestProgressIn, options?: RequestInit): Promise<QuestProgressOut> => {
 
-  return minecraftFetch<QuestProgressOut>(getCreateQuestProgressV1GuildsMeQuestsRouterProgressPostUrl(),
+  return minecraftFetch<QuestProgressOut>(getCreateQuestProgressV1GuildsMeQuestsProgressPostUrl(),
   {
     ...options,
     method: 'POST',
@@ -183,12 +183,12 @@ export const createQuestProgressV1GuildsMeQuestsRouterProgressPost = async (ques
 );}
 
 
-export const getListQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdGetUrl = (thornyId: number,) => {
+export const getListQuestProgressV1GuildsMeQuestsProgressUserThornyIdGetUrl = (thornyId: number,) => {
 
 
 
 
-  return `/v1/guilds/me/quests_router/progress/user/${thornyId}`
+  return `/v1/guilds/me/quests/progress/user/${thornyId}`
 }
 
 /**
@@ -197,9 +197,9 @@ export const getListQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdGetUr
  * Returns all quest progress belonging to a user
  * @summary List Quest Progress
  */
-export const listQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdGet = async (thornyId: number, options?: RequestInit): Promise<QuestProgressOut[]> => {
+export const listQuestProgressV1GuildsMeQuestsProgressUserThornyIdGet = async (thornyId: number, options?: RequestInit): Promise<QuestProgressOut[]> => {
 
-  return minecraftFetch<QuestProgressOut[]>(getListQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdGetUrl(thornyId),
+  return minecraftFetch<QuestProgressOut[]>(getListQuestProgressV1GuildsMeQuestsProgressUserThornyIdGetUrl(thornyId),
   {
     ...options,
     method: 'GET'
@@ -209,12 +209,12 @@ export const listQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdGet = as
 );}
 
 
-export const getGetActiveQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdActiveGetUrl = (thornyId: number,) => {
+export const getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl = (thornyId: number,) => {
 
 
 
 
-  return `/v1/guilds/me/quests_router/progress/user/${thornyId}/active`
+  return `/v1/guilds/me/quests/progress/user/${thornyId}/active`
 }
 
 /**
@@ -223,9 +223,9 @@ export const getGetActiveQuestProgressV1GuildsMeQuestsRouterProgressUserThornyId
  * Returns the user's currently active quest.
  * @summary Get Active Quest Progress
  */
-export const getActiveQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdActiveGet = async (thornyId: number, options?: RequestInit): Promise<QuestProgressOut> => {
+export const getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet = async (thornyId: number, options?: RequestInit): Promise<QuestProgressOut> => {
 
-  return minecraftFetch<QuestProgressOut>(getGetActiveQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdActiveGetUrl(thornyId),
+  return minecraftFetch<QuestProgressOut>(getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl(thornyId),
   {
     ...options,
     method: 'GET'
@@ -235,12 +235,12 @@ export const getActiveQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdAct
 );}
 
 
-export const getFailActiveQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdActiveDeleteUrl = (thornyId: number,) => {
+export const getFailActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDeleteUrl = (thornyId: number,) => {
 
 
 
 
-  return `/v1/guilds/me/quests_router/progress/user/${thornyId}/active`
+  return `/v1/guilds/me/quests/progress/user/${thornyId}/active`
 }
 
 /**
@@ -249,9 +249,9 @@ export const getFailActiveQuestProgressV1GuildsMeQuestsRouterProgressUserThornyI
  * This marks the active quest and all of its objectives as "failed".
  * @summary Fail Active Quest Progress
  */
-export const failActiveQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdActiveDelete = async (thornyId: number, options?: RequestInit): Promise<void> => {
+export const failActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDelete = async (thornyId: number, options?: RequestInit): Promise<void> => {
 
-  return minecraftFetch<void>(getFailActiveQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdActiveDeleteUrl(thornyId),
+  return minecraftFetch<void>(getFailActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDeleteUrl(thornyId),
   {
     ...options,
     method: 'DELETE'
@@ -261,12 +261,12 @@ export const failActiveQuestProgressV1GuildsMeQuestsRouterProgressUserThornyIdAc
 );}
 
 
-export const getPartialUpdateQuestProgressV1GuildsMeQuestsRouterProgressProgressIdPatchUrl = (progressId: number,) => {
+export const getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatchUrl = (progressId: number,) => {
 
 
 
 
-  return `/v1/guilds/me/quests_router/progress/${progressId}`
+  return `/v1/guilds/me/quests/progress/${progressId}`
 }
 
 /**
@@ -275,10 +275,10 @@ export const getPartialUpdateQuestProgressV1GuildsMeQuestsRouterProgressProgress
  * Updates a user's quest.
  * @summary Partial Update Quest Progress
  */
-export const partialUpdateQuestProgressV1GuildsMeQuestsRouterProgressProgressIdPatch = async (progressId: number,
+export const partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch = async (progressId: number,
     questProgressUpdate: QuestProgressUpdate, options?: RequestInit): Promise<QuestProgressOut> => {
 
-  return minecraftFetch<QuestProgressOut>(getPartialUpdateQuestProgressV1GuildsMeQuestsRouterProgressProgressIdPatchUrl(progressId),
+  return minecraftFetch<QuestProgressOut>(getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatchUrl(progressId),
   {
     ...options,
     method: 'PATCH',
@@ -288,12 +288,12 @@ export const partialUpdateQuestProgressV1GuildsMeQuestsRouterProgressProgressIdP
 );}
 
 
-export const getPartialUpdateQuestProgressV1GuildsMeQuestsRouterProgressProgressIdPutUrl = (progressId: number,) => {
+export const getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPutUrl = (progressId: number,) => {
 
 
 
 
-  return `/v1/guilds/me/quests_router/progress/${progressId}`
+  return `/v1/guilds/me/quests/progress/${progressId}`
 }
 
 /**
@@ -302,10 +302,10 @@ export const getPartialUpdateQuestProgressV1GuildsMeQuestsRouterProgressProgress
  * Updates a user's quest.
  * @summary Partial Update Quest Progress
  */
-export const partialUpdateQuestProgressV1GuildsMeQuestsRouterProgressProgressIdPut = async (progressId: number,
+export const partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut = async (progressId: number,
     questProgressUpdate: QuestProgressUpdate, options?: RequestInit): Promise<QuestProgressOut> => {
 
-  return minecraftFetch<QuestProgressOut>(getPartialUpdateQuestProgressV1GuildsMeQuestsRouterProgressProgressIdPutUrl(progressId),
+  return minecraftFetch<QuestProgressOut>(getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPutUrl(progressId),
   {
     ...options,
     method: 'PUT',
