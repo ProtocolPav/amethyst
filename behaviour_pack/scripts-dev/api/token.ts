@@ -12,6 +12,8 @@ export async function getAccessToken(): Promise<string> {
         return cachedToken;
     }
 
+    // Should be in the form:
+    // Basic base64(<CLIENT_ID>:<CLIENT_SECRET>)
     const clientCredentials = secrets.get('NEXUSCORE_CLIENT_CREDENTIALS_B64');
 
     const request = new HttpRequest(`${BASE_URL}/auth/token`);
