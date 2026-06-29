@@ -6,7 +6,7 @@ import Interaction from "../interaction";
 import utils from "../../utils";
 import QuestProgress from "./quest_progress";
 import {ITarget} from "../../types/objective";
-import {http, HttpHeader, HttpRequest, HttpRequestMethod} from "@minecraft/server-net";
+import {partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch} from "../nexuscore/quests/quests";
 
 interface RequirementCheck {
     increment_progress: boolean;
@@ -38,21 +38,18 @@ export class ObjectiveProgress {
     }
 
     public async update_user_objective() {
-        const request = new HttpRequest(`http://nexuscore:8000/api/v0.2/quests/progress/${this.progress_id}/${this.objective_id}`);
-        request.method = HttpRequestMethod.Put;
-        request.body = JSON.stringify({
-            "start_time": this.start_time ? this.start_time.toISOString() : null,
-            "end_time": this.end_time ? this.end_time.toISOString() : null,
-            "status": this.status,
-            "target_progress": this.target_progress,
-            "customization_progress": this.customization_progress
+        await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch(this.progress_id, {
+            objectives: [
+                {
+                    objective_id: this.objective_id,
+                    start_time: this.start_time ? this.start_time.toISOString() : null,
+                    end_time: this.end_time ? this.end_time.toISOString() : null,
+                    status: this.status,
+                    target_progress: this.target_progress,
+                    customization_progress: this.customization_progress
+                }
+            ]
         })
-        request.headers = [
-            new HttpHeader("Content-Type", "application/json"),
-            new HttpHeader("auth", "my-auth-token"),
-        ];
-
-        await http.request(request);
     }
 
     public get_total_progress() {

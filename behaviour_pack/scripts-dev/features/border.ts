@@ -31,28 +31,30 @@ function borderCheck(player: Player, dimensionID: MinecraftDimensionTypes, borde
 }
 
 export default function loadWorldBorder(guild_id: string) {
-    WorldCache.load_world(guild_id).then()
+    world.afterEvents.worldLoad.subscribe(() => {
+        WorldCache.load_world(guild_id).then()
 
-    let players_100_blocks_away  = {overworld: [], nether: [], end: []}
-    let players_outside_border  = {overworld: [], nether: [], end: []}
-    
-    system.runInterval(() => {
-        let players = {
-            overworld: world.getDimension(MinecraftDimensionTypes.Overworld).getPlayers(),
-            nether: world.getDimension(MinecraftDimensionTypes.Nether).getPlayers(),
-            end: world.getDimension(MinecraftDimensionTypes.TheEnd).getPlayers()
-        }
-    
-        players.overworld.forEach((player) => {
-            borderCheck(player, MinecraftDimensionTypes.Overworld, WorldCache.world.overworld_border, players_100_blocks_away.overworld, players_outside_border.overworld)
-        });
-        
-        players.nether.forEach((player) => {
-            borderCheck(player, MinecraftDimensionTypes.Nether, WorldCache.world.nether_border, players_100_blocks_away.nether, players_outside_border.nether)
-        });
-        
-        players.end.forEach((player) => {
-            borderCheck(player, MinecraftDimensionTypes.TheEnd, WorldCache.world.end_border, players_100_blocks_away.end, players_outside_border.end)
-        });
-    }, 20)
+        let players_100_blocks_away  = {overworld: [], nether: [], end: []}
+        let players_outside_border  = {overworld: [], nether: [], end: []}
+
+        system.runInterval(() => {
+            let players = {
+                overworld: world.getDimension(MinecraftDimensionTypes.Overworld).getPlayers(),
+                nether: world.getDimension(MinecraftDimensionTypes.Nether).getPlayers(),
+                end: world.getDimension(MinecraftDimensionTypes.TheEnd).getPlayers()
+            }
+
+            players.overworld.forEach((player) => {
+                borderCheck(player, MinecraftDimensionTypes.Overworld, WorldCache.world.overworld_border, players_100_blocks_away.overworld, players_outside_border.overworld)
+            });
+
+            players.nether.forEach((player) => {
+                borderCheck(player, MinecraftDimensionTypes.Nether, WorldCache.world.nether_border, players_100_blocks_away.nether, players_outside_border.nether)
+            });
+
+            players.end.forEach((player) => {
+                borderCheck(player, MinecraftDimensionTypes.TheEnd, WorldCache.world.end_border, players_100_blocks_away.end, players_outside_border.end)
+            });
+        }, 20)
+    })
 }

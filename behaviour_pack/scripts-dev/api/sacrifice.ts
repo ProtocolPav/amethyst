@@ -1,8 +1,7 @@
-import {http, HttpHeader, HttpRequest, HttpRequestMethod} from "@minecraft/server-net"
-import { parse } from "date-fns"
-import utils from "../utils"
-import ThornyUser from "./user"
-import Interaction from "./interaction"
+import {
+    getItemV1GuildsMeWorldsItemsItemIdGet, getWorldV1GuildsMeWorldsGet,
+    partialUpdateItemV1GuildsMeWorldsItemsItemIdPatch, partialUpdateWorldV1GuildsMeWorldsPatch
+} from "./nexuscore/worlds/worlds";
 
 export interface IItem {
     item_id: string
@@ -36,8 +35,8 @@ export class Item {
 
     public static async get_item(item_id: string) {
         try {
-            const item_response = await http.get(`http://nexuscore:8000/api/v0.2/server/items/${item_id}`);
-            const item_data = JSON.parse(item_response.body) as IItem;
+            const item_response = await getItemV1GuildsMeWorldsItemsItemIdGet(item_id)
+            const item_data = item_response as IItem;
 
             return new Item(item_data);
 
@@ -48,18 +47,9 @@ export class Item {
     }
 
     public async update_item() {
-        const request = new HttpRequest(`http://nexuscore:8000/api/v0.2/server/items/${this.item_id}`);
-        request.method = HttpRequestMethod.Put;
-        request.headers = [
-            new HttpHeader("Content-Type", "application/json"),
-            new HttpHeader("auth", "my-auth-token"),
-        ];
-
-        request.body = JSON.stringify({
+        await partialUpdateItemV1GuildsMeWorldsItemsItemIdPatch(this.item_id, {
             current_uses: this.current_uses
-        });
-
-        await http.request(request);
+        })
     }
 }
 
@@ -78,8 +68,8 @@ export class World {
 
     public static async get_world(guild_id: string) {
         try {
-            const world_response = await http.get(`http://nexuscore:8000/api/v0.2/server/world/${guild_id}`);
-            const world_data = JSON.parse(world_response.body) as IWorld;
+            const world_response = await getWorldV1GuildsMeWorldsGet()
+            const world_data = world_response as unknown as IWorld;
             world_data.guild_id = guild_id;
 
             return new World(world_data);
@@ -91,20 +81,11 @@ export class World {
     }
 
     public async update_world() {
-        const request = new HttpRequest(`http://nexuscore:8000/api/v0.2/server/world/${this.guild_id}`);
-        request.method = HttpRequestMethod.Put;
-        request.headers = [
-            new HttpHeader("Content-Type", "application/json"),
-            new HttpHeader("auth", "my-auth-token"),
-        ];
-
-        request.body = JSON.stringify({
+        await partialUpdateWorldV1GuildsMeWorldsPatch({
             overworld_border: this.overworld_border,
             nether_border: this.nether_border,
             end_border: this.end_border
-        });
-
-        await http.request(request);
+        })
     }
 }
 

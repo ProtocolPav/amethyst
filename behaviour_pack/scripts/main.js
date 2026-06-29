@@ -1,3 +1,48 @@
+// behaviour_pack/scripts-dev/polyfills/url-search-params.ts
+if (typeof globalThis.URLSearchParams === "undefined") {
+  globalThis.URLSearchParams = class URLSearchParams {
+    constructor(init) {
+      this.params = [];
+      if (!init) return;
+      if (typeof init === "string") {
+        init.replace(/^\?/, "").split("&").forEach((pair) => {
+          const [k, v] = pair.split("=");
+          if (k) this.params.push([decodeURIComponent(k), decodeURIComponent(v ?? "")]);
+        });
+      } else if (Array.isArray(init)) {
+        this.params = init.map(([k, v]) => [k, v]);
+      } else {
+        this.params = Object.entries(init);
+      }
+    }
+    append(key, value) {
+      this.params.push([key, value]);
+    }
+    delete(key) {
+      this.params = this.params.filter(([k]) => k !== key);
+    }
+    get(key) {
+      return this.params.find(([k]) => k === key)?.[1] ?? null;
+    }
+    getAll(key) {
+      return this.params.filter(([k]) => k === key).map(([, v]) => v);
+    }
+    has(key) {
+      return this.params.some(([k]) => k === key);
+    }
+    set(key, value) {
+      this.delete(key);
+      this.params.push([key, value]);
+    }
+    toString() {
+      return this.params.map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join("&");
+    }
+    forEach(cb) {
+      this.params.forEach(([k, v]) => cb(v, k));
+    }
+  };
+}
+
 // behaviour_pack/scripts-dev/features/border.ts
 import { world, system, EntityDamageCause } from "@minecraft/server";
 
@@ -3208,8 +3253,131 @@ var MinecraftPotionEffectTypes = ((MinecraftPotionEffectTypes2) => {
   return MinecraftPotionEffectTypes2;
 })(MinecraftPotionEffectTypes || {});
 
-// behaviour_pack/scripts-dev/api/sacrifice.ts
+// behaviour_pack/scripts-dev/api/minecraft-fetch.ts
+import { http as http2, HttpHeader as HttpHeader2, HttpRequest as HttpRequest2, HttpRequestMethod as HttpRequestMethod2 } from "@minecraft/server-net";
+
+// behaviour_pack/scripts-dev/api/token.ts
+import { secrets } from "@minecraft/server-admin";
 import { http, HttpHeader, HttpRequest, HttpRequestMethod } from "@minecraft/server-net";
+var BASE_URL = "http://nexuscore:8000/api";
+var cachedToken = null;
+var tokenExpiresAt = 0;
+async function getAccessToken() {
+  if (cachedToken && Date.now() < tokenExpiresAt) {
+    return cachedToken;
+  }
+  const clientCredentials = secrets.get("NEXUSCORE_CLIENT_CREDENTIALS_B64");
+  const request = new HttpRequest(`${BASE_URL}/auth/token`);
+  request.method = HttpRequestMethod.Post;
+  request.headers = [
+    new HttpHeader("Content-Type", "application/x-www-form-urlencoded"),
+    new HttpHeader("Authorization", clientCredentials ? clientCredentials : "")
+  ];
+  request.body = new URLSearchParams({ grant_type: "client_credentials" }).toString();
+  const response = await http.request(request);
+  if (response.status !== 200) {
+    throw new Error(`OAuth token fetch failed: ${response.status} ${response.body}`);
+  }
+  const data = JSON.parse(response.body);
+  cachedToken = data.access_token;
+  tokenExpiresAt = Date.now() + (data.expires_in - 30) * 1e3;
+  return cachedToken;
+}
+
+// behaviour_pack/scripts-dev/api/minecraft-fetch.ts
+var BASE_URL2 = "http://nexuscore:8000/api";
+var METHOD_MAP = {
+  GET: HttpRequestMethod2.Get,
+  POST: HttpRequestMethod2.Post,
+  PUT: HttpRequestMethod2.Put,
+  PATCH: HttpRequestMethod2.Put,
+  DELETE: HttpRequestMethod2.Delete,
+  HEAD: HttpRequestMethod2.Head
+};
+var minecraftFetch = async (url, options = {}) => {
+  const token = await getAccessToken();
+  const request = new HttpRequest2(`${BASE_URL2}${url}`);
+  request.method = METHOD_MAP[(options.method ?? "GET").toUpperCase()] ?? HttpRequestMethod2.Get;
+  let extraHeaders = [];
+  if (options.headers) {
+    if (Array.isArray(options.headers)) {
+      extraHeaders = options.headers;
+    } else {
+      extraHeaders = Object.entries(options.headers);
+    }
+  }
+  request.headers = [
+    new HttpHeader2("Content-Type", "application/json"),
+    new HttpHeader2("Authorization", `Bearer ${token}`),
+    ...extraHeaders.map(([k, v]) => new HttpHeader2(k, v))
+  ];
+  if (options.body) {
+    request.body = options.body.toString();
+  } else if (request.method === HttpRequestMethod2.Delete) {
+    request.body = "";
+  }
+  const response = await http2.request(request);
+  if (response.status < 200 || response.status >= 300) {
+    throw new Error(`HTTP ${response.status}: ${response.body}`);
+  }
+  return JSON.parse(response.body);
+};
+
+// behaviour_pack/scripts-dev/api/nexuscore/worlds/worlds.ts
+var getGetWorldV1GuildsMeWorldsGetUrl = () => {
+  return `/v1/guilds/me/worlds`;
+};
+var getWorldV1GuildsMeWorldsGet = async (options) => {
+  return minecraftFetch(
+    getGetWorldV1GuildsMeWorldsGetUrl(),
+    {
+      ...options,
+      method: "GET"
+    }
+  );
+};
+var getPartialUpdateWorldV1GuildsMeWorldsPatchUrl = () => {
+  return `/v1/guilds/me/worlds`;
+};
+var partialUpdateWorldV1GuildsMeWorldsPatch = async (worldUpdate, options) => {
+  return minecraftFetch(
+    getPartialUpdateWorldV1GuildsMeWorldsPatchUrl(),
+    {
+      ...options,
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(worldUpdate)
+    }
+  );
+};
+var getGetItemV1GuildsMeWorldsItemsItemIdGetUrl = (itemId) => {
+  return `/v1/guilds/me/worlds/items/${itemId}`;
+};
+var getItemV1GuildsMeWorldsItemsItemIdGet = async (itemId, options) => {
+  return minecraftFetch(
+    getGetItemV1GuildsMeWorldsItemsItemIdGetUrl(itemId),
+    {
+      ...options,
+      method: "GET"
+    }
+  );
+};
+var getPartialUpdateItemV1GuildsMeWorldsItemsItemIdPatchUrl = (itemId) => {
+  return `/v1/guilds/me/worlds/items/${itemId}`;
+};
+var partialUpdateItemV1GuildsMeWorldsItemsItemIdPatch = async (itemId, itemUpdateModel, options) => {
+  return minecraftFetch(
+    getPartialUpdateItemV1GuildsMeWorldsItemsItemIdPatchUrl(itemId),
+    {
+      ...options,
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(itemUpdateModel)
+    }
+  );
+};
+
+// behaviour_pack/scripts-dev/api/sacrifice.ts
 var Item = class _Item {
   constructor(data) {
     this.item_id = data.item_id;
@@ -3220,8 +3388,8 @@ var Item = class _Item {
   }
   static async get_item(item_id) {
     try {
-      const item_response = await http.get(`http://nexuscore:8000/api/v0.2/server/items/${item_id}`);
-      const item_data = JSON.parse(item_response.body);
+      const item_response = await getItemV1GuildsMeWorldsItemsItemIdGet(item_id);
+      const item_data = item_response;
       return new _Item(item_data);
     } catch (error) {
       console.error("Error fetching item:", error);
@@ -3229,16 +3397,9 @@ var Item = class _Item {
     }
   }
   async update_item() {
-    const request = new HttpRequest(`http://nexuscore:8000/api/v0.2/server/items/${this.item_id}`);
-    request.method = HttpRequestMethod.Put;
-    request.headers = [
-      new HttpHeader("Content-Type", "application/json"),
-      new HttpHeader("auth", "my-auth-token")
-    ];
-    request.body = JSON.stringify({
+    await partialUpdateItemV1GuildsMeWorldsItemsItemIdPatch(this.item_id, {
       current_uses: this.current_uses
     });
-    await http.request(request);
   }
 };
 var World = class _World {
@@ -3250,8 +3411,8 @@ var World = class _World {
   }
   static async get_world(guild_id2) {
     try {
-      const world_response = await http.get(`http://nexuscore:8000/api/v0.2/server/world/${guild_id2}`);
-      const world_data = JSON.parse(world_response.body);
+      const world_response = await getWorldV1GuildsMeWorldsGet();
+      const world_data = world_response;
       world_data.guild_id = guild_id2;
       return new _World(world_data);
     } catch (error) {
@@ -3260,18 +3421,11 @@ var World = class _World {
     }
   }
   async update_world() {
-    const request = new HttpRequest(`http://nexuscore:8000/api/v0.2/server/world/${this.guild_id}`);
-    request.method = HttpRequestMethod.Put;
-    request.headers = [
-      new HttpHeader("Content-Type", "application/json"),
-      new HttpHeader("auth", "my-auth-token")
-    ];
-    request.body = JSON.stringify({
+    await partialUpdateWorldV1GuildsMeWorldsPatch({
       overworld_border: this.overworld_border,
       nether_border: this.nether_border,
       end_border: this.end_border
     });
-    await http.request(request);
   }
 };
 var WorldCache = class _WorldCache {
@@ -3306,25 +3460,27 @@ function borderCheck(player, dimensionID, border_size, warning_range, outside) {
   }
 }
 function loadWorldBorder(guild_id2) {
-  WorldCache.load_world(guild_id2).then();
-  let players_100_blocks_away = { overworld: [], nether: [], end: [] };
-  let players_outside_border = { overworld: [], nether: [], end: [] };
-  system.runInterval(() => {
-    let players = {
-      overworld: world.getDimension(MinecraftDimensionTypes.Overworld).getPlayers(),
-      nether: world.getDimension(MinecraftDimensionTypes.Nether).getPlayers(),
-      end: world.getDimension(MinecraftDimensionTypes.TheEnd).getPlayers()
-    };
-    players.overworld.forEach((player) => {
-      borderCheck(player, MinecraftDimensionTypes.Overworld, WorldCache.world.overworld_border, players_100_blocks_away.overworld, players_outside_border.overworld);
-    });
-    players.nether.forEach((player) => {
-      borderCheck(player, MinecraftDimensionTypes.Nether, WorldCache.world.nether_border, players_100_blocks_away.nether, players_outside_border.nether);
-    });
-    players.end.forEach((player) => {
-      borderCheck(player, MinecraftDimensionTypes.TheEnd, WorldCache.world.end_border, players_100_blocks_away.end, players_outside_border.end);
-    });
-  }, 20);
+  world.afterEvents.worldLoad.subscribe(() => {
+    WorldCache.load_world(guild_id2).then();
+    let players_100_blocks_away = { overworld: [], nether: [], end: [] };
+    let players_outside_border = { overworld: [], nether: [], end: [] };
+    system.runInterval(() => {
+      let players = {
+        overworld: world.getDimension(MinecraftDimensionTypes.Overworld).getPlayers(),
+        nether: world.getDimension(MinecraftDimensionTypes.Nether).getPlayers(),
+        end: world.getDimension(MinecraftDimensionTypes.TheEnd).getPlayers()
+      };
+      players.overworld.forEach((player) => {
+        borderCheck(player, MinecraftDimensionTypes.Overworld, WorldCache.world.overworld_border, players_100_blocks_away.overworld, players_outside_border.overworld);
+      });
+      players.nether.forEach((player) => {
+        borderCheck(player, MinecraftDimensionTypes.Nether, WorldCache.world.nether_border, players_100_blocks_away.nether, players_outside_border.nether);
+      });
+      players.end.forEach((player) => {
+        borderCheck(player, MinecraftDimensionTypes.TheEnd, WorldCache.world.end_border, players_100_blocks_away.end, players_outside_border.end);
+      });
+    }, 20);
+  });
 }
 
 // behaviour_pack/scripts-dev/features/items/elytra-mending.ts
@@ -3723,7 +3879,7 @@ var secondsInWeek = secondsInDay * 7;
 var secondsInYear = secondsInDay * daysInYear;
 var secondsInMonth = secondsInYear / 12;
 var secondsInQuarter = secondsInMonth * 3;
-var constructFromSymbol = Symbol.for("constructDateFrom");
+var constructFromSymbol = /* @__PURE__ */ Symbol.for("constructDateFrom");
 
 // node_modules/date-fns/constructFrom.js
 function constructFrom(date, value) {
@@ -4823,8 +4979,91 @@ import {
   ItemComponentTypes as ItemComponentTypes4
 } from "@minecraft/server";
 
+// behaviour_pack/scripts-dev/api/nexuscore/users/users.ts
+var getLookupUserV1GuildsMeUsersLookupGetUrl = (params) => {
+  const normalizedParams = new URLSearchParams();
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== void 0) {
+      normalizedParams.append(key, value === null ? "null" : String(value));
+    }
+  });
+  const stringifiedParams = normalizedParams.toString();
+  return stringifiedParams.length > 0 ? `/v1/guilds/me/users/lookup?${stringifiedParams}` : `/v1/guilds/me/users/lookup`;
+};
+var lookupUserV1GuildsMeUsersLookupGet = async (params, options) => {
+  return minecraftFetch(
+    getLookupUserV1GuildsMeUsersLookupGetUrl(params),
+    {
+      ...options,
+      method: "GET"
+    }
+  );
+};
+var getPartialUpdateUserV1GuildsMeUsersThornyIdPatchUrl = (thornyId) => {
+  return `/v1/guilds/me/users/${thornyId}`;
+};
+var partialUpdateUserV1GuildsMeUsersThornyIdPatch = async (thornyId, userUpdate, options) => {
+  return minecraftFetch(
+    getPartialUpdateUserV1GuildsMeUsersThornyIdPatchUrl(thornyId),
+    {
+      ...options,
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(userUpdate)
+    }
+  );
+};
+
+// behaviour_pack/scripts-dev/api/nexuscore/guilds/guilds.ts
+var getCreateConnectionV1GuildsMeConnectionPostUrl = () => {
+  return `/v1/guilds/me/connection`;
+};
+var createConnectionV1GuildsMeConnectionPost = async (connectionIn, options) => {
+  return minecraftFetch(
+    getCreateConnectionV1GuildsMeConnectionPostUrl(),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(connectionIn)
+    }
+  );
+};
+var getCreateInteractionV1GuildsMeInteractionPostUrl = () => {
+  return `/v1/guilds/me/interaction`;
+};
+var createInteractionV1GuildsMeInteractionPost = async (interactionIn, options) => {
+  return minecraftFetch(
+    getCreateInteractionV1GuildsMeInteractionPostUrl(),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(interactionIn)
+    }
+  );
+};
+var getListInteractionsV1GuildsMeInteractionsGetUrl = (params) => {
+  const normalizedParams = new URLSearchParams();
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== void 0) {
+      normalizedParams.append(key, value === null ? "null" : String(value));
+    }
+  });
+  const stringifiedParams = normalizedParams.toString();
+  return stringifiedParams.length > 0 ? `/v1/guilds/me/interactions?${stringifiedParams}` : `/v1/guilds/me/interactions`;
+};
+var listInteractionsV1GuildsMeInteractionsGet = async (params, options) => {
+  return minecraftFetch(
+    getListInteractionsV1GuildsMeInteractionsGetUrl(params),
+    {
+      ...options,
+      method: "GET"
+    }
+  );
+};
+
 // behaviour_pack/scripts-dev/api/user.ts
-import { HttpRequest as HttpRequest2, HttpHeader as HttpHeader2, HttpRequestMethod as HttpRequestMethod2, http as http2 } from "@minecraft/server-net";
 var ThornyUser = class _ThornyUser {
   static {
     this.thorny_user_map = {};
@@ -4855,8 +5094,8 @@ var ThornyUser = class _ThornyUser {
     this.hidden = api_data.hidden;
   }
   static async get_user_from_api(guild_id2, gamertag) {
-    const response = await http2.get(`http://nexuscore:8000/api/v0.2/users/guild/${guild_id2}/${gamertag.replace(" ", "%20")}`);
-    const thorny_user = new _ThornyUser(JSON.parse(response.body));
+    const response = await lookupUserV1GuildsMeUsersLookupGet({ gamertag });
+    const thorny_user = new _ThornyUser(response);
     _ThornyUser.thorny_user_map[gamertag] = thorny_user;
     _ThornyUser.thorny_id_map[thorny_user.thorny_id] = thorny_user;
     thorny_user.gamertag = gamertag;
@@ -4873,35 +5112,23 @@ var ThornyUser = class _ThornyUser {
    * Currently only updates balance.
    */
   async update() {
-    const request = new HttpRequest2(`http://nexuscore:8000/api/v0.2/users/${this.thorny_id}`);
-    request.method = HttpRequestMethod2.Put;
-    request.body = JSON.stringify({
+    await partialUpdateUserV1GuildsMeUsersThornyIdPatch(this.thorny_id, {
       "balance": this.balance,
-      "whitelist": this.whitelist || this.gamertag,
       "location": this.location,
       "dimension": this.dimension,
       "hidden": this.hidden
     });
-    request.headers = [
-      new HttpHeader2("Content-Type", "application/json"),
-      new HttpHeader2("auth", "my-auth-token")
-    ];
-    await http2.request(request);
   }
   /**
    * Send a connection event to NexusCore, either
    * connect or disconnect
    */
-  send_connect_event(event_type) {
-    const request = new HttpRequest2(`http://nexuscore:8000/api/v0.2/events/connection`);
-    request.method = HttpRequestMethod2.Post;
-    request.headers = [
-      new HttpHeader2("Content-Type", "application/json"),
-      new HttpHeader2("auth", "my-auth-token")
-    ];
-    request.body = JSON.stringify({ "type": event_type, "thorny_id": this.thorny_id, "ignored": false });
-    console.log(`[CONNECTION] Sending ${event_type} to NexusCore for ThornyID ${this.thorny_id} (${this.whitelist} / ${this.gamertag})`);
-    http2.request(request);
+  async send_connect_event(event_type) {
+    console.log(`[CONNECTION] Sending ${event_type} to nexuscore for ThornyID ${this.thorny_id} (${this.whitelist})`);
+    await createConnectionV1GuildsMeConnectionPost({
+      "type": event_type,
+      "thorny_id": this.thorny_id
+    });
   }
   /**
    * Returns a decorated role string for chat decoration
@@ -4947,45 +5174,45 @@ var ThornyUser = class _ThornyUser {
   }
 };
 
+// behaviour_pack/scripts-dev/api/nexuscore/webhook-relay/webhook-relay.ts
+var getServerRelayV1RelayPostUrl = () => {
+  return `/v1/relay`;
+};
+var serverRelayV1RelayPost = async (relayModel, options) => {
+  return minecraftFetch(
+    getServerRelayV1RelayPostUrl(),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(relayModel)
+    }
+  );
+};
+
 // behaviour_pack/scripts-dev/api/relay.ts
-import { HttpRequest as HttpRequest3, HttpHeader as HttpHeader3, HttpRequestMethod as HttpRequestMethod3, http as http3 } from "@minecraft/server-net";
 var Relay = class {
   static message(nametag, content) {
-    const request = new HttpRequest3("http://nexuscore:8000/api/v0.2/events/relay");
-    request.method = HttpRequestMethod3.Post;
-    request.body = JSON.stringify({
+    serverRelayV1RelayPost({
       "type": "message",
       "content": content,
       "embed_title": "",
       "embed_content": "",
       "name": nametag
-    });
-    request.headers = [
-      new HttpHeader3("Content-Type", "application/json"),
-      new HttpHeader3("auth", "my-auth-token")
-    ];
-    http3.request(request);
+    }).then();
   }
   static event(title, content, event_type) {
-    const request = new HttpRequest3("http://nexuscore:8000/api/v0.2/events/relay");
-    request.method = HttpRequestMethod3.Post;
-    request.body = JSON.stringify({
+    serverRelayV1RelayPost({
       "type": event_type,
       "content": "",
       "embed_title": title,
       "embed_content": content,
       "name": "Server"
-    });
-    request.headers = [
-      new HttpHeader3("Content-Type", "application/json"),
-      new HttpHeader3("auth", "my-auth-token")
-    ];
-    http3.request(request);
+    }).then();
   }
 };
 
 // behaviour_pack/scripts-dev/api/interaction.ts
-import { HttpRequest as HttpRequest4, HttpHeader as HttpHeader4, HttpRequestMethod as HttpRequestMethod4, http as http4 } from "@minecraft/server-net";
 var Interaction = class _Interaction {
   static {
     this.queue = [];
@@ -5006,14 +5233,14 @@ var Interaction = class _Interaction {
    * Post interaction to NexusCore
    */
   async post_interaction() {
-    const request = new HttpRequest4(`http://nexuscore:8000/api/v0.2/events/interaction`);
-    request.method = HttpRequestMethod4.Post;
-    request.body = JSON.stringify(this);
-    request.headers = [
-      new HttpHeader4("Content-Type", "application/json"),
-      new HttpHeader4("auth", "my-auth-token")
-    ];
-    await http4.request(request);
+    await createInteractionV1GuildsMeInteractionPost({
+      thorny_id: this.thorny_id,
+      type: this.type,
+      coordinates: this.coordinates,
+      reference: this.reference,
+      mainhand: this.mainhand,
+      dimension: this.dimension
+    });
   }
   static set_processing(value) {
     _Interaction.processing = value;
@@ -5028,9 +5255,6 @@ var Interaction = class _Interaction {
     return _Interaction.queue.shift();
   }
 };
-
-// behaviour_pack/scripts-dev/api/quests/quest.ts
-import { http as http6 } from "@minecraft/server-net";
 
 // behaviour_pack/scripts-dev/api/quests/reward.ts
 import { ItemComponentTypes as ItemComponentTypes3, ItemStack as ItemStack2 } from "@minecraft/server";
@@ -5089,7 +5313,6 @@ var Reward = class {
 };
 
 // behaviour_pack/scripts-dev/api/quests/objective.ts
-import { http as http5 } from "@minecraft/server-net";
 var Objective = class {
   constructor(data) {
     Object.assign(this, data);
@@ -5192,14 +5415,13 @@ ${this.get_requirements_string()}
     return `${title}${description}${full_task}${rewards}${requirements}${final_line}`;
   }
   async check_if_natural(coordinates) {
-    const x = coordinates[0];
-    const y = coordinates[1];
-    const z = coordinates[2];
-    const response = await http5.get(`http://nexuscore:8000/api/v0.2/events/interaction?x=${x}&y=${y}&z=${z}`);
-    if (response.status !== 200) {
+    const response = await listInteractionsV1GuildsMeInteractionsGet({
+      coordinates
+    });
+    if (response.length !== 0) {
       return false;
     }
-    return JSON.parse(response.body).length > 1;
+    return response.length > 1;
   }
   async give_rewards(interation, thorny_user) {
     for (let reward of this.rewards) {
@@ -5241,6 +5463,58 @@ ${this.get_requirements_string()}
   }
 };
 
+// behaviour_pack/scripts-dev/api/nexuscore/quests/quests.ts
+var getGetQuestV1GuildsMeQuestsQuestIdGetUrl = (questId) => {
+  return `/v1/guilds/me/quests/${questId}`;
+};
+var getQuestV1GuildsMeQuestsQuestIdGet = async (questId, options) => {
+  return minecraftFetch(
+    getGetQuestV1GuildsMeQuestsQuestIdGetUrl(questId),
+    {
+      ...options,
+      method: "GET"
+    }
+  );
+};
+var getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl = (thornyId) => {
+  return `/v1/guilds/me/quests/progress/user/${thornyId}/active`;
+};
+var getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet = async (thornyId, options) => {
+  return minecraftFetch(
+    getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl(thornyId),
+    {
+      ...options,
+      method: "GET"
+    }
+  );
+};
+var getFailActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDeleteUrl = (thornyId) => {
+  return `/v1/guilds/me/quests/progress/user/${thornyId}/active`;
+};
+var failActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDelete = async (thornyId, options) => {
+  return minecraftFetch(
+    getFailActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDeleteUrl(thornyId),
+    {
+      ...options,
+      method: "DELETE"
+    }
+  );
+};
+var getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatchUrl = (progressId) => {
+  return `/v1/guilds/me/quests/progress/${progressId}`;
+};
+var partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch = async (progressId, questProgressUpdate, options) => {
+  return minecraftFetch(
+    getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatchUrl(progressId),
+    {
+      ...options,
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(questProgressUpdate)
+    }
+  );
+};
+
 // behaviour_pack/scripts-dev/api/quests/quest.ts
 var Quest = class _Quest {
   constructor(data) {
@@ -5251,8 +5525,8 @@ var Quest = class _Quest {
   }
   static async get_quest(quest_id) {
     try {
-      const quest_response = await http6.get(`http://nexuscore:8000/api/v0.2/quests/${quest_id}`);
-      const quest_data = JSON.parse(quest_response.body);
+      const quest_response = await getQuestV1GuildsMeQuestsQuestIdGet(quest_id);
+      const quest_data = quest_response;
       return new _Quest(quest_data);
     } catch (error) {
       console.error("Error fetching quest:", error);
@@ -5261,11 +5535,7 @@ var Quest = class _Quest {
   }
 };
 
-// behaviour_pack/scripts-dev/api/quests/quest_progress.ts
-import { http as http8, HttpHeader as HttpHeader6, HttpRequest as HttpRequest6, HttpRequestMethod as HttpRequestMethod6 } from "@minecraft/server-net";
-
 // behaviour_pack/scripts-dev/api/quests/objective_progress.ts
-import { http as http7, HttpHeader as HttpHeader5, HttpRequest as HttpRequest5, HttpRequestMethod as HttpRequestMethod5 } from "@minecraft/server-net";
 var ObjectiveProgress = class {
   constructor(data, thorny_user, quest) {
     Object.assign(this, data);
@@ -5275,20 +5545,18 @@ var ObjectiveProgress = class {
     this.objective = quest.objectives.find((o) => o.objective_id == this.objective_id);
   }
   async update_user_objective() {
-    const request = new HttpRequest5(`http://nexuscore:8000/api/v0.2/quests/progress/${this.progress_id}/${this.objective_id}`);
-    request.method = HttpRequestMethod5.Put;
-    request.body = JSON.stringify({
-      "start_time": this.start_time ? this.start_time.toISOString() : null,
-      "end_time": this.end_time ? this.end_time.toISOString() : null,
-      "status": this.status,
-      "target_progress": this.target_progress,
-      "customization_progress": this.customization_progress
+    await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch(this.progress_id, {
+      objectives: [
+        {
+          objective_id: this.objective_id,
+          start_time: this.start_time ? this.start_time.toISOString() : null,
+          end_time: this.end_time ? this.end_time.toISOString() : null,
+          status: this.status,
+          target_progress: this.target_progress,
+          customization_progress: this.customization_progress
+        }
+      ]
     });
-    request.headers = [
-      new HttpHeader5("Content-Type", "application/json"),
-      new HttpHeader5("auth", "my-auth-token")
-    ];
-    await http7.request(request);
   }
   get_total_progress() {
     return this.target_progress.reduce(
@@ -5457,18 +5725,11 @@ var QuestProgress = class _QuestProgress {
    * Updates the user's Quest and Objective Progress
    */
   async update_user_quest() {
-    const request = new HttpRequest6(`http://nexuscore:8000/api/v0.2/quests/progress/${this.progress_id}`);
-    request.method = HttpRequestMethod6.Put;
-    request.body = JSON.stringify({
+    await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch(this.progress_id, {
       "start_time": this.start_time ? this.start_time.toISOString() : null,
       "end_time": this.end_time ? this.end_time.toISOString() : null,
       "status": this.status
     });
-    request.headers = [
-      new HttpHeader6("Content-Type", "application/json"),
-      new HttpHeader6("auth", "my-auth-token")
-    ];
-    await http8.request(request);
     for (let objective of this.objectives) {
       await objective.update_user_objective();
     }
@@ -5476,14 +5737,7 @@ var QuestProgress = class _QuestProgress {
   /** Fails the QuestProgress **/
   async fail_quest(thorny_id) {
     this.status = "failed";
-    const request = new HttpRequest6(`http://nexuscore:8000/api/v0.2/quests/progress/user/${thorny_id}/active`);
-    request.method = HttpRequestMethod6.Delete;
-    request.body = JSON.stringify({});
-    request.headers = [
-      new HttpHeader6("Content-Type", "application/json"),
-      new HttpHeader6("auth", "my-auth-token")
-    ];
-    await http8.request(request);
+    await failActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDelete(thorny_id);
   }
   /**
    * Clears the QuestProgress cache.
@@ -5503,19 +5757,15 @@ var QuestProgress = class _QuestProgress {
   static async get_quest_progress(thorny_user) {
     try {
       const thorny_id = thorny_user.thorny_id;
-      const quest_progress_response = await http8.get(
-        `http://nexuscore:8000/api/v0.2/quests/progress/user/${thorny_id}/active`
-      );
-      if (quest_progress_response.status === 200) {
-        const quest_progress_data = JSON.parse(quest_progress_response.body);
+      const quest_progress_response = await getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet(thorny_id);
+      if (quest_progress_response) {
+        const quest_progress_data = quest_progress_response;
         const quest_id = quest_progress_data.quest_id;
         if (this.quest_cache[thorny_id] && this.quest_cache[thorny_id].quest_id === quest_id) {
           return this.quest_cache[thorny_id];
         }
-        const quest_response = await http8.get(
-          `http://nexuscore:8000/api/v0.2/quests/${quest_id}`
-        );
-        const quest = new Quest(JSON.parse(quest_response.body));
+        const quest_response = await getQuestV1GuildsMeQuestsQuestIdGet(quest_id);
+        const quest = new Quest(quest_response);
         const quest_progress = new _QuestProgress(
           quest_progress_data,
           thorny_user,
@@ -6465,7 +6715,7 @@ function loadConnectionsFeature() {
     if (spawn_event.initialSpawn) {
       try {
         const thorny_user = api_default.ThornyUser.fetch_user(spawn_event.player.name);
-        thorny_user.send_connect_event("connect");
+        await thorny_user.send_connect_event("connect");
         api_default.Relay.event(`${spawn_event.player.name} has joined the server`, "", "join");
         const quest = await api_default.QuestProgress.get_quest_progress(thorny_user);
         utils_default.send_motd(spawn_event.player, quest);
@@ -6478,12 +6728,12 @@ function loadConnectionsFeature() {
       }
     }
   });
-  world20.afterEvents.playerLeave.subscribe((leave_event) => {
+  world20.afterEvents.playerLeave.subscribe(async (leave_event) => {
     const thorny_user = api_default.ThornyUser.fetch_user(leave_event.playerName);
     if (thorny_user) {
       api_default.QuestProgress.clear_cache(thorny_user);
     }
-    thorny_user?.send_connect_event("disconnect");
+    await thorny_user?.send_connect_event("disconnect");
     api_default.Relay.event(`${leave_event.playerName} has left the server`, "", "leave");
   });
 }
@@ -6628,7 +6878,7 @@ function loadWhitelistFeature(guild_id2) {
 }
 
 // behaviour_pack/scripts-dev/main.ts
-var guild_id = "1213827104945471538";
+var guild_id = "611008530077712395";
 function load(name, fn, ...args) {
   try {
     fn(...args);

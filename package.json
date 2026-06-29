@@ -10,10 +10,12 @@
     "@types/lodash": "^4.17.13",
     "@types/node": "^22.9.0",
     "date-fns": "^4.1.0",
-    "esbuild": "^0.27.1"
+    "esbuild": "^0.27.1",
+    "orval": "^8.18.0"
   },
   "scripts": {
-    "bundle": "cross-env GUILD_ID=611008530077712395 node esbuild.js",
-    "dev": "cross-env GUILD_ID=1213827104945471538 node esbuild.js"
+    "bundle": "cross-env node esbuild.js",
+    "dev": "cross-env node esbuild.js",
+    "generate:api": "orval"
   }
 }
