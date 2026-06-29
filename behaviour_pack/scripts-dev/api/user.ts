@@ -76,7 +76,7 @@ export default class ThornyUser implements IThornyUser {
         this.hidden = api_data.hidden
     }
 
-    public static async get_user_from_api(guild_id: string, gamertag: string): Promise<ThornyUser> {
+    public static async get_user_from_api(gamertag: string): Promise<ThornyUser> {
         const response = await lookupUserV1GuildsMeUsersLookupGet({gamertag: gamertag})
         const thorny_user = new ThornyUser(response as unknown as IThornyUser)
 

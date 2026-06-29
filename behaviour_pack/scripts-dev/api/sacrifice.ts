@@ -66,11 +66,10 @@ export class World {
         this.end_border = data.end_border
     }
 
-    public static async get_world(guild_id: string) {
+    public static async get_world() {
         try {
             const world_response = await getWorldV1GuildsMeWorldsGet()
             const world_data = world_response as unknown as IWorld;
-            world_data.guild_id = guild_id;
 
             return new World(world_data);
 
@@ -92,7 +91,7 @@ export class World {
 export class WorldCache {
     static world: World
 
-    public static async load_world(guild_id: string) {
-        WorldCache.world = await World.get_world(guild_id)
+    public static async load_world() {
+        WorldCache.world = await World.get_world()
     }
 }

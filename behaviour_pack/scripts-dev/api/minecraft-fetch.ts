@@ -1,5 +1,6 @@
-import {http, HttpHeader, HttpRequest, HttpRequestMethod,} from '@minecraft/server-net';
+import {http, HttpHeader, HttpRequest, HttpRequestMethod} from '@minecraft/server-net';
 import {getAccessToken} from "./token";
+import {HttpError, NotFoundError, UnauthorizedError} from "./http-errors";
 
 const BASE_URL = 'http://nexuscore:8000/api';
 
@@ -45,7 +46,11 @@ export const minecraftFetch = async <T>(
     const response = await http.request(request);
 
     if (response.status < 200 || response.status >= 300) {
-        throw new Error(`HTTP ${response.status}: ${response.body}`);
+        switch (response.status) {
+            case 404: throw new NotFoundError(response.body);
+            case 401: throw new UnauthorizedError(response.body);
+            default:  throw new HttpError(response.status, response.body);
+        }
     }
 
     // Bedrock returns a raw string body, no Response object

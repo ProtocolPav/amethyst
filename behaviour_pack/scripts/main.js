@@ -1,3 +1,6 @@
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
+
 // behaviour_pack/scripts-dev/polyfills/url-search-params.ts
 if (typeof globalThis.URLSearchParams === "undefined") {
   globalThis.URLSearchParams = class URLSearchParams {
@@ -14,6 +17,9 @@ if (typeof globalThis.URLSearchParams === "undefined") {
       } else {
         this.params = Object.entries(init);
       }
+    }
+    static {
+      __name(this, "URLSearchParams");
     }
     append(key, value) {
       this.params.push([key, value]);
@@ -3283,6 +3289,36 @@ async function getAccessToken() {
   tokenExpiresAt = Date.now() + (data.expires_in - 30) * 1e3;
   return cachedToken;
 }
+__name(getAccessToken, "getAccessToken");
+
+// behaviour_pack/scripts-dev/api/http-errors.ts
+var HttpError = class extends Error {
+  static {
+    __name(this, "HttpError");
+  }
+  constructor(status, body) {
+    super(`HTTP ${status}: ${body}`);
+    this.name = "HttpError";
+  }
+};
+var NotFoundError = class extends HttpError {
+  static {
+    __name(this, "NotFoundError");
+  }
+  constructor(body) {
+    super(404, body);
+    this.name = "NotFoundError";
+  }
+};
+var UnauthorizedError = class extends HttpError {
+  static {
+    __name(this, "UnauthorizedError");
+  }
+  constructor(body) {
+    super(401, body);
+    this.name = "UnauthorizedError";
+  }
+};
 
 // behaviour_pack/scripts-dev/api/minecraft-fetch.ts
 var BASE_URL2 = "http://nexuscore:8000/api";
@@ -3294,7 +3330,7 @@ var METHOD_MAP = {
   DELETE: HttpRequestMethod2.Delete,
   HEAD: HttpRequestMethod2.Head
 };
-var minecraftFetch = async (url, options = {}) => {
+var minecraftFetch = /* @__PURE__ */ __name(async (url, options = {}) => {
   const token = await getAccessToken();
   const request = new HttpRequest2(`${BASE_URL2}${url}`);
   request.method = METHOD_MAP[(options.method ?? "GET").toUpperCase()] ?? HttpRequestMethod2.Get;
@@ -3318,16 +3354,23 @@ var minecraftFetch = async (url, options = {}) => {
   }
   const response = await http2.request(request);
   if (response.status < 200 || response.status >= 300) {
-    throw new Error(`HTTP ${response.status}: ${response.body}`);
+    switch (response.status) {
+      case 404:
+        throw new NotFoundError(response.body);
+      case 401:
+        throw new UnauthorizedError(response.body);
+      default:
+        throw new HttpError(response.status, response.body);
+    }
   }
   return JSON.parse(response.body);
-};
+}, "minecraftFetch");
 
 // behaviour_pack/scripts-dev/api/nexuscore/worlds/worlds.ts
-var getGetWorldV1GuildsMeWorldsGetUrl = () => {
+var getGetWorldV1GuildsMeWorldsGetUrl = /* @__PURE__ */ __name(() => {
   return `/v1/guilds/me/worlds`;
-};
-var getWorldV1GuildsMeWorldsGet = async (options) => {
+}, "getGetWorldV1GuildsMeWorldsGetUrl");
+var getWorldV1GuildsMeWorldsGet = /* @__PURE__ */ __name(async (options) => {
   return minecraftFetch(
     getGetWorldV1GuildsMeWorldsGetUrl(),
     {
@@ -3335,11 +3378,11 @@ var getWorldV1GuildsMeWorldsGet = async (options) => {
       method: "GET"
     }
   );
-};
-var getPartialUpdateWorldV1GuildsMeWorldsPatchUrl = () => {
+}, "getWorldV1GuildsMeWorldsGet");
+var getPartialUpdateWorldV1GuildsMeWorldsPatchUrl = /* @__PURE__ */ __name(() => {
   return `/v1/guilds/me/worlds`;
-};
-var partialUpdateWorldV1GuildsMeWorldsPatch = async (worldUpdate, options) => {
+}, "getPartialUpdateWorldV1GuildsMeWorldsPatchUrl");
+var partialUpdateWorldV1GuildsMeWorldsPatch = /* @__PURE__ */ __name(async (worldUpdate, options) => {
   return minecraftFetch(
     getPartialUpdateWorldV1GuildsMeWorldsPatchUrl(),
     {
@@ -3349,11 +3392,11 @@ var partialUpdateWorldV1GuildsMeWorldsPatch = async (worldUpdate, options) => {
       body: JSON.stringify(worldUpdate)
     }
   );
-};
-var getGetItemV1GuildsMeWorldsItemsItemIdGetUrl = (itemId) => {
+}, "partialUpdateWorldV1GuildsMeWorldsPatch");
+var getGetItemV1GuildsMeWorldsItemsItemIdGetUrl = /* @__PURE__ */ __name((itemId) => {
   return `/v1/guilds/me/worlds/items/${itemId}`;
-};
-var getItemV1GuildsMeWorldsItemsItemIdGet = async (itemId, options) => {
+}, "getGetItemV1GuildsMeWorldsItemsItemIdGetUrl");
+var getItemV1GuildsMeWorldsItemsItemIdGet = /* @__PURE__ */ __name(async (itemId, options) => {
   return minecraftFetch(
     getGetItemV1GuildsMeWorldsItemsItemIdGetUrl(itemId),
     {
@@ -3361,11 +3404,11 @@ var getItemV1GuildsMeWorldsItemsItemIdGet = async (itemId, options) => {
       method: "GET"
     }
   );
-};
-var getPartialUpdateItemV1GuildsMeWorldsItemsItemIdPatchUrl = (itemId) => {
+}, "getItemV1GuildsMeWorldsItemsItemIdGet");
+var getPartialUpdateItemV1GuildsMeWorldsItemsItemIdPatchUrl = /* @__PURE__ */ __name((itemId) => {
   return `/v1/guilds/me/worlds/items/${itemId}`;
-};
-var partialUpdateItemV1GuildsMeWorldsItemsItemIdPatch = async (itemId, itemUpdateModel, options) => {
+}, "getPartialUpdateItemV1GuildsMeWorldsItemsItemIdPatchUrl");
+var partialUpdateItemV1GuildsMeWorldsItemsItemIdPatch = /* @__PURE__ */ __name(async (itemId, itemUpdateModel, options) => {
   return minecraftFetch(
     getPartialUpdateItemV1GuildsMeWorldsItemsItemIdPatchUrl(itemId),
     {
@@ -3375,10 +3418,13 @@ var partialUpdateItemV1GuildsMeWorldsItemsItemIdPatch = async (itemId, itemUpdat
       body: JSON.stringify(itemUpdateModel)
     }
   );
-};
+}, "partialUpdateItemV1GuildsMeWorldsItemsItemIdPatch");
 
 // behaviour_pack/scripts-dev/api/sacrifice.ts
 var Item = class _Item {
+  static {
+    __name(this, "Item");
+  }
   constructor(data) {
     this.item_id = data.item_id;
     this.value = data.value;
@@ -3403,17 +3449,19 @@ var Item = class _Item {
   }
 };
 var World = class _World {
+  static {
+    __name(this, "World");
+  }
   constructor(data) {
     this.guild_id = data.guild_id;
     this.overworld_border = data.overworld_border;
     this.nether_border = data.nether_border;
     this.end_border = data.end_border;
   }
-  static async get_world(guild_id2) {
+  static async get_world() {
     try {
       const world_response = await getWorldV1GuildsMeWorldsGet();
       const world_data = world_response;
-      world_data.guild_id = guild_id2;
       return new _World(world_data);
     } catch (error) {
       console.error("Error fetching world:", error);
@@ -3429,8 +3477,11 @@ var World = class _World {
   }
 };
 var WorldCache = class _WorldCache {
-  static async load_world(guild_id2) {
-    _WorldCache.world = await World.get_world(guild_id2);
+  static {
+    __name(this, "WorldCache");
+  }
+  static async load_world() {
+    _WorldCache.world = await World.get_world();
   }
 };
 
@@ -3459,9 +3510,10 @@ function borderCheck(player, dimensionID, border_size, warning_range, outside) {
     warning_range.splice(warning_range.indexOf(player.name), 1);
   }
 }
-function loadWorldBorder(guild_id2) {
+__name(borderCheck, "borderCheck");
+function loadWorldBorder() {
   world.afterEvents.worldLoad.subscribe(() => {
-    WorldCache.load_world(guild_id2).then();
+    WorldCache.load_world().then();
     let players_100_blocks_away = { overworld: [], nether: [], end: [] };
     let players_outside_border = { overworld: [], nether: [], end: [] };
     system.runInterval(() => {
@@ -3482,6 +3534,7 @@ function loadWorldBorder(guild_id2) {
     }, 20);
   });
 }
+__name(loadWorldBorder, "loadWorldBorder");
 
 // behaviour_pack/scripts-dev/features/items/elytra-mending.ts
 import { EquipmentSlot, world as world2, system as system2, EntityComponentTypes, ItemComponentTypes, EnchantmentType } from "@minecraft/server";
@@ -3513,6 +3566,7 @@ function elytraCheck(player) {
     }
   }
 }
+__name(elytraCheck, "elytraCheck");
 function loadRemoveMendingFromElytraLoop() {
   system2.runInterval(() => {
     let playerlist = world2.getPlayers();
@@ -3521,6 +3575,7 @@ function loadRemoveMendingFromElytraLoop() {
     });
   }, 20);
 }
+__name(loadRemoveMendingFromElytraLoop, "loadRemoveMendingFromElytraLoop");
 
 // behaviour_pack/scripts-dev/features/items/champion-set.ts
 import { EntityComponentTypes as EntityComponentTypes2, EquipmentSlot as EquipmentSlot2, MolangVariableMap, system as system3, world as world3 } from "@minecraft/server";
@@ -3544,6 +3599,7 @@ function champion(player) {
     player.dimension.spawnParticle("minecraft:glow_particle", random_location, molang);
   }
 }
+__name(champion, "champion");
 function loadChampionSet() {
   system3.runInterval(() => {
     let playerlist = world3.getPlayers();
@@ -3552,6 +3608,7 @@ function loadChampionSet() {
     });
   }, 4);
 }
+__name(loadChampionSet, "loadChampionSet");
 
 // behaviour_pack/scripts-dev/features/items/totem-of-togetherness.ts
 import { EntityComponentTypes as EntityComponentTypes3, EquipmentSlot as EquipmentSlot3, system as system4, world as world4 } from "@minecraft/server";
@@ -3573,6 +3630,7 @@ function togetherness(player) {
     }
   }
 }
+__name(togetherness, "togetherness");
 function loadTotemOfTogethernessLoop() {
   system4.runInterval(() => {
     let playerlist = world4.getPlayers();
@@ -3581,6 +3639,7 @@ function loadTotemOfTogethernessLoop() {
     });
   }, 20);
 }
+__name(loadTotemOfTogethernessLoop, "loadTotemOfTogethernessLoop");
 
 // behaviour_pack/scripts-dev/features/items/index.ts
 function loadItemComponents() {
@@ -3588,6 +3647,7 @@ function loadItemComponents() {
   loadChampionSet();
   loadTotemOfTogethernessLoop();
 }
+__name(loadItemComponents, "loadItemComponents");
 
 // behaviour_pack/scripts-dev/features/blocks/fungus-spread.ts
 import {
@@ -3605,6 +3665,7 @@ function loadFungusSpreadComponent() {
       }
     }
   }
+  __name(fungus_spread, "fungus_spread");
   function fungus_destroy(event) {
     const random_choice = Math.random();
     const mobs = [
@@ -3646,6 +3707,7 @@ function loadFungusSpreadComponent() {
       );
     }
   }
+  __name(fungus_destroy, "fungus_destroy");
   system5.beforeEvents.startup.subscribe((initEvent) => {
     initEvent.blockComponentRegistry.registerCustomComponent(
       "amethyst:fungus_spread",
@@ -3660,12 +3722,16 @@ function loadFungusSpreadComponent() {
     );
   });
 }
+__name(loadFungusSpreadComponent, "loadFungusSpreadComponent");
 
 // behaviour_pack/scripts-dev/features/blocks/glitch-block.ts
 import { system as system8 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/utils/death_messages.ts
 var DeathMessage = class {
+  static {
+    __name(this, "DeathMessage");
+  }
   static random_pvp(killer, dead) {
     const deathMessages = [
       // Quirky messages
@@ -3889,11 +3955,13 @@ function constructFrom(date, value) {
   if (date instanceof Date) return new date.constructor(value);
   return new Date(value);
 }
+__name(constructFrom, "constructFrom");
 
 // node_modules/date-fns/toDate.js
 function toDate(argument, context) {
   return constructFrom(context || argument, argument);
 }
+__name(toDate, "toDate");
 
 // node_modules/date-fns/_lib/getRoundingMethod.js
 function getRoundingMethod(method) {
@@ -3903,17 +3971,20 @@ function getRoundingMethod(method) {
     return result === 0 ? 0 : result;
   };
 }
+__name(getRoundingMethod, "getRoundingMethod");
 
 // node_modules/date-fns/differenceInMilliseconds.js
 function differenceInMilliseconds(laterDate, earlierDate) {
   return +toDate(laterDate) - +toDate(earlierDate);
 }
+__name(differenceInMilliseconds, "differenceInMilliseconds");
 
 // node_modules/date-fns/differenceInSeconds.js
 function differenceInSeconds(laterDate, earlierDate, options) {
   const diff = differenceInMilliseconds(laterDate, earlierDate) / 1e3;
   return getRoundingMethod(options?.roundingMethod)(diff);
 }
+__name(differenceInSeconds, "differenceInSeconds");
 
 // behaviour_pack/scripts-dev/utils/checks.ts
 function distance_check(c1, c2, horizontalRadius, verticalRadius) {
@@ -3924,9 +3995,11 @@ function distance_check(c1, c2, horizontalRadius, verticalRadius) {
   const verticalDistance = Math.abs(dy);
   return horizontalDistance <= horizontalRadius && verticalDistance <= verticalRadius;
 }
+__name(distance_check, "distance_check");
 function timer_check(now, start, seconds) {
   return differenceInSeconds(now, start) <= seconds;
 }
+__name(timer_check, "timer_check");
 var checks = {
   timer_check,
   distance_check
@@ -3985,6 +4058,7 @@ ${randomLong}\xA7r
 ${questReminder}`
   );
 }
+__name(send_motd, "send_motd");
 
 // behaviour_pack/scripts-dev/utils/commands.ts
 import {
@@ -4000,6 +4074,7 @@ function send_message(dimension, target, message) {
   }
   world7.getDimension(dimension).runCommand(`tellraw ${target} ${JSON.stringify(msg)}`);
 }
+__name(send_message, "send_message");
 function play_quest_progress_sound(gamertag) {
   let player = world7.getPlayers({ name: gamertag })[0];
   player.playSound(
@@ -4007,6 +4082,7 @@ function play_quest_progress_sound(gamertag) {
     { volume: 100, location: player.location }
   );
 }
+__name(play_quest_progress_sound, "play_quest_progress_sound");
 function play_quest_complete_sound(gamertag) {
   let player = world7.getPlayers({ name: gamertag })[0];
   player.playSound(
@@ -4019,6 +4095,7 @@ function play_quest_complete_sound(gamertag) {
     }, 10);
   }
 }
+__name(play_quest_complete_sound, "play_quest_complete_sound");
 function play_objective_complete_sound(gamertag) {
   let player = world7.getPlayers({ name: gamertag })[0];
   player.playSound(
@@ -4026,6 +4103,7 @@ function play_objective_complete_sound(gamertag) {
     { volume: 100, location: player.location }
   );
 }
+__name(play_objective_complete_sound, "play_objective_complete_sound");
 function play_quest_fail_sound(gamertag) {
   let player = world7.getPlayers({ name: gamertag })[0];
   player.playSound(
@@ -4033,9 +4111,11 @@ function play_quest_fail_sound(gamertag) {
     { volume: 100, location: player.location }
   );
 }
+__name(play_quest_fail_sound, "play_quest_fail_sound");
 function send_title(dimension, target, type, message) {
   world7.getDimension(dimension).runCommand(`title "${target}" ${type} ${message}`);
 }
+__name(send_title, "send_title");
 function add_or_spawn_item(player, item) {
   const player_container = player.getComponent(EntityComponentTypes4.Inventory)?.container;
   if (!player_container) {
@@ -4047,6 +4127,7 @@ function add_or_spawn_item(player, item) {
     player.dimension.spawnItem(item, player.location);
   }
 }
+__name(add_or_spawn_item, "add_or_spawn_item");
 function give_item(gamertag, count, item) {
   const item_stack = item;
   let stack_amount = Math.trunc(count / item_stack.maxAmount);
@@ -4064,6 +4145,7 @@ function give_item(gamertag, count, item) {
     add_or_spawn_item(player, item_stack);
   }
 }
+__name(give_item, "give_item");
 function noise_glitch(player) {
   const noises = [
     [{ "name": "mob.villager.yes", "options": { "volume": 100, "pitch": 1 } }],
@@ -4093,6 +4175,7 @@ function noise_glitch(player) {
     );
   }
 }
+__name(noise_glitch, "noise_glitch");
 function vision_entity_glitch(player) {
   const entities = [
     MinecraftEntityTypes.Enderman,
@@ -4126,6 +4209,7 @@ function vision_entity_glitch(player) {
     current_entity.remove();
   });
 }
+__name(vision_entity_glitch, "vision_entity_glitch");
 function vision_block_glitch(player) {
   const blocks = [
     MinecraftBlockTypes.Bedrock,
@@ -4149,6 +4233,7 @@ function vision_block_glitch(player) {
     });
   }
 }
+__name(vision_block_glitch, "vision_block_glitch");
 function effect_glitch(player) {
   const effects = [
     MinecraftEffectTypes.Haste,
@@ -4165,6 +4250,7 @@ function effect_glitch(player) {
     }
   );
 }
+__name(effect_glitch, "effect_glitch");
 function place_glitch_block(player) {
   const block = "amethyst:glitch_block";
   let location = player.location;
@@ -4176,6 +4262,7 @@ function place_glitch_block(player) {
     random_block.setType(block);
   }
 }
+__name(place_glitch_block, "place_glitch_block");
 var commands = {
   send_message,
   play_quest_complete_sound,
@@ -4194,6 +4281,9 @@ var commands_default = commands;
 
 // behaviour_pack/scripts-dev/utils/altar_messages.ts
 var AltarMessage = class {
+  static {
+    __name(this, "AltarMessage");
+  }
   static random_sacrifice(blockValue, originalBlockValue) {
     const noValueMessages = [
       `The Anomaly cracks audibly... your empty gesture rejected. \xA78\xA7l${blockValue} blocks\xA7r`,
@@ -4262,12 +4352,12 @@ var AltarMessage = class {
         `The cosmos itself turns against you in fury. \xA74\xA7l+${blockValue} blocks\xA7r`
       ]
     };
-    const getValueTier = () => {
+    const getValueTier = /* @__PURE__ */ __name(() => {
       if (blockValue >= 100) return valueTierMessages.extreme;
       if (blockValue >= 30) return valueTierMessages.very;
       if (blockValue >= 10) return valueTierMessages.valuable;
       return valueTierMessages.not;
-    };
+    }, "getValueTier");
     let messages = getValueTier();
     if (blockValue < originalBlockValue) {
       const valueRemaining = blockValue / originalBlockValue;
@@ -4320,6 +4410,9 @@ var AltarMessage = class {
 // behaviour_pack/scripts-dev/utils/dragon_messages.ts
 import { world as world8 } from "@minecraft/server";
 var DragonHeartMessage = class {
+  static {
+    __name(this, "DragonHeartMessage");
+  }
   static heart_mined(heartsMined) {
     const heartMessages = {
       1: `\xA7l\xA75The Ancient Dragon's roar echoes across dimensions...
@@ -4397,6 +4490,9 @@ var DragonHeartMessage = class {
 // behaviour_pack/scripts-dev/utils/evil_acts.ts
 import { EntityDamageCause as EntityDamageCause2, TicksPerSecond as TicksPerSecond3, world as world9 } from "@minecraft/server";
 var EvilActs = class {
+  static {
+    __name(this, "EvilActs");
+  }
   constructor() {
     this.punishments = /* @__PURE__ */ new Map();
     this.initializePunishments();
@@ -4532,6 +4628,9 @@ var EvilActs = class {
 // behaviour_pack/scripts-dev/utils/glitches.ts
 import { EntityComponentTypes as EntityComponentTypes5, system as system7, TicksPerSecond as TicksPerSecond4 } from "@minecraft/server";
 var Glitches = class {
+  static {
+    __name(this, "Glitches");
+  }
   constructor() {
     this.glitches = /* @__PURE__ */ new Map();
     this.initializeGlitches();
@@ -4774,6 +4873,7 @@ function convert_seconds_to_hms(seconds) {
   const remainingSeconds = seconds % 60;
   return `${hours}h ${minutes}m ${remainingSeconds}s`;
 }
+__name(convert_seconds_to_hms, "convert_seconds_to_hms");
 function combine(list1, list2, id) {
   let combined_list = [];
   for (let item of list1) {
@@ -4781,9 +4881,11 @@ function combine(list1, list2, id) {
   }
   return combined_list;
 }
+__name(combine, "combine");
 function clean_id(id) {
   return id.replace(/^[^:]+:/, "").replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 }
+__name(clean_id, "clean_id");
 function normalizeDateString(datetime) {
   if (!datetime.includes(".")) {
     return `${datetime}.000000`;
@@ -4792,6 +4894,7 @@ function normalizeDateString(datetime) {
     return `.${digits.padEnd(6, "0")}`;
   });
 }
+__name(normalizeDateString, "normalizeDateString");
 function getWeightedChoice(choices) {
   const total_weight = choices.reduce((sum, choice) => sum + choice.weight, 0);
   const random_value = Math.random() * total_weight;
@@ -4804,6 +4907,7 @@ function getWeightedChoice(choices) {
   }
   return choices[0].item;
 }
+__name(getWeightedChoice, "getWeightedChoice");
 var emojis = {
   EVERTHORN: "\uE600",
   NUGS: "\uE601",
@@ -4854,6 +4958,7 @@ function loadGlitchBlockComponent() {
       });
     }
   }
+  __name(glitch, "glitch");
   function glitch_particles(event) {
     if (event.block.isValid) {
       const location = event.block.location;
@@ -4868,6 +4973,7 @@ function loadGlitchBlockComponent() {
       }
     }
   }
+  __name(glitch_particles, "glitch_particles");
   system8.beforeEvents.startup.subscribe((initEvent) => {
     initEvent.blockComponentRegistry.registerCustomComponent(
       "amethyst:glitch",
@@ -4880,6 +4986,7 @@ function loadGlitchBlockComponent() {
     );
   });
 }
+__name(loadGlitchBlockComponent, "loadGlitchBlockComponent");
 
 // behaviour_pack/scripts-dev/features/blocks/monolithic-reactor.ts
 import {
@@ -4914,6 +5021,7 @@ function loadMonolithicReactorComponent() {
       }
     }
   }
+  __name(on_interact, "on_interact");
   system9.beforeEvents.startup.subscribe((initEvent) => {
     initEvent.blockComponentRegistry.registerCustomComponent(
       "amethyst:reactor_activate",
@@ -4925,6 +5033,7 @@ function loadMonolithicReactorComponent() {
     );
   });
 }
+__name(loadMonolithicReactorComponent, "loadMonolithicReactorComponent");
 
 // behaviour_pack/scripts-dev/features/blocks/whoopie-cushion.ts
 import {
@@ -4937,9 +5046,11 @@ function loadWhoopieCushionComponent() {
     location.y += 0.65;
     dimension.spawnParticle("minecraft:explosion_particle", location);
   }
+  __name(play_fart, "play_fart");
   function on_interact(event) {
     play_fart(event.dimension, event.block.center());
   }
+  __name(on_interact, "on_interact");
   function on_redstone(event) {
     const powered = event.block.permutation.getState("amethyst:powered_bit");
     if (event.block.isValid && event.block.getRedstonePower() && !powered) {
@@ -4949,6 +5060,7 @@ function loadWhoopieCushionComponent() {
       event.block.setPermutation(BlockPermutation2.resolve("amethyst:whoopee_cushion", { "amethyst:powered_bit": false }));
     }
   }
+  __name(on_redstone, "on_redstone");
   system10.beforeEvents.startup.subscribe((initEvent) => {
     initEvent.blockComponentRegistry.registerCustomComponent(
       "amethyst:whoop",
@@ -4969,6 +5081,7 @@ function loadWhoopieCushionComponent() {
     );
   });
 }
+__name(loadWhoopieCushionComponent, "loadWhoopieCushionComponent");
 
 // behaviour_pack/scripts-dev/features/blocks/altar.ts
 import {
@@ -4980,7 +5093,7 @@ import {
 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/api/nexuscore/users/users.ts
-var getLookupUserV1GuildsMeUsersLookupGetUrl = (params) => {
+var getLookupUserV1GuildsMeUsersLookupGetUrl = /* @__PURE__ */ __name((params) => {
   const normalizedParams = new URLSearchParams();
   Object.entries(params || {}).forEach(([key, value]) => {
     if (value !== void 0) {
@@ -4989,8 +5102,8 @@ var getLookupUserV1GuildsMeUsersLookupGetUrl = (params) => {
   });
   const stringifiedParams = normalizedParams.toString();
   return stringifiedParams.length > 0 ? `/v1/guilds/me/users/lookup?${stringifiedParams}` : `/v1/guilds/me/users/lookup`;
-};
-var lookupUserV1GuildsMeUsersLookupGet = async (params, options) => {
+}, "getLookupUserV1GuildsMeUsersLookupGetUrl");
+var lookupUserV1GuildsMeUsersLookupGet = /* @__PURE__ */ __name(async (params, options) => {
   return minecraftFetch(
     getLookupUserV1GuildsMeUsersLookupGetUrl(params),
     {
@@ -4998,11 +5111,11 @@ var lookupUserV1GuildsMeUsersLookupGet = async (params, options) => {
       method: "GET"
     }
   );
-};
-var getPartialUpdateUserV1GuildsMeUsersThornyIdPatchUrl = (thornyId) => {
+}, "lookupUserV1GuildsMeUsersLookupGet");
+var getPartialUpdateUserV1GuildsMeUsersThornyIdPatchUrl = /* @__PURE__ */ __name((thornyId) => {
   return `/v1/guilds/me/users/${thornyId}`;
-};
-var partialUpdateUserV1GuildsMeUsersThornyIdPatch = async (thornyId, userUpdate, options) => {
+}, "getPartialUpdateUserV1GuildsMeUsersThornyIdPatchUrl");
+var partialUpdateUserV1GuildsMeUsersThornyIdPatch = /* @__PURE__ */ __name(async (thornyId, userUpdate, options) => {
   return minecraftFetch(
     getPartialUpdateUserV1GuildsMeUsersThornyIdPatchUrl(thornyId),
     {
@@ -5012,13 +5125,13 @@ var partialUpdateUserV1GuildsMeUsersThornyIdPatch = async (thornyId, userUpdate,
       body: JSON.stringify(userUpdate)
     }
   );
-};
+}, "partialUpdateUserV1GuildsMeUsersThornyIdPatch");
 
 // behaviour_pack/scripts-dev/api/nexuscore/guilds/guilds.ts
-var getCreateConnectionV1GuildsMeConnectionPostUrl = () => {
+var getCreateConnectionV1GuildsMeConnectionPostUrl = /* @__PURE__ */ __name(() => {
   return `/v1/guilds/me/connection`;
-};
-var createConnectionV1GuildsMeConnectionPost = async (connectionIn, options) => {
+}, "getCreateConnectionV1GuildsMeConnectionPostUrl");
+var createConnectionV1GuildsMeConnectionPost = /* @__PURE__ */ __name(async (connectionIn, options) => {
   return minecraftFetch(
     getCreateConnectionV1GuildsMeConnectionPostUrl(),
     {
@@ -5028,11 +5141,11 @@ var createConnectionV1GuildsMeConnectionPost = async (connectionIn, options) => 
       body: JSON.stringify(connectionIn)
     }
   );
-};
-var getCreateInteractionV1GuildsMeInteractionPostUrl = () => {
+}, "createConnectionV1GuildsMeConnectionPost");
+var getCreateInteractionV1GuildsMeInteractionPostUrl = /* @__PURE__ */ __name(() => {
   return `/v1/guilds/me/interaction`;
-};
-var createInteractionV1GuildsMeInteractionPost = async (interactionIn, options) => {
+}, "getCreateInteractionV1GuildsMeInteractionPostUrl");
+var createInteractionV1GuildsMeInteractionPost = /* @__PURE__ */ __name(async (interactionIn, options) => {
   return minecraftFetch(
     getCreateInteractionV1GuildsMeInteractionPostUrl(),
     {
@@ -5042,8 +5155,8 @@ var createInteractionV1GuildsMeInteractionPost = async (interactionIn, options) 
       body: JSON.stringify(interactionIn)
     }
   );
-};
-var getListInteractionsV1GuildsMeInteractionsGetUrl = (params) => {
+}, "createInteractionV1GuildsMeInteractionPost");
+var getListInteractionsV1GuildsMeInteractionsGetUrl = /* @__PURE__ */ __name((params) => {
   const normalizedParams = new URLSearchParams();
   Object.entries(params || {}).forEach(([key, value]) => {
     if (value !== void 0) {
@@ -5052,8 +5165,8 @@ var getListInteractionsV1GuildsMeInteractionsGetUrl = (params) => {
   });
   const stringifiedParams = normalizedParams.toString();
   return stringifiedParams.length > 0 ? `/v1/guilds/me/interactions?${stringifiedParams}` : `/v1/guilds/me/interactions`;
-};
-var listInteractionsV1GuildsMeInteractionsGet = async (params, options) => {
+}, "getListInteractionsV1GuildsMeInteractionsGetUrl");
+var listInteractionsV1GuildsMeInteractionsGet = /* @__PURE__ */ __name(async (params, options) => {
   return minecraftFetch(
     getListInteractionsV1GuildsMeInteractionsGetUrl(params),
     {
@@ -5061,10 +5174,13 @@ var listInteractionsV1GuildsMeInteractionsGet = async (params, options) => {
       method: "GET"
     }
   );
-};
+}, "listInteractionsV1GuildsMeInteractionsGet");
 
 // behaviour_pack/scripts-dev/api/user.ts
 var ThornyUser = class _ThornyUser {
+  static {
+    __name(this, "ThornyUser");
+  }
   static {
     this.thorny_user_map = {};
   }
@@ -5093,7 +5209,7 @@ var ThornyUser = class _ThornyUser {
     this.dimension = api_data.dimension;
     this.hidden = api_data.hidden;
   }
-  static async get_user_from_api(guild_id2, gamertag) {
+  static async get_user_from_api(gamertag) {
     const response = await lookupUserV1GuildsMeUsersLookupGet({ gamertag });
     const thorny_user = new _ThornyUser(response);
     _ThornyUser.thorny_user_map[gamertag] = thorny_user;
@@ -5175,10 +5291,10 @@ var ThornyUser = class _ThornyUser {
 };
 
 // behaviour_pack/scripts-dev/api/nexuscore/webhook-relay/webhook-relay.ts
-var getServerRelayV1RelayPostUrl = () => {
+var getServerRelayV1RelayPostUrl = /* @__PURE__ */ __name(() => {
   return `/v1/relay`;
-};
-var serverRelayV1RelayPost = async (relayModel, options) => {
+}, "getServerRelayV1RelayPostUrl");
+var serverRelayV1RelayPost = /* @__PURE__ */ __name(async (relayModel, options) => {
   return minecraftFetch(
     getServerRelayV1RelayPostUrl(),
     {
@@ -5188,10 +5304,13 @@ var serverRelayV1RelayPost = async (relayModel, options) => {
       body: JSON.stringify(relayModel)
     }
   );
-};
+}, "serverRelayV1RelayPost");
 
 // behaviour_pack/scripts-dev/api/relay.ts
 var Relay = class {
+  static {
+    __name(this, "Relay");
+  }
   static message(nametag, content) {
     serverRelayV1RelayPost({
       "type": "message",
@@ -5214,6 +5333,9 @@ var Relay = class {
 
 // behaviour_pack/scripts-dev/api/interaction.ts
 var Interaction = class _Interaction {
+  static {
+    __name(this, "Interaction");
+  }
   static {
     this.queue = [];
   }
@@ -5259,6 +5381,9 @@ var Interaction = class _Interaction {
 // behaviour_pack/scripts-dev/api/quests/reward.ts
 import { ItemComponentTypes as ItemComponentTypes3, ItemStack as ItemStack2 } from "@minecraft/server";
 var Reward = class {
+  static {
+    __name(this, "Reward");
+  }
   constructor(data) {
     Object.assign(this, data);
   }
@@ -5314,6 +5439,9 @@ var Reward = class {
 
 // behaviour_pack/scripts-dev/api/quests/objective.ts
 var Objective = class {
+  static {
+    __name(this, "Objective");
+  }
   constructor(data) {
     Object.assign(this, data);
     this.rewards = data.rewards.map((r) => new Reward(r));
@@ -5464,10 +5592,10 @@ ${this.get_requirements_string()}
 };
 
 // behaviour_pack/scripts-dev/api/nexuscore/quests/quests.ts
-var getGetQuestV1GuildsMeQuestsQuestIdGetUrl = (questId) => {
+var getGetQuestV1GuildsMeQuestsQuestIdGetUrl = /* @__PURE__ */ __name((questId) => {
   return `/v1/guilds/me/quests/${questId}`;
-};
-var getQuestV1GuildsMeQuestsQuestIdGet = async (questId, options) => {
+}, "getGetQuestV1GuildsMeQuestsQuestIdGetUrl");
+var getQuestV1GuildsMeQuestsQuestIdGet = /* @__PURE__ */ __name(async (questId, options) => {
   return minecraftFetch(
     getGetQuestV1GuildsMeQuestsQuestIdGetUrl(questId),
     {
@@ -5475,11 +5603,11 @@ var getQuestV1GuildsMeQuestsQuestIdGet = async (questId, options) => {
       method: "GET"
     }
   );
-};
-var getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl = (thornyId) => {
+}, "getQuestV1GuildsMeQuestsQuestIdGet");
+var getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl = /* @__PURE__ */ __name((thornyId) => {
   return `/v1/guilds/me/quests/progress/user/${thornyId}/active`;
-};
-var getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet = async (thornyId, options) => {
+}, "getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl");
+var getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet = /* @__PURE__ */ __name(async (thornyId, options) => {
   return minecraftFetch(
     getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl(thornyId),
     {
@@ -5487,11 +5615,11 @@ var getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet = async 
       method: "GET"
     }
   );
-};
-var getFailActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDeleteUrl = (thornyId) => {
+}, "getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet");
+var getFailActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDeleteUrl = /* @__PURE__ */ __name((thornyId) => {
   return `/v1/guilds/me/quests/progress/user/${thornyId}/active`;
-};
-var failActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDelete = async (thornyId, options) => {
+}, "getFailActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDeleteUrl");
+var failActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDelete = /* @__PURE__ */ __name(async (thornyId, options) => {
   return minecraftFetch(
     getFailActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDeleteUrl(thornyId),
     {
@@ -5499,11 +5627,11 @@ var failActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDelete = as
       method: "DELETE"
     }
   );
-};
-var getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatchUrl = (progressId) => {
+}, "failActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDelete");
+var getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatchUrl = /* @__PURE__ */ __name((progressId) => {
   return `/v1/guilds/me/quests/progress/${progressId}`;
-};
-var partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch = async (progressId, questProgressUpdate, options) => {
+}, "getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatchUrl");
+var partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch = /* @__PURE__ */ __name(async (progressId, questProgressUpdate, options) => {
   return minecraftFetch(
     getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatchUrl(progressId),
     {
@@ -5513,10 +5641,13 @@ var partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch = async (p
       body: JSON.stringify(questProgressUpdate)
     }
   );
-};
+}, "partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch");
 
 // behaviour_pack/scripts-dev/api/quests/quest.ts
 var Quest = class _Quest {
+  static {
+    __name(this, "Quest");
+  }
   constructor(data) {
     Object.assign(this, data);
     this.start_time = new Date(data.start_time);
@@ -5537,6 +5668,9 @@ var Quest = class _Quest {
 
 // behaviour_pack/scripts-dev/api/quests/objective_progress.ts
 var ObjectiveProgress = class {
+  static {
+    __name(this, "ObjectiveProgress");
+  }
   constructor(data, thorny_user, quest) {
     Object.assign(this, data);
     this.thorny_user = thorny_user;
@@ -5710,6 +5844,9 @@ var ObjectiveProgress = class {
 // behaviour_pack/scripts-dev/api/quests/quest_progress.ts
 var QuestProgress = class _QuestProgress {
   static {
+    __name(this, "QuestProgress");
+  }
+  static {
     this.quest_cache = {};
   }
   constructor(data, thorny_user, quest) {
@@ -5755,31 +5892,30 @@ var QuestProgress = class _QuestProgress {
    * If quest already exists in cache, it fetches from cache instead.
    */
   static async get_quest_progress(thorny_user) {
+    let quest_progress_response;
+    const thorny_id = thorny_user.thorny_id;
     try {
-      const thorny_id = thorny_user.thorny_id;
-      const quest_progress_response = await getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet(thorny_id);
-      if (quest_progress_response) {
-        const quest_progress_data = quest_progress_response;
-        const quest_id = quest_progress_data.quest_id;
-        if (this.quest_cache[thorny_id] && this.quest_cache[thorny_id].quest_id === quest_id) {
-          return this.quest_cache[thorny_id];
-        }
-        const quest_response = await getQuestV1GuildsMeQuestsQuestIdGet(quest_id);
-        const quest = new Quest(quest_response);
-        const quest_progress = new _QuestProgress(
-          quest_progress_data,
-          thorny_user,
-          quest
-        );
-        this.quest_cache[thorny_user.thorny_id] = quest_progress;
-        return quest_progress;
-      } else {
+      quest_progress_response = await getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet(thorny_id);
+    } catch (error) {
+      if (error instanceof NotFoundError) {
         return null;
       }
-    } catch (error) {
-      console.error("Error fetching quest:", error);
       throw error;
     }
+    const quest_progress_data = quest_progress_response;
+    const quest_id = quest_progress_data.quest_id;
+    if (this.quest_cache[thorny_id] && this.quest_cache[thorny_id].quest_id === quest_id) {
+      return this.quest_cache[thorny_id];
+    }
+    const quest_response = await getQuestV1GuildsMeQuestsQuestIdGet(quest_id);
+    const quest = new Quest(quest_response);
+    const quest_progress = new _QuestProgress(
+      quest_progress_data,
+      thorny_user,
+      quest
+    );
+    this.quest_cache[thorny_user.thorny_id] = quest_progress;
+    return quest_progress;
   }
   /**
    * Returns the currently active objective, or null if there are none left.
@@ -5913,7 +6049,7 @@ function loadAltarComponent() {
           await sacrificial_item.update_item();
           border.end_border += block_value;
           await border.update_world();
-          await WorldCache.load_world(border.guild_id);
+          await WorldCache.load_world();
           const total_value = sacrificeTotals.get(playerName)?.val;
           const total_original_value = sacrificeTotals.get(playerName)?.orig;
           if (total_value && total_original_value) {
@@ -5970,12 +6106,14 @@ function loadAltarComponent() {
       }
     }
   }
+  __name(sacrifice, "sacrifice");
   function ambient(event) {
     if (event.block.isValid) {
       const location = event.block.center();
       event.dimension.playSound("altar.ambient", location, { volume: 3 });
     }
   }
+  __name(ambient, "ambient");
   system11.beforeEvents.startup.subscribe((initEvent) => {
     initEvent.blockComponentRegistry.registerCustomComponent(
       "amethyst:sacrifice",
@@ -5990,6 +6128,7 @@ function loadAltarComponent() {
     );
   });
 }
+__name(loadAltarComponent, "loadAltarComponent");
 
 // behaviour_pack/scripts-dev/features/blocks/index.ts
 function loadBlockComponents() {
@@ -5999,6 +6138,7 @@ function loadBlockComponents() {
   loadWhoopieCushionComponent();
   loadAltarComponent();
 }
+__name(loadBlockComponents, "loadBlockComponents");
 
 // behaviour_pack/scripts-dev/features/dragon-fight/health-manager.ts
 import { EntityComponentTypes as EntityComponentTypes8, world as world12 } from "@minecraft/server";
@@ -6027,10 +6167,12 @@ function loadHealthManager() {
       utils_default.DragonHeartMessage.summon_minions();
     }
   }
+  __name(react_to_dragon_damage, "react_to_dragon_damage");
   function reset_health_stage(event) {
     first_stage = false;
     second_stage = false;
   }
+  __name(reset_health_stage, "reset_health_stage");
   world12.afterEvents.entityHurt.subscribe(
     react_to_dragon_damage,
     { entityTypes: [MinecraftEntityTypes.EnderDragon] }
@@ -6040,6 +6182,7 @@ function loadHealthManager() {
     { entityTypes: [MinecraftEntityTypes.EnderDragon] }
   );
 }
+__name(loadHealthManager, "loadHealthManager");
 
 // behaviour_pack/scripts-dev/features/dragon-fight/draconic-heart.ts
 import {
@@ -6057,6 +6200,7 @@ function loadDraconicHeartComponents() {
       event.dimension.playSound("mob.warden.heartbeat", event.block.location);
     }
   }
+  __name(heal_dragon, "heal_dragon");
   function heart_destroy(event) {
     mined_blocks++;
     event.dimension.spawnEntity(
@@ -6083,6 +6227,7 @@ function loadDraconicHeartComponents() {
       message
     );
   }
+  __name(heart_destroy, "heart_destroy");
   system12.beforeEvents.startup.subscribe((initEvent) => {
     initEvent.blockComponentRegistry.registerCustomComponent(
       "amethyst:heal_dragon",
@@ -6097,12 +6242,14 @@ function loadDraconicHeartComponents() {
     );
   });
 }
+__name(loadDraconicHeartComponents, "loadDraconicHeartComponents");
 
 // behaviour_pack/scripts-dev/features/dragon-fight/index.ts
 function loadDragonFightFeature() {
   loadHealthManager();
   loadDraconicHeartComponents();
 }
+__name(loadDragonFightFeature, "loadDragonFightFeature");
 
 // behaviour_pack/scripts-dev/features/commands/lore.ts
 import {
@@ -6156,11 +6303,13 @@ function loreCommand() {
     );
   });
 }
+__name(loreCommand, "loreCommand");
 
 // behaviour_pack/scripts-dev/features/commands/index.ts
 function loadCommands() {
   loreCommand();
 }
+__name(loadCommands, "loadCommands");
 
 // behaviour_pack/scripts-dev/features/wine-n-beer/components.ts
 import {
@@ -6179,6 +6328,7 @@ function loadOnDrinkComponent() {
       player.setDynamicProperty("amethyst:drunk_data", JSON.stringify(drunk_data));
     }
   }
+  __name(on_drink, "on_drink");
   system14.beforeEvents.startup.subscribe((initEvent) => {
     initEvent.itemComponentRegistry.registerCustomComponent(
       "amethyst:alcohol",
@@ -6190,6 +6340,7 @@ function loadOnDrinkComponent() {
     );
   });
 }
+__name(loadOnDrinkComponent, "loadOnDrinkComponent");
 
 // behaviour_pack/scripts-dev/features/wine-n-beer/loops.ts
 import { system as system15, TicksPerSecond as TicksPerSecond7, world as world13 } from "@minecraft/server";
@@ -6203,6 +6354,7 @@ function sober_up(drunk_data) {
   }
   return drunk_data;
 }
+__name(sober_up, "sober_up");
 function cumulative_drunk_effects(player, drunk_data) {
   player.addEffect(MinecraftEffectTypes.Oozing, TicksPerSecond7 * 2);
   if (drunk_data.drinks > 4) {
@@ -6215,6 +6367,7 @@ function cumulative_drunk_effects(player, drunk_data) {
     player.addEffect(MinecraftEffectTypes.FatalPoison, TicksPerSecond7 * 2);
   }
 }
+__name(cumulative_drunk_effects, "cumulative_drunk_effects");
 function drunk(player) {
   const drunk_data_string = player.getDynamicProperty("amethyst:drunk_data");
   if (drunk_data_string) {
@@ -6257,6 +6410,7 @@ function drunk(player) {
     }
   }
 }
+__name(drunk, "drunk");
 function drunk_effects(player, drunk_data, effect_choices) {
   const dimension = player.dimension;
   const location = player.location;
@@ -6294,6 +6448,7 @@ function drunk_effects(player, drunk_data, effect_choices) {
   }
   return drunk_data;
 }
+__name(drunk_effects, "drunk_effects");
 function drunkDataManager() {
   system15.runInterval(() => {
     let playerlist = world13.getPlayers();
@@ -6309,12 +6464,14 @@ function drunkDataManager() {
     }
   });
 }
+__name(drunkDataManager, "drunkDataManager");
 
 // behaviour_pack/scripts-dev/features/wine-n-beer/index.ts
 function loadWineAndBeerFeature() {
   loadOnDrinkComponent();
   drunkDataManager();
 }
+__name(loadWineAndBeerFeature, "loadWineAndBeerFeature");
 
 // behaviour_pack/scripts-dev/features/chat.ts
 import { system as system16, world as world14 } from "@minecraft/server";
@@ -6331,6 +6488,7 @@ function loadChatDecorationFeature() {
     chat_event.cancel = true;
   });
 }
+__name(loadChatDecorationFeature, "loadChatDecorationFeature");
 
 // behaviour_pack/scripts-dev/features/interactions/block-interact.ts
 import { world as world15, system as system17 } from "@minecraft/server";
@@ -6475,12 +6633,14 @@ function blockInteract() {
       });
     }
   }
+  __name(blockInteraction, "blockInteraction");
   world15.afterEvents.playerInteractWithBlock.subscribe((event) => {
     if (LOGGABLE_BLOCKS.includes(event.block.typeId)) {
       blockInteraction(event);
     }
   });
 }
+__name(blockInteract, "blockInteract");
 
 // behaviour_pack/scripts-dev/features/interactions/block-break.ts
 import { EntityComponentTypes as EntityComponentTypes12, EquipmentSlot as EquipmentSlot8, system as system18, world as world16 } from "@minecraft/server";
@@ -6494,6 +6654,7 @@ function interaction_preprocess(interaction, quest) {
   const matchingTargets = objective.get_target(interaction);
   return matchingTargets.length > 0;
 }
+__name(interaction_preprocess, "interaction_preprocess");
 
 // behaviour_pack/scripts-dev/features/interactions/block-break.ts
 function blockBreak() {
@@ -6522,6 +6683,7 @@ function blockBreak() {
     });
   });
 }
+__name(blockBreak, "blockBreak");
 
 // behaviour_pack/scripts-dev/features/interactions/block-place.ts
 import { EntityComponentTypes as EntityComponentTypes13, EquipmentSlot as EquipmentSlot9, system as system19, world as world17 } from "@minecraft/server";
@@ -6546,6 +6708,7 @@ function blockPlace() {
     });
   });
 }
+__name(blockPlace, "blockPlace");
 
 // behaviour_pack/scripts-dev/features/interactions/entity-interact.ts
 import { EntityComponentTypes as EntityComponentTypes14, EquipmentSlot as EquipmentSlot10, system as system20, world as world18 } from "@minecraft/server";
@@ -6597,12 +6760,14 @@ function entityInteract() {
       interaction.post_interaction();
     });
   }
+  __name(entityInteraction, "entityInteraction");
   world18.afterEvents.playerInteractWithEntity.subscribe((event) => {
     if (LOGGABLE_ENTITIES.includes(event.target.typeId)) {
       entityInteraction(event);
     }
   });
 }
+__name(entityInteract, "entityInteract");
 
 // behaviour_pack/scripts-dev/features/interactions/entity-die.ts
 import { world as world19 } from "@minecraft/server";
@@ -6628,6 +6793,7 @@ function entityDie() {
       api_default.Interaction.enqueue(interaction);
     }
   }
+  __name(playerKillEntity, "playerKillEntity");
   async function playerDieByPlayer(killer_player, dead_player) {
     const dimension = killer_player.dimension;
     const entity_mainhand = dead_player.getComponent(EntityComponentTypes15.Equippable)?.getEquipment(EquipmentSlot11.Mainhand);
@@ -6646,6 +6812,7 @@ function entityDie() {
     api_default.Interaction.enqueue(death_interaction);
     api_default.Relay.event(utils_default.DeathMessage.random_pvp(killer_player.name, dead_player.name), "", "other");
   }
+  __name(playerDieByPlayer, "playerDieByPlayer");
   async function playerDieByEntity(player, entity) {
     const dimension = player.dimension;
     const mainhand = player.getComponent(EntityComponentTypes15.Equippable)?.getEquipment(EquipmentSlot11.Mainhand);
@@ -6664,6 +6831,7 @@ function entityDie() {
     api_default.Interaction.enqueue(death_interaction);
     api_default.Relay.event(utils_default.DeathMessage.random_pve(player.name, entity.typeId), "", "other");
   }
+  __name(playerDieByEntity, "playerDieByEntity");
   async function playerDieByOther(player, damageCause) {
     const dimension = player.dimension;
     const mainhand = player.getComponent(EntityComponentTypes15.Equippable)?.getEquipment(EquipmentSlot11.Mainhand);
@@ -6682,6 +6850,7 @@ function entityDie() {
     api_default.Interaction.enqueue(death_interaction);
     api_default.Relay.event(utils_default.DeathMessage.random_suicide(player.name, damageCause), "", "other");
   }
+  __name(playerDieByOther, "playerDieByOther");
   world19.afterEvents.entityDie.subscribe(async (event) => {
     const damage_cause = event.damageSource.cause;
     const damaging_entity = event.damageSource.damagingEntity;
@@ -6698,6 +6867,7 @@ function entityDie() {
     }
   });
 }
+__name(entityDie, "entityDie");
 
 // behaviour_pack/scripts-dev/features/interactions/index.ts
 function loadInteractionHandlers() {
@@ -6707,6 +6877,7 @@ function loadInteractionHandlers() {
   entityInteract();
   entityDie();
 }
+__name(loadInteractionHandlers, "loadInteractionHandlers");
 
 // behaviour_pack/scripts-dev/features/connections.ts
 import { world as world20 } from "@minecraft/server";
@@ -6737,6 +6908,7 @@ function loadConnectionsFeature() {
     api_default.Relay.event(`${leave_event.playerName} has left the server`, "", "leave");
   });
 }
+__name(loadConnectionsFeature, "loadConnectionsFeature");
 
 // behaviour_pack/scripts-dev/features/location-logger.ts
 import { EntityComponentTypes as EntityComponentTypes16, EquipmentSlot as EquipmentSlot12, system as system22, world as world21, TicksPerSecond as TicksPerSecond8 } from "@minecraft/server";
@@ -6762,6 +6934,7 @@ function location_log(player) {
     thorny_user.update().then();
   }
 }
+__name(location_log, "location_log");
 function loadLocationLogger() {
   system22.runInterval(() => {
     let playerlist = world21.getPlayers();
@@ -6770,6 +6943,7 @@ function loadLocationLogger() {
     });
   }, TicksPerSecond8 * 5);
 }
+__name(loadLocationLogger, "loadLocationLogger");
 
 // behaviour_pack/scripts-dev/features/quests.ts
 import { system as system23, world as world22 } from "@minecraft/server";
@@ -6810,6 +6984,7 @@ async function check_quests() {
     throw e;
   }
 }
+__name(check_quests, "check_quests");
 async function display_timer() {
   for (let questCacheKey in api_default.QuestProgress.quest_cache) {
     let active_objective = api_default.QuestProgress.quest_cache[questCacheKey].get_active_objective();
@@ -6829,6 +7004,7 @@ async function display_timer() {
     }
   }
 }
+__name(display_timer, "display_timer");
 function load_quest_loop() {
   system23.runInterval(async () => {
     await check_quests();
@@ -6837,6 +7013,7 @@ function load_quest_loop() {
     await display_timer();
   }, 10);
 }
+__name(load_quest_loop, "load_quest_loop");
 
 // behaviour_pack/scripts-dev/features/whitelist.ts
 import { beforeEvents } from "@minecraft/server-admin";
@@ -6856,11 +7033,12 @@ async function blockJoin(join_event, reason = "other") {
   );
   console.log(`[Admin] ${join_event.name} blocked from joining. Reason: ${reason}`);
 }
-function loadWhitelistFeature(guild_id2) {
+__name(blockJoin, "blockJoin");
+function loadWhitelistFeature() {
   world23.afterEvents.worldLoad.subscribe(() => {
     beforeEvents.asyncPlayerJoin.subscribe(async (join_event) => {
       try {
-        const thorny_user = await api_default.ThornyUser.get_user_from_api(guild_id2, join_event.name);
+        const thorny_user = await api_default.ThornyUser.get_user_from_api(join_event.name);
         if (!thorny_user.active) {
           await blockJoin(join_event, "not_active");
           return;
@@ -6876,9 +7054,9 @@ function loadWhitelistFeature(guild_id2) {
     });
   });
 }
+__name(loadWhitelistFeature, "loadWhitelistFeature");
 
 // behaviour_pack/scripts-dev/main.ts
-var guild_id = "611008530077712395";
 function load(name, fn, ...args) {
   try {
     fn(...args);
@@ -6887,15 +7065,16 @@ function load(name, fn, ...args) {
     console.log(`[Amethyst] Error loading ${name}: ${e}`);
   }
 }
+__name(load, "load");
 load("Block Components", loadBlockComponents);
 load("Commands", loadCommands);
 load("Dragon Fight Feature", loadDragonFightFeature);
 load("Interactions Logging Feature", loadInteractionHandlers);
 load("Item Components", loadItemComponents);
 load("Wine And Beer Update Features", loadWineAndBeerFeature);
-load("World Border Feature", loadWorldBorder, guild_id);
+load("World Border Feature", loadWorldBorder);
 load("Chat Decoration Feature", loadChatDecorationFeature);
 load("Connection Logging Feature", loadConnectionsFeature);
 load("Location Logging Feature", loadLocationLogger);
 load("Quests Feature", load_quest_loop);
-load("Whitelist Feature", loadWhitelistFeature, guild_id);
+load("Whitelist Feature", loadWhitelistFeature);

@@ -82,7 +82,7 @@ export default function loadAltarComponent() {
                     border.end_border += block_value
                     await border.update_world()
                     // Reloads the world into the world cache
-                    await WorldCache.load_world(border.guild_id)
+                    await WorldCache.load_world()
 
                     const total_value = sacrificeTotals.get(playerName)?.val
                     const total_original_value = sacrificeTotals.get(playerName)?.orig
