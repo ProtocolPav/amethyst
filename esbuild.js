@@ -11,18 +11,16 @@ const external = [
     "@minecraft/debug-utilities",
 ];
 
-esbuild
-    .build({
-        entryPoints: ["behaviour_pack/scripts-dev/main.ts"],
-        outfile: "behaviour_pack/scripts/main.js",
-        bundle: true,
-        minify: false,
-        format: "esm",
-        external,
-    })
-    .then(() => {
-        console.log("Bundling finished!");
-    })
-    .catch((error) => {
-        console.error(error);
-    });
+esbuild.build({
+    entryPoints: ["behaviour_pack/scripts-dev/main.ts"],
+    outfile: "behaviour_pack/scripts/main.js",
+    bundle: true,
+    minify: false,
+    format: "esm",
+    external,
+    keepNames: true,
+}).then(() => {
+    console.log("Bundling finished!");
+}).catch((error) => {
+    console.error(error);
+});
