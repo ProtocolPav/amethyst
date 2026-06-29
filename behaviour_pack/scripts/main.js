@@ -3409,11 +3409,10 @@ var World = class _World {
     this.nether_border = data.nether_border;
     this.end_border = data.end_border;
   }
-  static async get_world(guild_id2) {
+  static async get_world() {
     try {
       const world_response = await getWorldV1GuildsMeWorldsGet();
       const world_data = world_response;
-      world_data.guild_id = guild_id2;
       return new _World(world_data);
     } catch (error) {
       console.error("Error fetching world:", error);
@@ -3429,8 +3428,8 @@ var World = class _World {
   }
 };
 var WorldCache = class _WorldCache {
-  static async load_world(guild_id2) {
-    _WorldCache.world = await World.get_world(guild_id2);
+  static async load_world() {
+    _WorldCache.world = await World.get_world();
   }
 };
 
@@ -3459,9 +3458,9 @@ function borderCheck(player, dimensionID, border_size, warning_range, outside) {
     warning_range.splice(warning_range.indexOf(player.name), 1);
   }
 }
-function loadWorldBorder(guild_id2) {
+function loadWorldBorder() {
   world.afterEvents.worldLoad.subscribe(() => {
-    WorldCache.load_world(guild_id2).then();
+    WorldCache.load_world().then();
     let players_100_blocks_away = { overworld: [], nether: [], end: [] };
     let players_outside_border = { overworld: [], nether: [], end: [] };
     system.runInterval(() => {
@@ -5093,7 +5092,7 @@ var ThornyUser = class _ThornyUser {
     this.dimension = api_data.dimension;
     this.hidden = api_data.hidden;
   }
-  static async get_user_from_api(guild_id2, gamertag) {
+  static async get_user_from_api(gamertag) {
     const response = await lookupUserV1GuildsMeUsersLookupGet({ gamertag });
     const thorny_user = new _ThornyUser(response);
     _ThornyUser.thorny_user_map[gamertag] = thorny_user;
@@ -5913,7 +5912,7 @@ function loadAltarComponent() {
           await sacrificial_item.update_item();
           border.end_border += block_value;
           await border.update_world();
-          await WorldCache.load_world(border.guild_id);
+          await WorldCache.load_world();
           const total_value = sacrificeTotals.get(playerName)?.val;
           const total_original_value = sacrificeTotals.get(playerName)?.orig;
           if (total_value && total_original_value) {
@@ -6856,11 +6855,11 @@ async function blockJoin(join_event, reason = "other") {
   );
   console.log(`[Admin] ${join_event.name} blocked from joining. Reason: ${reason}`);
 }
-function loadWhitelistFeature(guild_id2) {
+function loadWhitelistFeature() {
   world23.afterEvents.worldLoad.subscribe(() => {
     beforeEvents.asyncPlayerJoin.subscribe(async (join_event) => {
       try {
-        const thorny_user = await api_default.ThornyUser.get_user_from_api(guild_id2, join_event.name);
+        const thorny_user = await api_default.ThornyUser.get_user_from_api(join_event.name);
         if (!thorny_user.active) {
           await blockJoin(join_event, "not_active");
           return;
@@ -6878,7 +6877,6 @@ function loadWhitelistFeature(guild_id2) {
 }
 
 // behaviour_pack/scripts-dev/main.ts
-var guild_id = "611008530077712395";
 function load(name, fn, ...args) {
   try {
     fn(...args);
@@ -6893,9 +6891,9 @@ load("Dragon Fight Feature", loadDragonFightFeature);
 load("Interactions Logging Feature", loadInteractionHandlers);
 load("Item Components", loadItemComponents);
 load("Wine And Beer Update Features", loadWineAndBeerFeature);
-load("World Border Feature", loadWorldBorder, guild_id);
+load("World Border Feature", loadWorldBorder);
 load("Chat Decoration Feature", loadChatDecorationFeature);
 load("Connection Logging Feature", loadConnectionsFeature);
 load("Location Logging Feature", loadLocationLogger);
 load("Quests Feature", load_quest_loop);
-load("Whitelist Feature", loadWhitelistFeature, guild_id);
+load("Whitelist Feature", loadWhitelistFeature);

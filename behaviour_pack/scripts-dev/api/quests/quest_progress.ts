@@ -10,6 +10,8 @@ import {
     getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet, getQuestV1GuildsMeQuestsQuestIdGet,
     partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch
 } from "../nexuscore/quests/quests";
+import {NotFoundError} from "../http-errors";
+import {QuestProgressOut} from "../nexuscore/model";
 
 export default class QuestProgress {
     public static quest_cache: { [thorny_id: number]: QuestProgress } = {}
@@ -78,42 +80,41 @@ export default class QuestProgress {
      * If quest already exists in cache, it fetches from cache instead.
      */
     public static async get_quest_progress(thorny_user: ThornyUser): Promise<QuestProgress | null> {
+        let quest_progress_response: QuestProgressOut
+        const thorny_id = thorny_user.thorny_id
+
         try {
-            const thorny_id = thorny_user.thorny_id
-
-            const quest_progress_response = await getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet(thorny_id)
-
-            if (quest_progress_response) {
-                const quest_progress_data: IQuestProgress = quest_progress_response as unknown as IQuestProgress;
-                const quest_id = quest_progress_data.quest_id
-
-                // Check if the quest exists in the cache and return
-                if (this.quest_cache[thorny_id] && this.quest_cache[thorny_id].quest_id === quest_id) {
-                    return this.quest_cache[thorny_id]
-                }
-
-                // Otherwise, create the QuestProgress object and cache it
-                const quest_response = await getQuestV1GuildsMeQuestsQuestIdGet(quest_id)
-
-                const quest = new Quest( quest_response as unknown as IQuest )
-
-                const quest_progress = new QuestProgress(
-                    quest_progress_data,
-                    thorny_user,
-                    quest
-                )
-
-                this.quest_cache[thorny_user.thorny_id] = quest_progress
-
-                return quest_progress
-            } else {
-                return null
+            quest_progress_response = await getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet(thorny_id)
+        } catch (error) {
+            if (error instanceof NotFoundError) {
+                return null; // No active quest, that's fine
             }
 
-        } catch (error) {
-            console.error("Error fetching quest:", error);
-            throw error;
+            throw error; // Rethrow anything unexpected
         }
+
+        const quest_progress_data: IQuestProgress = quest_progress_response as unknown as IQuestProgress;
+        const quest_id = quest_progress_data.quest_id
+
+        // Check if the quest exists in the cache and return
+        if (this.quest_cache[thorny_id] && this.quest_cache[thorny_id].quest_id === quest_id) {
+            return this.quest_cache[thorny_id]
+        }
+
+        // Otherwise, create the QuestProgress object and cache it
+        const quest_response = await getQuestV1GuildsMeQuestsQuestIdGet(quest_id)
+
+        const quest = new Quest( quest_response as unknown as IQuest )
+
+        const quest_progress = new QuestProgress(
+            quest_progress_data,
+            thorny_user,
+            quest
+        )
+
+        this.quest_cache[thorny_user.thorny_id] = quest_progress
+
+        return quest_progress
     }
 
     /**
