@@ -1,11 +1,15 @@
 import {IQuestProgress} from "../../types/quest_progress";
 import ThornyUser from "../user";
 import Quest from "./quest";
-import {http, HttpHeader, HttpRequest, HttpRequestMethod} from "@minecraft/server-net";
 import utils from "../../utils";
 import {IQuest} from "../../types/quest";
 import {ObjectiveProgress} from "./objective_progress";
 import Interaction from "../interaction";
+import {
+    failActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDelete,
+    getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet, getQuestV1GuildsMeQuestsQuestIdGet,
+    partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch
+} from "../nexuscore/quests/quests";
 
 export default class QuestProgress {
     public static quest_cache: { [thorny_id: number]: QuestProgress } = {}
@@ -39,19 +43,11 @@ export default class QuestProgress {
      * Updates the user's Quest and Objective Progress
      */
     public async update_user_quest() {
-        const request = new HttpRequest(`http://nexuscore:8000/api/v0.2/quests/progress/${this.progress_id}`);
-        request.method = HttpRequestMethod.Put;
-        request.body = JSON.stringify({
+        await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch(this.progress_id, {
             "start_time": this.start_time ? this.start_time.toISOString() : null,
             "end_time": this.end_time ? this.end_time.toISOString() : null,
             "status": this.status
         })
-        request.headers = [
-            new HttpHeader("Content-Type", "application/json"),
-            new HttpHeader("auth", "my-auth-token"),
-        ];
-
-        await http.request(request);
 
         for (let objective of this.objectives) {
             await objective.update_user_objective()
@@ -62,15 +58,7 @@ export default class QuestProgress {
     public async fail_quest(thorny_id: number): Promise<void> {
         this.status = 'failed'
 
-        const request = new HttpRequest(`http://nexuscore:8000/api/v0.2/quests/progress/user/${thorny_id}/active`);
-        request.method = HttpRequestMethod.Delete;
-        request.body = JSON.stringify({})
-        request.headers = [
-            new HttpHeader("Content-Type", "application/json"),
-            new HttpHeader("auth", "my-auth-token"),
-        ];
-
-        await http.request(request)
+        await failActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDelete(thorny_id)
     }
 
     /**
@@ -93,12 +81,10 @@ export default class QuestProgress {
         try {
             const thorny_id = thorny_user.thorny_id
 
-            const quest_progress_response = await http.get(
-                `http://nexuscore:8000/api/v0.2/quests/progress/user/${thorny_id}/active`
-            );
+            const quest_progress_response = await getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet(thorny_id)
 
-            if (quest_progress_response.status === 200) {
-                const quest_progress_data: IQuestProgress = JSON.parse(quest_progress_response.body)
+            if (quest_progress_response) {
+                const quest_progress_data: IQuestProgress = quest_progress_response as unknown as IQuestProgress;
                 const quest_id = quest_progress_data.quest_id
 
                 // Check if the quest exists in the cache and return
@@ -107,11 +93,9 @@ export default class QuestProgress {
                 }
 
                 // Otherwise, create the QuestProgress object and cache it
-                const quest_response = await http.get(
-                    `http://nexuscore:8000/api/v0.2/quests/${quest_id}`
-                );
+                const quest_response = await getQuestV1GuildsMeQuestsQuestIdGet(quest_id)
 
-                const quest = new Quest( JSON.parse(quest_response.body) as IQuest )
+                const quest = new Quest( quest_response as unknown as IQuest )
 
                 const quest_progress = new QuestProgress(
                     quest_progress_data,

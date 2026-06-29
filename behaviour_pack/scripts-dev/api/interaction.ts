@@ -1,4 +1,4 @@
-import { HttpRequest, HttpHeader, HttpRequestMethod, http } from '@minecraft/server-net';
+import {createInteractionV1GuildsMeInteractionPost} from "./nexuscore/guilds/guilds";
 
 
 interface IInteraction {
@@ -36,15 +36,14 @@ export default class Interaction implements IInteraction {
      * Post interaction to NexusCore
      */
     public async post_interaction() {
-        const request = new HttpRequest(`http://nexuscore:8000/api/v0.2/events/interaction`);
-        request.method = HttpRequestMethod.Post;
-        request.body = JSON.stringify(this);
-        request.headers = [
-            new HttpHeader("Content-Type", "application/json"),
-            new HttpHeader("auth", "my-auth-token"),
-        ];
-  
-        await http.request(request);
+        await createInteractionV1GuildsMeInteractionPost({
+            thorny_id: this.thorny_id,
+            type: this.type,
+            coordinates: this.coordinates as [number, number, number],
+            reference: this.reference,
+            mainhand: this.mainhand,
+            dimension: this.dimension,
+        })
     }
 
     public static set_processing(value: true | false) {
