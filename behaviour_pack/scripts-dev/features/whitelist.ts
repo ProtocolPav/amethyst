@@ -22,12 +22,12 @@ async function blockJoin(join_event: AsyncPlayerJoinBeforeEvent, reason: JoinBlo
     console.log(`[Admin] ${join_event.name} blocked from joining. Reason: ${reason}`)
 }
 
-export default function loadWhitelistFeature(guild_id: string) {
+export default function loadWhitelistFeature() {
     // Blocked in early-execution mode, must be loaded after worldLoad
     world.afterEvents.worldLoad.subscribe(() => {
         beforeEvents.asyncPlayerJoin.subscribe(async (join_event) => {
             try {
-                const thorny_user = await api.ThornyUser.get_user_from_api(guild_id, join_event.name)
+                const thorny_user = await api.ThornyUser.get_user_from_api(join_event.name)
 
                 if (!thorny_user.active) {
                     await blockJoin(join_event, 'not_active')
