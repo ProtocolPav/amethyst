@@ -2,8 +2,8 @@ import {ICustomizations, IObjective, ITarget, ObjectiveTypes} from "../../types/
 import {Reward} from "./reward";
 import utils from "../../utils";
 import Interaction from "../interaction";
-import {http} from "@minecraft/server-net";
 import ThornyUser from "../user";
+import {listInteractionsV1GuildsMeInteractionsGet} from "../nexuscore/guilds/guilds";
 
 export class Objective implements IObjective {
     quest_id!: number
@@ -134,17 +134,15 @@ export class Objective implements IObjective {
     }
 
     public async check_if_natural(coordinates: [number, number, number]): Promise<Boolean> {
-        const x = coordinates[0]
-        const y = coordinates[1]
-        const z = coordinates[2]
+        const response = await listInteractionsV1GuildsMeInteractionsGet({
+            coordinates: coordinates
+        })
 
-        const response = await http.get(`http://nexuscore:8000/api/v0.2/events/interaction?x=${x}&y=${y}&z=${z}`)
-
-        if (response.status !== 200) {
+        if (response.length !== 0) {
             return false
         }
 
-        return JSON.parse(response.body).length > 1
+        return response.length > 1
     }
 
     public async give_rewards(interation: Interaction, thorny_user: ThornyUser) {

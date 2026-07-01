@@ -1,5 +1,9 @@
-import { HttpRequest, HttpHeader, HttpRequestMethod, http } from '@minecraft/server-net';
 import utils from "../utils";
+import {
+    lookupUserV1GuildsMeUsersLookupGet,
+    partialUpdateUserV1GuildsMeUsersThornyIdPatch, partialUpdateUserV1GuildsMeUsersThornyIdPut
+} from "./nexuscore/users/users";
+import {createConnectionV1GuildsMeConnectionPost} from "./nexuscore/guilds/guilds";
 
 interface IThornyUser {
     thorny_id: number
@@ -72,9 +76,9 @@ export default class ThornyUser implements IThornyUser {
         this.hidden = api_data.hidden
     }
 
-    public static async get_user_from_api(guild_id: string, gamertag: string): Promise<ThornyUser> {
-        const response = await http.get(`http://nexuscore:8000/api/v0.2/users/guild/${guild_id}/${gamertag.replace(" ", "%20")}`)
-        const thorny_user = new ThornyUser(JSON.parse(response.body) as IThornyUser)
+    public static async get_user_from_api(gamertag: string): Promise<ThornyUser> {
+        const response = await lookupUserV1GuildsMeUsersLookupGet({gamertag: gamertag})
+        const thorny_user = new ThornyUser(response as unknown as IThornyUser)
 
         // Adds user to the map for quick fetching
         ThornyUser.thorny_user_map[gamertag] = thorny_user
@@ -97,37 +101,25 @@ export default class ThornyUser implements IThornyUser {
      * Currently only updates balance.
      */
     public async update() {
-        const request = new HttpRequest(`http://nexuscore:8000/api/v0.2/users/${this.thorny_id}`);
-        request.method = HttpRequestMethod.Put;
-        request.body = JSON.stringify({
+        await partialUpdateUserV1GuildsMeUsersThornyIdPatch(this.thorny_id, {
             "balance": this.balance,
-            "whitelist": this.whitelist || this.gamertag,
-            "location": this.location,
+            "location": this.location as [number, number, number],
             "dimension": this.dimension,
             "hidden": this.hidden
         })
-        request.headers = [
-            new HttpHeader("Content-Type", "application/json"),
-            new HttpHeader("auth", "my-auth-token"),
-        ];
-        await http.request(request);
     }
 
     /**
      * Send a connection event to NexusCore, either
      * connect or disconnect
      */
-    public send_connect_event(event_type: "connect" | "disconnect") {
-        const request = new HttpRequest(`http://nexuscore:8000/api/v0.2/events/connection`);
-        request.method = HttpRequestMethod.Post;
-        request.headers = [
-            new HttpHeader("Content-Type", "application/json"),
-            new HttpHeader("auth", "my-auth-token"),
-        ];
-        request.body = JSON.stringify({"type": event_type, "thorny_id": this.thorny_id, 'ignored': false});
-        console.log(`[CONNECTION] Sending ${event_type} to NexusCore for ThornyID ${this.thorny_id} (${this.whitelist} / ${this.gamertag})`);
-    
-        http.request(request);
+    public async send_connect_event(event_type: "connect" | "disconnect") {
+        console.log(`[CONNECTION] Sending ${event_type} to nexuscore for ThornyID ${this.thorny_id} (${this.whitelist})`);
+
+        await createConnectionV1GuildsMeConnectionPost({
+            "type": event_type,
+            "thorny_id": this.thorny_id
+        })
     }
 
     /**
