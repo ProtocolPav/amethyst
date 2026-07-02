@@ -1,6 +1,7 @@
 import {http} from "@minecraft/server-net";
 import {Objective} from "./objective";
 import {IQuest} from "../../types/quest";
+import {getQuestV1GuildsMeQuestsQuestIdGet} from "../nexuscore/quests/quests";
 
 export default class Quest {
     quest_id!: number
@@ -24,8 +25,8 @@ export default class Quest {
     public static async get_quest(quest_id: number): Promise<Quest> {
         try {
             // Fetch the quest
-            const quest_response = await http.get(`http://nexuscore:8000/api/v0.2/quests/${quest_id}`);
-            const quest_data = JSON.parse(quest_response.body) as IQuest;
+            const quest_response = await getQuestV1GuildsMeQuestsQuestIdGet(quest_id)
+            const quest_data = quest_response as unknown as IQuest;
 
             return new Quest(quest_data);
 

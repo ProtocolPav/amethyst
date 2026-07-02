@@ -11,8 +11,6 @@ import loadLocationLogger from "./features/location-logger";
 import loadQuestsFeature from "./features/quests";
 import loadWhitelistFeature from "./features/whitelist";
 
-const guild_id = process.env.GUILD_ID || '0'
-
 function load(name: string, fn: () => void): void
 
 function load<T extends unknown[]>(name: string, fn: (...args: T) => void, ...args: T): void
@@ -33,9 +31,9 @@ load("Dragon Fight Feature", loadDragonFightFeature)
 load("Interactions Logging Feature", loadInteractionHandlers)
 load("Item Components", loadItemComponents)
 load("Wine And Beer Update Features", loadWineAndBeerFeature)
-load("World Border Feature", loadWorldBorder, guild_id)
+load("World Border Feature", loadWorldBorder)
 load("Chat Decoration Feature", loadChatDecorationFeature)
 load("Connection Logging Feature", loadConnectionsFeature)
 load("Location Logging Feature", loadLocationLogger)
 load("Quests Feature", loadQuestsFeature)
-load("Whitelist Feature", loadWhitelistFeature, guild_id)
+load("Whitelist Feature", loadWhitelistFeature)

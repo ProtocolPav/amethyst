@@ -1,0 +1,131 @@
+{
+	"format_version": "1.21.50",
+	"minecraft:block": {
+		"description": {
+			"identifier": "amethyst:prism_e",
+			"menu_category": {
+				"category": "construction"
+			},
+			"traits": {
+				"minecraft:placement_position": {
+					"enabled_states": ["minecraft:block_face"]
+				},
+				"minecraft:placement_direction": {
+					"enabled_states": ["minecraft:cardinal_direction"]
+				}
+			}
+		},
+		"components": {
+			"minecraft:display_name": "Prism E",
+            "tag:amethyst:everthorn_e": {},
+			"minecraft:collision_box": {
+				"origin": [-8, 0, 7],
+				"size": [16, 16, 1]
+			},
+			"minecraft:selection_box": {
+				"origin": [-8, 0, 7],
+				"size": [16, 16, 1]
+			},
+			"minecraft:destructible_by_mining": true,
+			"minecraft:destructible_by_explosion": true,
+			"minecraft:geometry": "geometry.prism_e",
+			"minecraft:material_instances": {
+				"*": {
+					"texture": "prism_e",
+					"render_method": "alpha_test"
+				}
+			},
+            "minecraft:placement_filter": {
+                "conditions": [
+                    {
+                        "block_filter": [
+                            {
+                                "tags": "!q.any_tag('amethyst:everthorn_e')"
+                            }
+                        ]
+                    }
+                ]
+            }
+		},
+		"permutations": [
+			{
+				"condition": "q.block_state('minecraft:block_face') == 'up' && q.block_state('minecraft:cardinal_direction') == 'north'",
+				"components": {
+					"minecraft:transformation": { "rotation": [90, 180, 0] }
+				}
+			},
+			{
+				"condition": "q.block_state('minecraft:block_face') == 'up' && q.block_state('minecraft:cardinal_direction') == 'south'",
+				"components": {
+					"minecraft:transformation": { "rotation": [90, 0, 0] }
+				}
+			},
+			{
+				"condition": "q.block_state('minecraft:block_face') == 'up' && q.block_state('minecraft:cardinal_direction') == 'east'",
+				"components": {
+					"minecraft:transformation": { "rotation": [90, 90, 0] }
+				}
+			},
+			{
+				"condition": "q.block_state('minecraft:block_face') == 'up' && q.block_state('minecraft:cardinal_direction') == 'west'",
+				"components": {
+					"minecraft:transformation": { "rotation": [90, -90, 0] }
+				}
+			},
+
+
+			{
+				"condition": "q.block_state('minecraft:block_face') == 'down' && q.block_state('minecraft:cardinal_direction') == 'north'",
+				"components": {
+					"minecraft:transformation": { "rotation": [-90, 180, 0] }
+				}
+			},
+			{
+				"condition": "q.block_state('minecraft:block_face') == 'down' && q.block_state('minecraft:cardinal_direction') == 'south'",
+				"components": {
+					"minecraft:transformation": { "rotation": [-90, 0, 0] }
+				}
+			},
+			{
+				"condition": "q.block_state('minecraft:block_face') == 'down' && q.block_state('minecraft:cardinal_direction') == 'east'",
+				"components": {
+					"minecraft:transformation": { "rotation": [-90, 90, 0] }
+				}
+			},
+			{
+				"condition": "q.block_state('minecraft:block_face') == 'down' && q.block_state('minecraft:cardinal_direction') == 'west'",
+				"components": {
+					"minecraft:transformation": { "rotation": [-90, -90, 0] }
+				}
+			},
+
+
+			{
+				"condition": "q.block_state('minecraft:block_face') == 'north'",
+				"components": {
+					"minecraft:transformation": { "rotation": [0, 0, 0] }
+				}
+			},
+			{
+				"condition": "q.block_state('minecraft:block_face') == 'south'",
+				"components": {
+					"minecraft:transformation": { "rotation": [0, 180, 0] }
+				}
+			},
+			{
+				"condition": "q.block_state('minecraft:block_face') == 'east'",
+				"components": {
+					"minecraft:transformation": { "rotation": [0, -90, 0] }
+				}
+			},
+			{
+				"condition": "q.block_state('minecraft:block_face') == 'west'",
+				"components": {
+					"minecraft:transformation": { "rotation": [0, 90, 0] }
+				}
+			}
+
+		]
+
+	}
+}

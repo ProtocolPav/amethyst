@@ -16,7 +16,8 @@
 			}
 		},
 		"components": {
-			"minecraft:display_name": "Everthorn E",
+			"minecraft:display_name": "Thornite E",
+            "tag:amethyst:everthorn_e": {},
 			"minecraft:collision_box": {
 				"origin": [-8, 0, 7],
 				"size": [16, 16, 1]
@@ -30,10 +31,21 @@
 			"minecraft:geometry": "geometry.everthorn_e",
 			"minecraft:material_instances": {
 				"*": {
-					"texture": "everthorn_e",
+					"texture": "thornite_e",
 					"render_method": "alpha_test"
 				}
-			}
+			},
+            "minecraft:placement_filter": {
+                "conditions": [
+                    {
+                        "block_filter": [
+                            {
+                                "tags": "!q.any_tag('amethyst:everthorn_e')"
+                            }
+                        ]
+                    }
+                ]
+            }
 		},
 		"permutations": [
 			{

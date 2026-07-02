@@ -1,7 +1,5 @@
 const esbuild = require("esbuild");
 
-const guildId = process.env.GUILD_ID;
-
 const external = [
     "@minecraft/server",
     "@minecraft/server-ui",
@@ -13,21 +11,28 @@ const external = [
     "@minecraft/debug-utilities",
 ];
 
-esbuild
-    .build({
-        entryPoints: ["behaviour_pack/scripts-dev/main.ts"],
-        outfile: "behaviour_pack/scripts/main.js",
-        bundle: true,
-        minify: false,
-        format: "esm",
-        external,
-        define: {
-            'process.env.GUILD_ID': JSON.stringify(guildId), // Inject GUILD_ID at build time
-        },
-    })
-    .then(() => {
-        console.log("Bundling finished!");
-    })
-    .catch((error) => {
-        console.error(error);
-    });
+const start = performance.now();
+
+console.log("⛏  Bundling Amethyst Behaviour Pack...\n");
+
+esbuild.build({
+    entryPoints: ["behaviour_pack/scripts-dev/main.ts"],
+    outfile: "behaviour_pack/scripts/main.js",
+    bundle: true,
+    minify: false,
+    format: "esm",
+    external,
+    keepNames: true,
+    metafile: true,
+}).then((result) => {
+    const elapsed = (performance.now() - start).toFixed(0);
+    const output = Object.entries(result.metafile.outputs)[0];
+    const sizeKb = (output[1].bytes / 1024).toFixed(1);
+
+    console.log(`  ✔  main.js  ${sizeKb} kb`);
+    console.log(`\n✅  Done in ${elapsed}ms`);
+}).catch((error) => {
+    console.error("\n❌  Build failed:\n");
+    console.error(error.message ?? error);
+    process.exit(1);
+});
