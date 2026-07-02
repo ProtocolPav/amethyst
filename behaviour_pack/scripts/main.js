@@ -5592,6 +5592,25 @@ ${this.get_requirements_string()}
 };
 
 // behaviour_pack/scripts-dev/api/nexuscore/quests/quests.ts
+var getListQuestsV1GuildsMeQuestsGetUrl = /* @__PURE__ */ __name((params) => {
+  const normalizedParams = new URLSearchParams();
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== void 0) {
+      normalizedParams.append(key, value === null ? "null" : String(value));
+    }
+  });
+  const stringifiedParams = normalizedParams.toString();
+  return stringifiedParams.length > 0 ? `/v1/guilds/me/quests?${stringifiedParams}` : `/v1/guilds/me/quests`;
+}, "getListQuestsV1GuildsMeQuestsGetUrl");
+var listQuestsV1GuildsMeQuestsGet = /* @__PURE__ */ __name(async (params, options) => {
+  return minecraftFetch(
+    getListQuestsV1GuildsMeQuestsGetUrl(params),
+    {
+      ...options,
+      method: "GET"
+    }
+  );
+}, "listQuestsV1GuildsMeQuestsGet");
 var getGetQuestV1GuildsMeQuestsQuestIdGetUrl = /* @__PURE__ */ __name((questId) => {
   return `/v1/guilds/me/quests/${questId}`;
 }, "getGetQuestV1GuildsMeQuestsQuestIdGetUrl");
@@ -5660,7 +5679,15 @@ var Quest = class _Quest {
       const quest_data = quest_response;
       return new _Quest(quest_data);
     } catch (error) {
-      console.error("Error fetching quest:", error);
+      throw error;
+    }
+  }
+  static async get_active_quests() {
+    try {
+      const quests_list = await listQuestsV1GuildsMeQuestsGet({ active: true });
+      console.log(`Got ${quests_list.length} active quests`);
+      return quests_list.map((quest) => new _Quest(quest));
+    } catch (error) {
       throw error;
     }
   }
@@ -5671,12 +5698,11 @@ var ObjectiveProgress = class {
   static {
     __name(this, "ObjectiveProgress");
   }
-  constructor(data, thorny_user, quest) {
+  constructor(data, thorny_user) {
     Object.assign(this, data);
     this.thorny_user = thorny_user;
     this.start_time = data.start_time ? new Date(data.start_time) : null;
     this.end_time = data.end_time ? new Date(data.end_time) : null;
-    this.objective = quest.objectives.find((o) => o.objective_id == this.objective_id);
   }
   async update_user_objective() {
     await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch(this.progress_id, {
@@ -5846,17 +5872,13 @@ var QuestProgress = class _QuestProgress {
   static {
     __name(this, "QuestProgress");
   }
-  static {
-    this.quest_cache = {};
-  }
-  constructor(data, thorny_user, quest) {
+  constructor(data, thorny_user) {
     Object.assign(this, data);
     this.thorny_user = thorny_user;
-    this.quest = quest;
     this.accept_time = new Date(data.accept_time);
     this.start_time = data.start_time ? new Date(data.start_time) : null;
     this.end_time = data.end_time ? new Date(data.end_time) : null;
-    this.objectives = data.objectives.map((o) => new ObjectiveProgress(o, thorny_user, quest));
+    this.objectives = data.objectives.map((o) => new ObjectiveProgress(o, thorny_user));
   }
   /**
    * Updates the user's Quest and Objective Progress
@@ -5876,21 +5898,7 @@ var QuestProgress = class _QuestProgress {
     this.status = "failed";
     await failActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDelete(thorny_id);
   }
-  /**
-   * Clears the QuestProgress cache.
-   *
-   * @remarks
-   * Use this when a player leaves. This way the quest is refetched on join.
-   */
-  static clear_cache(thorny_user) {
-    delete this.quest_cache[thorny_user.thorny_id];
-  }
-  /**
-   * Fetches QuestProgress, and saves to cache.
-   *
-   * @remarks
-   * If quest already exists in cache, it fetches from cache instead.
-   */
+  /** Fetches QuestProgress **/
   static async get_quest_progress(thorny_user) {
     let quest_progress_response;
     const thorny_id = thorny_user.thorny_id;
@@ -5903,19 +5911,10 @@ var QuestProgress = class _QuestProgress {
       throw error;
     }
     const quest_progress_data = quest_progress_response;
-    const quest_id = quest_progress_data.quest_id;
-    if (this.quest_cache[thorny_id] && this.quest_cache[thorny_id].quest_id === quest_id) {
-      return this.quest_cache[thorny_id];
-    }
-    const quest_response = await getQuestV1GuildsMeQuestsQuestIdGet(quest_id);
-    const quest = new Quest(quest_response);
-    const quest_progress = new _QuestProgress(
+    return new _QuestProgress(
       quest_progress_data,
-      thorny_user,
-      quest
+      thorny_user
     );
-    this.quest_cache[thorny_user.thorny_id] = quest_progress;
-    return quest_progress;
   }
   /**
    * Returns the currently active objective, or null if there are none left.
@@ -6888,8 +6887,7 @@ function loadConnectionsFeature() {
         const thorny_user = api_default.ThornyUser.fetch_user(spawn_event.player.name);
         await thorny_user.send_connect_event("connect");
         api_default.Relay.event(`${spawn_event.player.name} has joined the server`, "", "join");
-        const quest = await api_default.QuestProgress.get_quest_progress(thorny_user);
-        utils_default.send_motd(spawn_event.player, quest);
+        utils_default.send_motd(spawn_event.player, null);
         if (thorny_user.patron) {
           spawn_event.player.nameTag = `\xA7l\xA7c${spawn_event.player.nameTag}\xA7r`;
         }
@@ -6901,9 +6899,6 @@ function loadConnectionsFeature() {
   });
   world20.afterEvents.playerLeave.subscribe(async (leave_event) => {
     const thorny_user = api_default.ThornyUser.fetch_user(leave_event.playerName);
-    if (thorny_user) {
-      api_default.QuestProgress.clear_cache(thorny_user);
-    }
     await thorny_user?.send_connect_event("disconnect");
     api_default.Relay.event(`${leave_event.playerName} has left the server`, "", "leave");
   });
@@ -6945,75 +6940,81 @@ function loadLocationLogger() {
 }
 __name(loadLocationLogger, "loadLocationLogger");
 
-// behaviour_pack/scripts-dev/features/quests.ts
-import { system as system23, world as world22 } from "@minecraft/server";
-async function check_quests() {
-  try {
-    if (!api_default.Interaction.is_processing()) {
-      api_default.Interaction.set_processing(true);
-      let interaction = api_default.Interaction.dequeue();
-      while (interaction) {
-        let thorny_user = api_default.ThornyUser.fetch_user_by_id(interaction.thorny_id);
-        let quest_progress = await api_default.QuestProgress.get_quest_progress(thorny_user);
-        if (quest_progress && await quest_progress.increment_active_objective(interaction)) {
-          await quest_progress.update_user_quest();
-          await thorny_user.update();
-          if (quest_progress.status == "completed") {
-            api_default.Relay.event(
-              `${thorny_user.gamertag} has completed *${quest_progress.quest.title}!*`,
-              "Run `/quests view` to start it and reap the rewards!",
-              "other"
-            );
-            api_default.QuestProgress.clear_cache(thorny_user);
-          }
-        } else if (quest_progress && quest_progress.status == "failed") {
-          api_default.Relay.event(
-            `${thorny_user.gamertag} has failed *${quest_progress.quest.title}!*`,
-            "Better luck next time!",
-            "other"
-          );
-          await quest_progress.fail_quest(thorny_user.thorny_id);
-          api_default.QuestProgress.clear_cache(thorny_user);
-        }
-        interaction = api_default.Interaction.dequeue();
-      }
-      api_default.Interaction.set_processing(false);
-    }
-  } catch (e) {
-    api_default.Interaction.set_processing(false);
-    throw e;
-  }
+// behaviour_pack/scripts-dev/features/quests/progress-cache.ts
+import { system as system24, TicksPerSecond as TicksPerSecond10, world as world22 } from "@minecraft/server";
+
+// behaviour_pack/scripts-dev/features/quests/quest-cache.ts
+import { system as system23, TicksPerSecond as TicksPerSecond9 } from "@minecraft/server";
+var QUEST_CACHE = /* @__PURE__ */ new Map();
+async function reload_quest_cache() {
+  const quests = await api_default.Quest.get_active_quests();
+  QUEST_CACHE.clear();
+  quests.forEach((quest) => QUEST_CACHE.set(quest.quest_id, quest));
 }
-__name(check_quests, "check_quests");
-async function display_timer() {
-  for (let questCacheKey in api_default.QuestProgress.quest_cache) {
-    let active_objective = api_default.QuestProgress.quest_cache[questCacheKey].get_active_objective();
-    if (active_objective && active_objective.start_time && active_objective.objective.customizations.timer) {
-      let elapsed_seconds = Math.floor(((/* @__PURE__ */ new Date()).getTime() - active_objective.start_time.getTime()) / 1e3);
-      const timer_seconds = active_objective.objective.customizations.timer.seconds;
-      let remaining_seconds = Math.max(0, timer_seconds - elapsed_seconds);
-      let minutes = Math.floor(remaining_seconds / 60);
-      let seconds = remaining_seconds % 60;
-      let player = world22.getPlayers({ name: active_objective.thorny_user.gamertag })[0];
-      utils_default.commands.send_title(
-        player.dimension.id,
-        player.name,
-        "actionbar",
-        `\xA7l\xA7sObjective ${active_objective.objective.order_index + 1}\xA7r | ${minutes.toString().padStart(2, "0")}m${seconds.toString().padStart(2, "0")}s`
-      );
+__name(reload_quest_cache, "reload_quest_cache");
+function loadQuestCache() {
+  system23.run(async () => {
+    await reload_quest_cache();
+  });
+  system23.runInterval(async () => {
+    await reload_quest_cache();
+  }, TicksPerSecond9 * 60 * 5);
+}
+__name(loadQuestCache, "loadQuestCache");
+
+// behaviour_pack/scripts-dev/features/quests/progress-cache.ts
+var QUEST_PROGRESS_CACHE = /* @__PURE__ */ new Map();
+function loadQuestProgressCache() {
+  const PLAYER_LOOP_RUN_IDS = /* @__PURE__ */ new Map();
+  async function update_player_quest(player_name) {
+    const player = world22.getPlayers().find((p) => p.name == player_name);
+    if (!player) return;
+    const thorny_user = api_default.ThornyUser.fetch_user(player_name);
+    const questProgress = await api_default.QuestProgress.get_quest_progress(thorny_user);
+    const cachedQuestProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
+    if (questProgress && cachedQuestProgress?.progress_id !== questProgress.progress_id) {
+      const quest = QUEST_CACHE.get(questProgress.quest_id);
+      QUEST_PROGRESS_CACHE.set(thorny_user.thorny_id, questProgress);
+      console.log(`Quest Fetched ${quest}`);
+      player.sendMessage(`You have a quest active: ${quest.title}`);
+    } else if (!questProgress && cachedQuestProgress) {
+      const cached_quest = QUEST_CACHE.get(cachedQuestProgress.quest_id);
+      QUEST_PROGRESS_CACHE.delete(thorny_user.thorny_id);
+      player.sendMessage(`You have dropped: ${cached_quest.title}`);
+    } else if (questProgress && cachedQuestProgress?.progress_id === questProgress.progress_id) {
+      await questProgress.update_user_quest();
     }
   }
+  __name(update_player_quest, "update_player_quest");
+  world22.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
+    if (spawn_event.initialSpawn) {
+      const runId = system24.runInterval(async () => {
+        await update_player_quest(spawn_event.player.name);
+      }, TicksPerSecond10 * 2);
+      PLAYER_LOOP_RUN_IDS.set(spawn_event.player.name, runId);
+    } else {
+    }
+  });
+  world22.afterEvents.playerLeave.subscribe((leave_event) => {
+    const runId = PLAYER_LOOP_RUN_IDS.get(leave_event.playerName);
+    if (runId !== void 0) {
+      system24.clearRun(runId);
+      PLAYER_LOOP_RUN_IDS.delete(leave_event.playerName);
+    }
+    const thorny_user = api_default.ThornyUser.fetch_user(leave_event.playerName);
+    if (thorny_user) {
+      QUEST_PROGRESS_CACHE.delete(thorny_user.thorny_id);
+    }
+  });
 }
-__name(display_timer, "display_timer");
-function load_quest_loop() {
-  system23.runInterval(async () => {
-    await check_quests();
-  }, 1);
-  system23.runInterval(async () => {
-    await display_timer();
-  }, 10);
+__name(loadQuestProgressCache, "loadQuestProgressCache");
+
+// behaviour_pack/scripts-dev/features/quests/index.ts
+function loadQuestsFeature() {
+  loadQuestProgressCache();
+  loadQuestCache();
 }
-__name(load_quest_loop, "load_quest_loop");
+__name(loadQuestsFeature, "loadQuestsFeature");
 
 // behaviour_pack/scripts-dev/features/whitelist.ts
 import { beforeEvents } from "@minecraft/server-admin";
@@ -7076,5 +7077,5 @@ load("World Border Feature", loadWorldBorder);
 load("Chat Decoration Feature", loadChatDecorationFeature);
 load("Connection Logging Feature", loadConnectionsFeature);
 load("Location Logging Feature", loadLocationLogger);
-load("Quests Feature", load_quest_loop);
+load("Quests Feature", loadQuestsFeature);
 load("Whitelist Feature", loadWhitelistFeature);

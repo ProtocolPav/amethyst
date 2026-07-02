@@ -1,13 +1,11 @@
 import {IQuestProgress} from "../../types/quest_progress";
 import ThornyUser from "../user";
-import Quest from "./quest";
 import utils from "../../utils";
-import {IQuest} from "../../types/quest";
 import {ObjectiveProgress} from "./objective_progress";
 import Interaction from "../interaction";
 import {
     failActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDelete,
-    getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet, getQuestV1GuildsMeQuestsQuestIdGet,
+    getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet,
     partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch
 } from "../nexuscore/quests/quests";
 import {NotFoundError} from "../http-errors";
@@ -73,32 +71,13 @@ export default class QuestProgress {
 
             throw error; // Rethrow anything unexpected
         }
-            if (quest_progress_response.status === 200) {
-                const quest_progress_data: IQuestProgress = JSON.parse(quest_progress_response.body)
 
-                return new QuestProgress(quest_progress_data, thorny_user)
-            } else {
-                return null
-            }
+        const quest_progress_data: IQuestProgress = quest_progress_response as unknown as IQuestProgress;
 
-        } catch (error) {
-            console.error("Error fetching quest:", error);
-            throw error;
-        }
-        // Otherwise, create the QuestProgress object and cache it
-        const quest_response = await getQuestV1GuildsMeQuestsQuestIdGet(quest_id)
-
-        const quest = new Quest( quest_response as unknown as IQuest )
-
-        const quest_progress = new QuestProgress(
+        return new QuestProgress(
             quest_progress_data,
-            thorny_user,
-            quest
+            thorny_user
         )
-
-        this.quest_cache[thorny_user.thorny_id] = quest_progress
-
-        return quest_progress
     }
 
     /**

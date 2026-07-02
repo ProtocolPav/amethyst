@@ -26,10 +26,6 @@ export default function loadConnectionsFeature() {
     world.afterEvents.playerLeave.subscribe(async (leave_event) => {
         const thorny_user = api.ThornyUser.fetch_user(leave_event.playerName)!
 
-        if (thorny_user) {
-            api.QuestProgress.clear_cache(thorny_user)
-        }
-
         await thorny_user?.send_connect_event('disconnect')
 
         api.Relay.event(`${leave_event.playerName} has left the server`, '', 'leave')

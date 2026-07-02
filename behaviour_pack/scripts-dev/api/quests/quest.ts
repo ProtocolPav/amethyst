@@ -1,7 +1,6 @@
-import {http} from "@minecraft/server-net";
 import {Objective} from "./objective";
 import {IQuest} from "../../types/quest";
-import {getQuestV1GuildsMeQuestsQuestIdGet} from "../nexuscore/quests/quests";
+import {getQuestV1GuildsMeQuestsQuestIdGet, listQuestsV1GuildsMeQuestsGet} from "../nexuscore/quests/quests";
 
 export default class Quest {
     quest_id!: number
@@ -31,20 +30,19 @@ export default class Quest {
             return new Quest(quest_data);
 
         } catch (error) {
-            console.error("Error fetching quest:", error);
             throw error;
         }
     }
 
     public static async get_active_quests(): Promise<Quest[]> {
         try {
-            const quest_response = await http.get(`http://nexuscore:8000/api/v0.2/quests?active=true`);
-            const quests_list_data = JSON.parse(quest_response.body) as IQuest[];
+            const quests_list = await listQuestsV1GuildsMeQuestsGet({active: true})
 
-            return quests_list_data.map(quest => new Quest(quest));
+            console.log(`Got ${quests_list.length} active quests`)
+
+            return quests_list.map(quest => new Quest(quest as unknown as IQuest));
 
         } catch (error) {
-            console.error("Error fetching quest:", error);
             throw error;
         }
     }

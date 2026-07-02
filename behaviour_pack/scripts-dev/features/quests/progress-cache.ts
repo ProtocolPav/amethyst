@@ -21,6 +21,8 @@ export default function loadQuestProgressCache() {
 
             QUEST_PROGRESS_CACHE.set(thorny_user.thorny_id, questProgress)
 
+            console.log(`Quest Fetched ${quest}`)
+
             player.sendMessage(`You have a quest active: ${quest.title}`)
         } else if (!questProgress && cachedQuestProgress) {
             const cached_quest = QUEST_CACHE.get(cachedQuestProgress.quest_id)!
@@ -35,7 +37,9 @@ export default function loadQuestProgressCache() {
 
     world.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
         if (spawn_event.initialSpawn) {
-            const runId = system.runInterval(async () => {await update_player_quest(spawn_event.player.name)}, TicksPerSecond * 2)
+            const runId = system.runInterval(async () => {
+                await update_player_quest(spawn_event.player.name)
+            }, TicksPerSecond * 2)
 
             PLAYER_LOOP_RUN_IDS.set(spawn_event.player.name, runId)
         } else {
