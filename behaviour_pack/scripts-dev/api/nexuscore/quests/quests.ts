@@ -49,6 +49,12 @@ export const getListQuestsV1GuildsMeQuestsGetUrl = (params?: ListQuestsV1GuildsM
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+    const arrayFormatParameters = ["creator_thorny_ids","quest_types"];
+
+    if (Array.isArray(value) && arrayFormatParameters.includes(key)) {
+      value.forEach((v) => { normalizedParams.append(key, v === null ? 'null' : String(v)); });
+      return;
+    }
 
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))

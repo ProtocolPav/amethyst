@@ -5159,6 +5159,13 @@ var createInteractionV1GuildsMeInteractionPost = /* @__PURE__ */ __name(async (i
 var getListInteractionsV1GuildsMeInteractionsGetUrl = /* @__PURE__ */ __name((params) => {
   const normalizedParams = new URLSearchParams();
   Object.entries(params || {}).forEach(([key, value]) => {
+    const arrayFormatParameters = ["coordinates", "coordinates_end", "thorny_ids", "interaction_types", "references", "dimensions"];
+    if (Array.isArray(value) && arrayFormatParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? "null" : String(v));
+      });
+      return;
+    }
     if (value !== void 0) {
       normalizedParams.append(key, value === null ? "null" : String(value));
     }

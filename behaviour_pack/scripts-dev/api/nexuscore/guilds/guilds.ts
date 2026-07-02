@@ -306,6 +306,12 @@ export const getListInteractionsV1GuildsMeInteractionsGetUrl = (params?: ListInt
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+    const arrayFormatParameters = ["coordinates","coordinates_end","thorny_ids","interaction_types","references","dimensions"];
+
+    if (Array.isArray(value) && arrayFormatParameters.includes(key)) {
+      value.forEach((v) => { normalizedParams.append(key, v === null ? 'null' : String(v)); });
+      return;
+    }
 
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))

@@ -12,6 +12,7 @@ export default defineConfig({
             override: {
                 fetch: {
                     includeHttpResponseReturnType: false,
+                    arrayFormat: "repeat"
                 },
                 mutator: {
                     path: './behaviour_pack/scripts-dev/api/minecraft-fetch.ts',
