@@ -1,7 +1,9 @@
-import { KillTargetProgressModel, MineTargetProgressModel, ObjectiveOut, ScriptEventTargetProgressModel } from "../../../api/nexuscore/model";
+import { Player } from "@minecraft/server";
+import { KillTargetModel, KillTargetProgressModel, MineTargetModel, MineTargetProgressModel, ObjectiveOut, ObjectiveProgressOut, ScriptEventTargetProgressModel } from "../../../api/nexuscore/model";
 import { GameAction } from "./action";
 
 export type AnyTargetProgress = MineTargetProgressModel | KillTargetProgressModel | ScriptEventTargetProgressModel
+export type AnyTarget = MineTargetModel | KillTargetModel
 
 export interface TargetProcessor {
     /**
@@ -23,4 +25,29 @@ export interface TargetProcessor {
      * @returns The amount to increment this target's count by (0 = no progress).
      */
     evaluate(action: GameAction, objective: ObjectiveOut, targetProgress: AnyTargetProgress): number
+
+    /**
+     * Called when the objective this processor owns becomes active for a player.
+     * Use to register event listeners, spawn entities, start timers, etc.
+     *
+     * Optional — processors that need no setup can omit this.
+     *
+     * @param player         The player whose objective just became active.
+     * @param objective      The full objective definition.
+     * @param objectiveProgress The current progress state for this objective.
+     */
+    onActivate?(player: Player, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): void
+
+    /**
+     * Called when the objective this processor owns is deactivated for a player.
+     * This fires on completion, failure, quest abandonment, or player leave.
+     * Use to clean up any listeners or runtime state registered in onActivate.
+     *
+     * Optional — processors that need no teardown can omit this.
+     *
+     * @param player         The player whose objective just deactivated.
+     * @param objective      The full objective definition.
+     * @param objectiveProgress The current progress state for this objective.
+     */
+    onDeactivate?(player: Player, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): void
 }
