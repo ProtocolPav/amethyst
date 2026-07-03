@@ -46,7 +46,6 @@ export * from './killTargetModel';
 export * from './killTargetProgressModel';
 export * from './leaderboardEntry';
 export * from './leaderboardModel';
-export * from './listInteractionsV1GuildsMeInteractionsGetInteractionTypesItem';
 export * from './listInteractionsV1GuildsMeInteractionsGetParams';
 export * from './listQuestsV1GuildsMeQuestsGetParams';
 export * from './listSessionsV1GuildsMeSessionsGetParams';

@@ -5,47 +5,46 @@
  * The backend for all Everthorn internal services
  * OpenAPI spec version: 1.0.0
  */
-import type { ListInteractionsV1GuildsMeInteractionsGetInteractionTypesItem } from './listInteractionsV1GuildsMeInteractionsGetInteractionTypesItem';
 
 export type ListInteractionsV1GuildsMeInteractionsGetParams = {
 /**
  * The coordinates where it happened
  */
-coordinates?: number[];
+coordinates?: number[] | null;
 /**
  * Optional End coordinates
  */
-coordinates_end?: number[];
+coordinates_end?: number[] | null;
 /**
  * The thorny IDs to filter by
  */
-thorny_ids?: number[];
+thorny_ids?: number[] | null;
 /**
  * The interaction types to filter by
  */
-interaction_types?: ListInteractionsV1GuildsMeInteractionsGetInteractionTypesItem[];
+interaction_types?: ('kill' | 'mine' | 'place' | 'use' | 'die' | 'scriptevent')[] | null;
 /**
  * The references to filter by
  */
-references?: string[];
+references?: string[] | null;
 /**
  * The dimensions to filter by
  */
-dimensions?: string[];
+dimensions?: string[] | null;
 /**
  * The start time of the interaction events
  */
-time_start?: string;
+time_start?: string | null;
 /**
  * The end time of the interaction events
  */
-time_end?: string;
+time_end?: string | null;
 /**
  * The page number of the results. Defaults to 1
  */
-page?: number;
+page?: number | null;
 /**
  * The number of results per page. Defaults to 100
  */
-page_size?: number;
+page_size?: number | null;
 };
