@@ -42,11 +42,6 @@ export default function loadQuestProgressCache() {
         else if (!questProgress && cachedQuestProgress) {
             await dropped_quest(cachedQuestProgress, thorny_user, player)
         }
-
-        // Update quest progress - needs to be outsourced into another loop specifically for updating the API
-        // else if (questProgress && cachedQuestProgress?.progress_id === questProgress.progress_id) {
-        //     await questProgress.update_user_quest()
-        // }
     }
 
     world.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
