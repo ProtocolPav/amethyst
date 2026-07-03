@@ -1,11 +1,14 @@
-import {Player, system, TicksPerSecond, world} from "@minecraft/server";
-import {QUEST_CACHE} from "./quest-cache";
+import { Player, system, TicksPerSecond, world } from "@minecraft/server";
+import { QUEST_CACHE } from "./quest-cache";
 import ThornyUser from "../../api/user";
-import {get_quest_progress} from "./core/fetch";
-import {ObjectiveOut, ObjectiveProgressOut, ObjectiveProgressOutStatus, QuestProgressOut, QuestProgressOutStatus} from "../../api/nexuscore/model";
-import { activateObjective, deactivateObjective } from "./processors/objective-processor";
+import { get_quest_progress } from "./core/fetch";
+import { ObjectiveOut, ObjectiveProgressOut, ObjectiveProgressOutStatus, QuestProgressOut, QuestProgressOutStatus } from "../../api/nexuscore/model";
+import { activateObjective, deactivateObjective, tickPlugins } from "./processors/objective-processor";
+import { QuestProcessor } from "./processors/quest-processor";
 
 export const QUEST_PROGRESS_CACHE = new Map<number, QuestProgressOut>()
+
+const questProcessor = new QuestProcessor()
 
 /**
  * Returns the active ObjectiveProgressOut for a quest progress, or undefined if none.
@@ -83,6 +86,28 @@ export default function loadQuestProgressCache() {
         else if (!questProgress && cachedQuestProgress) {
             await dropped_quest(cachedQuestProgress, thorny_user, player)
         }
+
+        // Tick watcher plugins (timer, death) for the player's active objective.
+        // This runs on every interval so watchers fire even with no game action.
+        else if (cachedQuestProgress) {
+            const activeObjectiveProgress = getActiveObjectiveProgress(cachedQuestProgress)
+            if (activeObjectiveProgress) {
+                const activeObjectiveDef = getObjectiveDef(cachedQuestProgress, activeObjectiveProgress)
+                if (activeObjectiveDef && player) {
+                    const quest = QUEST_CACHE.get(cachedQuestProgress.quest_id)
+                    if (quest) {
+                        const signal = tickPlugins(player, thorny_user.thorny_id, activeObjectiveDef, activeObjectiveProgress)
+                        if (signal === 'fail') {
+                            questProcessor.fail(player, quest as any, cachedQuestProgress)
+                        } else if (signal === 'advance') {
+                            // Non-failing timer expiry — let quest-processor handle the transition
+                            // by faking a process() call with a no-op action
+                            questProcessor.advance(player, quest as any, cachedQuestProgress)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     world.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
@@ -122,13 +147,8 @@ export default function loadQuestProgressCache() {
             if (questProgress) {
                 const activeObjectiveProgress = getActiveObjectiveProgress(questProgress)
                 if (activeObjectiveProgress) {
-                    // Note: player object is unavailable after leave; processors must not
-                    // call player methods in onDeactivate triggered from this path.
                     const activeObjectiveDef = getObjectiveDef(questProgress, activeObjectiveProgress)
                     if (activeObjectiveDef) {
-                        // We cannot get the Player object after leave, so pass a minimal stub
-                        // for processors that only need it for cleanup (e.g. clearing entity refs).
-                        // Processors must guard against a gone player in this path.
                         const player = world.getPlayers().find(p => p.name === leave_event.playerName)
                         if (player) {
                             deactivateObjective(player, thorny_user.thorny_id, activeObjectiveDef, activeObjectiveProgress)

@@ -1,11 +1,15 @@
 import loadQuestProgressCache from "./progress-cache";
-import load_quest_loop from "./quests-old";
 import loadQuestCache from "./quest-cache";
+import loadMineHandler from "./handlers/mine";
+import loadKillHandler from "./handlers/kill";
+import loadWriteBackLoop from "./write-back";
 
 export default function loadQuestsFeature() {
     // Quest definitions must be loaded before progress, since progress-cache
     // reads from QUEST_CACHE when activating objectives on playerSpawn.
     loadQuestCache()
     loadQuestProgressCache()
-    //load_quest_loop()
+    loadMineHandler()
+    loadKillHandler()
+    loadWriteBackLoop()
 }
