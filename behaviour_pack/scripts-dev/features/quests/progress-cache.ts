@@ -71,10 +71,7 @@ export default function loadQuestProgressCache() {
         const thorny_user = ThornyUser.fetch_user(leave_event.playerName)!
 
         if (thorny_user) {
-            // Flush WriteBack Cache for this player!
             QUEST_PROGRESS_CACHE.delete(thorny_user.thorny_id)
         }
     })
-
-    system.beforeEvents.shutdown
 }
