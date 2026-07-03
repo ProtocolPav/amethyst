@@ -1,4 +1,4 @@
-import { Player, world } from "@minecraft/server";
+import {EntityDieAfterEvent, Player, world} from "@minecraft/server";
 import { ObjectiveOut, ObjectiveProgressOut } from "../../../api/nexuscore/model";
 import { CustomizationPlugin } from "../core/customization-plugin";
 
@@ -26,8 +26,8 @@ export class DeathPlugin implements CustomizationPlugin {
         // Seed from existing progress so reloads don't reset the count
         let deaths = progress.customization_progress.maximum_deaths?.deaths ?? 0
 
-        const handler = (event: { deadEntityId: string }) => {
-            if (event.deadEntityId !== player.id) return
+        const handler = (event: EntityDieAfterEvent) => {
+            if (event.deadEntity.id !== player.id) return
             deaths++
             if (deaths >= c.deaths) this.exceeded = true
         }
