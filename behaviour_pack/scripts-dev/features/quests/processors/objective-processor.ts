@@ -11,12 +11,44 @@ import { GameAction } from "../core/action";
 import { AnyTarget, AnyTargetProgress, TargetProcessor } from "../core/target-processor";
 import { MineTargetProcessor } from "./mine-target-processor";
 import { KillTargetProcessor } from "./kill-target-processor";
-import { QUEST_CACHE } from "../quest-cache";
+import { CustomizationPlugin } from "../core/customization-plugin";
+import { LocationPlugin } from "../plugins/location-plugin";
+import { MainhandPlugin } from "../plugins/mainhand-plugin";
+import { NaturalBlockPlugin } from "../plugins/natural-block-plugin";
+import { TimerPlugin } from "../plugins/timer-plugin";
+import { DeathPlugin } from "../plugins/death-plugin";
 
+/**
+ * Registry of target processors, keyed by objective_type.
+ * Each processor owns evaluate() and optional lifecycle hooks for its type.
+ */
 const TARGET_PROCESSORS: Record<string, TargetProcessor> = {
     mine: new MineTargetProcessor(),
     kill: new KillTargetProcessor(),
 }
+
+/**
+ * Registry of customization plugin classes, keyed by the customization field
+ * name as it appears in objective.customizations.
+ *
+ * When an objective is activated, every key present in objective.customizations
+ * that has a matching entry here is instantiated and stored in ACTIVE_PLUGINS.
+ * Add future plugins here — no other changes needed.
+ */
+const CUSTOMIZATION_PLUGINS: Record<string, new () => CustomizationPlugin> = {
+    location:       LocationPlugin,
+    mainhand:       MainhandPlugin,
+    natural_block:  NaturalBlockPlugin,
+    timer:          TimerPlugin,
+    maximum_deaths: DeathPlugin,
+}
+
+/**
+ * Live plugin instances for each currently active objective, keyed by thorny_id.
+ * Populated by activateObjective, cleared by deactivateObjective.
+ * One entry per player — a player can only have one active objective at a time.
+ */
+const ACTIVE_PLUGINS: Map<number, CustomizationPlugin[]> = new Map()
 
 function targetCount(target: AnyTarget): number {
     return target.count ?? 1
@@ -24,27 +56,75 @@ function targetCount(target: AnyTarget): number {
 
 /**
  * Activates the currently active objective for a player.
- * Calls onActivate on the matching processor if defined.
+ * Calls onActivate on the matching target processor if defined,
+ * then instantiates and activates all matching customization plugins.
  */
-export function activateObjective(player: Player, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): void {
+export function activateObjective(player: Player, thorny_id: number, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): void {
+    // Activate the target processor lifecycle hook
     const processor = TARGET_PROCESSORS[objective.objective_type]
     processor?.onActivate?.(player, objective, objectiveProgress)
+
+    // Instantiate a plugin for every customization key that has a registered class
+    const plugins: CustomizationPlugin[] = []
+    for (const key of Object.keys(objective.customizations)) {
+        const PluginClass = CUSTOMIZATION_PLUGINS[key]
+        if (!PluginClass) continue
+        const plugin = new PluginClass()
+        plugin.onActivate?.(player, objective, objectiveProgress)
+        plugins.push(plugin)
+    }
+    ACTIVE_PLUGINS.set(thorny_id, plugins)
 }
 
 /**
  * Deactivates the currently active objective for a player.
- * Calls onDeactivate on the matching processor if defined.
+ * Calls onDeactivate on the matching target processor if defined,
+ * then deactivates and discards all active customization plugins.
  */
-export function deactivateObjective(player: Player, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): void {
+export function deactivateObjective(player: Player, thorny_id: number, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): void {
+    // Deactivate the target processor lifecycle hook
     const processor = TARGET_PROCESSORS[objective.objective_type]
     processor?.onDeactivate?.(player, objective, objectiveProgress)
+
+    // Deactivate all plugins and remove them from the map
+    const plugins = ACTIVE_PLUGINS.get(thorny_id) ?? []
+    for (const plugin of plugins) {
+        plugin.onDeactivate?.(player, objective, objectiveProgress)
+    }
+    ACTIVE_PLUGINS.delete(thorny_id)
+}
+
+/**
+ * Iterates onTick() across all active plugins for a player and returns the
+ * first non-void signal. Called by quest-processor after each process() cycle.
+ *
+ * Returns:
+ *   'fail'    — at least one watcher wants the objective to fail
+ *   'advance' — at least one watcher wants the objective to be skipped/passed
+ *   void      — no plugin signalled anything
+ *
+ * ACTIVE_PLUGINS is intentionally kept private to this module — quest-processor
+ * calls this function rather than accessing the map directly (Option B).
+ */
+export function tickPlugins(
+    player: Player,
+    thorny_id: number,
+    objective: ObjectiveOut,
+    progress: ObjectiveProgressOut
+): 'fail' | 'advance' | void {
+    const plugins = ACTIVE_PLUGINS.get(thorny_id) ?? []
+    for (const plugin of plugins) {
+        const signal = plugin.onTick?.(player, objective, progress)
+        if (signal) return signal
+    }
 }
 
 export class ObjectiveProcessor {
-    process(action: GameAction, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): boolean {
+    process(action: GameAction, thorny_id: number, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): boolean {
         if (objectiveProgress.status === ObjectiveProgressOutStatus.completed) return false
 
-        if (!this.passesCustomizations(action, objective, objectiveProgress)) return false
+        // Run all passer plugins — if any return false, block the action
+        if (!this.passesCustomizations(action, thorny_id, objective, objectiveProgress)) return false
 
         const processor = TARGET_PROCESSORS[objective.objective_type]
         if (!processor) return false
@@ -59,6 +139,19 @@ export class ObjectiveProcessor {
     private complete(progress: ObjectiveProgressOut): true {
         progress.status = ObjectiveProgressOutStatus.completed
         progress.end_time = new Date().toISOString()
+        return true
+    }
+
+    /**
+     * Iterates the passes() hook of every active plugin for this player.
+     * Returns false as soon as any plugin blocks the action.
+     * Replaces the old hardcoded passesCustomizations() method.
+     */
+    private passesCustomizations(action: GameAction, thorny_id: number, objective: ObjectiveOut, progress: ObjectiveProgressOut): boolean {
+        const plugins = ACTIVE_PLUGINS.get(thorny_id) ?? []
+        for (const plugin of plugins) {
+            if (plugin.passes?.(action, objective, progress) === false) return false
+        }
         return true
     }
 
@@ -123,30 +216,5 @@ export class ObjectiveProcessor {
         })
 
         return allDone ? this.complete(progress) : false
-    }
-
-    private passesCustomizations(action: GameAction, objective: ObjectiveOut, progress: ObjectiveProgressOut): boolean {
-        const c = objective.customizations
-
-        if (c.mainhand && action.mainhand !== c.mainhand.item) return false
-
-        if (c.location) {
-            const loc = c.location
-            const dx = Math.abs(action.coordinates.x - loc.coordinates[0])
-            const dy = Math.abs(action.coordinates.y - loc.coordinates[1])
-            const dz = Math.abs(action.coordinates.z - loc.coordinates[2])
-            if (dx > loc.horizontal_radius || dz > loc.horizontal_radius || dy > loc.vertical_radius) return false
-        }
-
-        if (c.natural_block && action.type === 'mine' && !action.naturally_mined) return false
-
-        if (c.timer && progress.start_time) {
-            const elapsed = (Date.now() - new Date(progress.start_time).getTime()) / 1000
-            if (elapsed > c.timer.seconds) return false
-        }
-
-        if (c.maximum_deaths && progress.customization_progress.maximum_deaths?.deaths! > c.maximum_deaths.deaths) return false
-
-        return true
     }
 }
