@@ -6,12 +6,14 @@ import {QUEST_PROGRESS_CACHE} from "../progress-cache";
 
 export default function loadMineHandler() {
     world.afterEvents.playerBreakBlock.subscribe(async (event) => {
+        const thorny_user = api.ThornyUser.fetch_user(event.player.name)!
+        const quest_progress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id)
+
+        if (!quest_progress) return
+
         const interactions = await listInteractionsV1GuildsMeInteractionsGet({
             coordinates: [event.block.x, event.block.y, event.block.z]
         })
-
-        const thorny_user = api.ThornyUser.fetch_user(event.player.name)!
-        const quest_progress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id)
 
         const mining_action: MineAction = {
             time: new Date(),
@@ -21,5 +23,6 @@ export default function loadMineHandler() {
             mainhand: event.itemStackBeforeBreak?.typeId ?? null,
             naturally_mined: interactions.length > 1 // Breaking a block for the first time adds one interaction, so check for >1
         }
+
     })
 }

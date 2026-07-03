@@ -1,14 +1,15 @@
-import QuestProgress from "../../api/quests/quest_progress";
 import {Player, system, TicksPerSecond, world} from "@minecraft/server";
 import {QUEST_CACHE} from "./quest-cache";
 import ThornyUser from "../../api/user";
+import {get_quest_progress} from "./core/fetch";
+import {QuestProgressOut} from "../../api/nexuscore/model";
 
-export const QUEST_PROGRESS_CACHE = new Map<number, QuestProgress>()
+export const QUEST_PROGRESS_CACHE = new Map<number, QuestProgressOut>()
 
 export default function loadQuestProgressCache() {
     const PLAYER_LOOP_RUN_IDS = new Map<string, number>()
 
-    async function new_active_quest(questProgress: QuestProgress, thornyUser: ThornyUser, player: Player) {
+    async function new_active_quest(questProgress: QuestProgressOut, thornyUser: ThornyUser, player: Player) {
         const quest = QUEST_CACHE.get(questProgress.quest_id)!
 
         QUEST_PROGRESS_CACHE.set(thornyUser.thorny_id, questProgress)
@@ -16,7 +17,7 @@ export default function loadQuestProgressCache() {
         player.sendMessage(`You have a quest active: ${quest.title}`)
     }
 
-    async function dropped_quest(questProgress: QuestProgress, thornyUser: ThornyUser, player: Player) {
+    async function dropped_quest(questProgress: QuestProgressOut, thornyUser: ThornyUser, player: Player) {
         const cached_quest = QUEST_CACHE.get(questProgress.quest_id)!
 
         QUEST_PROGRESS_CACHE.delete(thornyUser.thorny_id)
@@ -29,7 +30,7 @@ export default function loadQuestProgressCache() {
         if (!player) return;
 
         const thorny_user = ThornyUser.fetch_user(player_name)!
-        const questProgress = await QuestProgress.get_quest_progress(thorny_user)
+        const questProgress = await get_quest_progress(thorny_user.thorny_id)
         const cachedQuestProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id)
 
         // User has accepted a new quest
@@ -43,9 +44,9 @@ export default function loadQuestProgressCache() {
         }
 
         // Update quest progress - needs to be outsourced into another loop specifically for updating the API
-        else if (questProgress && cachedQuestProgress?.progress_id === questProgress.progress_id) {
-            await questProgress.update_user_quest()
-        }
+        // else if (questProgress && cachedQuestProgress?.progress_id === questProgress.progress_id) {
+        //     await questProgress.update_user_quest()
+        // }
     }
 
     world.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
