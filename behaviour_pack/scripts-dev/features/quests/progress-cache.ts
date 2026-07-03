@@ -1,36 +1,49 @@
 import QuestProgress from "../../api/quests/quest_progress";
-import {system, TicksPerSecond, world} from "@minecraft/server";
-import api from "../../api";
+import {Player, system, TicksPerSecond, world} from "@minecraft/server";
 import {QUEST_CACHE} from "./quest-cache";
+import ThornyUser from "../../api/user";
 
 export const QUEST_PROGRESS_CACHE = new Map<number, QuestProgress>()
 
 export default function loadQuestProgressCache() {
     const PLAYER_LOOP_RUN_IDS = new Map<string, number>()
 
+    async function new_active_quest(questProgress: QuestProgress, thornyUser: ThornyUser, player: Player) {
+        const quest = QUEST_CACHE.get(questProgress.quest_id)!
+
+        QUEST_PROGRESS_CACHE.set(thornyUser.thorny_id, questProgress)
+
+        player.sendMessage(`You have a quest active: ${quest.title}`)
+    }
+
+    async function dropped_quest(questProgress: QuestProgress, thornyUser: ThornyUser, player: Player) {
+        const cached_quest = QUEST_CACHE.get(questProgress.quest_id)!
+
+        QUEST_PROGRESS_CACHE.delete(thornyUser.thorny_id)
+
+        player.sendMessage(`You have dropped: ${cached_quest.title}`)
+    }
+
     async function update_player_quest(player_name: string) {
         const player = world.getPlayers().find((p) => p.name == player_name)
         if (!player) return;
 
-        const thorny_user = api.ThornyUser.fetch_user(player_name)!
-        const questProgress = await api.QuestProgress.get_quest_progress(thorny_user)
+        const thorny_user = ThornyUser.fetch_user(player_name)!
+        const questProgress = await QuestProgress.get_quest_progress(thorny_user)
         const cachedQuestProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id)
 
+        // User has accepted a new quest
         if (questProgress && cachedQuestProgress?.progress_id !== questProgress.progress_id) {
-            const quest = QUEST_CACHE.get(questProgress.quest_id)!
+            await new_active_quest(questProgress, thorny_user, player)
+        }
 
-            QUEST_PROGRESS_CACHE.set(thorny_user.thorny_id, questProgress)
+        // User has dropped a quest
+        else if (!questProgress && cachedQuestProgress) {
+            await dropped_quest(cachedQuestProgress, thorny_user, player)
+        }
 
-            console.log(`Quest Fetched ${quest}`)
-
-            player.sendMessage(`You have a quest active: ${quest.title}`)
-        } else if (!questProgress && cachedQuestProgress) {
-            const cached_quest = QUEST_CACHE.get(cachedQuestProgress.quest_id)!
-
-            QUEST_PROGRESS_CACHE.delete(thorny_user.thorny_id)
-
-            player.sendMessage(`You have dropped: ${cached_quest.title}`)
-        } else if (questProgress && cachedQuestProgress?.progress_id === questProgress.progress_id) {
+        // Update quest progress - needs to be outsourced into another loop specifically for updating the API
+        else if (questProgress && cachedQuestProgress?.progress_id === questProgress.progress_id) {
             await questProgress.update_user_quest()
         }
     }
@@ -54,7 +67,7 @@ export default function loadQuestProgressCache() {
             PLAYER_LOOP_RUN_IDS.delete(leave_event.playerName)
         }
 
-        const thorny_user = api.ThornyUser.fetch_user(leave_event.playerName)!
+        const thorny_user = ThornyUser.fetch_user(leave_event.playerName)!
 
         if (thorny_user) {
             QUEST_PROGRESS_CACHE.delete(thorny_user.thorny_id)
