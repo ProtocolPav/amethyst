@@ -3,10 +3,6 @@ import { GameAction, MineAction } from "../core/action";
 import { AnyTargetProgress, TargetProcessor } from "../core/target-processor";
 
 export class MineTargetProcessor implements TargetProcessor {
-    handles(action: GameAction): boolean {
-        return action.type === 'mine'
-    }
-
     evaluate(action: GameAction, objective: ObjectiveOut, targetProgress: AnyTargetProgress): number {
         if (action.type !== 'mine') return 0
         if (targetProgress.target_type !== 'mine') return 0

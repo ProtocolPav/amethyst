@@ -7,12 +7,6 @@ export type AnyTarget = MineTargetModel | KillTargetModel
 
 export interface TargetProcessor {
     /**
-     * Returns true if this processor can handle the given action type.
-     * Used by the registry to route actions to the correct processor.
-     */
-    handles(action: GameAction): boolean
-
-    /**
      * Evaluates whether the action progresses a specific target within the objective.
      *
      * Called once per target by ObjectiveProcessor, which owns the and/or/sequential logic.
@@ -31,23 +25,15 @@ export interface TargetProcessor {
      * Use to register event listeners, spawn entities, start timers, etc.
      *
      * Optional — processors that need no setup can omit this.
-     *
-     * @param player         The player whose objective just became active.
-     * @param objective      The full objective definition.
-     * @param objectiveProgress The current progress state for this objective.
      */
     onActivate?(player: Player, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): void
 
     /**
      * Called when the objective this processor owns is deactivated for a player.
-     * This fires on completion, failure, quest abandonment, or player leave.
+     * Fires on completion, failure, quest abandonment, or player leave.
      * Use to clean up any listeners or runtime state registered in onActivate.
      *
      * Optional — processors that need no teardown can omit this.
-     *
-     * @param player         The player whose objective just deactivated.
-     * @param objective      The full objective definition.
-     * @param objectiveProgress The current progress state for this objective.
      */
     onDeactivate?(player: Player, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): void
 }

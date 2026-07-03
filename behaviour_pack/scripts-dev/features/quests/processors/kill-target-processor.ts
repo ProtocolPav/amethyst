@@ -3,10 +3,6 @@ import { GameAction, KillAction } from "../core/action";
 import { AnyTargetProgress, TargetProcessor } from "../core/target-processor";
 
 export class KillTargetProcessor implements TargetProcessor {
-    handles(action: GameAction): boolean {
-        return action.type === 'kill'
-    }
-
     evaluate(action: GameAction, objective: ObjectiveOut, targetProgress: AnyTargetProgress): number {
         if (action.type !== 'kill') return 0
         if (targetProgress.target_type !== 'kill') return 0
