@@ -1,12 +1,10 @@
-import { Vector3 } from "@minecraft/server";
-
-// The discriminated union tag — mirrors ObjectiveOutObjectiveType from the API
-export type ActionType = 'mine' | 'kill'
+import {Player, Vector3} from "@minecraft/server";
+import {ObjectiveOutObjectiveType} from "../../../api/nexuscore/model";
 
 interface BaseAction {
-    type: ActionType
+    type: ObjectiveOutObjectiveType
     time: Date
-    player_thorny_id: number
+    player: Player
     coordinates: Vector3
     dimension: string
     mainhand: string | null

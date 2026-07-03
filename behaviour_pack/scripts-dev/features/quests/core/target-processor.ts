@@ -1,7 +1,7 @@
 import { ObjectiveOut } from "../../../api/nexuscore/model";
 import { GameAction } from "./action";
 
-export interface ObjectiveProcessor {
+export interface TargetProcessor {
     /**
      * Returns true if this processor can handle the given action type.
      * Used by the registry to route actions to the correct processor.
