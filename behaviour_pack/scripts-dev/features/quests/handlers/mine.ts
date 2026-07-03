@@ -29,7 +29,7 @@ export default function loadMineHandler() {
             time: new Date(),
             coordinates: event.block.location,
             dimension: event.player.dimension.id,
-            block_id: event.block.typeId,
+            block_id: event.brokenBlockPermutation.type.id,
             mainhand: event.itemStackBeforeBreak?.typeId ?? null,
             naturally_mined: interactions.length > 1,
             player: event.player,

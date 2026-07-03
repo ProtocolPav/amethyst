@@ -7020,7 +7020,9 @@ var MineTargetProcessor = class {
       (t) => t.target_type === "mine" && t.target_uuid === targetProgress.target_uuid
     );
     if (!target) return 0;
+    console.log(`Matching mine target: ${mine.block_id} -> ${target.block}, ${this.matchesBlock(mine.block_id, target.block)}`);
     if (!this.matchesBlock(mine.block_id, target.block)) return 0;
+    console.log(`Matched mine target: ${mine.block_id} -> ${target.block}`);
     return 1;
   }
   matchesBlock(actual, pattern) {
@@ -7068,6 +7070,7 @@ var LocationPlugin = class {
     const dx = Math.abs(action.coordinates.x - loc.coordinates[0]);
     const dy = Math.abs(action.coordinates.y - loc.coordinates[1]);
     const dz = Math.abs(action.coordinates.z - loc.coordinates[2]);
+    console.log(`Location Plugin pass: ${dx <= loc.horizontal_radius && dz <= loc.horizontal_radius && dy <= loc.vertical_radius}`);
     return dx <= loc.horizontal_radius && dz <= loc.horizontal_radius && dy <= loc.vertical_radius;
   }
 };
@@ -7218,7 +7221,6 @@ var ObjectiveProcessor = class {
     if (!this.passesCustomizations(action, thorny_id, objective, objectiveProgress)) return false;
     const processor = TARGET_PROCESSORS[objective.objective_type];
     if (!processor) return false;
-    console.log(`Processing objective ${objective.objective_id} for ${thorny_id}`);
     switch (objective.logic) {
       case ObjectiveOutLogic.or:
         return this.processOr(action, objective, objectiveProgress, processor);
@@ -7566,7 +7568,7 @@ function loadMineHandler() {
       time: /* @__PURE__ */ new Date(),
       coordinates: event.block.location,
       dimension: event.player.dimension.id,
-      block_id: event.block.typeId,
+      block_id: event.brokenBlockPermutation.type.id,
       mainhand: event.itemStackBeforeBreak?.typeId ?? null,
       naturally_mined: interactions.length > 1,
       player: event.player
