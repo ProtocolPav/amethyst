@@ -9,10 +9,10 @@
 /**
  * The type of interaction
  */
-export type InteractionOutType = typeof InteractionOutType[keyof typeof InteractionOutType];
+export type ListInteractionsV1GuildsMeInteractionsGetInteractionTypesItem = typeof ListInteractionsV1GuildsMeInteractionsGetInteractionTypesItem[keyof typeof ListInteractionsV1GuildsMeInteractionsGetInteractionTypesItem];
 
 
-export const InteractionOutType = {
+export const ListInteractionsV1GuildsMeInteractionsGetInteractionTypesItem = {
   kill: 'kill',
   mine: 'mine',
   place: 'place',
