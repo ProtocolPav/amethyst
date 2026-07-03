@@ -1,4 +1,4 @@
-import { ObjectiveOut, MineTargetModel, MineTargetProgressModel } from "../../../api/nexuscore/model";
+import { ObjectiveOut, MineTargetModel } from "../../../api/nexuscore/model";
 import { GameAction, MineAction } from "../core/action";
 import { AnyTargetProgress, TargetProcessor } from "../core/target-processor";
 

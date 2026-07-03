@@ -6,18 +6,38 @@ import {
     MineTargetModel,
     KillTargetModel,
 } from "../../../api/nexuscore/model";
+import { Player } from "@minecraft/server";
 import { GameAction } from "../core/action";
-import { AnyTargetProgress, TargetProcessor } from "../core/target-processor";
+import { AnyTarget, AnyTargetProgress, TargetProcessor } from "../core/target-processor";
 import { MineTargetProcessor } from "./mine-target-processor";
 import { KillTargetProcessor } from "./kill-target-processor";
+import { QUEST_CACHE } from "../quest-cache";
 
-const TARGET_PROCESSORS: TargetProcessor[] = [
-    new MineTargetProcessor(),
-    new KillTargetProcessor(),
-]
+const TARGET_PROCESSORS: Record<string, TargetProcessor> = {
+    mine: new MineTargetProcessor(),
+    kill: new KillTargetProcessor(),
+}
 
-function targetCount(target: MineTargetModel | KillTargetModel): number {
+function targetCount(target: AnyTarget): number {
     return target.count ?? 1
+}
+
+/**
+ * Activates the currently active objective for a player.
+ * Calls onActivate on the matching processor if defined.
+ */
+export function activateObjective(player: Player, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): void {
+    const processor = TARGET_PROCESSORS[objective.objective_type]
+    processor?.onActivate?.(player, objective, objectiveProgress)
+}
+
+/**
+ * Deactivates the currently active objective for a player.
+ * Calls onDeactivate on the matching processor if defined.
+ */
+export function deactivateObjective(player: Player, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): void {
+    const processor = TARGET_PROCESSORS[objective.objective_type]
+    processor?.onDeactivate?.(player, objective, objectiveProgress)
 }
 
 export class ObjectiveProcessor {
@@ -26,7 +46,7 @@ export class ObjectiveProcessor {
 
         if (!this.passesCustomizations(action, objective, objectiveProgress)) return false
 
-        const processor = TARGET_PROCESSORS.find(p => p.handles(action))
+        const processor = TARGET_PROCESSORS[objective.objective_type]
         if (!processor) return false
 
         switch (objective.logic) {
@@ -57,7 +77,7 @@ export class ObjectiveProcessor {
                 if (total >= sharedPool) return this.complete(progress)
             } else {
                 // Individual — this specific target must reach its own count
-                const def = objective.targets.find(t => t.target_uuid === targetProgress.target_uuid) as MineTargetModel | KillTargetModel | undefined
+                const def = objective.targets.find(t => t.target_uuid === targetProgress.target_uuid) as AnyTarget | undefined
                 const required = def ? targetCount(def) : 1
                 if (targetProgress.count >= required) return this.complete(progress)
             }
@@ -68,7 +88,7 @@ export class ObjectiveProcessor {
 
     private processAnd(action: GameAction, objective: ObjectiveOut, progress: ObjectiveProgressOut, processor: TargetProcessor): boolean {
         for (const targetProgress of progress.target_progress as AnyTargetProgress[]) {
-            const def = objective.targets.find(t => t.target_uuid === targetProgress.target_uuid) as MineTargetModel | KillTargetModel | undefined
+            const def = objective.targets.find(t => t.target_uuid === targetProgress.target_uuid) as AnyTarget | undefined
             if (!def) continue
             if ((targetProgress.count ?? 0) >= targetCount(def)) continue  // already complete
 
@@ -77,7 +97,7 @@ export class ObjectiveProcessor {
         }
 
         const allDone = (progress.target_progress as AnyTargetProgress[]).every(tp => {
-            const def = objective.targets.find(t => t.target_uuid === tp.target_uuid) as MineTargetModel | KillTargetModel | undefined
+            const def = objective.targets.find(t => t.target_uuid === tp.target_uuid) as AnyTarget | undefined
             return def ? (tp.count ?? 0) >= targetCount(def) : false
         })
 
@@ -86,7 +106,7 @@ export class ObjectiveProcessor {
 
     private processSequential(action: GameAction, objective: ObjectiveOut, progress: ObjectiveProgressOut, processor: TargetProcessor): boolean {
         const currentTarget = (progress.target_progress as AnyTargetProgress[]).find(tp => {
-            const def = objective.targets.find(t => t.target_uuid === tp.target_uuid) as MineTargetModel | KillTargetModel | undefined
+            const def = objective.targets.find(t => t.target_uuid === tp.target_uuid) as AnyTarget | undefined
             return def ? (tp.count ?? 0) < targetCount(def) : false
         })
 
@@ -98,7 +118,7 @@ export class ObjectiveProcessor {
         currentTarget.count = (currentTarget.count ?? 0) + increment
 
         const allDone = (progress.target_progress as AnyTargetProgress[]).every(tp => {
-            const def = objective.targets.find(t => t.target_uuid === tp.target_uuid) as MineTargetModel | KillTargetModel | undefined
+            const def = objective.targets.find(t => t.target_uuid === tp.target_uuid) as AnyTarget | undefined
             return def ? (tp.count ?? 0) >= targetCount(def) : false
         })
 
