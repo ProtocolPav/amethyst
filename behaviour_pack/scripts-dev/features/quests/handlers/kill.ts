@@ -34,6 +34,8 @@ export default function loadKillHandler() {
             player: player,
         }
 
+        console.log(JSON.stringify(kill_action, null, 2))
+
         questProcessor.process(kill_action, player, quest as any, quest_progress)
     })
 }

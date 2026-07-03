@@ -1,6 +1,8 @@
 import { system, TicksPerSecond } from "@minecraft/server";
 import { QuestProgressOut, QuestProgressUpdate } from "../../api/nexuscore/model";
-import { partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch } from "../../api/nexuscore/quests/quests";
+import {
+    partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut
+} from "../../api/nexuscore/quests/quests";
 import { QUEST_PROGRESS_CACHE } from "./progress-cache";
 
 // Dirty set — thorny_ids of players whose progress needs flushing
@@ -26,6 +28,7 @@ function buildUpdate(progress: QuestProgressOut): QuestProgressUpdate {
         start_time: progress.start_time,
         end_time: progress.end_time,
         objectives: progress.objectives.map(obj => ({
+            progress_id: obj.progress_id,
             objective_id: obj.objective_id,
             status: obj.status,
             start_time: obj.start_time,
@@ -45,7 +48,9 @@ async function flush(): Promise<void> {
 
     for (const [thorny_id, progress] of DIRTY) {
         try {
-            await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch(
+            console.log(`[write-back] Flushing progress for thorny_id ${thorny_id}`)
+
+            await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut(
                 progress.progress_id,
                 buildUpdate(progress)
             )

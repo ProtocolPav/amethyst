@@ -13,7 +13,7 @@ export class KillTargetProcessor implements TargetProcessor {
         ) as KillTargetModel | undefined
 
         if (!target) return 0
-        if (!this.matchesEntity(kill.entity_type_id, target.entity)) return 0
+        if (!this.matchesEntity(kill.entity_id, target.entity)) return 0
 
         return 1
     }

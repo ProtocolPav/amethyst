@@ -5675,6 +5675,20 @@ var partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch = /* @__PU
     }
   );
 }, "partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch");
+var getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPutUrl = /* @__PURE__ */ __name((progressId) => {
+  return `/v1/guilds/me/quests/progress/${progressId}`;
+}, "getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPutUrl");
+var partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut = /* @__PURE__ */ __name(async (progressId, questProgressUpdate, options) => {
+  return minecraftFetch(
+    getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPutUrl(progressId),
+    {
+      ...options,
+      method: "PUT",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(questProgressUpdate)
+    }
+  );
+}, "partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut");
 
 // behaviour_pack/scripts-dev/api/quests/quest.ts
 var Quest = class _Quest {
@@ -7031,7 +7045,7 @@ var KillTargetProcessor = class {
       (t) => t.target_type === "kill" && t.target_uuid === targetProgress.target_uuid
     );
     if (!target) return 0;
-    if (!this.matchesEntity(kill.entity_type_id, target.entity)) return 0;
+    if (!this.matchesEntity(kill.entity_id, target.entity)) return 0;
     return 1;
   }
   matchesEntity(actual, pattern) {
@@ -7204,6 +7218,7 @@ var ObjectiveProcessor = class {
     if (!this.passesCustomizations(action, thorny_id, objective, objectiveProgress)) return false;
     const processor = TARGET_PROCESSORS[objective.objective_type];
     if (!processor) return false;
+    console.log(`Processing objective ${objective.objective_id} for ${thorny_id}`);
     switch (objective.logic) {
       case ObjectiveOutLogic.or:
         return this.processOr(action, objective, objectiveProgress, processor);
@@ -7292,6 +7307,7 @@ function buildUpdate(progress) {
     start_time: progress.start_time,
     end_time: progress.end_time,
     objectives: progress.objectives.map((obj) => ({
+      progress_id: obj.progress_id,
       objective_id: obj.objective_id,
       status: obj.status,
       start_time: obj.start_time,
@@ -7306,7 +7322,8 @@ async function flush() {
   if (DIRTY.size === 0) return;
   for (const [thorny_id, progress] of DIRTY) {
     try {
-      await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch(
+      console.log(`[write-back] Flushing progress for thorny_id ${thorny_id}`);
+      await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut(
         progress.progress_id,
         buildUpdate(progress)
       );
@@ -7582,6 +7599,7 @@ function loadKillHandler() {
       mainhand: player.getComponent("equippable")?.getEquipment(EquipmentSlot13.Mainhand)?.typeId ?? null,
       player
     };
+    console.log(JSON.stringify(kill_action, null, 2));
     questProcessor3.process(kill_action, player, quest, quest_progress);
   });
 }
