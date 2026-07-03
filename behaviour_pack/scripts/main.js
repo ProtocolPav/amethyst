@@ -5602,6 +5602,13 @@ ${this.get_requirements_string()}
 var getListQuestsV1GuildsMeQuestsGetUrl = /* @__PURE__ */ __name((params) => {
   const normalizedParams = new URLSearchParams();
   Object.entries(params || {}).forEach(([key, value]) => {
+    const arrayFormatParameters = ["creator_thorny_ids", "quest_types"];
+    if (Array.isArray(value) && arrayFormatParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? "null" : String(v));
+      });
+      return;
+    }
     if (value !== void 0) {
       normalizedParams.append(key, value === null ? "null" : String(value));
     }
@@ -6650,19 +6657,6 @@ __name(blockInteract, "blockInteract");
 
 // behaviour_pack/scripts-dev/features/interactions/block-break.ts
 import { EntityComponentTypes as EntityComponentTypes12, EquipmentSlot as EquipmentSlot8, system as system18, world as world16 } from "@minecraft/server";
-
-// behaviour_pack/scripts-dev/utils/interaction_preprocess.ts
-function interaction_preprocess(interaction, quest) {
-  if (!quest) return false;
-  const objectiveProgress = quest.get_active_objective();
-  if (!objectiveProgress) return false;
-  const { objective } = objectiveProgress;
-  const matchingTargets = objective.get_target(interaction);
-  return matchingTargets.length > 0;
-}
-__name(interaction_preprocess, "interaction_preprocess");
-
-// behaviour_pack/scripts-dev/features/interactions/block-break.ts
 function blockBreak() {
   world16.beforeEvents.playerBreakBlock.subscribe(async (event) => {
     const block_id = event.block.typeId;
@@ -6670,7 +6664,6 @@ function blockBreak() {
     const dimension = event.player.dimension;
     const mainhand = event.player.getComponent(EntityComponentTypes12.Equippable)?.getEquipment(EquipmentSlot8.Mainhand);
     const thorny_user = api_default.ThornyUser.fetch_user(event.player.name);
-    const active_quest = await api_default.QuestProgress.get_quest_progress(thorny_user);
     system18.run(() => {
       const interaction = new api_default.Interaction(
         {
@@ -6683,9 +6676,6 @@ function blockBreak() {
         }
       );
       interaction.post_interaction();
-      if (interaction_preprocess(interaction, active_quest)) {
-        api_default.Interaction.enqueue(interaction);
-      }
     });
   });
 }
@@ -6783,7 +6773,6 @@ function entityDie() {
     const dimension = player.dimension;
     const mainhand = player.getComponent(EntityComponentTypes15.Equippable)?.getEquipment(EquipmentSlot11.Mainhand);
     const thorny_user = api_default.ThornyUser.fetch_user(player.name);
-    const active_quest = await api_default.QuestProgress.get_quest_progress(thorny_user);
     const interaction = new api_default.Interaction(
       {
         thorny_id: thorny_user?.thorny_id ?? 0,
@@ -6795,9 +6784,6 @@ function entityDie() {
       }
     );
     await interaction.post_interaction();
-    if (interaction_preprocess(interaction, active_quest)) {
-      api_default.Interaction.enqueue(interaction);
-    }
   }
   __name(playerKillEntity, "playerKillEntity");
   async function playerDieByPlayer(killer_player, dead_player) {
@@ -6948,7 +6934,7 @@ function loadLocationLogger() {
 __name(loadLocationLogger, "loadLocationLogger");
 
 // behaviour_pack/scripts-dev/features/quests/progress-cache.ts
-import { system as system24, TicksPerSecond as TicksPerSecond10, world as world22 } from "@minecraft/server";
+import { system as system26, TicksPerSecond as TicksPerSecond11, world as world23 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/features/quests/quest-cache.ts
 import { system as system23, TicksPerSecond as TicksPerSecond9 } from "@minecraft/server";
@@ -6969,63 +6955,651 @@ function loadQuestCache() {
 }
 __name(loadQuestCache, "loadQuestCache");
 
+// behaviour_pack/scripts-dev/features/quests/core/fetch.ts
+async function get_quest_progress(thorny_id) {
+  let quest_progress_response;
+  try {
+    quest_progress_response = await getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet(thorny_id);
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      return null;
+    }
+    throw error;
+  }
+  return quest_progress_response;
+}
+__name(get_quest_progress, "get_quest_progress");
+
+// behaviour_pack/scripts-dev/api/nexuscore/model/objectiveOutLogic.ts
+var ObjectiveOutLogic = {
+  and: "and",
+  or: "or",
+  sequential: "sequential"
+};
+
+// behaviour_pack/scripts-dev/api/nexuscore/model/objectiveProgressOutStatus.ts
+var ObjectiveProgressOutStatus = {
+  active: "active",
+  pending: "pending",
+  completed: "completed",
+  failed: "failed"
+};
+
+// behaviour_pack/scripts-dev/api/nexuscore/model/questProgressOutStatus.ts
+var QuestProgressOutStatus = {
+  active: "active",
+  pending: "pending",
+  completed: "completed",
+  failed: "failed"
+};
+
+// behaviour_pack/scripts-dev/features/quests/processors/mine-target-processor.ts
+var MineTargetProcessor = class {
+  static {
+    __name(this, "MineTargetProcessor");
+  }
+  evaluate(action, objective, targetProgress) {
+    if (action.type !== "mine") return 0;
+    if (targetProgress.target_type !== "mine") return 0;
+    const mine = action;
+    const target = objective.targets.find(
+      (t) => t.target_type === "mine" && t.target_uuid === targetProgress.target_uuid
+    );
+    if (!target) return 0;
+    if (!this.matchesBlock(mine.block_id, target.block)) return 0;
+    return 1;
+  }
+  matchesBlock(actual, pattern) {
+    if (pattern.endsWith(":*")) {
+      const namespace = pattern.slice(0, -2);
+      return actual.startsWith(namespace + ":");
+    }
+    return actual === pattern;
+  }
+};
+
+// behaviour_pack/scripts-dev/features/quests/processors/kill-target-processor.ts
+var KillTargetProcessor = class {
+  static {
+    __name(this, "KillTargetProcessor");
+  }
+  evaluate(action, objective, targetProgress) {
+    if (action.type !== "kill") return 0;
+    if (targetProgress.target_type !== "kill") return 0;
+    const kill = action;
+    const target = objective.targets.find(
+      (t) => t.target_type === "kill" && t.target_uuid === targetProgress.target_uuid
+    );
+    if (!target) return 0;
+    if (!this.matchesEntity(kill.entity_type_id, target.entity)) return 0;
+    return 1;
+  }
+  matchesEntity(actual, pattern) {
+    if (pattern.endsWith(":*")) {
+      const namespace = pattern.slice(0, -2);
+      return actual.startsWith(namespace + ":");
+    }
+    return actual === pattern;
+  }
+};
+
+// behaviour_pack/scripts-dev/features/quests/plugins/location-plugin.ts
+var LocationPlugin = class {
+  static {
+    __name(this, "LocationPlugin");
+  }
+  passes(action, objective, _progress) {
+    const loc = objective.customizations.location;
+    if (!loc) return true;
+    const dx = Math.abs(action.coordinates.x - loc.coordinates[0]);
+    const dy = Math.abs(action.coordinates.y - loc.coordinates[1]);
+    const dz = Math.abs(action.coordinates.z - loc.coordinates[2]);
+    return dx <= loc.horizontal_radius && dz <= loc.horizontal_radius && dy <= loc.vertical_radius;
+  }
+};
+
+// behaviour_pack/scripts-dev/features/quests/plugins/mainhand-plugin.ts
+var MainhandPlugin = class {
+  static {
+    __name(this, "MainhandPlugin");
+  }
+  passes(action, objective, _progress) {
+    const c = objective.customizations.mainhand;
+    if (!c) return true;
+    return action.mainhand === c.item;
+  }
+};
+
+// behaviour_pack/scripts-dev/features/quests/plugins/natural-block-plugin.ts
+var NaturalBlockPlugin = class {
+  static {
+    __name(this, "NaturalBlockPlugin");
+  }
+  passes(action, objective, _progress) {
+    const c = objective.customizations.natural_block;
+    if (!c) return true;
+    return action.type === "mine" && action.naturally_mined;
+  }
+};
+
+// behaviour_pack/scripts-dev/features/quests/plugins/timer-plugin.ts
+import { system as system24 } from "@minecraft/server";
+var TimerPlugin = class {
+  constructor() {
+    this.expired = false;
+    this.shouldFail = true;
+  }
+  static {
+    __name(this, "TimerPlugin");
+  }
+  onActivate(_player, objective, _progress) {
+    const c = objective.customizations.timer;
+    if (!c) return;
+    this.shouldFail = c.fail ?? true;
+    this.expired = false;
+    this.runId = system24.runTimeout(() => {
+      this.expired = true;
+    }, c.seconds * 20);
+  }
+  onDeactivate(_player, _objective, _progress) {
+    if (this.runId !== void 0) {
+      system24.clearRun(this.runId);
+      this.runId = void 0;
+    }
+    this.expired = false;
+  }
+  onTick(_player, _objective, _progress) {
+    if (!this.expired) return;
+    return this.shouldFail ? "fail" : "advance";
+  }
+};
+
+// behaviour_pack/scripts-dev/features/quests/plugins/death-plugin.ts
+import { world as world22 } from "@minecraft/server";
+var DeathPlugin = class {
+  constructor() {
+    this.exceeded = false;
+  }
+  static {
+    __name(this, "DeathPlugin");
+  }
+  onActivate(player, objective, progress) {
+    const c = objective.customizations.maximum_deaths;
+    if (!c) return;
+    this.exceeded = false;
+    let deaths = progress.customization_progress.maximum_deaths?.deaths ?? 0;
+    const handler = /* @__PURE__ */ __name((event) => {
+      if (event.deadEntity.id !== player.id) return;
+      deaths++;
+      if (deaths >= c.deaths) this.exceeded = true;
+    }, "handler");
+    world22.afterEvents.entityDie.subscribe(handler);
+    this.unsubscribe = () => world22.afterEvents.entityDie.unsubscribe(handler);
+  }
+  onDeactivate(_player, _objective, _progress) {
+    this.unsubscribe?.();
+    this.unsubscribe = void 0;
+    this.exceeded = false;
+  }
+  onTick(_player, _objective, _progress) {
+    if (this.exceeded) return "fail";
+  }
+};
+
+// behaviour_pack/scripts-dev/features/quests/processors/objective-processor.ts
+var TARGET_PROCESSORS = {
+  mine: new MineTargetProcessor(),
+  kill: new KillTargetProcessor()
+};
+var CUSTOMIZATION_PLUGINS = {
+  location: LocationPlugin,
+  mainhand: MainhandPlugin,
+  natural_block: NaturalBlockPlugin,
+  timer: TimerPlugin,
+  maximum_deaths: DeathPlugin
+};
+var ACTIVE_PLUGINS = /* @__PURE__ */ new Map();
+function targetCount(target) {
+  return target.count ?? 1;
+}
+__name(targetCount, "targetCount");
+function activateObjective(player, thorny_id, objective, objectiveProgress) {
+  const processor = TARGET_PROCESSORS[objective.objective_type];
+  processor?.onActivate?.(player, objective, objectiveProgress);
+  const plugins = [];
+  for (const key of Object.keys(objective.customizations)) {
+    const PluginClass = CUSTOMIZATION_PLUGINS[key];
+    if (!PluginClass) continue;
+    const plugin = new PluginClass();
+    plugin.onActivate?.(player, objective, objectiveProgress);
+    plugins.push(plugin);
+  }
+  ACTIVE_PLUGINS.set(thorny_id, plugins);
+}
+__name(activateObjective, "activateObjective");
+function deactivateObjective(player, thorny_id, objective, objectiveProgress) {
+  const processor = TARGET_PROCESSORS[objective.objective_type];
+  processor?.onDeactivate?.(player, objective, objectiveProgress);
+  const plugins = ACTIVE_PLUGINS.get(thorny_id) ?? [];
+  for (const plugin of plugins) {
+    plugin.onDeactivate?.(player, objective, objectiveProgress);
+  }
+  ACTIVE_PLUGINS.delete(thorny_id);
+}
+__name(deactivateObjective, "deactivateObjective");
+function tickPlugins(player, thorny_id, objective, progress) {
+  const plugins = ACTIVE_PLUGINS.get(thorny_id) ?? [];
+  for (const plugin of plugins) {
+    const signal = plugin.onTick?.(player, objective, progress);
+    if (signal) return signal;
+  }
+}
+__name(tickPlugins, "tickPlugins");
+var ObjectiveProcessor = class {
+  static {
+    __name(this, "ObjectiveProcessor");
+  }
+  process(action, thorny_id, objective, objectiveProgress) {
+    if (objectiveProgress.status === ObjectiveProgressOutStatus.completed) return false;
+    if (!this.passesCustomizations(action, thorny_id, objective, objectiveProgress)) return false;
+    const processor = TARGET_PROCESSORS[objective.objective_type];
+    if (!processor) return false;
+    switch (objective.logic) {
+      case ObjectiveOutLogic.or:
+        return this.processOr(action, objective, objectiveProgress, processor);
+      case ObjectiveOutLogic.and:
+        return this.processAnd(action, objective, objectiveProgress, processor);
+      case ObjectiveOutLogic.sequential:
+        return this.processSequential(action, objective, objectiveProgress, processor);
+    }
+  }
+  complete(progress) {
+    progress.status = ObjectiveProgressOutStatus.completed;
+    progress.end_time = (/* @__PURE__ */ new Date()).toISOString();
+    return true;
+  }
+  /**
+   * Iterates the passes() hook of every active plugin for this player.
+   * Returns false as soon as any plugin blocks the action.
+   * Replaces the old hardcoded passesCustomizations() method.
+   */
+  passesCustomizations(action, thorny_id, objective, progress) {
+    const plugins = ACTIVE_PLUGINS.get(thorny_id) ?? [];
+    for (const plugin of plugins) {
+      if (plugin.passes?.(action, objective, progress) === false) return false;
+    }
+    return true;
+  }
+  processOr(action, objective, progress, processor) {
+    const sharedPool = objective.target_count ?? null;
+    for (const targetProgress of progress.target_progress) {
+      const increment = processor.evaluate(action, objective, targetProgress);
+      if (increment === 0) continue;
+      targetProgress.count = (targetProgress.count ?? 0) + increment;
+      if (sharedPool !== null) {
+        const total = progress.target_progress.reduce((sum, tp) => sum + (tp.count ?? 0), 0);
+        if (total >= sharedPool) return this.complete(progress);
+      } else {
+        const def = objective.targets.find((t) => t.target_uuid === targetProgress.target_uuid);
+        const required = def ? targetCount(def) : 1;
+        if (targetProgress.count >= required) return this.complete(progress);
+      }
+    }
+    return false;
+  }
+  processAnd(action, objective, progress, processor) {
+    for (const targetProgress of progress.target_progress) {
+      const def = objective.targets.find((t) => t.target_uuid === targetProgress.target_uuid);
+      if (!def) continue;
+      if ((targetProgress.count ?? 0) >= targetCount(def)) continue;
+      const increment = processor.evaluate(action, objective, targetProgress);
+      if (increment > 0) targetProgress.count = (targetProgress.count ?? 0) + increment;
+    }
+    const allDone = progress.target_progress.every((tp) => {
+      const def = objective.targets.find((t) => t.target_uuid === tp.target_uuid);
+      return def ? (tp.count ?? 0) >= targetCount(def) : false;
+    });
+    return allDone ? this.complete(progress) : false;
+  }
+  processSequential(action, objective, progress, processor) {
+    const currentTarget = progress.target_progress.find((tp) => {
+      const def = objective.targets.find((t) => t.target_uuid === tp.target_uuid);
+      return def ? (tp.count ?? 0) < targetCount(def) : false;
+    });
+    if (!currentTarget) return this.complete(progress);
+    const increment = processor.evaluate(action, objective, currentTarget);
+    if (increment === 0) return false;
+    currentTarget.count = (currentTarget.count ?? 0) + increment;
+    const allDone = progress.target_progress.every((tp) => {
+      const def = objective.targets.find((t) => t.target_uuid === tp.target_uuid);
+      return def ? (tp.count ?? 0) >= targetCount(def) : false;
+    });
+    return allDone ? this.complete(progress) : false;
+  }
+};
+
+// behaviour_pack/scripts-dev/features/quests/write-back.ts
+import { system as system25, TicksPerSecond as TicksPerSecond10 } from "@minecraft/server";
+var DIRTY = /* @__PURE__ */ new Map();
+function markDirty(thorny_id) {
+  const progress = QUEST_PROGRESS_CACHE.get(thorny_id);
+  if (progress) DIRTY.set(thorny_id, progress);
+}
+__name(markDirty, "markDirty");
+function buildUpdate(progress) {
+  return {
+    status: progress.status,
+    start_time: progress.start_time,
+    end_time: progress.end_time,
+    objectives: progress.objectives.map((obj) => ({
+      objective_id: obj.objective_id,
+      status: obj.status,
+      start_time: obj.start_time,
+      end_time: obj.end_time,
+      target_progress: obj.target_progress,
+      customization_progress: obj.customization_progress
+    }))
+  };
+}
+__name(buildUpdate, "buildUpdate");
+async function flush() {
+  if (DIRTY.size === 0) return;
+  for (const [thorny_id, progress] of DIRTY) {
+    try {
+      await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch(
+        progress.progress_id,
+        buildUpdate(progress)
+      );
+      DIRTY.delete(thorny_id);
+    } catch (error) {
+      console.error(`[write-back] Failed to flush progress for thorny_id ${thorny_id}:`, error);
+    }
+  }
+}
+__name(flush, "flush");
+function loadWriteBackLoop() {
+  system25.runInterval(async () => {
+    await flush();
+  }, TicksPerSecond10 * 5);
+}
+__name(loadWriteBackLoop, "loadWriteBackLoop");
+
+// behaviour_pack/scripts-dev/features/quests/processors/quest-processor.ts
+var objectiveProcessor = new ObjectiveProcessor();
+var QuestProcessor = class {
+  static {
+    __name(this, "QuestProcessor");
+  }
+  process(action, player, quest, questProgress) {
+    if (questProgress.status === QuestProgressOutStatus.completed) return false;
+    if (questProgress.status === QuestProgressOutStatus.failed) return false;
+    const activeObjectiveProgress = questProgress.objectives.find(
+      (o) => o.status === ObjectiveProgressOutStatus.active
+    );
+    if (!activeObjectiveProgress) return false;
+    const activeObjectiveDef = quest.objectives.find(
+      (o) => o.objective_id === activeObjectiveProgress.objective_id
+    );
+    if (!activeObjectiveDef) return false;
+    const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
+    const completed = objectiveProcessor.process(action, thorny_id, activeObjectiveDef, activeObjectiveProgress);
+    markDirty(thorny_id);
+    if (!completed) return false;
+    return this.onObjectiveComplete(player, thorny_id, quest, questProgress);
+  }
+  /**
+   * Called by the tick loop when a watcher plugin signals 'advance'
+   * (e.g. a non-failing timer that has expired).
+   * Marks the active objective completed and transitions to the next one.
+   */
+  advance(player, quest, questProgress) {
+    if (questProgress.status === QuestProgressOutStatus.completed) return;
+    if (questProgress.status === QuestProgressOutStatus.failed) return;
+    const activeObjectiveProgress = questProgress.objectives.find(
+      (o) => o.status === ObjectiveProgressOutStatus.active
+    );
+    if (!activeObjectiveProgress) return;
+    const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
+    activeObjectiveProgress.status = ObjectiveProgressOutStatus.completed;
+    activeObjectiveProgress.end_time = (/* @__PURE__ */ new Date()).toISOString();
+    this.onObjectiveComplete(player, thorny_id, quest, questProgress);
+  }
+  onObjectiveComplete(player, thorny_id, quest, questProgress) {
+    const justCompletedProgress = questProgress.objectives.find(
+      (o) => o.status === ObjectiveProgressOutStatus.completed
+    );
+    const justCompletedDef = justCompletedProgress ? quest.objectives.find((o) => o.objective_id === justCompletedProgress.objective_id) : void 0;
+    if (justCompletedDef && justCompletedProgress) {
+      deactivateObjective(player, thorny_id, justCompletedDef, justCompletedProgress);
+    }
+    const nextObjectiveProgress = questProgress.objectives.find(
+      (o) => o.status === ObjectiveProgressOutStatus.pending
+    );
+    if (nextObjectiveProgress) {
+      nextObjectiveProgress.status = ObjectiveProgressOutStatus.active;
+      nextObjectiveProgress.start_time = (/* @__PURE__ */ new Date()).toISOString();
+      const nextObjectiveDef = quest.objectives.find(
+        (o) => o.objective_id === nextObjectiveProgress.objective_id
+      );
+      if (nextObjectiveDef) {
+        activateObjective(player, thorny_id, nextObjectiveDef, nextObjectiveProgress);
+      }
+      markDirty(thorny_id);
+      return false;
+    }
+    return this.onQuestComplete(player, thorny_id, questProgress);
+  }
+  onQuestComplete(player, thorny_id, questProgress) {
+    questProgress.status = QuestProgressOutStatus.completed;
+    questProgress.end_time = (/* @__PURE__ */ new Date()).toISOString();
+    markDirty(thorny_id);
+    return true;
+  }
+  fail(player, quest, questProgress) {
+    const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
+    const activeObjectiveProgress = questProgress.objectives.find(
+      (o) => o.status === ObjectiveProgressOutStatus.active
+    );
+    const activeObjectiveDef = activeObjectiveProgress ? quest.objectives.find((o) => o.objective_id === activeObjectiveProgress.objective_id) : void 0;
+    if (activeObjectiveDef && activeObjectiveProgress) {
+      deactivateObjective(player, thorny_id, activeObjectiveDef, activeObjectiveProgress);
+    }
+    questProgress.status = QuestProgressOutStatus.failed;
+    questProgress.end_time = (/* @__PURE__ */ new Date()).toISOString();
+    for (const obj of questProgress.objectives) {
+      if (obj.status !== ObjectiveProgressOutStatus.completed) {
+        obj.status = ObjectiveProgressOutStatus.failed;
+        obj.end_time = (/* @__PURE__ */ new Date()).toISOString();
+      }
+    }
+    markDirty(thorny_id);
+  }
+};
+
 // behaviour_pack/scripts-dev/features/quests/progress-cache.ts
 var QUEST_PROGRESS_CACHE = /* @__PURE__ */ new Map();
+var questProcessor = new QuestProcessor();
+function getActiveObjectiveProgress(questProgress) {
+  return questProgress.objectives.find((o) => o.status === ObjectiveProgressOutStatus.active);
+}
+__name(getActiveObjectiveProgress, "getActiveObjectiveProgress");
+function getObjectiveDef(questProgress, objectiveProgress) {
+  const quest = QUEST_CACHE.get(questProgress.quest_id);
+  if (!quest) return void 0;
+  return quest.objectives.find((o) => o.objective_id === objectiveProgress.objective_id);
+}
+__name(getObjectiveDef, "getObjectiveDef");
 function loadQuestProgressCache() {
   const PLAYER_LOOP_RUN_IDS = /* @__PURE__ */ new Map();
+  async function new_active_quest(questProgress, thornyUser, player) {
+    const quest = QUEST_CACHE.get(questProgress.quest_id);
+    QUEST_PROGRESS_CACHE.set(thornyUser.thorny_id, questProgress);
+    if (questProgress.status === QuestProgressOutStatus.active) {
+      const activeObjectiveProgress = getActiveObjectiveProgress(questProgress);
+      if (activeObjectiveProgress) {
+        const activeObjectiveDef = getObjectiveDef(questProgress, activeObjectiveProgress);
+        if (activeObjectiveDef) {
+          activateObjective(player, thornyUser.thorny_id, activeObjectiveDef, activeObjectiveProgress);
+        }
+      }
+    }
+    player.sendMessage(`You have a quest active: ${quest.title}`);
+  }
+  __name(new_active_quest, "new_active_quest");
+  async function dropped_quest(questProgress, thornyUser, player) {
+    const cached_quest = QUEST_CACHE.get(questProgress.quest_id);
+    const activeObjectiveProgress = getActiveObjectiveProgress(questProgress);
+    if (activeObjectiveProgress) {
+      const activeObjectiveDef = getObjectiveDef(questProgress, activeObjectiveProgress);
+      if (activeObjectiveDef) {
+        deactivateObjective(player, thornyUser.thorny_id, activeObjectiveDef, activeObjectiveProgress);
+      }
+    }
+    QUEST_PROGRESS_CACHE.delete(thornyUser.thorny_id);
+    player.sendMessage(`You have dropped: ${cached_quest.title}`);
+  }
+  __name(dropped_quest, "dropped_quest");
   async function update_player_quest(player_name) {
-    const player = world22.getPlayers().find((p) => p.name == player_name);
+    const player = world23.getPlayers().find((p) => p.name == player_name);
     if (!player) return;
-    const thorny_user = api_default.ThornyUser.fetch_user(player_name);
-    const questProgress = await api_default.QuestProgress.get_quest_progress(thorny_user);
+    const thorny_user = ThornyUser.fetch_user(player_name);
+    const questProgress = await get_quest_progress(thorny_user.thorny_id);
     const cachedQuestProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
     if (questProgress && cachedQuestProgress?.progress_id !== questProgress.progress_id) {
-      const quest = QUEST_CACHE.get(questProgress.quest_id);
-      QUEST_PROGRESS_CACHE.set(thorny_user.thorny_id, questProgress);
-      console.log(`Quest Fetched ${quest}`);
-      player.sendMessage(`You have a quest active: ${quest.title}`);
+      await new_active_quest(questProgress, thorny_user, player);
     } else if (!questProgress && cachedQuestProgress) {
-      const cached_quest = QUEST_CACHE.get(cachedQuestProgress.quest_id);
-      QUEST_PROGRESS_CACHE.delete(thorny_user.thorny_id);
-      player.sendMessage(`You have dropped: ${cached_quest.title}`);
-    } else if (questProgress && cachedQuestProgress?.progress_id === questProgress.progress_id) {
-      await questProgress.update_user_quest();
+      await dropped_quest(cachedQuestProgress, thorny_user, player);
+    } else if (cachedQuestProgress) {
+      const activeObjectiveProgress = getActiveObjectiveProgress(cachedQuestProgress);
+      if (activeObjectiveProgress) {
+        const activeObjectiveDef = getObjectiveDef(cachedQuestProgress, activeObjectiveProgress);
+        if (activeObjectiveDef && player) {
+          const quest = QUEST_CACHE.get(cachedQuestProgress.quest_id);
+          if (quest) {
+            const signal = tickPlugins(player, thorny_user.thorny_id, activeObjectiveDef, activeObjectiveProgress);
+            if (signal === "fail") {
+              questProcessor.fail(player, quest, cachedQuestProgress);
+            } else if (signal === "advance") {
+              questProcessor.advance(player, quest, cachedQuestProgress);
+            }
+          }
+        }
+      }
     }
   }
   __name(update_player_quest, "update_player_quest");
-  world22.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
+  world23.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
     if (spawn_event.initialSpawn) {
-      const runId = system24.runInterval(async () => {
+      const thorny_user = ThornyUser.fetch_user(spawn_event.player.name);
+      if (thorny_user) {
+        const questProgress = await get_quest_progress(thorny_user.thorny_id);
+        if (questProgress) {
+          await new_active_quest(questProgress, thorny_user, spawn_event.player);
+        }
+      }
+      const runId = system26.runInterval(async () => {
         await update_player_quest(spawn_event.player.name);
-      }, TicksPerSecond10 * 2);
+      }, TicksPerSecond11 * 2);
       PLAYER_LOOP_RUN_IDS.set(spawn_event.player.name, runId);
-    } else {
     }
   });
-  world22.afterEvents.playerLeave.subscribe((leave_event) => {
+  world23.afterEvents.playerLeave.subscribe((leave_event) => {
     const runId = PLAYER_LOOP_RUN_IDS.get(leave_event.playerName);
     if (runId !== void 0) {
-      system24.clearRun(runId);
+      system26.clearRun(runId);
       PLAYER_LOOP_RUN_IDS.delete(leave_event.playerName);
     }
-    const thorny_user = api_default.ThornyUser.fetch_user(leave_event.playerName);
+    const thorny_user = ThornyUser.fetch_user(leave_event.playerName);
     if (thorny_user) {
+      const questProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
+      if (questProgress) {
+        const activeObjectiveProgress = getActiveObjectiveProgress(questProgress);
+        if (activeObjectiveProgress) {
+          const activeObjectiveDef = getObjectiveDef(questProgress, activeObjectiveProgress);
+          if (activeObjectiveDef) {
+            const player = world23.getPlayers().find((p) => p.name === leave_event.playerName);
+            if (player) {
+              deactivateObjective(player, thorny_user.thorny_id, activeObjectiveDef, activeObjectiveProgress);
+            }
+          }
+        }
+      }
       QUEST_PROGRESS_CACHE.delete(thorny_user.thorny_id);
     }
   });
 }
 __name(loadQuestProgressCache, "loadQuestProgressCache");
 
+// behaviour_pack/scripts-dev/features/quests/handlers/mine.ts
+import { world as world24 } from "@minecraft/server";
+var questProcessor2 = new QuestProcessor();
+function loadMineHandler() {
+  world24.afterEvents.playerBreakBlock.subscribe(async (event) => {
+    const thorny_user = ThornyUser.fetch_user(event.player.name);
+    if (!thorny_user) return;
+    const quest_progress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
+    if (!quest_progress) return;
+    const quest = QUEST_CACHE.get(quest_progress.quest_id);
+    if (!quest) return;
+    const interactions = await listInteractionsV1GuildsMeInteractionsGet({
+      coordinates: [event.block.x, event.block.y, event.block.z]
+    });
+    const mining_action = {
+      type: "mine",
+      time: /* @__PURE__ */ new Date(),
+      coordinates: event.block.location,
+      dimension: event.player.dimension.id,
+      block_id: event.block.typeId,
+      mainhand: event.itemStackBeforeBreak?.typeId ?? null,
+      naturally_mined: interactions.length > 1,
+      player: event.player
+    };
+    questProcessor2.process(mining_action, event.player, quest, quest_progress);
+  });
+}
+__name(loadMineHandler, "loadMineHandler");
+
+// behaviour_pack/scripts-dev/features/quests/handlers/kill.ts
+import { EquipmentSlot as EquipmentSlot13, world as world25 } from "@minecraft/server";
+var questProcessor3 = new QuestProcessor();
+function loadKillHandler() {
+  world25.afterEvents.entityDie.subscribe((event) => {
+    const attacker = event.damageSource.damagingEntity;
+    if (!attacker || attacker.typeId !== "minecraft:player") return;
+    const player = attacker;
+    const thorny_user = ThornyUser.fetch_user(player.name);
+    if (!thorny_user) return;
+    const quest_progress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
+    if (!quest_progress) return;
+    const quest = QUEST_CACHE.get(quest_progress.quest_id);
+    if (!quest) return;
+    const kill_action = {
+      type: "kill",
+      time: /* @__PURE__ */ new Date(),
+      coordinates: event.deadEntity.location,
+      dimension: event.deadEntity.dimension.id,
+      entity_id: event.deadEntity.typeId,
+      mainhand: player.getComponent("equippable")?.getEquipment(EquipmentSlot13.Mainhand)?.typeId ?? null,
+      player
+    };
+    questProcessor3.process(kill_action, player, quest, quest_progress);
+  });
+}
+__name(loadKillHandler, "loadKillHandler");
+
 // behaviour_pack/scripts-dev/features/quests/index.ts
 function loadQuestsFeature() {
-  loadQuestProgressCache();
   loadQuestCache();
+  loadQuestProgressCache();
+  loadMineHandler();
+  loadKillHandler();
+  loadWriteBackLoop();
 }
 __name(loadQuestsFeature, "loadQuestsFeature");
 
 // behaviour_pack/scripts-dev/features/whitelist.ts
 import { beforeEvents } from "@minecraft/server-admin";
-import { world as world23 } from "@minecraft/server";
+import { world as world26 } from "@minecraft/server";
 var BlockMessageMap = {
   "no_whitelist": "You are not whitelisted. Check the guidelines to see how to whitelist yourself.",
   "not_active": "WAIT! Don't go!\n\nCouldn't resist a peek, could you? We don't blame you. Let's get you back to where you belong.\n\nRejoin us at everthorn.net/apply or reach out on Discord. We'll get you right back in!",
@@ -7043,7 +7617,7 @@ async function blockJoin(join_event, reason = "other") {
 }
 __name(blockJoin, "blockJoin");
 function loadWhitelistFeature() {
-  world23.afterEvents.worldLoad.subscribe(() => {
+  world26.afterEvents.worldLoad.subscribe(() => {
     beforeEvents.asyncPlayerJoin.subscribe(async (join_event) => {
       try {
         const thorny_user = await api_default.ThornyUser.get_user_from_api(join_event.name);

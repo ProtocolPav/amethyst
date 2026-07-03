@@ -2,7 +2,6 @@ import {Entity, EntityDamageCause, system, world} from "@minecraft/server"
 import api from "../../api"
 import utils from "../../utils"
 import { EntityComponentTypes, EquipmentSlot, Player } from "@minecraft/server"
-import {interaction_preprocess} from "../../utils/interaction_preprocess";
 
 export default function entityDie() {
     /**
@@ -15,7 +14,6 @@ export default function entityDie() {
         const mainhand = player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
 
         const thorny_user = api.ThornyUser.fetch_user(player.name)!
-        const active_quest = await api.QuestProgress.get_quest_progress(thorny_user)
 
         const interaction = new api.Interaction(
             {
@@ -29,10 +27,6 @@ export default function entityDie() {
         )
 
         await interaction.post_interaction()
-
-        if (interaction_preprocess(interaction, active_quest)) {
-            api.Interaction.enqueue(interaction)
-        }
     }
 
     /**
