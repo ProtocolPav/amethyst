@@ -1,5 +1,7 @@
-import { ObjectiveOut } from "../../../api/nexuscore/model";
+import { KillTargetProgressModel, MineTargetProgressModel, ObjectiveOut, ScriptEventTargetProgressModel } from "../../../api/nexuscore/model";
 import { GameAction } from "./action";
+
+export type AnyTargetProgress = MineTargetProgressModel | KillTargetProgressModel | ScriptEventTargetProgressModel
 
 export interface TargetProcessor {
     /**
@@ -9,12 +11,16 @@ export interface TargetProcessor {
     handles(action: GameAction): boolean
 
     /**
-     * Evaluates whether the action progresses the given objective target.
+     * Evaluates whether the action progresses a specific target within the objective.
      *
-     * @param action      The game action that occurred.
-     * @param objective   The full objective definition from the API (contains targets, customizations, logic).
-     * @param currentCount The player's current progress count on this objective.
-     * @returns The amount to increment progress by (0 = no progress).
+     * Called once per target by ObjectiveProcessor, which owns the and/or/sequential logic.
+     *
+     * @param action         The game action that occurred.
+     * @param objective      The full objective definition (targets, customizations, logic).
+     * @param targetProgress The current progress state for this specific target.
+     *                       Carries the current count, and for complex objectives like Boss,
+     *                       will carry the registered runtime entity ID to match against.
+     * @returns The amount to increment this target's count by (0 = no progress).
      */
-    evaluate(action: GameAction, objective: ObjectiveOut, currentCount: number): number
+    evaluate(action: GameAction, objective: ObjectiveOut, targetProgress: AnyTargetProgress): number
 }
