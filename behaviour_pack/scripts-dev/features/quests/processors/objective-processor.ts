@@ -30,8 +30,8 @@ export class ObjectiveProcessor {
         if (!processor) return false
 
         switch (objective.logic) {
-            case ObjectiveOutLogic.or:         return this.processOr(action, objective, objectiveProgress, processor)
-            case ObjectiveOutLogic.and:        return this.processAnd(action, objective, objectiveProgress, processor)
+            case ObjectiveOutLogic.or: return this.processOr(action, objective, objectiveProgress, processor)
+            case ObjectiveOutLogic.and: return this.processAnd(action, objective, objectiveProgress, processor)
             case ObjectiveOutLogic.sequential: return this.processSequential(action, objective, objectiveProgress, processor)
         }
     }
@@ -115,6 +115,8 @@ export class ObjectiveProcessor {
             const elapsed = (Date.now() - new Date(progress.start_time).getTime()) / 1000
             if (elapsed > c.timer.seconds) return false
         }
+
+        if (c.maximum_deaths && progress.customization_progress.maximum_deaths?.deaths! > c.maximum_deaths.deaths) return false
 
         return true
     }
