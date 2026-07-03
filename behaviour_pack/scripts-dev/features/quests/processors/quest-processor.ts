@@ -33,17 +33,6 @@ export class QuestProcessor {
         // Process the action against the active objective
         const completed = objectiveProcessor.process(action, thorny_id, activeObjectiveDef, activeObjectiveProgress)
 
-        // Tick all watcher plugins — checks timer expiry, death counts, etc.
-        // This runs regardless of whether the action made progress.
-        const signal = tickPlugins(player, thorny_id, activeObjectiveDef, activeObjectiveProgress)
-        if (signal === 'fail') {
-            this.fail(player, quest, questProgress)
-            return false
-        }
-        if (signal === 'advance') {
-            return this.onObjectiveComplete(player, thorny_id, quest, questProgress)
-        }
-
         markDirty(thorny_id)
 
         if (!completed) return false

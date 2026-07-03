@@ -126,8 +126,6 @@ export default function loadQuestProgressCache() {
             }, TicksPerSecond * 2)
 
             PLAYER_LOOP_RUN_IDS.set(spawn_event.player.name, runId)
-        } else {
-            // They are respawning, so count their death down.
         }
     })
 
