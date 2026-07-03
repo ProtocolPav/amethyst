@@ -120,6 +120,14 @@ export function tickPlugins(
 }
 
 export class ObjectiveProcessor {
+    /**
+     * Processes an objective against the given action.
+     * @param action
+     * @param thorny_id
+     * @param objective
+     * @param objectiveProgress
+     * @returns true if the objective is complete, false otherwise
+     */
     process(action: GameAction, thorny_id: number, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): boolean {
         if (objectiveProgress.status === ObjectiveProgressOutStatus.completed) return false
 
@@ -145,7 +153,6 @@ export class ObjectiveProcessor {
     /**
      * Iterates the passes() hook of every active plugin for this player.
      * Returns false as soon as any plugin blocks the action.
-     * Replaces the old hardcoded passesCustomizations() method.
      */
     private passesCustomizations(action: GameAction, thorny_id: number, objective: ObjectiveOut, progress: ObjectiveProgressOut): boolean {
         const plugins = ACTIVE_PLUGINS.get(thorny_id) ?? []
