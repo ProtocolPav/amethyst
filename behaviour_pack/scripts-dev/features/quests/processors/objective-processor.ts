@@ -43,7 +43,7 @@ export class ObjectiveProcessor {
     }
 
     private processOr(action: GameAction, objective: ObjectiveOut, progress: ObjectiveProgressOut, processor: TargetProcessor): boolean {
-        const required = objective.target_count ?? 1
+        const sharedPool = objective.target_count ?? null
 
         for (const targetProgress of progress.target_progress as AnyTargetProgress[]) {
             const increment = processor.evaluate(action, objective, targetProgress)
@@ -51,7 +51,16 @@ export class ObjectiveProcessor {
 
             targetProgress.count = (targetProgress.count ?? 0) + increment
 
-            if (targetProgress.count >= required) return this.complete(progress)
+            if (sharedPool !== null) {
+                // Shared pool — sum all targets together
+                const total = (progress.target_progress as AnyTargetProgress[]).reduce((sum, tp) => sum + (tp.count ?? 0), 0)
+                if (total >= sharedPool) return this.complete(progress)
+            } else {
+                // Individual — this specific target must reach its own count
+                const def = objective.targets.find(t => t.target_uuid === targetProgress.target_uuid) as MineTargetModel | KillTargetModel | undefined
+                const required = def ? targetCount(def) : 1
+                if (targetProgress.count >= required) return this.complete(progress)
+            }
         }
 
         return false
