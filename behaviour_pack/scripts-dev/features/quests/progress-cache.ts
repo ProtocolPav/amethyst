@@ -41,7 +41,7 @@ export default function loadQuestProgressCache() {
             if (activeObjectiveProgress) {
                 const activeObjectiveDef = getObjectiveDef(questProgress, activeObjectiveProgress)
                 if (activeObjectiveDef) {
-                    activateObjective(player, activeObjectiveDef, activeObjectiveProgress)
+                    activateObjective(player, thornyUser.thorny_id, activeObjectiveDef, activeObjectiveProgress)
                 }
             }
         }
@@ -57,7 +57,7 @@ export default function loadQuestProgressCache() {
         if (activeObjectiveProgress) {
             const activeObjectiveDef = getObjectiveDef(questProgress, activeObjectiveProgress)
             if (activeObjectiveDef) {
-                deactivateObjective(player, activeObjectiveDef, activeObjectiveProgress)
+                deactivateObjective(player, thornyUser.thorny_id, activeObjectiveDef, activeObjectiveProgress)
             }
         }
 
@@ -131,7 +131,7 @@ export default function loadQuestProgressCache() {
                         // Processors must guard against a gone player in this path.
                         const player = world.getPlayers().find(p => p.name === leave_event.playerName)
                         if (player) {
-                            deactivateObjective(player, activeObjectiveDef, activeObjectiveProgress)
+                            deactivateObjective(player, thorny_user.thorny_id, activeObjectiveDef, activeObjectiveProgress)
                         }
                     }
                 }
