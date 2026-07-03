@@ -99,12 +99,9 @@ export function deactivateObjective(player: Player, thorny_id: number, objective
  * first non-void signal. Called by quest-processor after each process() cycle.
  *
  * Returns:
- *   'fail'    — at least one watcher wants the objective to fail
+ *   'fail' — at least one watcher wants the objective to fail
  *   'advance' — at least one watcher wants the objective to be skipped/passed
- *   void      — no plugin signalled anything
- *
- * ACTIVE_PLUGINS is intentionally kept private to this module — quest-processor
- * calls this function rather than accessing the map directly (Option B).
+ *   void — no plugin signalled anything
  */
 export function tickPlugins(
     player: Player,

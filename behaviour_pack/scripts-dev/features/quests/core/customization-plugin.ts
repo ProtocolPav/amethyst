@@ -12,14 +12,14 @@ import { GameAction } from "./action";
  *
  * There are three conceptual plugin types:
  *
- *   Passers   — implement only `passes`. They gate whether a game action
+ *   Passers — implement only `passes`. They gate whether a game action
  *               counts toward progress (e.g. location, mainhand, natural_block).
  *
- *   Watchers  — implement `onActivate`, `onDeactivate`, and `onTick`. They
+ *   Watchers — implement `onActivate`, `onDeactivate`, and `onTick`. They
  *               observe time or events independently of player actions and
  *               can trigger a fail or advance (e.g. timer, maximum_deaths).
  *
- *   Effects   — implement only `onActivate` and `onDeactivate`. They produce
+ *   Effects — implement only `onActivate` and `onDeactivate`. They produce
  *               side effects with no influence on progress counting
  *               (e.g. music_loop, command_loop — future additions).
  */
