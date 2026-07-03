@@ -41,7 +41,6 @@ export class QuestProcessor {
             return false
         }
         if (signal === 'advance') {
-            // A watcher (e.g. non-failing timer) wants to skip this objective
             return this.onObjectiveComplete(player, thorny_id, quest, questProgress)
         }
 
@@ -50,6 +49,30 @@ export class QuestProcessor {
         if (!completed) return false
 
         return this.onObjectiveComplete(player, thorny_id, quest, questProgress)
+    }
+
+    /**
+     * Called by the tick loop when a watcher plugin signals 'advance'
+     * (e.g. a non-failing timer that has expired).
+     * Marks the active objective completed and transitions to the next one.
+     */
+    advance(player: Player, quest: QuestOut, questProgress: QuestProgressOut): void {
+        if (questProgress.status === QuestProgressOutStatus.completed) return
+        if (questProgress.status === QuestProgressOutStatus.failed) return
+
+        const activeObjectiveProgress = questProgress.objectives.find(
+            o => o.status === ObjectiveProgressOutStatus.active
+        )
+        if (!activeObjectiveProgress) return
+
+        const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
+
+        // Mark the current objective completed so onObjectiveComplete
+        // picks up the correct justCompleted entry
+        activeObjectiveProgress.status = ObjectiveProgressOutStatus.completed
+        activeObjectiveProgress.end_time = new Date().toISOString()
+
+        this.onObjectiveComplete(player, thorny_id, quest, questProgress)
     }
 
     private onObjectiveComplete(player: Player, thorny_id: number, quest: QuestOut, questProgress: QuestProgressOut): boolean {
