@@ -17,6 +17,10 @@
 			"category": "ui",
 			"sounds": ["sounds/quests/quest_fail"]
 		},
+        "quest.notify": {
+            "category": "ui",
+            "sounds": ["sounds/quests/quest_cache_notification"]
+        },
 		"altar.ambient": {
 			"category": "ambient",
 			"max_distance": 48.0,

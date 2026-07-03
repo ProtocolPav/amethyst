@@ -4075,6 +4075,14 @@ function send_message(dimension, target, message) {
   world7.getDimension(dimension).runCommand(`tellraw ${target} ${JSON.stringify(msg)}`);
 }
 __name(send_message, "send_message");
+function play_quest_notify(gamertag) {
+  let player = world7.getPlayers({ name: gamertag })[0];
+  player.playSound(
+    "quest.notify",
+    { volume: 100, location: player.location }
+  );
+}
+__name(play_quest_notify, "play_quest_notify");
 function play_quest_progress_sound(gamertag) {
   let player = world7.getPlayers({ name: gamertag })[0];
   player.playSound(
@@ -4265,6 +4273,7 @@ function place_glitch_block(player) {
 __name(place_glitch_block, "place_glitch_block");
 var commands = {
   send_message,
+  play_quest_notify,
   play_quest_complete_sound,
   play_quest_progress_sound,
   send_title,
@@ -7020,9 +7029,7 @@ var MineTargetProcessor = class {
       (t) => t.target_type === "mine" && t.target_uuid === targetProgress.target_uuid
     );
     if (!target) return 0;
-    console.log(`Matching mine target: ${mine.block_id} -> ${target.block}, ${this.matchesBlock(mine.block_id, target.block)}`);
     if (!this.matchesBlock(mine.block_id, target.block)) return 0;
-    console.log(`Matched mine target: ${mine.block_id} -> ${target.block}`);
     return 1;
   }
   matchesBlock(actual, pattern) {
@@ -7070,7 +7077,6 @@ var LocationPlugin = class {
     const dx = Math.abs(action.coordinates.x - loc.coordinates[0]);
     const dy = Math.abs(action.coordinates.y - loc.coordinates[1]);
     const dz = Math.abs(action.coordinates.z - loc.coordinates[2]);
-    console.log(`Location Plugin pass: ${dx <= loc.horizontal_radius && dz <= loc.horizontal_radius && dy <= loc.vertical_radius}`);
     return dx <= loc.horizontal_radius && dz <= loc.horizontal_radius && dy <= loc.vertical_radius;
   }
 };
@@ -7462,7 +7468,10 @@ function loadQuestProgressCache() {
         }
       }
     }
-    player.sendMessage(`You have a quest active: ${quest.title}`);
+    system26.runTimeout(() => {
+      utils_default.commands.play_quest_notify(player.name);
+      utils_default.commands.send_message(player.dimension.id, player.name, `You have a quest active: ${quest.title}`);
+    }, TicksPerSecond11 * 5);
   }
   __name(new_active_quest, "new_active_quest");
   async function dropped_quest(questProgress, thornyUser, player) {

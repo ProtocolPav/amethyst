@@ -5,6 +5,7 @@ import { get_quest_progress } from "./core/fetch";
 import { ObjectiveOut, ObjectiveProgressOut, ObjectiveProgressOutStatus, QuestProgressOut, QuestProgressOutStatus } from "../../api/nexuscore/model";
 import { activateObjective, deactivateObjective, tickPlugins } from "./processors/objective-processor";
 import { QuestProcessor } from "./processors/quest-processor";
+import utils from "../../utils";
 
 export const QUEST_PROGRESS_CACHE = new Map<number, QuestProgressOut>()
 
@@ -49,7 +50,10 @@ export default function loadQuestProgressCache() {
             }
         }
 
-        player.sendMessage(`You have a quest active: ${quest.title}`)
+        system.runTimeout(() => {
+            utils.commands.play_quest_notify(player.name)
+            utils.commands.send_message(player.dimension.id, player.name, `You have a quest active: ${quest.title}`)
+        }, TicksPerSecond * 5)
     }
 
     async function dropped_quest(questProgress: QuestProgressOut, thornyUser: ThornyUser, player: Player) {
@@ -100,8 +104,6 @@ export default function loadQuestProgressCache() {
                         if (signal === 'fail') {
                             questProcessor.fail(player, quest as any, cachedQuestProgress)
                         } else if (signal === 'advance') {
-                            // Non-failing timer expiry — let quest-processor handle the transition
-                            // by faking a process() call with a no-op action
                             questProcessor.advance(player, quest as any, cachedQuestProgress)
                         }
                     }

@@ -20,6 +20,15 @@ function send_message(dimension: string, target: string, message: string) {
     world.getDimension(dimension).runCommand(`tellraw ${target} ${JSON.stringify(msg)}`)
 }
 
+function play_quest_notify(gamertag: string) {
+    let player = world.getPlayers({name: gamertag})[0]
+
+    player.playSound(
+        'quest.notify',
+        {volume: 100, location: player.location}
+    )
+}
+
 function play_quest_progress_sound(gamertag: string) {
     let player = world.getPlayers({name: gamertag})[0]
 
@@ -241,6 +250,7 @@ function place_glitch_block(player: Player) {
 
 const commands = {
     send_message,
+    play_quest_notify,
     play_quest_complete_sound,
     play_quest_progress_sound,
     send_title,
