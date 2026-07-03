@@ -6,7 +6,7 @@ import {
 } from "../../../api/nexuscore/model";
 import { Player } from "@minecraft/server";
 import { GameAction } from "../core/action";
-import { ObjectiveProcessor, activateObjective, deactivateObjective } from "./objective-processor";
+import { ObjectiveProcessor, activateObjective, deactivateObjective, tickPlugins } from "./objective-processor";
 import { markDirty } from "../write-back";
 import ThornyUser from "../../../api/user";
 
@@ -27,20 +27,32 @@ export class QuestProcessor {
         )
         if (!activeObjectiveDef) return false
 
+        // Resolve thorny_id once and reuse throughout
         const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
 
-        const completed = objectiveProcessor.process(action, activeObjectiveDef, activeObjectiveProgress)
+        // Process the action against the active objective
+        const completed = objectiveProcessor.process(action, thorny_id, activeObjectiveDef, activeObjectiveProgress)
+
+        // Tick all watcher plugins — checks timer expiry, death counts, etc.
+        // This runs regardless of whether the action made progress.
+        const signal = tickPlugins(player, thorny_id, activeObjectiveDef, activeObjectiveProgress)
+        if (signal === 'fail') {
+            this.fail(player, quest, questProgress)
+            return false
+        }
+        if (signal === 'advance') {
+            // A watcher (e.g. non-failing timer) wants to skip this objective
+            return this.onObjectiveComplete(player, thorny_id, quest, questProgress)
+        }
 
         markDirty(thorny_id)
 
         if (!completed) return false
 
-        return this.onObjectiveComplete(player, quest, questProgress)
+        return this.onObjectiveComplete(player, thorny_id, quest, questProgress)
     }
 
-    private onObjectiveComplete(player: Player, quest: QuestOut, questProgress: QuestProgressOut): boolean {
-        const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
-
+    private onObjectiveComplete(player: Player, thorny_id: number, quest: QuestOut, questProgress: QuestProgressOut): boolean {
         const justCompletedProgress = questProgress.objectives.find(
             o => o.status === ObjectiveProgressOutStatus.completed
         )
@@ -49,7 +61,7 @@ export class QuestProcessor {
             : undefined
 
         if (justCompletedDef && justCompletedProgress) {
-            deactivateObjective(player, justCompletedDef, justCompletedProgress)
+            deactivateObjective(player, thorny_id, justCompletedDef, justCompletedProgress)
         }
 
         const nextObjectiveProgress = questProgress.objectives.find(
@@ -64,7 +76,7 @@ export class QuestProcessor {
                 o => o.objective_id === nextObjectiveProgress.objective_id
             )
             if (nextObjectiveDef) {
-                activateObjective(player, nextObjectiveDef, nextObjectiveProgress)
+                activateObjective(player, thorny_id, nextObjectiveDef, nextObjectiveProgress)
             }
 
             markDirty(thorny_id)
@@ -72,11 +84,10 @@ export class QuestProcessor {
             return false
         }
 
-        return this.onQuestComplete(player, questProgress)
+        return this.onQuestComplete(player, thorny_id, questProgress)
     }
 
-    private onQuestComplete(player: Player, questProgress: QuestProgressOut): true {
-        const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
+    private onQuestComplete(player: Player, thorny_id: number, questProgress: QuestProgressOut): true {
         questProgress.status = QuestProgressOutStatus.completed
         questProgress.end_time = new Date().toISOString()
         markDirty(thorny_id)
@@ -95,7 +106,7 @@ export class QuestProcessor {
             : undefined
 
         if (activeObjectiveDef && activeObjectiveProgress) {
-            deactivateObjective(player, activeObjectiveDef, activeObjectiveProgress)
+            deactivateObjective(player, thorny_id, activeObjectiveDef, activeObjectiveProgress)
         }
 
         questProgress.status = QuestProgressOutStatus.failed
