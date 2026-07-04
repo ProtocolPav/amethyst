@@ -6957,7 +6957,7 @@ function loadLocationLogger() {
 __name(loadLocationLogger, "loadLocationLogger");
 
 // behaviour_pack/scripts-dev/features/quests/progress-cache.ts
-import { system as system26, TicksPerSecond as TicksPerSecond11, world as world23 } from "@minecraft/server";
+import { system as system26, TicksPerSecond as TicksPerSecond12, world as world23 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/features/quests/quest-cache.ts
 import { system as system23, TicksPerSecond as TicksPerSecond9 } from "@minecraft/server";
@@ -7106,7 +7106,7 @@ var NaturalBlockPlugin = class {
 };
 
 // behaviour_pack/scripts-dev/features/quests/plugins/timer-plugin.ts
-import { system as system24 } from "@minecraft/server";
+import { system as system24, TicksPerSecond as TicksPerSecond10 } from "@minecraft/server";
 var TimerPlugin = class {
   constructor() {
     this.expired = false;
@@ -7122,7 +7122,7 @@ var TimerPlugin = class {
     this.expired = false;
     this.runId = system24.runTimeout(() => {
       this.expired = true;
-    }, c.seconds * 20);
+    }, TicksPerSecond10 * c.seconds);
   }
   onDeactivate(_player, _objective, _progress) {
     if (this.runId !== void 0) {
@@ -7168,6 +7168,25 @@ var DeathPlugin = class {
     if (this.exceeded) return "fail";
   }
 };
+
+// behaviour_pack/scripts-dev/features/quests/core/notify.ts
+function showProgressTick(player, target, current, goal) {
+  let label = "Progress";
+  switch (target?.target_type) {
+    case "mine":
+      label = utils_default.clean_id(target.block);
+      break;
+    case "kill":
+      label = utils_default.clean_id(target.entity);
+      break;
+  }
+  player.playSound(
+    "quest.objective.progress",
+    { volume: 100, location: player.location }
+  );
+  player.onScreenDisplay.setActionBar(`\xA7l\xA7s${label}:\xA7r \xA77${current}\xA7r/${goal}`);
+}
+__name(showProgressTick, "showProgressTick");
 
 // behaviour_pack/scripts-dev/features/quests/processors/objective-processor.ts
 var TARGET_PROCESSORS = {
@@ -7222,18 +7241,27 @@ var ObjectiveProcessor = class {
   static {
     __name(this, "ObjectiveProcessor");
   }
-  process(action, thorny_id, objective, objectiveProgress) {
+  /**
+   * Processes an objective against the given action.
+   * @param action
+   * @param player
+   * @param thorny_id
+   * @param objective
+   * @param objectiveProgress
+   * @returns true if the objective is complete, false otherwise
+   */
+  process(action, player, thorny_id, objective, objectiveProgress) {
     if (objectiveProgress.status === ObjectiveProgressOutStatus.completed) return false;
     if (!this.passesCustomizations(action, thorny_id, objective, objectiveProgress)) return false;
     const processor = TARGET_PROCESSORS[objective.objective_type];
     if (!processor) return false;
     switch (objective.logic) {
       case ObjectiveOutLogic.or:
-        return this.processOr(action, objective, objectiveProgress, processor);
+        return this.processOr(action, objective, objectiveProgress, processor, player);
       case ObjectiveOutLogic.and:
-        return this.processAnd(action, objective, objectiveProgress, processor);
+        return this.processAnd(action, objective, objectiveProgress, processor, player);
       case ObjectiveOutLogic.sequential:
-        return this.processSequential(action, objective, objectiveProgress, processor);
+        return this.processSequential(action, objective, objectiveProgress, processor, player);
     }
   }
   complete(progress) {
@@ -7244,7 +7272,6 @@ var ObjectiveProcessor = class {
   /**
    * Iterates the passes() hook of every active plugin for this player.
    * Returns false as soon as any plugin blocks the action.
-   * Replaces the old hardcoded passesCustomizations() method.
    */
   passesCustomizations(action, thorny_id, objective, progress) {
     const plugins = ACTIVE_PLUGINS.get(thorny_id) ?? [];
@@ -7253,30 +7280,35 @@ var ObjectiveProcessor = class {
     }
     return true;
   }
-  processOr(action, objective, progress, processor) {
+  processOr(action, objective, progress, processor, player) {
     const sharedPool = objective.target_count ?? null;
     for (const targetProgress of progress.target_progress) {
       const increment = processor.evaluate(action, objective, targetProgress);
       if (increment === 0) continue;
       targetProgress.count = (targetProgress.count ?? 0) + increment;
+      const targetDef = objective.targets.find((t) => t.target_uuid === targetProgress.target_uuid);
       if (sharedPool !== null) {
         const total = progress.target_progress.reduce((sum, tp) => sum + (tp.count ?? 0), 0);
+        showProgressTick(player, targetDef, total, sharedPool);
         if (total >= sharedPool) return this.complete(progress);
       } else {
-        const def = objective.targets.find((t) => t.target_uuid === targetProgress.target_uuid);
-        const required = def ? targetCount(def) : 1;
+        const required = targetDef ? targetCount(targetDef) : 1;
+        showProgressTick(player, targetDef, targetProgress.count, required);
         if (targetProgress.count >= required) return this.complete(progress);
       }
     }
     return false;
   }
-  processAnd(action, objective, progress, processor) {
+  processAnd(action, objective, progress, processor, player) {
     for (const targetProgress of progress.target_progress) {
-      const def = objective.targets.find((t) => t.target_uuid === targetProgress.target_uuid);
-      if (!def) continue;
-      if ((targetProgress.count ?? 0) >= targetCount(def)) continue;
+      const targetDef = objective.targets.find((t) => t.target_uuid === targetProgress.target_uuid);
+      if (!targetDef) continue;
+      if ((targetProgress.count ?? 0) >= targetCount(targetDef)) continue;
       const increment = processor.evaluate(action, objective, targetProgress);
-      if (increment > 0) targetProgress.count = (targetProgress.count ?? 0) + increment;
+      if (increment > 0) {
+        targetProgress.count = (targetProgress.count ?? 0) + increment;
+        showProgressTick(player, targetDef, targetProgress.count, targetCount(targetDef));
+      }
     }
     const allDone = progress.target_progress.every((tp) => {
       const def = objective.targets.find((t) => t.target_uuid === tp.target_uuid);
@@ -7284,25 +7316,28 @@ var ObjectiveProcessor = class {
     });
     return allDone ? this.complete(progress) : false;
   }
-  processSequential(action, objective, progress, processor) {
+  processSequential(action, objective, progress, processor, player) {
     const currentTarget = progress.target_progress.find((tp) => {
-      const def = objective.targets.find((t) => t.target_uuid === tp.target_uuid);
-      return def ? (tp.count ?? 0) < targetCount(def) : false;
+      const def2 = objective.targets.find((t) => t.target_uuid === tp.target_uuid);
+      return def2 ? (tp.count ?? 0) < targetCount(def2) : false;
     });
     if (!currentTarget) return this.complete(progress);
     const increment = processor.evaluate(action, objective, currentTarget);
     if (increment === 0) return false;
     currentTarget.count = (currentTarget.count ?? 0) + increment;
+    const def = objective.targets.find((t) => t.target_uuid === currentTarget.target_uuid);
+    const required = def ? targetCount(def) : 1;
+    if (def) showProgressTick(player, def, currentTarget.count, required);
     const allDone = progress.target_progress.every((tp) => {
-      const def = objective.targets.find((t) => t.target_uuid === tp.target_uuid);
-      return def ? (tp.count ?? 0) >= targetCount(def) : false;
+      const def2 = objective.targets.find((t) => t.target_uuid === tp.target_uuid);
+      return def2 ? (tp.count ?? 0) >= targetCount(def2) : false;
     });
     return allDone ? this.complete(progress) : false;
   }
 };
 
 // behaviour_pack/scripts-dev/features/quests/write-back.ts
-import { system as system25, TicksPerSecond as TicksPerSecond10 } from "@minecraft/server";
+import { system as system25, TicksPerSecond as TicksPerSecond11 } from "@minecraft/server";
 var DIRTY = /* @__PURE__ */ new Map();
 function markDirty(thorny_id) {
   const progress = QUEST_PROGRESS_CACHE.get(thorny_id);
@@ -7330,7 +7365,6 @@ async function flush() {
   if (DIRTY.size === 0) return;
   for (const [thorny_id, progress] of DIRTY) {
     try {
-      console.log(`[write-back] Flushing progress for thorny_id ${thorny_id}`);
       await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut(
         progress.progress_id,
         buildUpdate(progress)
@@ -7345,7 +7379,7 @@ __name(flush, "flush");
 function loadWriteBackLoop() {
   system25.runInterval(async () => {
     await flush();
-  }, TicksPerSecond10 * 5);
+  }, TicksPerSecond11 * 5);
 }
 __name(loadWriteBackLoop, "loadWriteBackLoop");
 
@@ -7367,7 +7401,7 @@ var QuestProcessor = class {
     );
     if (!activeObjectiveDef) return false;
     const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
-    const completed = objectiveProcessor.process(action, thorny_id, activeObjectiveDef, activeObjectiveProgress);
+    const completed = objectiveProcessor.process(action, player, thorny_id, activeObjectiveDef, activeObjectiveProgress);
     markDirty(thorny_id);
     if (!completed) return false;
     return this.onObjectiveComplete(player, thorny_id, quest, questProgress);
@@ -7471,7 +7505,7 @@ function loadQuestProgressCache() {
     system26.runTimeout(() => {
       utils_default.commands.play_quest_notify(player.name);
       utils_default.commands.send_message(player.dimension.id, player.name, `You have a quest active: ${quest.title}`);
-    }, TicksPerSecond11 * 5);
+    }, TicksPerSecond12 * 5);
   }
   __name(new_active_quest, "new_active_quest");
   async function dropped_quest(questProgress, thornyUser, player) {
@@ -7527,7 +7561,7 @@ function loadQuestProgressCache() {
       }
       const runId = system26.runInterval(async () => {
         await update_player_quest(spawn_event.player.name);
-      }, TicksPerSecond11 * 2);
+      }, TicksPerSecond12 * 2);
       PLAYER_LOOP_RUN_IDS.set(spawn_event.player.name, runId);
     }
   });

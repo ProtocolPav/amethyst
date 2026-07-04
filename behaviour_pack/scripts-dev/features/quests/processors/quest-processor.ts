@@ -6,7 +6,7 @@ import {
 } from "../../../api/nexuscore/model";
 import { Player } from "@minecraft/server";
 import { GameAction } from "../core/action";
-import { ObjectiveProcessor, activateObjective, deactivateObjective, tickPlugins } from "./objective-processor";
+import { ObjectiveProcessor, activateObjective, deactivateObjective } from "./objective-processor";
 import { markDirty } from "../write-back";
 import ThornyUser from "../../../api/user";
 
@@ -31,7 +31,7 @@ export class QuestProcessor {
         const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
 
         // Process the action against the active objective
-        const completed = objectiveProcessor.process(action, thorny_id, activeObjectiveDef, activeObjectiveProgress)
+        const completed = objectiveProcessor.process(action, player, thorny_id, activeObjectiveDef, activeObjectiveProgress)
 
         markDirty(thorny_id)
 
