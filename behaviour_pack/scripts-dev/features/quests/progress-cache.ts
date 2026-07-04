@@ -6,6 +6,7 @@ import { ObjectiveOut, ObjectiveProgressOut, ObjectiveProgressOutStatus, QuestPr
 import { activateObjective, deactivateObjective, tickPlugins } from "./processors/objective-processor";
 import { QuestProcessor } from "./processors/quest-processor";
 import utils from "../../utils";
+import {notifyOfQuestUpdate} from "./core/notify";
 
 export const QUEST_PROGRESS_CACHE = new Map<number, QuestProgressOut>()
 
@@ -51,9 +52,8 @@ export default function loadQuestProgressCache() {
         }
 
         system.runTimeout(() => {
-            utils.commands.play_quest_notify(player.name)
-            utils.commands.send_message(player.dimension.id, player.name, `You have a quest active: ${quest.title}`)
-        }, TicksPerSecond * 5)
+            notifyOfQuestUpdate(player, `You have a quest active: ${quest.title}`)
+        }, TicksPerSecond * 10)
     }
 
     async function dropped_quest(questProgress: QuestProgressOut, thornyUser: ThornyUser, player: Player) {
@@ -70,7 +70,7 @@ export default function loadQuestProgressCache() {
 
         QUEST_PROGRESS_CACHE.delete(thornyUser.thorny_id)
 
-        player.sendMessage(`You have dropped: ${cached_quest.title}`)
+        notifyOfQuestUpdate(player, `You have dropped your quest: ${cached_quest.title}`)
     }
 
     async function update_player_quest(player_name: string) {

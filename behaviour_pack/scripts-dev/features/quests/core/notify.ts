@@ -21,3 +21,12 @@ export function showProgressTick(player: Player, target: AnyTarget | undefined, 
 
     player.onScreenDisplay.setActionBar(`§l§s${label}:§r §7${current}§r/${goal}`)
 }
+
+export function notifyOfQuestUpdate(player: Player, message: string) {
+    player.playSound(
+        'quest.notify',
+        {volume: 100, location: player.location}
+    )
+
+    player.sendMessage(message)
+}
