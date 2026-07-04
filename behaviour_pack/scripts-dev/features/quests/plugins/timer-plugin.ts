@@ -1,6 +1,7 @@
 import {Player, system, TicksPerSecond} from "@minecraft/server";
 import { ObjectiveOut, ObjectiveProgressOut } from "../../../api/nexuscore/model";
 import { CustomizationPlugin } from "../core/customization-plugin";
+import {showTimer} from "../core/notify";
 
 /**
  * Watcher — fails or advances the objective when a time limit expires.
@@ -20,17 +21,27 @@ export class TimerPlugin implements CustomizationPlugin {
     private runId: number | undefined
     private expired = false
     private shouldFail = true
+    private remaining_seconds = 0
 
-    onActivate(_player: Player, objective: ObjectiveOut, _progress: ObjectiveProgressOut): void {
+    onActivate(player: Player, objective: ObjectiveOut, progress: ObjectiveProgressOut): void {
         const c = objective.customizations.timer
         if (!c) return
 
         this.shouldFail = c.fail ?? true
         this.expired = false
 
+        const startedAt = progress.start_time ? new Date(progress.start_time).getTime() : Date.now()
+        const elapsedSeconds = (Date.now() - startedAt) / 1000
+        this.remaining_seconds = Math.max(0, c.seconds - elapsedSeconds)
+
+        if (this.remaining_seconds === 0) {
+            this.expired = true
+            return
+        }
+
         this.runId = system.runTimeout(() => {
             this.expired = true
-        }, TicksPerSecond * c.seconds)
+        }, Math.ceil(this.remaining_seconds) * TicksPerSecond)
     }
 
     onDeactivate(_player: Player, _objective: ObjectiveOut, _progress: ObjectiveProgressOut): void {
@@ -43,6 +54,8 @@ export class TimerPlugin implements CustomizationPlugin {
     }
 
     onTick(_player: Player, _objective: ObjectiveOut, _progress: ObjectiveProgressOut): 'fail' | 'advance' | void {
+        this.remaining_seconds -= 2
+        showTimer(_player, this.remaining_seconds)
         if (!this.expired) return
         return this.shouldFail ? 'fail' : 'advance'
     }

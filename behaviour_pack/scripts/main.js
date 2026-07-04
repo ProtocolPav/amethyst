@@ -7107,22 +7107,71 @@ var NaturalBlockPlugin = class {
 
 // behaviour_pack/scripts-dev/features/quests/plugins/timer-plugin.ts
 import { system as system24, TicksPerSecond as TicksPerSecond10 } from "@minecraft/server";
+
+// behaviour_pack/scripts-dev/features/quests/core/notify.ts
+function showProgressTick(player, target, current, goal) {
+  let label = "Progress";
+  switch (target?.target_type) {
+    case "mine":
+      label = utils_default.clean_id(target.block);
+      break;
+    case "kill":
+      label = utils_default.clean_id(target.entity);
+      break;
+  }
+  player.playSound(
+    "quest.objective.progress",
+    { volume: 100, location: player.location }
+  );
+  player.onScreenDisplay.setActionBar(`\xA7l\xA7s${label}:\xA7r \xA77${current}\xA7r/${goal}`);
+}
+__name(showProgressTick, "showProgressTick");
+function notifyOfQuestUpdate(player, message) {
+  player.playSound(
+    "quest.notify",
+    { volume: 100, location: player.location }
+  );
+  player.sendMessage(message);
+}
+__name(notifyOfQuestUpdate, "notifyOfQuestUpdate");
+function showTimer(player, remaining_seconds) {
+  const minutes = Math.floor(remaining_seconds / 60);
+  const seconds = Math.floor(remaining_seconds % 60);
+  const formatted = minutes > 0 ? `${minutes}m ${seconds.toString().padStart(2, "0")}s` : `${seconds}s`;
+  const color = remaining_seconds <= 10 ? "\xA7c" : remaining_seconds <= 30 ? "\xA7e" : "\xA7a";
+  player.playSound(
+    "note.hat",
+    { volume: 100, location: player.location }
+  );
+  player.onScreenDisplay.setActionBar(`${color}${formatted}`);
+}
+__name(showTimer, "showTimer");
+
+// behaviour_pack/scripts-dev/features/quests/plugins/timer-plugin.ts
 var TimerPlugin = class {
   constructor() {
     this.expired = false;
     this.shouldFail = true;
+    this.remaining_seconds = 0;
   }
   static {
     __name(this, "TimerPlugin");
   }
-  onActivate(_player, objective, _progress) {
+  onActivate(player, objective, progress) {
     const c = objective.customizations.timer;
     if (!c) return;
     this.shouldFail = c.fail ?? true;
     this.expired = false;
+    const startedAt = progress.start_time ? new Date(progress.start_time).getTime() : Date.now();
+    const elapsedSeconds = (Date.now() - startedAt) / 1e3;
+    this.remaining_seconds = Math.max(0, c.seconds - elapsedSeconds);
+    if (this.remaining_seconds === 0) {
+      this.expired = true;
+      return;
+    }
     this.runId = system24.runTimeout(() => {
       this.expired = true;
-    }, TicksPerSecond10 * c.seconds);
+    }, Math.ceil(this.remaining_seconds) * TicksPerSecond10);
   }
   onDeactivate(_player, _objective, _progress) {
     if (this.runId !== void 0) {
@@ -7132,6 +7181,8 @@ var TimerPlugin = class {
     this.expired = false;
   }
   onTick(_player, _objective, _progress) {
+    this.remaining_seconds -= 2;
+    showTimer(_player, this.remaining_seconds);
     if (!this.expired) return;
     return this.shouldFail ? "fail" : "advance";
   }
@@ -7168,25 +7219,6 @@ var DeathPlugin = class {
     if (this.exceeded) return "fail";
   }
 };
-
-// behaviour_pack/scripts-dev/features/quests/core/notify.ts
-function showProgressTick(player, target, current, goal) {
-  let label = "Progress";
-  switch (target?.target_type) {
-    case "mine":
-      label = utils_default.clean_id(target.block);
-      break;
-    case "kill":
-      label = utils_default.clean_id(target.entity);
-      break;
-  }
-  player.playSound(
-    "quest.objective.progress",
-    { volume: 100, location: player.location }
-  );
-  player.onScreenDisplay.setActionBar(`\xA7l\xA7s${label}:\xA7r \xA77${current}\xA7r/${goal}`);
-}
-__name(showProgressTick, "showProgressTick");
 
 // behaviour_pack/scripts-dev/features/quests/processors/objective-processor.ts
 var TARGET_PROCESSORS = {
@@ -7503,9 +7535,8 @@ function loadQuestProgressCache() {
       }
     }
     system26.runTimeout(() => {
-      utils_default.commands.play_quest_notify(player.name);
-      utils_default.commands.send_message(player.dimension.id, player.name, `You have a quest active: ${quest.title}`);
-    }, TicksPerSecond12 * 5);
+      notifyOfQuestUpdate(player, `You have a quest active: ${quest.title}`);
+    }, TicksPerSecond12 * 10);
   }
   __name(new_active_quest, "new_active_quest");
   async function dropped_quest(questProgress, thornyUser, player) {
@@ -7518,7 +7549,7 @@ function loadQuestProgressCache() {
       }
     }
     QUEST_PROGRESS_CACHE.delete(thornyUser.thorny_id);
-    player.sendMessage(`You have dropped: ${cached_quest.title}`);
+    notifyOfQuestUpdate(player, `You have dropped your quest: ${cached_quest.title}`);
   }
   __name(dropped_quest, "dropped_quest");
   async function update_player_quest(player_name) {
