@@ -48,8 +48,6 @@ async function flush(): Promise<void> {
 
     for (const [thorny_id, progress] of DIRTY) {
         try {
-            console.log(`[write-back] Flushing progress for thorny_id ${thorny_id}`)
-
             await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut(
                 progress.progress_id,
                 buildUpdate(progress)
