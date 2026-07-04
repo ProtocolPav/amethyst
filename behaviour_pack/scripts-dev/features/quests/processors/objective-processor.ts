@@ -65,9 +65,10 @@ export function activateObjective(player: Player, thorny_id: number, objective: 
     const processor = TARGET_PROCESSORS[objective.objective_type]
     processor?.onActivate?.(player, objective, objectiveProgress)
 
-    // Instantiate a plugin for every customization key that has a registered class
+    // Instantiate a plugin for every customization that is not null
     const plugins: CustomizationPlugin[] = []
-    for (const key of Object.keys(objective.customizations)) {
+    for (const [key, value] of Object.entries(objective.customizations)) {
+        if (value === null) continue
         const PluginClass = CUSTOMIZATION_PLUGINS[key]
         if (!PluginClass) continue
         const plugin = new PluginClass()

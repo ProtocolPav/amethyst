@@ -7181,7 +7181,7 @@ var TimerPlugin = class {
     this.expired = false;
   }
   onTick(_player, _objective, _progress) {
-    this.remaining_seconds -= 2;
+    this.remaining_seconds -= 1;
     showTimer(_player, this.remaining_seconds);
     if (!this.expired) return;
     return this.shouldFail ? "fail" : "advance";
@@ -7241,7 +7241,8 @@ function activateObjective(player, thorny_id, objective, objectiveProgress) {
   const processor = TARGET_PROCESSORS[objective.objective_type];
   processor?.onActivate?.(player, objective, objectiveProgress);
   const plugins = [];
-  for (const key of Object.keys(objective.customizations)) {
+  for (const [key, value] of Object.entries(objective.customizations)) {
+    if (value === null) continue;
     const PluginClass = CUSTOMIZATION_PLUGINS[key];
     if (!PluginClass) continue;
     const plugin = new PluginClass();
@@ -7562,7 +7563,15 @@ function loadQuestProgressCache() {
       await new_active_quest(questProgress, thorny_user, player);
     } else if (!questProgress && cachedQuestProgress) {
       await dropped_quest(cachedQuestProgress, thorny_user, player);
-    } else if (cachedQuestProgress) {
+    }
+  }
+  __name(update_player_quest, "update_player_quest");
+  async function tickQuest(player_name) {
+    const player = world23.getPlayers().find((p) => p.name == player_name);
+    if (!player) return;
+    const thorny_user = ThornyUser.fetch_user(player_name);
+    const cachedQuestProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
+    if (cachedQuestProgress) {
       const activeObjectiveProgress = getActiveObjectiveProgress(cachedQuestProgress);
       if (activeObjectiveProgress) {
         const activeObjectiveDef = getObjectiveDef(cachedQuestProgress, activeObjectiveProgress);
@@ -7580,7 +7589,7 @@ function loadQuestProgressCache() {
       }
     }
   }
-  __name(update_player_quest, "update_player_quest");
+  __name(tickQuest, "tickQuest");
   world23.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
     if (spawn_event.initialSpawn) {
       const thorny_user = ThornyUser.fetch_user(spawn_event.player.name);
@@ -7590,16 +7599,19 @@ function loadQuestProgressCache() {
           await new_active_quest(questProgress, thorny_user, spawn_event.player);
         }
       }
-      const runId = system26.runInterval(async () => {
+      const cacheRunId = system26.runInterval(async () => {
         await update_player_quest(spawn_event.player.name);
       }, TicksPerSecond12 * 2);
-      PLAYER_LOOP_RUN_IDS.set(spawn_event.player.name, runId);
+      const tickRunId = system26.runInterval(async () => {
+        await tickQuest(spawn_event.player.name);
+      }, TicksPerSecond12);
+      PLAYER_LOOP_RUN_IDS.set(spawn_event.player.name, [cacheRunId, tickRunId]);
     }
   });
   world23.afterEvents.playerLeave.subscribe((leave_event) => {
-    const runId = PLAYER_LOOP_RUN_IDS.get(leave_event.playerName);
-    if (runId !== void 0) {
-      system26.clearRun(runId);
+    const runIds = PLAYER_LOOP_RUN_IDS.get(leave_event.playerName);
+    if (runIds !== void 0) {
+      runIds.map((i) => system26.clearRun(i));
       PLAYER_LOOP_RUN_IDS.delete(leave_event.playerName);
     }
     const thorny_user = ThornyUser.fetch_user(leave_event.playerName);

@@ -33,7 +33,7 @@ function getObjectiveDef(questProgress: QuestProgressOut, objectiveProgress: Obj
 }
 
 export default function loadQuestProgressCache() {
-    const PLAYER_LOOP_RUN_IDS = new Map<string, number>()
+    const PLAYER_LOOP_RUN_IDS = new Map<string, number[]>()
 
     async function new_active_quest(questProgress: QuestProgressOut, thornyUser: ThornyUser, player: Player) {
         const quest = QUEST_CACHE.get(questProgress.quest_id)!
@@ -90,10 +90,16 @@ export default function loadQuestProgressCache() {
         else if (!questProgress && cachedQuestProgress) {
             await dropped_quest(cachedQuestProgress, thorny_user, player)
         }
+    }
 
-        // Tick watcher plugins (timer, death) for the player's active objective.
-        // This runs on every interval so watchers fire even with no game action.
-        else if (cachedQuestProgress) {
+    async function tickQuest(player_name: string) {
+        const player = world.getPlayers().find((p) => p.name == player_name)
+        if (!player) return;
+
+        const thorny_user = ThornyUser.fetch_user(player_name)!
+        const cachedQuestProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id)
+
+        if (cachedQuestProgress) {
             const activeObjectiveProgress = getActiveObjectiveProgress(cachedQuestProgress)
             if (activeObjectiveProgress) {
                 const activeObjectiveDef = getObjectiveDef(cachedQuestProgress, activeObjectiveProgress)
@@ -123,18 +129,22 @@ export default function loadQuestProgressCache() {
                 }
             }
 
-            const runId = system.runInterval(async () => {
+            const cacheRunId = system.runInterval(async () => {
                 await update_player_quest(spawn_event.player.name)
             }, TicksPerSecond * 2)
 
-            PLAYER_LOOP_RUN_IDS.set(spawn_event.player.name, runId)
+            const tickRunId = system.runInterval(async () => {
+                await tickQuest(spawn_event.player.name)
+            }, TicksPerSecond)
+
+            PLAYER_LOOP_RUN_IDS.set(spawn_event.player.name, [cacheRunId, tickRunId])
         }
     })
 
     world.afterEvents.playerLeave.subscribe((leave_event) => {
-        const runId = PLAYER_LOOP_RUN_IDS.get(leave_event.playerName)
-        if (runId !== undefined) {
-            system.clearRun(runId)
+        const runIds = PLAYER_LOOP_RUN_IDS.get(leave_event.playerName)
+        if (runIds !== undefined) {
+            runIds.map(i => system.clearRun(i))
             PLAYER_LOOP_RUN_IDS.delete(leave_event.playerName)
         }
 

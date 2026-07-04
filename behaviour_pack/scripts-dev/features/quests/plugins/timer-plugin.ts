@@ -54,7 +54,7 @@ export class TimerPlugin implements CustomizationPlugin {
     }
 
     onTick(_player: Player, _objective: ObjectiveOut, _progress: ObjectiveProgressOut): 'fail' | 'advance' | void {
-        this.remaining_seconds -= 2
+        this.remaining_seconds -= 1
         showTimer(_player, this.remaining_seconds)
         if (!this.expired) return
         return this.shouldFail ? 'fail' : 'advance'
