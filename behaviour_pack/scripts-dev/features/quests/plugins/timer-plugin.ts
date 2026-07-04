@@ -1,4 +1,4 @@
-import { Player, system } from "@minecraft/server";
+import {Player, system, TicksPerSecond} from "@minecraft/server";
 import { ObjectiveOut, ObjectiveProgressOut } from "../../../api/nexuscore/model";
 import { CustomizationPlugin } from "../core/customization-plugin";
 
@@ -13,8 +13,8 @@ import { CustomizationPlugin } from "../core/customization-plugin";
  * the flag is set once and read on the next onTick call.
  *
  * `c.timer.fail` controls the outcome:
- *   true  (default) → return 'fail'    (objective fails)
- *   false           → return 'advance' (objective is skipped/passed)
+ *   true (default) → return 'fail' (objective fails)
+ *   false → return 'advance' (objective is skipped/passed)
  */
 export class TimerPlugin implements CustomizationPlugin {
     private runId: number | undefined
@@ -30,7 +30,7 @@ export class TimerPlugin implements CustomizationPlugin {
 
         this.runId = system.runTimeout(() => {
             this.expired = true
-        }, c.seconds * 20)
+        }, TicksPerSecond * c.seconds)
     }
 
     onDeactivate(_player: Player, _objective: ObjectiveOut, _progress: ObjectiveProgressOut): void {
