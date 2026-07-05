@@ -62,7 +62,7 @@ export class QuestProcessor {
 
         const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
 
-        activeObjectiveProgress.status = ObjectiveProgressOutStatus.completed
+        activeObjectiveProgress.status = ObjectiveProgressOutStatus.failed
         activeObjectiveProgress.end_time = new Date().toISOString()
 
         deactivateObjective(player, thorny_id, activeObjectiveDef, activeObjectiveProgress)
