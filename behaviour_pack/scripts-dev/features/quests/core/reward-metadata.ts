@@ -12,15 +12,15 @@ import { RewardOut, ObjectiveProgressOut } from "../../../api/nexuscore/model";
  *
  * There are three conceptual metadata types:
  *
- *   ItemMutators   — implement only `applyToItem`. They modify the ItemStack
+ *   ItemMutators — implement only `applyToItem`. They modify the ItemStack
  *                    after it is constructed (Name, Lore, Enchantment, Damage,
  *                    Potion). Ignored entirely for non-item rewards.
  *
- *   Gaters         — implement only `shouldGrant`. They can suppress the
+ *   Gaters — implement only `shouldGrant`. They can suppress the
  *                    reward entirely (Timed, First). If ANY gater returns
  *                    false, the reward is skipped.
  *
- *   Transformers   — implement only `transform`. They mutate the RewardOut
+ *   Transformers — implement only `transform`. They mutate the RewardOut
  *                    before the granter sees it (RandomCount). Called only
  *                    after all gaters have passed.
  *

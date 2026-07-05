@@ -1,6 +1,6 @@
 import { Player } from "@minecraft/server";
-import { RewardOut, ObjectiveProgressOut } from "../../../../api/nexuscore/model";
-import { RewardMetadata } from "../../core/reward-metadata";
+import { RewardOut, ObjectiveProgressOut } from "../../../../../api/nexuscore/model";
+import { RewardMetadata } from "../../../core/reward-metadata";
 
 /**
  * Gater — suppresses the reward if `max_recipients` players have already

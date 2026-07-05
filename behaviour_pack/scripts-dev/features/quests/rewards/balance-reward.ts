@@ -17,7 +17,7 @@ export class BalanceReward implements RewardGranter {
 
     async grant(player: Player, thorny_id: number, reward: RewardOut): Promise<void> {
         await partialUpdateUserV1GuildsMeUsersThornyIdPatch(thorny_id, {
-            balance: reward.balance!,
+            balance: reward.balance,
         })
 
         utils.commands.send_message(

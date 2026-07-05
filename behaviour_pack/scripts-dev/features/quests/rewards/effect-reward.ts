@@ -10,9 +10,9 @@ import utils from "../../../utils";
  * yet exist in the generated model and requires an API schema addition:
  *
  *   effect: {
- *     effect_id:      MinecraftEffectTypes
+ *     effect_id: MinecraftEffectTypes
  *     duration_ticks: number
- *     amplifier?:     number   (defaults to 0)
+ *     amplifier?: number (defaults to 0)
  *   } | null
  *
  * Until the API adds this field, canHandle() will always return false
