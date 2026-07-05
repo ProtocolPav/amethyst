@@ -9,7 +9,7 @@ export class DamageMetadata implements RewardMetadata {
     applyToItem(item: ItemStack, data: DamageModel): ItemStack {
         const durability = item.getComponent(ItemComponentTypes.Durability)
         if (durability) {
-            durability.damage = Math.floor(durability.maxDurability * data.damage_percentage)
+            durability.damage = Math.floor(durability.maxDurability * data.damage_percentage / 100)
         }
         return item
     }

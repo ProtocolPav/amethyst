@@ -7257,7 +7257,7 @@ function showTimer(player, remaining_seconds) {
 }
 __name(showTimer, "showTimer");
 
-// behaviour_pack/scripts-dev/features/quests/plugins/death-plugin.ts
+// behaviour_pack/scripts-dev/features/quests/customizations/death-plugin.ts
 import { world as world23 } from "@minecraft/server";
 var DeathPlugin = class {
   constructor() {
@@ -7292,7 +7292,7 @@ var DeathPlugin = class {
   }
 };
 
-// behaviour_pack/scripts-dev/features/quests/plugins/location-plugin.ts
+// behaviour_pack/scripts-dev/features/quests/customizations/location-plugin.ts
 var LocationPlugin = class {
   static {
     __name(this, "LocationPlugin");
@@ -7307,7 +7307,7 @@ var LocationPlugin = class {
   }
 };
 
-// behaviour_pack/scripts-dev/features/quests/plugins/mainhand-plugin.ts
+// behaviour_pack/scripts-dev/features/quests/customizations/mainhand-plugin.ts
 var MainhandPlugin = class {
   static {
     __name(this, "MainhandPlugin");
@@ -7319,7 +7319,7 @@ var MainhandPlugin = class {
   }
 };
 
-// behaviour_pack/scripts-dev/features/quests/plugins/natural-block-plugin.ts
+// behaviour_pack/scripts-dev/features/quests/customizations/natural-block-plugin.ts
 var NaturalBlockPlugin = class {
   static {
     __name(this, "NaturalBlockPlugin");
@@ -7331,7 +7331,7 @@ var NaturalBlockPlugin = class {
   }
 };
 
-// behaviour_pack/scripts-dev/features/quests/plugins/timer-plugin.ts
+// behaviour_pack/scripts-dev/features/quests/customizations/timer-plugin.ts
 import { system as system25, TicksPerSecond as TicksPerSecond10 } from "@minecraft/server";
 var TimerPlugin = class {
   constructor() {
@@ -7577,6 +7577,327 @@ function getActiveObjective(quest, questProgress) {
 }
 __name(getActiveObjective, "getActiveObjective");
 
+// behaviour_pack/scripts-dev/features/quests/rewards/metadata/enchantment-metadata.ts
+import { ItemComponentTypes as ItemComponentTypes5, EnchantmentTypes } from "@minecraft/server";
+var EnchantmentMetadata = class {
+  constructor() {
+    this.metadata_type = "enchantment";
+  }
+  static {
+    __name(this, "EnchantmentMetadata");
+  }
+  applyToItem(item, data) {
+    const enchants = item.getComponent(ItemComponentTypes5.Enchantable);
+    enchants?.addEnchantment({
+      type: EnchantmentTypes.get(data.enchantment_id),
+      level: data.enchantment_level
+    });
+    return item;
+  }
+};
+
+// behaviour_pack/scripts-dev/features/quests/rewards/metadata/random-enchantment-metadata.ts
+import { ItemComponentTypes as ItemComponentTypes6, EnchantmentTypes as EnchantmentTypes2 } from "@minecraft/server";
+var ENCHANTABILITY = {
+  "minecraft:leather_helmet": 15,
+  "minecraft:leather_chestplate": 15,
+  "minecraft:leather_leggings": 15,
+  "minecraft:leather_boots": 15,
+  "minecraft:chainmail_helmet": 12,
+  "minecraft:chainmail_chestplate": 12,
+  "minecraft:chainmail_leggings": 12,
+  "minecraft:chainmail_boots": 12,
+  "minecraft:iron_helmet": 9,
+  "minecraft:iron_chestplate": 9,
+  "minecraft:iron_leggings": 9,
+  "minecraft:iron_boots": 9,
+  "minecraft:diamond_helmet": 10,
+  "minecraft:diamond_chestplate": 10,
+  "minecraft:diamond_leggings": 10,
+  "minecraft:diamond_boots": 10,
+  "minecraft:golden_helmet": 25,
+  "minecraft:golden_chestplate": 25,
+  "minecraft:golden_leggings": 25,
+  "minecraft:golden_boots": 25,
+  "minecraft:netherite_helmet": 15,
+  "minecraft:netherite_chestplate": 15,
+  "minecraft:netherite_leggings": 15,
+  "minecraft:netherite_boots": 15,
+  "minecraft:wooden_sword": 15,
+  "minecraft:wooden_pickaxe": 15,
+  "minecraft:wooden_axe": 15,
+  "minecraft:wooden_shovel": 15,
+  "minecraft:wooden_hoe": 15,
+  "minecraft:stone_sword": 5,
+  "minecraft:stone_pickaxe": 5,
+  "minecraft:stone_axe": 5,
+  "minecraft:stone_shovel": 5,
+  "minecraft:stone_hoe": 5,
+  "minecraft:iron_sword": 9,
+  "minecraft:iron_pickaxe": 9,
+  "minecraft:iron_axe": 9,
+  "minecraft:iron_shovel": 9,
+  "minecraft:iron_hoe": 9,
+  "minecraft:diamond_sword": 10,
+  "minecraft:diamond_pickaxe": 10,
+  "minecraft:diamond_axe": 10,
+  "minecraft:diamond_shovel": 10,
+  "minecraft:diamond_hoe": 10,
+  "minecraft:golden_sword": 25,
+  "minecraft:golden_pickaxe": 25,
+  "minecraft:golden_axe": 25,
+  "minecraft:golden_shovel": 25,
+  "minecraft:golden_hoe": 25,
+  "minecraft:netherite_sword": 15,
+  "minecraft:netherite_pickaxe": 15,
+  "minecraft:netherite_axe": 15,
+  "minecraft:netherite_shovel": 15,
+  "minecraft:netherite_hoe": 15,
+  "minecraft:bow": 1,
+  "minecraft:book": 1,
+  "minecraft:crossbow": 1,
+  "minecraft:trident": 9,
+  "minecraft:fishing_rod": 1
+};
+var DEFAULT_ENCHANTABILITY = 1;
+var TREASURE_ENCHANTS = /* @__PURE__ */ new Set([
+  MinecraftEnchantmentTypes.Mending,
+  MinecraftEnchantmentTypes.FrostWalker,
+  MinecraftEnchantmentTypes.SoulSpeed,
+  MinecraftEnchantmentTypes.SwiftSneak,
+  MinecraftEnchantmentTypes.WindBurst,
+  MinecraftEnchantmentTypes.Density,
+  MinecraftEnchantmentTypes.Breach,
+  MinecraftEnchantmentTypes.Binding,
+  MinecraftEnchantmentTypes.Vanishing
+]);
+function triangleRand(max) {
+  return Math.floor(Math.random() * (Math.floor(max / 2) + 1)) + Math.floor(Math.random() * (Math.floor(max / 2) + 1));
+}
+__name(triangleRand, "triangleRand");
+var RandomEnchantmentMetadata = class {
+  constructor() {
+    this.metadata_type = "enchantment_random";
+  }
+  static {
+    __name(this, "RandomEnchantmentMetadata");
+  }
+  applyToItem(item, data) {
+    const enchants = item.getComponent(ItemComponentTypes6.Enchantable);
+    if (!enchants) return item;
+    const xpLevel = data.level_min + Math.floor(Math.random() * (data.level_max - data.level_min + 1));
+    const enchantability = ENCHANTABILITY[item.typeId] ?? DEFAULT_ENCHANTABILITY;
+    const modifiedLevel = Math.round(
+      (xpLevel + triangleRand(enchantability) + 1) * (0.85 + Math.random() * 0.3)
+    );
+    const pool = EnchantmentTypes2.getAll().filter(
+      (e) => (data.treasure || !TREASURE_ENCHANTS.has(e.id)) && enchants.canAddEnchantment({ type: e, level: 1 })
+    );
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    let currentLevel = modifiedLevel;
+    do {
+      const pick = pool.shift();
+      if (!pick) break;
+      const power = Math.min(Math.max(1, Math.round(currentLevel / 10)), pick.maxLevel);
+      if (enchants.canAddEnchantment({ type: pick, level: power })) {
+        enchants.addEnchantment({ type: pick, level: power });
+      }
+      currentLevel = Math.floor(currentLevel / 2);
+    } while (Math.random() < (currentLevel + 1) / 50);
+    return item;
+  }
+};
+
+// behaviour_pack/scripts-dev/features/quests/rewards/metadata/potion-metadata.ts
+import { Potions } from "@minecraft/server";
+var PotionMetadata = class {
+  constructor() {
+    this.metadata_type = "potion";
+  }
+  static {
+    __name(this, "PotionMetadata");
+  }
+  applyToItem(item, data) {
+    return Potions.resolve(
+      data.potion_effect,
+      data.potion_delivery
+    );
+  }
+};
+
+// behaviour_pack/scripts-dev/features/quests/rewards/metadata/name-metadata.ts
+var NameMetadata = class {
+  constructor() {
+    this.metadata_type = "name";
+  }
+  static {
+    __name(this, "NameMetadata");
+  }
+  applyToItem(item, data) {
+    item.nameTag = data.item_name;
+    return item;
+  }
+};
+
+// behaviour_pack/scripts-dev/features/quests/rewards/metadata/lore-metadata.ts
+var LoreMetadata = class {
+  constructor() {
+    this.metadata_type = "lore";
+  }
+  static {
+    __name(this, "LoreMetadata");
+  }
+  applyToItem(item, data) {
+    item.setLore(data.item_lore);
+    return item;
+  }
+};
+
+// behaviour_pack/scripts-dev/features/quests/rewards/metadata/damage-metadata.ts
+import { ItemComponentTypes as ItemComponentTypes8 } from "@minecraft/server";
+var DamageMetadata = class {
+  constructor() {
+    this.metadata_type = "damage";
+  }
+  static {
+    __name(this, "DamageMetadata");
+  }
+  applyToItem(item, data) {
+    const durability = item.getComponent(ItemComponentTypes8.Durability);
+    if (durability) {
+      durability.damage = Math.floor(durability.maxDurability * data.damage_percentage / 100);
+    }
+    return item;
+  }
+};
+
+// behaviour_pack/scripts-dev/features/quests/rewards/metadata/registry.ts
+var REWARD_METADATA_REGISTRY = /* @__PURE__ */ new Map([
+  ["enchantment", new EnchantmentMetadata()],
+  ["enchantment_random", new RandomEnchantmentMetadata()],
+  ["potion", new PotionMetadata()],
+  ["name", new NameMetadata()],
+  ["lore", new LoreMetadata()],
+  ["damage", new DamageMetadata()]
+  // ['random_count', new RandomCountMetadata()],
+  // ['timed', new TimedMetadata()],
+  // ['first', new FirstMetadata()],
+]);
+
+// behaviour_pack/scripts-dev/features/quests/rewards/balance-reward.ts
+var BalanceReward = class {
+  static {
+    __name(this, "BalanceReward");
+  }
+  canHandle(reward) {
+    return reward.balance !== null;
+  }
+  async grant(player, thorny_id, reward) {
+    await partialUpdateUserV1GuildsMeUsersThornyIdPatch(thorny_id, {
+      balance: reward.balance
+    });
+    utils_default.commands.send_message(
+      player.dimension.id,
+      player.name,
+      `\xA7l[\xA7aQuests\xA7f]\xA7r You received \xA76${reward.balance}${utils_default.emojis.NUGS}\xA7r!`
+    );
+  }
+};
+
+// behaviour_pack/scripts-dev/features/quests/rewards/item-reward.ts
+import { ItemStack as ItemStack7 } from "@minecraft/server";
+var ItemReward = class {
+  static {
+    __name(this, "ItemReward");
+  }
+  canHandle(reward) {
+    return reward.item !== null && reward.count !== null;
+  }
+  async grant(player, _thorny_id, reward) {
+    const item = this.buildItemStack(reward);
+    utils_default.commands.give_item(player.name, reward.count, item);
+    const label = reward.display_name ?? `${reward.count}x ${utils_default.clean_id(reward.item)}`;
+    utils_default.commands.send_message(
+      player.dimension.id,
+      player.name,
+      `\xA7l[\xA7aQuests\xA7f]\xA7r You received \xA7f${label}\xA7r!`
+    );
+  }
+  buildItemStack(reward) {
+    let item = new ItemStack7(reward.item, 1);
+    for (const m of reward.item_metadata) {
+      const handler = REWARD_METADATA_REGISTRY.get(m.metadata_type);
+      if (handler?.applyToItem) {
+        item = handler.applyToItem(item, m);
+      }
+    }
+    return item;
+  }
+};
+
+// behaviour_pack/scripts-dev/features/quests/rewards/effect-reward.ts
+var EffectReward = class {
+  static {
+    __name(this, "EffectReward");
+  }
+  canHandle(reward) {
+    return reward.effect !== null && reward.effect !== void 0;
+  }
+  async grant(player, _thorny_id, reward) {
+    const e = reward.effect;
+    player.addEffect(e.effect_id, e.duration_ticks, { amplifier: e.amplifier ?? 0 });
+    const label = reward.display_name ?? utils_default.clean_id(e.effect_id);
+    utils_default.commands.send_message(
+      player.dimension.id,
+      player.name,
+      `\xA7l[\xA7aQuests\xA7f]\xA7r You received \xA7d${label}\xA7r!`
+    );
+  }
+};
+
+// behaviour_pack/scripts-dev/features/quests/rewards/grant-rewards.ts
+var GRANTERS = [
+  new BalanceReward(),
+  new ItemReward(),
+  new EffectReward()
+];
+async function grantRewards(player, thorny_id, currentBalance, rewards, objectiveProgress) {
+  for (const reward of rewards) {
+    const granter = GRANTERS.find((g) => g.canHandle(reward));
+    if (!granter) {
+      console.warn(`[grantRewards] No granter registered for reward_id ${reward.reward_id}`);
+      continue;
+    }
+    const handlers = reward.item_metadata.map((m) => ({ data: m, handler: REWARD_METADATA_REGISTRY.get(m.metadata_type) })).filter((e) => !!e.handler);
+    let allow = true;
+    for (const { handler } of handlers) {
+      if (!handler.shouldGrant) continue;
+      const permitted = await handler.shouldGrant(player, thorny_id, reward, objectiveProgress);
+      if (!permitted) {
+        allow = false;
+        break;
+      }
+    }
+    if (!allow) continue;
+    let effectiveReward = reward;
+    for (const { handler } of handlers) {
+      if (handler.transform) effectiveReward = handler.transform(effectiveReward);
+    }
+    if (effectiveReward.balance !== null) {
+      effectiveReward = { ...effectiveReward, balance: currentBalance + effectiveReward.balance };
+    }
+    try {
+      await granter.grant(player, thorny_id, effectiveReward);
+    } catch (err) {
+      console.error(`[grantRewards] Failed to grant reward_id ${reward.reward_id}:`, err);
+    }
+  }
+}
+__name(grantRewards, "grantRewards");
+
 // behaviour_pack/scripts-dev/features/quests/processors/quest-processor.ts
 var objectiveProcessor = new ObjectiveProcessor();
 var QuestProcessor = class {
@@ -7617,7 +7938,8 @@ var QuestProcessor = class {
    */
   completeObjective(player, thorny_id, quest, questProgress, objectiveDef, objectiveProgress) {
     deactivateObjective(player, thorny_id, objectiveDef, objectiveProgress);
-    this.grantObjectiveRewards(player, objectiveDef);
+    const thorny_user = ThornyUser.fetch_user_by_id(thorny_id);
+    grantRewards(player, thorny_id, thorny_user.balance, objectiveDef.rewards, objectiveProgress).then();
     return this.advanceQuest(player, thorny_id, quest, questProgress);
   }
   /**
@@ -7650,13 +7972,6 @@ var QuestProcessor = class {
       return false;
     }
     return this.onQuestComplete(player, thorny_id, quest, questProgress);
-  }
-  /**
-   * Grants rewards tied to a single objective's completion.
-   * Not called for skipped objectives, and not called for quest completion
-   * — objective rewards and quest completion are separate concerns.
-   */
-  grantObjectiveRewards(player, objectiveDef) {
   }
   onQuestComplete(player, thorny_id, questOut, questProgress) {
     questProgress.status = QuestProgressOutStatus.completed;
