@@ -53,10 +53,10 @@ export class TimerPlugin implements CustomizationPlugin {
         this.expired = false
     }
 
-    onTick(_player: Player, _objective: ObjectiveOut, _progress: ObjectiveProgressOut): 'fail' | 'advance' | void {
+    onTick(_player: Player, _objective: ObjectiveOut, _progress: ObjectiveProgressOut): 'fail' | 'skip' | void {
         this.remaining_seconds -= 1
         showTimer(_player, this.remaining_seconds)
         if (!this.expired) return
-        return this.shouldFail ? 'fail' : 'advance'
+        return this.shouldFail ? 'fail' : 'skip'
     }
 }

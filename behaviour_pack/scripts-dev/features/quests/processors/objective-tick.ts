@@ -8,7 +8,7 @@ import {ACTIVE_PLUGINS} from "./objective-lifecycle";
  *
  * Returns:
  *   'fail' — at least one watcher wants the objective to fail
- *   'advance' — at least one watcher wants the objective to be skipped/passed
+ *   'skip' — at least one watcher wants the objective to be skipped/passed
  *   void — no plugin signalled anything
  */
 export function tickPlugins(
@@ -16,7 +16,7 @@ export function tickPlugins(
     thorny_id: number,
     objective: ObjectiveOut,
     progress: ObjectiveProgressOut
-): 'fail' | 'advance' | void {
+): 'fail' | 'skip' | void {
     const plugins = ACTIVE_PLUGINS.get(thorny_id) ?? []
     for (const plugin of plugins) {
         const signal = plugin.onTick?.(player, objective, progress)

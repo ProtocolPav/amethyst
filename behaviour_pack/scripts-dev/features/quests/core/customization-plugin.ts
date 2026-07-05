@@ -49,9 +49,9 @@ export interface CustomizationPlugin {
      * Watchers use this to check whether a condition has been exceeded.
      *
      * Return values:
-     *   'fail'    — the objective fails immediately
-     *   'advance' — the objective is skipped/passed (e.g. non-failing timer expiry)
-     *   void      — nothing happens
+     *   'fail' — the objective fails immediately
+     *   'skip' — the objective is skipped/passed (e.g. non-failing timer expiry)
+     *   void — nothing happens
      */
-    onTick?(player: Player, objective: ObjectiveOut, progress: ObjectiveProgressOut): 'fail' | 'advance' | void
+    onTick?(player: Player, objective: ObjectiveOut, progress: ObjectiveProgressOut): 'fail' | 'skip' | void
 }

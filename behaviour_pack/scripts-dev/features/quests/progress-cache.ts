@@ -109,8 +109,8 @@ export default function loadQuestProgressCache() {
                         const signal = tickPlugins(player, thorny_user.thorny_id, activeObjectiveDef, activeObjectiveProgress)
                         if (signal === 'fail') {
                             questProcessor.fail(player, quest as any, cachedQuestProgress)
-                        } else if (signal === 'advance') {
-                            questProcessor.advance(player, quest as any, cachedQuestProgress)
+                        } else if (signal === 'skip') {
+                            questProcessor.skipObjective(player, quest as any, cachedQuestProgress)
                         }
                     }
                 }
