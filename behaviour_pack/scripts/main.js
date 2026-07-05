@@ -7067,107 +7067,124 @@ var KillTargetProcessor = class {
 };
 
 // behaviour_pack/scripts-dev/features/quests/core/objective-display.ts
-function getRewardsString(rewards) {
-  const parts = [];
-  for (const reward of rewards) {
-    if (reward.display_name) {
-      parts.push(`\xA77${reward.display_name}\xA7r`);
-    } else if (reward.item) {
-      parts.push(`${reward.count} \xA77${utils_default.clean_id(reward.item)}\xA7r`);
-    } else if (reward.balance) {
-      parts.push(`\xA7p${reward.balance}${utils_default.emojis.NUGS}\xA7r`);
-    }
-  }
-  return parts.join(", ");
-}
-__name(getRewardsString, "getRewardsString");
-function getRequirementsString(objective) {
-  const lines = [];
-  if (objective.customizations?.natural_block && objective.objective_type === "mine") {
-    lines.push(`- The blocks must be naturally generated`);
-  }
-  if (objective.customizations?.mainhand) {
-    lines.push(`- Using ${utils_default.clean_id(objective.customizations.mainhand.item)}`);
-  }
-  if (objective.customizations?.location) {
-    lines.push(
-      `- Around ${objective.customizations.location.coordinates} (Radius ${objective.customizations.location.horizontal_radius})`
-    );
-  }
-  if (objective.customizations?.timer) {
-    lines.push(`- Within ${utils_default.convert_seconds_to_hms(objective.customizations.timer.seconds)}`);
-  }
-  if (objective.customizations?.maximum_deaths) {
-    lines.push(`- Die no more than ${objective.customizations.maximum_deaths.deaths} times`);
-  }
-  const failsQuest = objective.customizations?.timer?.fail || objective.customizations?.maximum_deaths?.fail;
-  if (failsQuest) {
-    lines.push(`- Failing this objective will fail the entire quest`);
-  }
-  return lines.join("\n");
-}
-__name(getRequirementsString, "getRequirementsString");
-function getTaskString(objective) {
-  if (objective.display) {
-    return `\xA7b${objective.display}\xA7r
-`;
-  }
-  const task_type = objective.objective_type.replace(/\b\w/g, (char) => char.toUpperCase());
-  const targetLabels = [];
-  for (const target of objective.targets) {
-    let target_id;
-    switch (target.target_type) {
-      case "kill":
-        target_id = target.entity;
-        break;
-      case "mine":
-        target_id = target.block;
-        break;
-      default:
-        target_id = "UNKNOWN";
-    }
-    if (objective.logic === ObjectiveOutLogic.or && objective.target_count) {
-      targetLabels.push(`\xA7l${utils_default.clean_id(target_id)}\xA7r`);
-    } else {
-      targetLabels.push(`\xA7l${target.count} ${utils_default.clean_id(target_id)}\xA7r`);
-    }
-  }
-  let targetString;
-  const init = targetLabels.slice(0, targetLabels.length - 1);
-  const last = targetLabels[targetLabels.length - 1];
-  const tail = init.length !== targetLabels.length ? `, ${last}` : "";
-  switch (objective.logic) {
-    case ObjectiveOutLogic.or:
-      targetString = `any of: ${init.join(", ")}${init.length !== targetLabels.length ? `, or ${last}` : last}`;
-      break;
-    case ObjectiveOutLogic.sequential:
-      targetString = `in order: ${init.join(", ")}${tail}`;
-      break;
-    case ObjectiveOutLogic.and:
+var SECTION = "\xA78\xA7m                              \xA7r";
+var DIVIDER = "\xA78- - - - - - - - - - - - - - - -\xA7r";
+function targetId(target) {
+  switch (target.target_type) {
+    case "mine":
+      return target.block;
+    case "kill":
+      return target.entity;
     default:
-      targetString = `${init.join(", ")}${init.length !== targetLabels.length ? `, and ${last}` : last}`;
-      break;
+      return "unknown";
   }
-  return `\xA7b${task_type} ${targetString}
-`;
 }
-__name(getTaskString, "getTaskString");
+__name(targetId, "targetId");
+function logicVerb(type) {
+  switch (type) {
+    case "mine":
+      return "Mine";
+    case "kill":
+      return "Kill";
+    default:
+      return "Complete";
+  }
+}
+__name(logicVerb, "logicVerb");
+function rewardsLine(rewards) {
+  if (rewards.length === 0) return "\xA77None\xA7r";
+  const parts = rewards.map((r) => {
+    if (r.display_name)
+      return `\xA7e${r.display_name}\xA7r`;
+    if (r.item !== null && r.count !== null)
+      return `\xA7f${r.count}x \xA7e${utils_default.clean_id(r.item)}\xA7r`;
+    if (r.balance !== null)
+      return `\xA76${r.balance}${utils_default.emojis.NUGS}\xA7r`;
+    return "\xA77???\xA7r";
+  });
+  return parts.join("\xA77, \xA7r");
+}
+__name(rewardsLine, "rewardsLine");
+function taskLine(objective) {
+  if (objective.display) return `\xA7b${objective.display}\xA7r`;
+  const verb = logicVerb(objective.objective_type);
+  const targets = objective.targets;
+  if (targets.length === 0) return `\xA7b${verb}\u2026\xA7r`;
+  if (objective.logic === ObjectiveOutLogic.or && objective.target_count !== null && objective.target_count !== void 0) {
+    const names = targets.map((t) => `\xA7f${utils_default.clean_id(targetId(t))}\xA7r`).join("\xA77/\xA7r");
+    return `\xA7b${verb}\xA7r \xA77any combination of\xA7r ${names} \xA77(total: \xA7f${objective.target_count}\xA77)\xA7r`;
+  }
+  const targetParts = targets.map((t) => {
+    const name = utils_default.clean_id(targetId(t));
+    return `\xA7f${t.count}x ${name}\xA7r`;
+  });
+  switch (objective.logic) {
+    case ObjectiveOutLogic.and:
+      return buildSentence(verb, targetParts, "and");
+    case ObjectiveOutLogic.sequential:
+      return buildSentence(verb, targetParts, "then") + " \xA77(in order)\xA7r";
+    case ObjectiveOutLogic.or:
+    default:
+      return buildSentence(verb, targetParts, "or");
+  }
+}
+__name(taskLine, "taskLine");
+function buildSentence(verb, parts, conjunction) {
+  if (parts.length === 1) return `\xA7b${verb}\xA7r ${parts[0]}`;
+  const init = parts.slice(0, -1).join("\xA77, \xA7r");
+  const last = parts[parts.length - 1];
+  return `\xA7b${verb}\xA7r ${init} \xA77${conjunction}\xA7r ${last}`;
+}
+__name(buildSentence, "buildSentence");
+function requirementLines(objective) {
+  const c = objective.customizations;
+  const lines = [];
+  const failables = [];
+  if (c.natural_block && objective.objective_type === "mine")
+    lines.push(`\xA77- \xA7fNatural blocks only\xA7r`);
+  if (c.mainhand)
+    lines.push(`\xA77- Using \xA7f${utils_default.clean_id(c.mainhand.item)}\xA7r`);
+  if (c.location) {
+    const [x, y, z] = c.location.coordinates;
+    lines.push(`\xA77- Around \xA7f${x}, ${y}, ${z}`);
+    lines.push(`\xA77- Radius: \xA7f${c.location.horizontal_radius}h \xA77/ \xA7f${c.location.vertical_radius}v\xA7r`);
+  }
+  if (c.timer) {
+    const skull = c.timer.fail ? ` ${utils_default.emojis.KNIGHT}` : "";
+    lines.push(`\xA77-${skull} Time limit: \xA7f${utils_default.convert_seconds_to_hms(c.timer.seconds)}\xA7r`);
+    if (c.timer.fail) failables.push("Time Limit");
+  }
+  if (c.maximum_deaths) {
+    const skull = c.maximum_deaths.fail ? ` ${utils_default.emojis.KNIGHT}` : "";
+    lines.push(`\xA77-${skull} Die no more than \xA7f${c.maximum_deaths.deaths}\xA7r times`);
+    if (c.maximum_deaths.fail) failables.push("Exceed Death Limit");
+  }
+  if (failables.length > 0)
+    lines.push(`\xA7c- Failing these will fail the entire quest: \xA7f${failables.join("\xA7c, \xA7f")}\xA7r`);
+  return lines;
+}
+__name(requirementLines, "requirementLines");
 function generateObjectiveDisplayString(objective, objectiveIndex, totalObjectives, questTitle) {
-  const title = `\xA7a+=+=+=+=+ ${questTitle} +=+=+=+=+\xA7r
-Quest Progress: ${objectiveIndex}/${totalObjectives}
-`;
-  const description = `\xA77${objective.description}\xA7r
-
-`;
-  const task = `Your Task: ${getTaskString(objective)}`;
-  const rewards = `Rewards: ${getRewardsString(objective.rewards ?? [])}
-`;
-  const requirementsBody = getRequirementsString(objective);
-  const requirements = requirementsBody ? `\xA7u+=+=+=+=+ Requirements +=+=+=+=+\xA7r
-${requirementsBody}
-` : "";
-  const footer = `\xA7a+=+=+=+=+=+=+=+=+=+=+=+=+=+=+\xA7r`;
-  return `${title}${description}${task}${rewards}${requirements}${footer}`;
+  const header = `\xA7a\xA7l[ ${questTitle} ]\xA7r
+\xA77Objective ${objectiveIndex} of ${totalObjectives}\xA7r`;
+  const description = objective.description ? `\xA77${objective.description}\xA7r` : null;
+  const task = `\xA7aTask:\xA7r ${taskLine(objective)}`;
+  const rewards = `\xA76Rewards:\xA7r ${rewardsLine(objective.rewards)}`;
+  const reqLines = requirementLines(objective);
+  const requirements = reqLines.length > 0 ? `${DIVIDER}
+\xA7eRequirements:\xA7r
+${reqLines.join("\n")}` : null;
+  const parts = [
+    SECTION,
+    header,
+    DIVIDER,
+    ...description ? [description] : [],
+    task,
+    rewards,
+    ...requirements ? [requirements] : [],
+    SECTION
+  ];
+  return parts.join("\n");
 }
 __name(generateObjectiveDisplayString, "generateObjectiveDisplayString");
 
@@ -7777,7 +7794,7 @@ function loadMineHandler() {
       dimension: event.player.dimension.id,
       block_id: event.brokenBlockPermutation.type.id,
       mainhand: event.itemStackBeforeBreak?.typeId ?? null,
-      naturally_mined: interactions.length > 1,
+      naturally_mined: interactions.length <= 1,
       player: event.player
     };
     questProcessor2.process(mining_action, event.player, quest, quest_progress);
