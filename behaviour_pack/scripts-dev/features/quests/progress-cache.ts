@@ -2,35 +2,16 @@ import { Player, system, TicksPerSecond, world } from "@minecraft/server";
 import { QUEST_CACHE } from "./quest-cache";
 import ThornyUser from "../../api/user";
 import { get_quest_progress } from "./core/fetch";
-import { ObjectiveOut, ObjectiveProgressOut, ObjectiveProgressOutStatus, QuestProgressOut, QuestProgressOutStatus } from "../../api/nexuscore/model";
+import { QuestProgressOut, QuestProgressOutStatus } from "../../api/nexuscore/model";
 import { QuestProcessor } from "./processors/quest-processor";
-import {notifyOfQuestUpdate} from "./core/notify";
-import {activateObjective, deactivateObjective} from "./processors/objective-lifecycle";
-import {tickPlugins} from "./processors/objective-tick";
+import { notifyOfQuestUpdate } from "./core/notify";
+import { activateObjective, deactivateObjective } from "./processors/objective-lifecycle";
+import { tickPlugins } from "./processors/objective-tick";
+import { getActiveObjective } from "./core/objective-lookup";
 
 export const QUEST_PROGRESS_CACHE = new Map<number, QuestProgressOut>()
 
 const questProcessor = new QuestProcessor()
-
-/**
- * Returns the active ObjectiveProgressOut for a quest progress, or undefined if none.
- */
-function getActiveObjectiveProgress(questProgress: QuestProgressOut): ObjectiveProgressOut | undefined {
-    return questProgress.objectives.find(o => o.status === ObjectiveProgressOutStatus.active)
-}
-
-/**
- * Resolves the ObjectiveOut definition for a given ObjectiveProgressOut,
- * looking up the quest definition from QUEST_CACHE.
- *
- * Casts via unknown since QUEST_CACHE stores the legacy Objective class,
- * which is structurally compatible with ObjectiveOut for processor purposes.
- */
-function getObjectiveDef(questProgress: QuestProgressOut, objectiveProgress: ObjectiveProgressOut): ObjectiveOut | undefined {
-    const quest = QUEST_CACHE.get(questProgress.quest_id)
-    if (!quest) return undefined
-    return quest.objectives.find(o => o.objective_id === objectiveProgress.objective_id) as unknown as ObjectiveOut
-}
 
 export default function loadQuestProgressCache() {
     const PLAYER_LOOP_RUN_IDS = new Map<string, number[]>()
@@ -42,12 +23,9 @@ export default function loadQuestProgressCache() {
 
         // Activate the current objective if the quest is active
         if (questProgress.status === QuestProgressOutStatus.active) {
-            const activeObjectiveProgress = getActiveObjectiveProgress(questProgress)
-            if (activeObjectiveProgress) {
-                const activeObjectiveDef = getObjectiveDef(questProgress, activeObjectiveProgress)
-                if (activeObjectiveDef) {
-                    activateObjective(player, thornyUser.thorny_id, activeObjectiveDef, activeObjectiveProgress)
-                }
+            const active = getActiveObjective(quest as any, questProgress)
+            if (active) {
+                activateObjective(player, thornyUser.thorny_id, active.quest_def, active.quest_progress)
             }
         }
 
@@ -60,12 +38,9 @@ export default function loadQuestProgressCache() {
         const cached_quest = QUEST_CACHE.get(questProgress.quest_id)!
 
         // Deactivate the active objective before evicting
-        const activeObjectiveProgress = getActiveObjectiveProgress(questProgress)
-        if (activeObjectiveProgress) {
-            const activeObjectiveDef = getObjectiveDef(questProgress, activeObjectiveProgress)
-            if (activeObjectiveDef) {
-                deactivateObjective(player, thornyUser.thorny_id, activeObjectiveDef, activeObjectiveProgress)
-            }
+        const active = getActiveObjective(cached_quest as any, questProgress)
+        if (active) {
+            deactivateObjective(player, thornyUser.thorny_id, active.quest_def, active.quest_progress)
         }
 
         QUEST_PROGRESS_CACHE.delete(thornyUser.thorny_id)
@@ -98,23 +73,19 @@ export default function loadQuestProgressCache() {
 
         const thorny_user = ThornyUser.fetch_user(player_name)!
         const cachedQuestProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id)
+        if (!cachedQuestProgress) return
 
-        if (cachedQuestProgress) {
-            const activeObjectiveProgress = getActiveObjectiveProgress(cachedQuestProgress)
-            if (activeObjectiveProgress) {
-                const activeObjectiveDef = getObjectiveDef(cachedQuestProgress, activeObjectiveProgress)
-                if (activeObjectiveDef && player) {
-                    const quest = QUEST_CACHE.get(cachedQuestProgress.quest_id)
-                    if (quest) {
-                        const signal = tickPlugins(player, thorny_user.thorny_id, activeObjectiveDef, activeObjectiveProgress)
-                        if (signal === 'fail') {
-                            questProcessor.fail(player, quest as any, cachedQuestProgress)
-                        } else if (signal === 'skip') {
-                            questProcessor.skipObjective(player, quest as any, cachedQuestProgress)
-                        }
-                    }
-                }
-            }
+        const quest = QUEST_CACHE.get(cachedQuestProgress.quest_id)
+        if (!quest) return
+
+        const active = getActiveObjective(quest as any, cachedQuestProgress)
+        if (!active) return
+
+        const signal = tickPlugins(player, thorny_user.thorny_id, active.quest_def, active.quest_progress)
+        if (signal === 'fail') {
+            questProcessor.fail(player, quest as any, cachedQuestProgress)
+        } else if (signal === 'skip') {
+            questProcessor.skipObjective(player, quest as any, cachedQuestProgress)
         }
     }
 
@@ -155,14 +126,12 @@ export default function loadQuestProgressCache() {
 
             // Deactivate the active objective before evicting the cache entry
             if (questProgress) {
-                const activeObjectiveProgress = getActiveObjectiveProgress(questProgress)
-                if (activeObjectiveProgress) {
-                    const activeObjectiveDef = getObjectiveDef(questProgress, activeObjectiveProgress)
-                    if (activeObjectiveDef) {
-                        const player = world.getPlayers().find(p => p.name === leave_event.playerName)
-                        if (player) {
-                            deactivateObjective(player, thorny_user.thorny_id, activeObjectiveDef, activeObjectiveProgress)
-                        }
+                const quest = QUEST_CACHE.get(questProgress.quest_id)
+                const active = quest ? getActiveObjective(quest as any, questProgress) : undefined
+                if (active) {
+                    const player = world.getPlayers().find(p => p.name === leave_event.playerName)
+                    if (player) {
+                        deactivateObjective(player, thorny_user.thorny_id, active.quest_def, active.quest_progress)
                     }
                 }
             }

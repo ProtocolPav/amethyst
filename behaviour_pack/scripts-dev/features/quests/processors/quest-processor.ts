@@ -11,6 +11,7 @@ import { ObjectiveProcessor } from "./objective-processor";
 import { markDirty } from "../write-back";
 import ThornyUser from "../../../api/user";
 import { activateObjective, deactivateObjective } from "./objective-lifecycle";
+import {getActiveObjective} from "../core/objective-lookup";
 
 const objectiveProcessor = new ObjectiveProcessor()
 
@@ -21,25 +22,18 @@ export class QuestProcessor {
         if (questProgress.status === QuestProgressOutStatus.completed) return false
         if (questProgress.status === QuestProgressOutStatus.failed) return false
 
-        const activeObjectiveProgress = questProgress.objectives.find(
-            o => o.status === ObjectiveProgressOutStatus.active
-        )
-        if (!activeObjectiveProgress) return false
-
-        const activeObjectiveDef = quest.objectives.find(
-            o => o.objective_id === activeObjectiveProgress.objective_id
-        )
-        if (!activeObjectiveDef) return false
+        const active = getActiveObjective(quest, questProgress)
+        if (!active) return false
 
         const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
 
-        const completed = objectiveProcessor.process(action, player, thorny_id, activeObjectiveDef, activeObjectiveProgress)
+        const completed = objectiveProcessor.process(action, player, thorny_id, active.quest_def, active.quest_progress)
 
         markDirty(thorny_id)
 
         if (!completed) return false
 
-        return this.completeObjective(player, thorny_id, quest, questProgress, activeObjectiveDef, activeObjectiveProgress)
+        return this.completeObjective(player, thorny_id, quest, questProgress, active.quest_def, active.quest_progress)
     }
 
     /**
@@ -52,22 +46,15 @@ export class QuestProcessor {
         if (questProgress.status === QuestProgressOutStatus.completed) return
         if (questProgress.status === QuestProgressOutStatus.failed) return
 
-        const activeObjectiveProgress = questProgress.objectives.find(
-            o => o.status === ObjectiveProgressOutStatus.active
-        )
-        if (!activeObjectiveProgress) return
-
-        const activeObjectiveDef = quest.objectives.find(
-            o => o.objective_id === activeObjectiveProgress.objective_id
-        )
-        if (!activeObjectiveDef) return
+        const active = getActiveObjective(quest, questProgress)
+        if (!active) return
 
         const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
 
-        activeObjectiveProgress.status = ObjectiveProgressOutStatus.failed
-        activeObjectiveProgress.end_time = new Date().toISOString()
+        active.quest_progress.status = ObjectiveProgressOutStatus.failed
+        active.quest_progress.end_time = new Date().toISOString()
 
-        deactivateObjective(player, thorny_id, activeObjectiveDef, activeObjectiveProgress)
+        deactivateObjective(player, thorny_id, active.quest_def, active.quest_progress)
 
         this.advanceQuest(player, thorny_id, quest, questProgress)
     }
@@ -141,15 +128,9 @@ export class QuestProcessor {
     fail(player: Player, quest: QuestOut, questProgress: QuestProgressOut): void {
         const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
 
-        const activeObjectiveProgress = questProgress.objectives.find(
-            o => o.status === ObjectiveProgressOutStatus.active
-        )
-        const activeObjectiveDef = activeObjectiveProgress
-            ? quest.objectives.find(o => o.objective_id === activeObjectiveProgress.objective_id)
-            : undefined
-
-        if (activeObjectiveDef && activeObjectiveProgress) {
-            deactivateObjective(player, thorny_id, activeObjectiveDef, activeObjectiveProgress)
+        const active = getActiveObjective(quest, questProgress)
+        if (active) {
+            deactivateObjective(player, thorny_id, active.quest_def, active.quest_progress)
         }
 
         questProgress.status = QuestProgressOutStatus.failed
