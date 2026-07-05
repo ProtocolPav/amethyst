@@ -1,6 +1,8 @@
 import {Player} from "@minecraft/server";
 import {AnyTarget} from "./target-processor";
 import utils from "../../../utils";
+import {generateObjectiveDisplayString} from "./objective-display";
+import {ObjectiveOut} from "../../../api/nexuscore/model";
 
 export function showProgressTick(player: Player, target: AnyTarget | undefined, current: number, goal: number) {
     let label = "Progress"
@@ -29,6 +31,15 @@ export function notifyOfQuestUpdate(player: Player, message: string) {
     )
 
     player.sendMessage(message)
+}
+
+export function notifyQuestProgress(player: Player, objective: ObjectiveOut, objectiveIndex: number, totalObjectives: number, questTitle: string) {
+    player.playSound(
+        'quest.objective.complete',
+        {volume: 100, location: player.location}
+    )
+
+    player.sendMessage(generateObjectiveDisplayString(objective, objectiveIndex, totalObjectives, questTitle))
 }
 
 export function showTimer(player: Player, remaining_seconds: number) {

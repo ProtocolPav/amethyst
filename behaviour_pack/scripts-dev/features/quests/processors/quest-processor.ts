@@ -12,6 +12,7 @@ import { markDirty } from "../write-back";
 import ThornyUser from "../../../api/user";
 import { activateObjective, deactivateObjective } from "./objective-lifecycle";
 import {getActiveObjective} from "../core/objective-lookup";
+import {notifyQuestProgress} from "../core/notify";
 
 const objectiveProcessor = new ObjectiveProcessor()
 
@@ -101,7 +102,15 @@ export class QuestProcessor {
             }
 
             markDirty(thorny_id)
-            // TODO: notify player of next objective
+
+            notifyQuestProgress(
+                player,
+                nextObjectiveDef!,
+                quest.objectives.indexOf(nextObjectiveDef!) + 1,
+                quest.objectives.length,
+                quest.title
+            )
+
             return false
         }
 
