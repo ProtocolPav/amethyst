@@ -33,7 +33,7 @@ function rewardsLine(rewards: RewardOut[]): string {
             return `§e${r.display_name}§r`
 
         if (r.item !== null && r.count !== null)
-            return `§f${r.count}x §e${utils.clean_id(r.item)}§r`
+            return `§f${r.count} §e${utils.clean_id(r.item)}§r`
 
         if (r.balance !== null)
             return `§6${r.balance}${utils.emojis.NUGS}§r`
@@ -54,17 +54,17 @@ function taskLine(objective: ObjectiveOut): string {
     const verb = logicVerb(objective.objective_type)
     const targets = objective.targets as AnyTarget[]
 
-    if (targets.length === 0) return `§b${verb}…§r`
+    if (targets.length === 0) return `§b${verb}...§r`
 
     // Shared pool (OR with a single cap overriding individual counts)
     if (objective.logic === ObjectiveOutLogic.or && objective.target_count !== null && objective.target_count !== undefined) {
         const names = targets.map(t => `§f${utils.clean_id(targetId(t))}§r`).join('§7/§r')
-        return `§b${verb}§r §7any combination of§r ${names} §7(total: §f${objective.target_count}§7)§r`
+        return `§b${verb}§r §7any §f${objective.target_count}§7 of§r ${names}§r`
     }
 
     const targetParts = targets.map(t => {
         const name = utils.clean_id(targetId(t))
-        return `§f${t.count}x ${name}§r`
+        return `§f${t.count} ${name}§r`
     })
 
     switch (objective.logic) {
