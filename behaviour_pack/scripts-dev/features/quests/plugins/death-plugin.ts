@@ -15,6 +15,7 @@ import { CustomizationPlugin } from "../core/customization-plugin";
  */
 export class DeathPlugin implements CustomizationPlugin {
     private exceeded = false
+    private shouldFail = false
     private unsubscribe: (() => void) | undefined
 
     onActivate(player: Player, objective: ObjectiveOut, progress: ObjectiveProgressOut): void {
@@ -22,6 +23,7 @@ export class DeathPlugin implements CustomizationPlugin {
         if (!c) return
 
         this.exceeded = false
+        this.shouldFail = c.fail ?? false
 
         // Seed from existing progress so reloads don't reset the count
         let deaths = progress.customization_progress.maximum_deaths?.deaths ?? 0
@@ -44,7 +46,8 @@ export class DeathPlugin implements CustomizationPlugin {
         this.exceeded = false
     }
 
-    onTick(_player: Player, _objective: ObjectiveOut, _progress: ObjectiveProgressOut): 'fail' | void {
-        if (this.exceeded) return 'fail'
+    onTick(_player: Player, _objective: ObjectiveOut, _progress: ObjectiveProgressOut): 'fail' | 'skip' | void {
+        if (!this.exceeded) return
+        return this.shouldFail ? 'fail' : 'skip'
     }
 }

@@ -20,14 +20,14 @@ import {showTimer} from "../core/notify";
 export class TimerPlugin implements CustomizationPlugin {
     private runId: number | undefined
     private expired = false
-    private shouldFail = true
+    private shouldFail = false
     private remaining_seconds = 0
 
     onActivate(player: Player, objective: ObjectiveOut, progress: ObjectiveProgressOut): void {
         const c = objective.customizations.timer
         if (!c) return
 
-        this.shouldFail = c.fail ?? true
+        this.shouldFail = c.fail ?? false
         this.expired = false
 
         const startedAt = progress.start_time ? new Date(progress.start_time).getTime() : Date.now()

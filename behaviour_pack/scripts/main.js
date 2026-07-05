@@ -7066,6 +7066,77 @@ var KillTargetProcessor = class {
   }
 };
 
+// behaviour_pack/scripts-dev/features/quests/core/notify.ts
+function showProgressTick(player, target, current, goal) {
+  let label = "Progress";
+  switch (target?.target_type) {
+    case "mine":
+      label = utils_default.clean_id(target.block);
+      break;
+    case "kill":
+      label = utils_default.clean_id(target.entity);
+      break;
+  }
+  player.playSound(
+    "quest.objective.progress",
+    { volume: 100, location: player.location }
+  );
+  player.onScreenDisplay.setActionBar(`\xA7l\xA7s${label}:\xA7r \xA77${current}\xA7r/${goal}`);
+}
+__name(showProgressTick, "showProgressTick");
+function notifyOfQuestUpdate(player, message) {
+  player.playSound(
+    "quest.notify",
+    { volume: 100, location: player.location }
+  );
+  player.sendMessage(message);
+}
+__name(notifyOfQuestUpdate, "notifyOfQuestUpdate");
+function showTimer(player, remaining_seconds) {
+  const minutes = Math.floor(remaining_seconds / 60);
+  const seconds = Math.floor(remaining_seconds % 60);
+  const formatted = minutes > 0 ? `${minutes}m ${seconds.toString().padStart(2, "0")}s` : `${seconds}s`;
+  const color = remaining_seconds <= 10 ? "\xA7c" : remaining_seconds <= 30 ? "\xA7e" : "\xA7a";
+  player.playSound(
+    "note.hat",
+    { volume: 100, location: player.location }
+  );
+  player.onScreenDisplay.setActionBar(`${color}${formatted}`);
+}
+__name(showTimer, "showTimer");
+
+// behaviour_pack/scripts-dev/features/quests/plugins/death-plugin.ts
+import { world as world22 } from "@minecraft/server";
+var DeathPlugin = class {
+  constructor() {
+    this.exceeded = false;
+  }
+  static {
+    __name(this, "DeathPlugin");
+  }
+  onActivate(player, objective, progress) {
+    const c = objective.customizations.maximum_deaths;
+    if (!c) return;
+    this.exceeded = false;
+    let deaths = progress.customization_progress.maximum_deaths?.deaths ?? 0;
+    const handler = /* @__PURE__ */ __name((event) => {
+      if (event.deadEntity.id !== player.id) return;
+      deaths++;
+      if (deaths >= c.deaths) this.exceeded = true;
+    }, "handler");
+    world22.afterEvents.entityDie.subscribe(handler);
+    this.unsubscribe = () => world22.afterEvents.entityDie.unsubscribe(handler);
+  }
+  onDeactivate(_player, _objective, _progress) {
+    this.unsubscribe?.();
+    this.unsubscribe = void 0;
+    this.exceeded = false;
+  }
+  onTick(_player, _objective, _progress) {
+    if (this.exceeded) return "fail";
+  }
+};
+
 // behaviour_pack/scripts-dev/features/quests/plugins/location-plugin.ts
 var LocationPlugin = class {
   static {
@@ -7107,47 +7178,6 @@ var NaturalBlockPlugin = class {
 
 // behaviour_pack/scripts-dev/features/quests/plugins/timer-plugin.ts
 import { system as system24, TicksPerSecond as TicksPerSecond10 } from "@minecraft/server";
-
-// behaviour_pack/scripts-dev/features/quests/core/notify.ts
-function showProgressTick(player, target, current, goal) {
-  let label = "Progress";
-  switch (target?.target_type) {
-    case "mine":
-      label = utils_default.clean_id(target.block);
-      break;
-    case "kill":
-      label = utils_default.clean_id(target.entity);
-      break;
-  }
-  player.playSound(
-    "quest.objective.progress",
-    { volume: 100, location: player.location }
-  );
-  player.onScreenDisplay.setActionBar(`\xA7l\xA7s${label}:\xA7r \xA77${current}\xA7r/${goal}`);
-}
-__name(showProgressTick, "showProgressTick");
-function notifyOfQuestUpdate(player, message) {
-  player.playSound(
-    "quest.notify",
-    { volume: 100, location: player.location }
-  );
-  player.sendMessage(message);
-}
-__name(notifyOfQuestUpdate, "notifyOfQuestUpdate");
-function showTimer(player, remaining_seconds) {
-  const minutes = Math.floor(remaining_seconds / 60);
-  const seconds = Math.floor(remaining_seconds % 60);
-  const formatted = minutes > 0 ? `${minutes}m ${seconds.toString().padStart(2, "0")}s` : `${seconds}s`;
-  const color = remaining_seconds <= 10 ? "\xA7c" : remaining_seconds <= 30 ? "\xA7e" : "\xA7a";
-  player.playSound(
-    "note.hat",
-    { volume: 100, location: player.location }
-  );
-  player.onScreenDisplay.setActionBar(`${color}${formatted}`);
-}
-__name(showTimer, "showTimer");
-
-// behaviour_pack/scripts-dev/features/quests/plugins/timer-plugin.ts
 var TimerPlugin = class {
   constructor() {
     this.expired = false;
@@ -7184,47 +7214,11 @@ var TimerPlugin = class {
     this.remaining_seconds -= 1;
     showTimer(_player, this.remaining_seconds);
     if (!this.expired) return;
-    return this.shouldFail ? "fail" : "advance";
+    return this.shouldFail ? "fail" : "skip";
   }
 };
 
-// behaviour_pack/scripts-dev/features/quests/plugins/death-plugin.ts
-import { world as world22 } from "@minecraft/server";
-var DeathPlugin = class {
-  constructor() {
-    this.exceeded = false;
-  }
-  static {
-    __name(this, "DeathPlugin");
-  }
-  onActivate(player, objective, progress) {
-    const c = objective.customizations.maximum_deaths;
-    if (!c) return;
-    this.exceeded = false;
-    let deaths = progress.customization_progress.maximum_deaths?.deaths ?? 0;
-    const handler = /* @__PURE__ */ __name((event) => {
-      if (event.deadEntity.id !== player.id) return;
-      deaths++;
-      if (deaths >= c.deaths) this.exceeded = true;
-    }, "handler");
-    world22.afterEvents.entityDie.subscribe(handler);
-    this.unsubscribe = () => world22.afterEvents.entityDie.unsubscribe(handler);
-  }
-  onDeactivate(_player, _objective, _progress) {
-    this.unsubscribe?.();
-    this.unsubscribe = void 0;
-    this.exceeded = false;
-  }
-  onTick(_player, _objective, _progress) {
-    if (this.exceeded) return "fail";
-  }
-};
-
-// behaviour_pack/scripts-dev/features/quests/processors/objective-processor.ts
-var TARGET_PROCESSORS = {
-  mine: new MineTargetProcessor(),
-  kill: new KillTargetProcessor()
-};
+// behaviour_pack/scripts-dev/features/quests/processors/objective-lifecycle.ts
 var CUSTOMIZATION_PLUGINS = {
   location: LocationPlugin,
   mainhand: MainhandPlugin,
@@ -7233,10 +7227,6 @@ var CUSTOMIZATION_PLUGINS = {
   maximum_deaths: DeathPlugin
 };
 var ACTIVE_PLUGINS = /* @__PURE__ */ new Map();
-function targetCount(target) {
-  return target.count ?? 1;
-}
-__name(targetCount, "targetCount");
 function activateObjective(player, thorny_id, objective, objectiveProgress) {
   const processor = TARGET_PROCESSORS[objective.objective_type];
   processor?.onActivate?.(player, objective, objectiveProgress);
@@ -7262,14 +7252,16 @@ function deactivateObjective(player, thorny_id, objective, objectiveProgress) {
   ACTIVE_PLUGINS.delete(thorny_id);
 }
 __name(deactivateObjective, "deactivateObjective");
-function tickPlugins(player, thorny_id, objective, progress) {
-  const plugins = ACTIVE_PLUGINS.get(thorny_id) ?? [];
-  for (const plugin of plugins) {
-    const signal = plugin.onTick?.(player, objective, progress);
-    if (signal) return signal;
-  }
+
+// behaviour_pack/scripts-dev/features/quests/processors/objective-processor.ts
+var TARGET_PROCESSORS = {
+  mine: new MineTargetProcessor(),
+  kill: new KillTargetProcessor()
+};
+function targetCount(target) {
+  return target.count ?? 1;
 }
-__name(tickPlugins, "tickPlugins");
+__name(targetCount, "targetCount");
 var ObjectiveProcessor = class {
   static {
     __name(this, "ObjectiveProcessor");
@@ -7437,33 +7429,47 @@ var QuestProcessor = class {
     const completed = objectiveProcessor.process(action, player, thorny_id, activeObjectiveDef, activeObjectiveProgress);
     markDirty(thorny_id);
     if (!completed) return false;
-    return this.onObjectiveComplete(player, thorny_id, quest, questProgress);
+    return this.completeObjective(player, thorny_id, quest, questProgress, activeObjectiveDef, activeObjectiveProgress);
   }
   /**
    * Called by the tick loop when a watcher plugin signals 'advance'
    * (e.g. a non-failing timer that has expired).
-   * Marks the active objective completed and transitions to the next one.
+   * Skips the active objective — deactivates it and transitions onward,
+   * but grants NO objective rewards, unlike a normal completion.
    */
-  advance(player, quest, questProgress) {
+  skipObjective(player, quest, questProgress) {
     if (questProgress.status === QuestProgressOutStatus.completed) return;
     if (questProgress.status === QuestProgressOutStatus.failed) return;
     const activeObjectiveProgress = questProgress.objectives.find(
       (o) => o.status === ObjectiveProgressOutStatus.active
     );
     if (!activeObjectiveProgress) return;
-    const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
-    activeObjectiveProgress.status = ObjectiveProgressOutStatus.completed;
-    activeObjectiveProgress.end_time = (/* @__PURE__ */ new Date()).toISOString();
-    this.onObjectiveComplete(player, thorny_id, quest, questProgress);
-  }
-  onObjectiveComplete(player, thorny_id, quest, questProgress) {
-    const justCompletedProgress = questProgress.objectives.find(
-      (o) => o.status === ObjectiveProgressOutStatus.completed
+    const activeObjectiveDef = quest.objectives.find(
+      (o) => o.objective_id === activeObjectiveProgress.objective_id
     );
-    const justCompletedDef = justCompletedProgress ? quest.objectives.find((o) => o.objective_id === justCompletedProgress.objective_id) : void 0;
-    if (justCompletedDef && justCompletedProgress) {
-      deactivateObjective(player, thorny_id, justCompletedDef, justCompletedProgress);
-    }
+    if (!activeObjectiveDef) return;
+    const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
+    activeObjectiveProgress.status = ObjectiveProgressOutStatus.failed;
+    activeObjectiveProgress.end_time = (/* @__PURE__ */ new Date()).toISOString();
+    deactivateObjective(player, thorny_id, activeObjectiveDef, activeObjectiveProgress);
+    this.advanceQuest(player, thorny_id, quest, questProgress);
+  }
+  /**
+   * Called when an objective is genuinely completed via process().
+   * Deactivates it, grants its rewards, then transitions onward.
+   */
+  completeObjective(player, thorny_id, quest, questProgress, objectiveDef, objectiveProgress) {
+    deactivateObjective(player, thorny_id, objectiveDef, objectiveProgress);
+    this.grantObjectiveRewards(player, objectiveDef);
+    return this.advanceQuest(player, thorny_id, quest, questProgress);
+  }
+  /**
+   * Shared transition logic used by both completion and skip paths.
+   * Activates the next pending objective if one exists, otherwise
+   * completes the quest. Grants no rewards itself — reward-granting
+   * is the caller's responsibility.
+   */
+  advanceQuest(player, thorny_id, quest, questProgress) {
     const nextObjectiveProgress = questProgress.objectives.find(
       (o) => o.status === ObjectiveProgressOutStatus.pending
     );
@@ -7480,6 +7486,13 @@ var QuestProcessor = class {
       return false;
     }
     return this.onQuestComplete(player, thorny_id, questProgress);
+  }
+  /**
+   * Grants rewards tied to a single objective's completion.
+   * Not called for skipped objectives, and not called for quest completion
+   * — objective rewards and quest completion are separate concerns.
+   */
+  grantObjectiveRewards(player, objectiveDef) {
   }
   onQuestComplete(player, thorny_id, questProgress) {
     questProgress.status = QuestProgressOutStatus.completed;
@@ -7507,6 +7520,16 @@ var QuestProcessor = class {
     markDirty(thorny_id);
   }
 };
+
+// behaviour_pack/scripts-dev/features/quests/processors/objective-tick.ts
+function tickPlugins(player, thorny_id, objective, progress) {
+  const plugins = ACTIVE_PLUGINS.get(thorny_id) ?? [];
+  for (const plugin of plugins) {
+    const signal = plugin.onTick?.(player, objective, progress);
+    if (signal) return signal;
+  }
+}
+__name(tickPlugins, "tickPlugins");
 
 // behaviour_pack/scripts-dev/features/quests/progress-cache.ts
 var QUEST_PROGRESS_CACHE = /* @__PURE__ */ new Map();
@@ -7581,8 +7604,8 @@ function loadQuestProgressCache() {
             const signal = tickPlugins(player, thorny_user.thorny_id, activeObjectiveDef, activeObjectiveProgress);
             if (signal === "fail") {
               questProcessor.fail(player, quest, cachedQuestProgress);
-            } else if (signal === "advance") {
-              questProcessor.advance(player, quest, cachedQuestProgress);
+            } else if (signal === "skip") {
+              questProcessor.skipObjective(player, quest, cachedQuestProgress);
             }
           }
         }
