@@ -6,9 +6,10 @@ import {
 } from "../../../api/nexuscore/model";
 import { Player } from "@minecraft/server";
 import { GameAction } from "../core/action";
-import { ObjectiveProcessor, activateObjective, deactivateObjective } from "./objective-processor";
+import { ObjectiveProcessor } from "./objective-processor";
 import { markDirty } from "../write-back";
 import ThornyUser from "../../../api/user";
+import {activateObjective, deactivateObjective} from "./objective-lifecycle";
 
 const objectiveProcessor = new ObjectiveProcessor()
 
