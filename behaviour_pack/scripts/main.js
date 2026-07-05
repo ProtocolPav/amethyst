@@ -6957,7 +6957,7 @@ function loadLocationLogger() {
 __name(loadLocationLogger, "loadLocationLogger");
 
 // behaviour_pack/scripts-dev/features/quests/progress-cache.ts
-import { system as system26, TicksPerSecond as TicksPerSecond12, world as world23 } from "@minecraft/server";
+import { system as system27, TicksPerSecond as TicksPerSecond12, world as world24 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/features/quests/quest-cache.ts
 import { system as system23, TicksPerSecond as TicksPerSecond9 } from "@minecraft/server";
@@ -7066,6 +7066,9 @@ var KillTargetProcessor = class {
   }
 };
 
+// behaviour_pack/scripts-dev/features/quests/core/notify.ts
+import { system as system24, world as world22 } from "@minecraft/server";
+
 // behaviour_pack/scripts-dev/features/quests/core/objective-display.ts
 var SECTION = "\xA78\xA7m                              \xA7r";
 var DIVIDER = "\xA78- - - - - - - - - - - - - - - -\xA7r";
@@ -7097,7 +7100,7 @@ function rewardsLine(rewards) {
     if (r.display_name)
       return `\xA7e${r.display_name}\xA7r`;
     if (r.item !== null && r.count !== null)
-      return `\xA7f${r.count}x \xA7e${utils_default.clean_id(r.item)}\xA7r`;
+      return `\xA7f${r.count} \xA7e${utils_default.clean_id(r.item)}\xA7r`;
     if (r.balance !== null)
       return `\xA76${r.balance}${utils_default.emojis.NUGS}\xA7r`;
     return "\xA77???\xA7r";
@@ -7109,14 +7112,14 @@ function taskLine(objective) {
   if (objective.display) return `\xA7b${objective.display}\xA7r`;
   const verb = logicVerb(objective.objective_type);
   const targets = objective.targets;
-  if (targets.length === 0) return `\xA7b${verb}\u2026\xA7r`;
+  if (targets.length === 0) return `\xA7b${verb}...\xA7r`;
   if (objective.logic === ObjectiveOutLogic.or && objective.target_count !== null && objective.target_count !== void 0) {
     const names = targets.map((t) => `\xA7f${utils_default.clean_id(targetId(t))}\xA7r`).join("\xA77/\xA7r");
-    return `\xA7b${verb}\xA7r \xA77any combination of\xA7r ${names} \xA77(total: \xA7f${objective.target_count}\xA77)\xA7r`;
+    return `\xA7b${verb}\xA7r \xA77any \xA7f${objective.target_count}\xA77 of\xA7r ${names}\xA7r`;
   }
   const targetParts = targets.map((t) => {
     const name = utils_default.clean_id(targetId(t));
-    return `\xA7f${t.count}x ${name}\xA7r`;
+    return `\xA7f${t.count} ${name}\xA7r`;
   });
   switch (objective.logic) {
     case ObjectiveOutLogic.and:
@@ -7222,6 +7225,25 @@ function notifyQuestProgress(player, objective, objectiveIndex, totalObjectives,
   player.sendMessage(generateObjectiveDisplayString(objective, objectiveIndex, totalObjectives, questTitle));
 }
 __name(notifyQuestProgress, "notifyQuestProgress");
+function notifyQuestComplete(player, questTitle) {
+  world22.sendMessage(
+    `\xA7a+=+=+=+=+=+=+ Quest Completed! +=+=+=+=+=+=+\xA7r
+${player.name} has just completed \xA7l\xA7n${questTitle}\xA7r!
+Run \xA75/quests view\xA7r on Discord to start it!`
+  );
+  player.onScreenDisplay.setTitle(`\xA7l\xA7eQ\xA7du\xA7se\xA7as\xA7tt \xA7uC\xA7io\xA7mm\xA7pp\xA79l\xA7ee\xA7nt\xA7be!`);
+  player.dimension.playSound(
+    "quest.complete",
+    player.location,
+    { volume: 1e4 }
+  );
+  for (let i = 0; i < 5; i++) {
+    system24.runTimeout(() => {
+      player.runCommand(`particle minecraft:totem_particle ~ ~2 ~`);
+    }, 10);
+  }
+}
+__name(notifyQuestComplete, "notifyQuestComplete");
 function showTimer(player, remaining_seconds) {
   const minutes = Math.floor(remaining_seconds / 60);
   const seconds = Math.floor(remaining_seconds % 60);
@@ -7236,7 +7258,7 @@ function showTimer(player, remaining_seconds) {
 __name(showTimer, "showTimer");
 
 // behaviour_pack/scripts-dev/features/quests/plugins/death-plugin.ts
-import { world as world22 } from "@minecraft/server";
+import { world as world23 } from "@minecraft/server";
 var DeathPlugin = class {
   constructor() {
     this.exceeded = false;
@@ -7256,8 +7278,8 @@ var DeathPlugin = class {
       deaths++;
       if (deaths >= c.deaths) this.exceeded = true;
     }, "handler");
-    world22.afterEvents.entityDie.subscribe(handler);
-    this.unsubscribe = () => world22.afterEvents.entityDie.unsubscribe(handler);
+    world23.afterEvents.entityDie.subscribe(handler);
+    this.unsubscribe = () => world23.afterEvents.entityDie.unsubscribe(handler);
   }
   onDeactivate(_player, _objective, _progress) {
     this.unsubscribe?.();
@@ -7310,7 +7332,7 @@ var NaturalBlockPlugin = class {
 };
 
 // behaviour_pack/scripts-dev/features/quests/plugins/timer-plugin.ts
-import { system as system24, TicksPerSecond as TicksPerSecond10 } from "@minecraft/server";
+import { system as system25, TicksPerSecond as TicksPerSecond10 } from "@minecraft/server";
 var TimerPlugin = class {
   constructor() {
     this.expired = false;
@@ -7332,13 +7354,13 @@ var TimerPlugin = class {
       this.expired = true;
       return;
     }
-    this.runId = system24.runTimeout(() => {
+    this.runId = system25.runTimeout(() => {
       this.expired = true;
     }, Math.ceil(this.remaining_seconds) * TicksPerSecond10);
   }
   onDeactivate(_player, _objective, _progress) {
     if (this.runId !== void 0) {
-      system24.clearRun(this.runId);
+      system25.clearRun(this.runId);
       this.runId = void 0;
     }
     this.expired = false;
@@ -7495,7 +7517,7 @@ var ObjectiveProcessor = class {
 };
 
 // behaviour_pack/scripts-dev/features/quests/write-back.ts
-import { system as system25, TicksPerSecond as TicksPerSecond11 } from "@minecraft/server";
+import { system as system26, TicksPerSecond as TicksPerSecond11 } from "@minecraft/server";
 var DIRTY = /* @__PURE__ */ new Map();
 function markDirty(thorny_id) {
   const progress = QUEST_PROGRESS_CACHE.get(thorny_id);
@@ -7535,7 +7557,7 @@ async function flush() {
 }
 __name(flush, "flush");
 function loadWriteBackLoop() {
-  system25.runInterval(async () => {
+  system26.runInterval(async () => {
     await flush();
   }, TicksPerSecond11 * 5);
 }
@@ -7627,7 +7649,7 @@ var QuestProcessor = class {
       );
       return false;
     }
-    return this.onQuestComplete(player, thorny_id, questProgress);
+    return this.onQuestComplete(player, thorny_id, quest, questProgress);
   }
   /**
    * Grants rewards tied to a single objective's completion.
@@ -7636,10 +7658,11 @@ var QuestProcessor = class {
    */
   grantObjectiveRewards(player, objectiveDef) {
   }
-  onQuestComplete(player, thorny_id, questProgress) {
+  onQuestComplete(player, thorny_id, questOut, questProgress) {
     questProgress.status = QuestProgressOutStatus.completed;
     questProgress.end_time = (/* @__PURE__ */ new Date()).toISOString();
     markDirty(thorny_id);
+    notifyQuestComplete(player, questOut.title);
     return true;
   }
   fail(player, quest, questProgress) {
@@ -7684,7 +7707,7 @@ function loadQuestProgressCache() {
         activateObjective(player, thornyUser.thorny_id, active.quest_def, active.quest_progress);
       }
     }
-    system26.runTimeout(() => {
+    system27.runTimeout(() => {
       notifyOfQuestUpdate(player, `You have a quest active: ${quest.title}`);
     }, TicksPerSecond12 * 10);
   }
@@ -7700,7 +7723,7 @@ function loadQuestProgressCache() {
   }
   __name(dropped_quest, "dropped_quest");
   async function update_player_quest(player_name) {
-    const player = world23.getPlayers().find((p) => p.name == player_name);
+    const player = world24.getPlayers().find((p) => p.name == player_name);
     if (!player) return;
     const thorny_user = ThornyUser.fetch_user(player_name);
     const questProgress = await get_quest_progress(thorny_user.thorny_id);
@@ -7713,7 +7736,7 @@ function loadQuestProgressCache() {
   }
   __name(update_player_quest, "update_player_quest");
   async function tickQuest(player_name) {
-    const player = world23.getPlayers().find((p) => p.name == player_name);
+    const player = world24.getPlayers().find((p) => p.name == player_name);
     if (!player) return;
     const thorny_user = ThornyUser.fetch_user(player_name);
     const cachedQuestProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
@@ -7730,7 +7753,7 @@ function loadQuestProgressCache() {
     }
   }
   __name(tickQuest, "tickQuest");
-  world23.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
+  world24.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
     if (spawn_event.initialSpawn) {
       const thorny_user = ThornyUser.fetch_user(spawn_event.player.name);
       if (thorny_user) {
@@ -7739,19 +7762,19 @@ function loadQuestProgressCache() {
           await new_active_quest(questProgress, thorny_user, spawn_event.player);
         }
       }
-      const cacheRunId = system26.runInterval(async () => {
+      const cacheRunId = system27.runInterval(async () => {
         await update_player_quest(spawn_event.player.name);
       }, TicksPerSecond12 * 2);
-      const tickRunId = system26.runInterval(async () => {
+      const tickRunId = system27.runInterval(async () => {
         await tickQuest(spawn_event.player.name);
       }, TicksPerSecond12);
       PLAYER_LOOP_RUN_IDS.set(spawn_event.player.name, [cacheRunId, tickRunId]);
     }
   });
-  world23.afterEvents.playerLeave.subscribe((leave_event) => {
+  world24.afterEvents.playerLeave.subscribe((leave_event) => {
     const runIds = PLAYER_LOOP_RUN_IDS.get(leave_event.playerName);
     if (runIds !== void 0) {
-      runIds.map((i) => system26.clearRun(i));
+      runIds.map((i) => system27.clearRun(i));
       PLAYER_LOOP_RUN_IDS.delete(leave_event.playerName);
     }
     const thorny_user = ThornyUser.fetch_user(leave_event.playerName);
@@ -7761,7 +7784,7 @@ function loadQuestProgressCache() {
         const quest = QUEST_CACHE.get(questProgress.quest_id);
         const active = quest ? getActiveObjective(quest, questProgress) : void 0;
         if (active) {
-          const player = world23.getPlayers().find((p) => p.name === leave_event.playerName);
+          const player = world24.getPlayers().find((p) => p.name === leave_event.playerName);
           if (player) {
             deactivateObjective(player, thorny_user.thorny_id, active.quest_def, active.quest_progress);
           }
@@ -7774,10 +7797,10 @@ function loadQuestProgressCache() {
 __name(loadQuestProgressCache, "loadQuestProgressCache");
 
 // behaviour_pack/scripts-dev/features/quests/handlers/mine.ts
-import { world as world24 } from "@minecraft/server";
+import { world as world25 } from "@minecraft/server";
 var questProcessor2 = new QuestProcessor();
 function loadMineHandler() {
-  world24.afterEvents.playerBreakBlock.subscribe(async (event) => {
+  world25.afterEvents.playerBreakBlock.subscribe(async (event) => {
     const thorny_user = ThornyUser.fetch_user(event.player.name);
     if (!thorny_user) return;
     const quest_progress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
@@ -7803,10 +7826,10 @@ function loadMineHandler() {
 __name(loadMineHandler, "loadMineHandler");
 
 // behaviour_pack/scripts-dev/features/quests/handlers/kill.ts
-import { EquipmentSlot as EquipmentSlot13, world as world25 } from "@minecraft/server";
+import { EquipmentSlot as EquipmentSlot13, world as world26 } from "@minecraft/server";
 var questProcessor3 = new QuestProcessor();
 function loadKillHandler() {
-  world25.afterEvents.entityDie.subscribe((event) => {
+  world26.afterEvents.entityDie.subscribe((event) => {
     const attacker = event.damageSource.damagingEntity;
     if (!attacker || attacker.typeId !== "minecraft:player") return;
     const player = attacker;
@@ -7842,7 +7865,7 @@ __name(loadQuestsFeature, "loadQuestsFeature");
 
 // behaviour_pack/scripts-dev/features/whitelist.ts
 import { beforeEvents } from "@minecraft/server-admin";
-import { world as world26 } from "@minecraft/server";
+import { world as world27 } from "@minecraft/server";
 var BlockMessageMap = {
   "no_whitelist": "You are not whitelisted. Check the guidelines to see how to whitelist yourself.",
   "not_active": "WAIT! Don't go!\n\nCouldn't resist a peek, could you? We don't blame you. Let's get you back to where you belong.\n\nRejoin us at everthorn.net/apply or reach out on Discord. We'll get you right back in!",
@@ -7860,7 +7883,7 @@ async function blockJoin(join_event, reason = "other") {
 }
 __name(blockJoin, "blockJoin");
 function loadWhitelistFeature() {
-  world26.afterEvents.worldLoad.subscribe(() => {
+  world27.afterEvents.worldLoad.subscribe(() => {
     beforeEvents.asyncPlayerJoin.subscribe(async (join_event) => {
       try {
         const thorny_user = await api_default.ThornyUser.get_user_from_api(join_event.name);

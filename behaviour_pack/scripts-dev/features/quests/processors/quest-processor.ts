@@ -12,7 +12,7 @@ import { markDirty } from "../write-back";
 import ThornyUser from "../../../api/user";
 import { activateObjective, deactivateObjective } from "./objective-lifecycle";
 import {getActiveObjective} from "../core/objective-lookup";
-import {notifyQuestProgress} from "../core/notify";
+import {notifyQuestComplete, notifyQuestProgress} from "../core/notify";
 
 const objectiveProcessor = new ObjectiveProcessor()
 
@@ -114,7 +114,7 @@ export class QuestProcessor {
             return false
         }
 
-        return this.onQuestComplete(player, thorny_id, questProgress)
+        return this.onQuestComplete(player, thorny_id, quest, questProgress)
     }
 
     /**
@@ -126,11 +126,12 @@ export class QuestProcessor {
         // TODO: deliver objective-level rewards
     }
 
-    private onQuestComplete(player: Player, thorny_id: number, questProgress: QuestProgressOut): true {
+    private onQuestComplete(player: Player, thorny_id: number, questOut: QuestOut, questProgress: QuestProgressOut): true {
         questProgress.status = QuestProgressOutStatus.completed
         questProgress.end_time = new Date().toISOString()
         markDirty(thorny_id)
-        // TODO: notify player quest is complete
+
+        notifyQuestComplete(player, questOut.title)
         return true
     }
 

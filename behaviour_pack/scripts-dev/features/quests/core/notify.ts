@@ -1,4 +1,4 @@
-import {Player} from "@minecraft/server";
+import {Player, system, world} from "@minecraft/server";
 import {AnyTarget} from "./target-processor";
 import utils from "../../../utils";
 import {generateObjectiveDisplayString} from "./objective-display";
@@ -40,6 +40,26 @@ export function notifyQuestProgress(player: Player, objective: ObjectiveOut, obj
     )
 
     player.sendMessage(generateObjectiveDisplayString(objective, objectiveIndex, totalObjectives, questTitle))
+}
+
+export function notifyQuestComplete(player: Player, questTitle: string) {
+    world.sendMessage(
+        `§a+=+=+=+=+=+=+ Quest Completed! +=+=+=+=+=+=+§r\n` +
+        `${player.name} has just completed §l§n${questTitle}§r!\n` +
+        `Run §5/quests view§r on Discord to start it!`
+    )
+
+    player.onScreenDisplay.setTitle(`§l§eQ§du§se§as§tt §uC§io§mm§pp§9l§ee§nt§be!`)
+
+    player.dimension.playSound(
+        'quest.complete',
+        player.location,
+        {volume: 10000}
+    )
+
+    for (let i = 0; i < 5; i++) {
+        system.runTimeout(() => {player.runCommand(`particle minecraft:totem_particle ~ ~2 ~`)}, 10)
+    }
 }
 
 export function showTimer(player: Player, remaining_seconds: number) {
