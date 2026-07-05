@@ -13,6 +13,7 @@ import ThornyUser from "../../../api/user";
 import { activateObjective, deactivateObjective } from "./objective-lifecycle";
 import {getActiveObjective} from "../core/objective-lookup";
 import {notifyQuestComplete, notifyQuestProgress} from "../core/notify";
+import {grantRewards} from "../rewards/grant-rewards";
 
 const objectiveProcessor = new ObjectiveProcessor()
 
@@ -74,7 +75,8 @@ export class QuestProcessor {
     ): boolean {
         deactivateObjective(player, thorny_id, objectiveDef, objectiveProgress)
 
-        this.grantObjectiveRewards(player, objectiveDef)
+        const thorny_user = ThornyUser.fetch_user_by_id(thorny_id)
+        grantRewards(player, thorny_id, thorny_user.balance, objectiveDef.rewards, objectiveProgress).then()
 
         return this.advanceQuest(player, thorny_id, quest, questProgress)
     }
@@ -115,15 +117,6 @@ export class QuestProcessor {
         }
 
         return this.onQuestComplete(player, thorny_id, quest, questProgress)
-    }
-
-    /**
-     * Grants rewards tied to a single objective's completion.
-     * Not called for skipped objectives, and not called for quest completion
-     * — objective rewards and quest completion are separate concerns.
-     */
-    private grantObjectiveRewards(player: Player, objectiveDef: ObjectiveOut): void {
-        // TODO: deliver objective-level rewards
     }
 
     private onQuestComplete(player: Player, thorny_id: number, questOut: QuestOut, questProgress: QuestProgressOut): true {
