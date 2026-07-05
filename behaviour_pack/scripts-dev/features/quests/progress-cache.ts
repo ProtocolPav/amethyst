@@ -3,10 +3,10 @@ import { QUEST_CACHE } from "./quest-cache";
 import ThornyUser from "../../api/user";
 import { get_quest_progress } from "./core/fetch";
 import { ObjectiveOut, ObjectiveProgressOut, ObjectiveProgressOutStatus, QuestProgressOut, QuestProgressOutStatus } from "../../api/nexuscore/model";
-import { activateObjective, deactivateObjective, tickPlugins } from "./processors/objective-processor";
 import { QuestProcessor } from "./processors/quest-processor";
-import utils from "../../utils";
 import {notifyOfQuestUpdate} from "./core/notify";
+import {activateObjective, deactivateObjective} from "./processors/objective-lifecycle";
+import {tickPlugins} from "./processors/objective-tick";
 
 export const QUEST_PROGRESS_CACHE = new Map<number, QuestProgressOut>()
 
