@@ -14,6 +14,8 @@ import { activateObjective, deactivateObjective } from "./objective-lifecycle";
 
 const objectiveProcessor = new ObjectiveProcessor()
 
+// TODO: Quest does not set quest start_time, nor does it override the first objective start_time
+
 export class QuestProcessor {
     process(action: GameAction, player: Player, quest: QuestOut, questProgress: QuestProgressOut): boolean {
         if (questProgress.status === QuestProgressOutStatus.completed) return false
