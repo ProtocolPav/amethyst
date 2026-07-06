@@ -1,6 +1,8 @@
 import {EntityDieAfterEvent, Player, world} from "@minecraft/server";
 import { ObjectiveOut, ObjectiveProgressOut } from "../../../api/nexuscore/model";
 import { CustomizationPlugin } from "../core/customization-plugin";
+import {markDirty} from "../write-back";
+import ThornyUser from "../../../api/user";
 
 /**
  * Watcher — fails the objective if the player dies too many times.
@@ -25,12 +27,22 @@ export class DeathPlugin implements CustomizationPlugin {
         this.exceeded = false
         this.shouldFail = c.fail ?? false
 
+        const thornyUser = ThornyUser.fetch_user(player.name)!
+
         // Seed from existing progress so reloads don't reset the count
         let deaths = progress.customization_progress.maximum_deaths?.deaths ?? 0
 
         const handler = (event: EntityDieAfterEvent) => {
             if (event.deadEntity.id !== player.id) return
             deaths++
+
+            if (!progress.customization_progress.maximum_deaths) {
+                progress.customization_progress.maximum_deaths = { deaths: 0 }
+            }
+            progress.customization_progress.maximum_deaths.deaths = deaths
+
+            markDirty(thornyUser.thorny_id)
+
             if (deaths >= c.deaths) this.exceeded = true
         }
 
