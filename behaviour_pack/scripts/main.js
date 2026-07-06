@@ -4008,7 +4008,7 @@ var checks_default = checks;
 
 // behaviour_pack/scripts-dev/utils/motd.ts
 import { world as world6 } from "@minecraft/server";
-function send_motd(player, quest_progress) {
+function send_motd(player) {
   const motd_shorts = [
     "You're a star! \uE107",
     "Your adventure awaits...",
@@ -4040,12 +4040,6 @@ function send_motd(player, quest_progress) {
   let questReminder = "";
   if (Math.random() < 5e-3) {
     randomLong = "\xA7o\xA7p\xA7lLucky you! You just found 1 Nug! Send a screenshot in #general and ping a CM to claim it!";
-  }
-  if (quest_progress) {
-    const quest = quest_progress.quest;
-    questReminder = `\xA7l\xA7aActive Quest:\xA7r ${quest.title}
----------
-`;
   }
   world6.getDimension(MinecraftDimensionTypes.Overworld).runCommand(
     `title "${player.name}" actionbar \xA7a\xA7lWelcome to Everthorn!\xA7r ${randomShort}`
@@ -5098,7 +5092,7 @@ import {
   EntityComponentTypes as EntityComponentTypes7,
   EquipmentSlot as EquipmentSlot5,
   TicksPerSecond as TicksPerSecond5,
-  ItemComponentTypes as ItemComponentTypes4
+  ItemComponentTypes as ItemComponentTypes3
 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/api/nexuscore/users/users.ts
@@ -5394,643 +5388,11 @@ var Interaction = class _Interaction {
   }
 };
 
-// behaviour_pack/scripts-dev/api/quests/reward.ts
-import { ItemComponentTypes as ItemComponentTypes3, ItemStack as ItemStack2 } from "@minecraft/server";
-var Reward = class {
-  static {
-    __name(this, "Reward");
-  }
-  constructor(data) {
-    Object.assign(this, data);
-  }
-  async give_reward(interaction, thorny_user) {
-    if (this.balance) {
-      thorny_user.balance += this.balance;
-      utils_default.commands.send_message(
-        interaction.dimension,
-        thorny_user.gamertag,
-        `\xA7l[\xA7aQuests\xA7f]\xA7r You have received ${this.balance}${utils_default.emojis.NUGS}!`
-      );
-    } else if (this.item && this.count) {
-      utils_default.commands.give_item(
-        thorny_user.gamertag,
-        this.count,
-        this.get_item_stack(this.item, this.item_metadata)
-      );
-      utils_default.commands.send_message(
-        interaction.dimension,
-        thorny_user.gamertag,
-        `\xA7l[\xA7aQuests\xA7f]\xA7r You have received ${this.count} ${utils_default.clean_id(this.item)}!`
-      );
-    }
-  }
-  get_item_stack(item, metadata) {
-    const item_stack = new ItemStack2(item, 1);
-    metadata.forEach((data) => {
-      switch (data.metadata_type) {
-        case "name":
-          item_stack.nameTag = data.item_name;
-          break;
-        case "lore":
-          item_stack.setLore(data.item_lore);
-          break;
-        case "damage":
-          const durability = item_stack.getComponent(ItemComponentTypes3.Durability);
-          const max_damage = durability?.maxDurability ?? 0;
-          if (durability) {
-            durability.damage = max_damage * data.damage_percentage;
-          }
-          break;
-        case "potion":
-          break;
-        case "enchantment":
-          break;
-        case "enchantment_random":
-          break;
-      }
-    });
-    return item_stack;
-  }
-};
-
-// behaviour_pack/scripts-dev/api/quests/objective.ts
-var Objective = class {
-  static {
-    __name(this, "Objective");
-  }
-  constructor(data) {
-    Object.assign(this, data);
-    this.rewards = data.rewards.map((r) => new Reward(r));
-  }
-  get_rewards_string() {
-    let rewards = [];
-    for (let reward of this.rewards) {
-      if (reward.display_name) {
-        rewards.push(`\xA77${reward.display_name}\xA7r`);
-      } else if (reward.item) {
-        rewards.push(`${reward.count} \xA77${utils_default.clean_id(reward.item)}\xA7r`);
-      } else if (reward.balance) {
-        rewards.push(`\xA7p${reward.balance}${utils_default.emojis.NUGS}\xA7r`);
-      }
-    }
-    return rewards.join(", ");
-  }
-  get_requirements_string() {
-    let requirements = [];
-    if (this.customizations.natural_block && this.objective_type === "mine") {
-      requirements.push(`- The blocks must be naturally generated`);
-    }
-    if (this.customizations.mainhand) {
-      requirements.push(`- Using ${utils_default.clean_id(this.customizations.mainhand.item)}`);
-    }
-    if (this.customizations.location) {
-      requirements.push(`- Around ${this.customizations.location.coordinates} (Radius ${this.customizations.location.horizontal_radius})`);
-    }
-    if (this.customizations.timer) {
-      requirements.push(`- Within ${utils_default.convert_seconds_to_hms(this.customizations.timer.seconds)}`);
-    }
-    if (this.customizations.maximum_deaths) {
-      requirements.push(`- Die no more than ${this.customizations.maximum_deaths.deaths} times`);
-    }
-    if (this.fail_quest_on_objective_fail()) {
-      requirements.push(`- Failing this objective will fail the entire quest`);
-    }
-    return requirements.join("\n");
-  }
-  get_task_string() {
-    let task;
-    if (this.display) {
-      task = `\xA7b${this.display}\xA7r
-`;
-    } else {
-      const task_type = this.objective_type.replace(/\b\w/g, (char) => char.toUpperCase());
-      const targets = [];
-      this.targets.forEach((target) => {
-        let target_id;
-        switch (target.target_type) {
-          case "kill":
-            target_id = target.entity;
-            break;
-          case "mine":
-            target_id = target.block;
-            break;
-          default:
-            target_id = "UNKNOWN";
-        }
-        if (this.logic === "or" && this.target_count) {
-          targets.push(`\xA7l${utils_default.clean_id(target_id)}\xA7r`);
-        } else {
-          targets.push(`\xA7l${target.count} ${utils_default.clean_id(target_id)}\xA7r`);
-        }
-      });
-      let target_string;
-      if (this.logic === "or") {
-        const sliced = targets.slice(0, targets.length - 1);
-        target_string = `any of: ${sliced.join(", ")}${sliced.length !== targets.length ? `, or ${targets[targets.length - 1]}` : ""}`;
-      } else if (this.logic === "and") {
-        const sliced = targets.slice(0, targets.length - 1);
-        target_string = `${sliced.join(", ")}${sliced.length !== targets.length ? `, and ${targets[targets.length - 1]}` : ""}`;
-      } else {
-        const sliced = targets.slice(0, targets.length - 1);
-        target_string = `in order: ${sliced.join(", ")}${sliced.length !== targets.length ? `, and ${targets[targets.length - 1]}` : ""}`;
-      }
-      task = `\xA7b${task_type} ${target_string}
-`;
-    }
-    return task;
-  }
-  generate_objective_string(objective_index, total_objectives, quest_title) {
-    const title = `\xA7a+=+=+=+=+ ${quest_title} +=+=+=+=+\xA7r
-Quest Progress: ${objective_index}/${total_objectives}
-`;
-    const description = `\xA77${this.description}\xA7r
-
-`;
-    const full_task = `Your Task: ${this.get_task_string()}`;
-    const rewards = `Rewards: ${this.get_rewards_string()}
-`;
-    let requirements = "";
-    if (this.get_requirements_string()) {
-      requirements = `\xA7u+=+=+=+=+ Requirements +=+=+=+=+\xA7r
-${this.get_requirements_string()}
-`;
-    }
-    const final_line = `\xA7a+=+=+=+=+=+=+=+=+=+=+=+=+=+=+\xA7r`;
-    return `${title}${description}${full_task}${rewards}${requirements}${final_line}`;
-  }
-  async check_if_natural(coordinates) {
-    const response = await listInteractionsV1GuildsMeInteractionsGet({
-      coordinates
-    });
-    if (response.length !== 0) {
-      return false;
-    }
-    return response.length > 1;
-  }
-  async give_rewards(interation, thorny_user) {
-    for (let reward of this.rewards) {
-      await reward.give_reward(interation, thorny_user);
-    }
-  }
-  get_total_count() {
-    if (this.target_count && this.logic === "or") {
-      return this.target_count;
-    } else {
-      return this.targets.reduce(
-        (previousValue, currentValue) => previousValue + currentValue.count,
-        0
-      );
-    }
-  }
-  get_target(interaction) {
-    const interaction_map = {
-      mine: "mine",
-      kill: "kill",
-      scriptevent: "scriptevent"
-    };
-    const targetType = interaction_map[interaction.type];
-    if (!targetType) return [];
-    return this.targets.filter((t) => {
-      if (t.target_type !== targetType) return false;
-      switch (t.target_type) {
-        case "mine":
-          return t.block === interaction.reference;
-        case "kill":
-          return t.entity === interaction.reference;
-        case "scriptevent":
-          return t.script_id === interaction.reference;
-      }
-    });
-  }
-  fail_quest_on_objective_fail() {
-    return this.customizations.timer?.fail || this.customizations.maximum_deaths?.fail;
-  }
-};
-
-// behaviour_pack/scripts-dev/api/nexuscore/quests/quests.ts
-var getListQuestsV1GuildsMeQuestsGetUrl = /* @__PURE__ */ __name((params) => {
-  const normalizedParams = new URLSearchParams();
-  Object.entries(params || {}).forEach(([key, value]) => {
-    const arrayFormatParameters = ["creator_thorny_ids", "quest_types"];
-    if (Array.isArray(value) && arrayFormatParameters.includes(key)) {
-      value.forEach((v) => {
-        normalizedParams.append(key, v === null ? "null" : String(v));
-      });
-      return;
-    }
-    if (value !== void 0) {
-      normalizedParams.append(key, value === null ? "null" : String(value));
-    }
-  });
-  const stringifiedParams = normalizedParams.toString();
-  return stringifiedParams.length > 0 ? `/v1/guilds/me/quests?${stringifiedParams}` : `/v1/guilds/me/quests`;
-}, "getListQuestsV1GuildsMeQuestsGetUrl");
-var listQuestsV1GuildsMeQuestsGet = /* @__PURE__ */ __name(async (params, options) => {
-  return minecraftFetch(
-    getListQuestsV1GuildsMeQuestsGetUrl(params),
-    {
-      ...options,
-      method: "GET"
-    }
-  );
-}, "listQuestsV1GuildsMeQuestsGet");
-var getGetQuestV1GuildsMeQuestsQuestIdGetUrl = /* @__PURE__ */ __name((questId) => {
-  return `/v1/guilds/me/quests/${questId}`;
-}, "getGetQuestV1GuildsMeQuestsQuestIdGetUrl");
-var getQuestV1GuildsMeQuestsQuestIdGet = /* @__PURE__ */ __name(async (questId, options) => {
-  return minecraftFetch(
-    getGetQuestV1GuildsMeQuestsQuestIdGetUrl(questId),
-    {
-      ...options,
-      method: "GET"
-    }
-  );
-}, "getQuestV1GuildsMeQuestsQuestIdGet");
-var getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl = /* @__PURE__ */ __name((thornyId) => {
-  return `/v1/guilds/me/quests/progress/user/${thornyId}/active`;
-}, "getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl");
-var getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet = /* @__PURE__ */ __name(async (thornyId, options) => {
-  return minecraftFetch(
-    getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl(thornyId),
-    {
-      ...options,
-      method: "GET"
-    }
-  );
-}, "getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet");
-var getFailActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDeleteUrl = /* @__PURE__ */ __name((thornyId) => {
-  return `/v1/guilds/me/quests/progress/user/${thornyId}/active`;
-}, "getFailActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDeleteUrl");
-var failActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDelete = /* @__PURE__ */ __name(async (thornyId, options) => {
-  return minecraftFetch(
-    getFailActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDeleteUrl(thornyId),
-    {
-      ...options,
-      method: "DELETE"
-    }
-  );
-}, "failActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDelete");
-var getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatchUrl = /* @__PURE__ */ __name((progressId) => {
-  return `/v1/guilds/me/quests/progress/${progressId}`;
-}, "getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatchUrl");
-var partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch = /* @__PURE__ */ __name(async (progressId, questProgressUpdate, options) => {
-  return minecraftFetch(
-    getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatchUrl(progressId),
-    {
-      ...options,
-      method: "PATCH",
-      headers: { "Content-Type": "application/json", ...options?.headers },
-      body: JSON.stringify(questProgressUpdate)
-    }
-  );
-}, "partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch");
-var getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPutUrl = /* @__PURE__ */ __name((progressId) => {
-  return `/v1/guilds/me/quests/progress/${progressId}`;
-}, "getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPutUrl");
-var partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut = /* @__PURE__ */ __name(async (progressId, questProgressUpdate, options) => {
-  return minecraftFetch(
-    getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPutUrl(progressId),
-    {
-      ...options,
-      method: "PUT",
-      headers: { "Content-Type": "application/json", ...options?.headers },
-      body: JSON.stringify(questProgressUpdate)
-    }
-  );
-}, "partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut");
-
-// behaviour_pack/scripts-dev/api/quests/quest.ts
-var Quest = class _Quest {
-  static {
-    __name(this, "Quest");
-  }
-  constructor(data) {
-    Object.assign(this, data);
-    this.start_time = new Date(data.start_time);
-    this.end_time = new Date(data.end_time);
-    this.objectives = data.objectives.map((o) => new Objective(o));
-  }
-  static async get_quest(quest_id) {
-    try {
-      const quest_response = await getQuestV1GuildsMeQuestsQuestIdGet(quest_id);
-      const quest_data = quest_response;
-      return new _Quest(quest_data);
-    } catch (error) {
-      throw error;
-    }
-  }
-  static async get_active_quests() {
-    try {
-      const quests_list = await listQuestsV1GuildsMeQuestsGet({ active: true });
-      console.log(`Got ${quests_list.length} active quests`);
-      return quests_list.map((quest) => new _Quest(quest));
-    } catch (error) {
-      throw error;
-    }
-  }
-};
-
-// behaviour_pack/scripts-dev/api/quests/objective_progress.ts
-var ObjectiveProgress = class {
-  static {
-    __name(this, "ObjectiveProgress");
-  }
-  constructor(data, thorny_user) {
-    Object.assign(this, data);
-    this.thorny_user = thorny_user;
-    this.start_time = data.start_time ? new Date(data.start_time) : null;
-    this.end_time = data.end_time ? new Date(data.end_time) : null;
-  }
-  async update_user_objective() {
-    await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch(this.progress_id, {
-      objectives: [
-        {
-          objective_id: this.objective_id,
-          start_time: this.start_time ? this.start_time.toISOString() : null,
-          end_time: this.end_time ? this.end_time.toISOString() : null,
-          status: this.status,
-          target_progress: this.target_progress,
-          customization_progress: this.customization_progress
-        }
-      ]
-    });
-  }
-  get_total_progress() {
-    return this.target_progress.reduce(
-      (previousValue, currentValue) => previousValue + currentValue.count,
-      0
-    );
-  }
-  get_progress_string(targets_data) {
-    return targets_data.map((t) => {
-      const progress = this.target_progress.find((p) => p.target_uuid === t.target_uuid);
-      const current = progress?.count ?? 0;
-      const total = t.count;
-      let label;
-      switch (t.target_type) {
-        case "mine":
-          label = utils_default.clean_id(t.block);
-          break;
-        case "kill":
-          label = utils_default.clean_id(t.entity);
-          break;
-        default:
-          label = "Progress";
-      }
-      return `\xA7l\xA7s${label}:\xA7r \xA77${current}\xA7r/${total}`;
-    });
-  }
-  async check_requirements(interaction) {
-    const objective = this.objective;
-    if (this.customization_progress.maximum_deaths && objective.customizations.maximum_deaths && this.customization_progress.maximum_deaths.deaths >= objective.customizations.maximum_deaths?.deaths) {
-      return { increment_progress: false, end_objective: true, fail_objective: objective.customizations.maximum_deaths.fail };
-    }
-    if (interaction.type !== objective.objective_type) {
-      return { increment_progress: false, end_objective: false, fail_objective: false };
-    }
-    if (objective.customizations.mainhand && objective.customizations.mainhand.item !== interaction.mainhand) {
-      return { increment_progress: false, end_objective: false, fail_objective: false };
-    }
-    if (objective.customizations.location && !utils_default.checks.distance_check(
-      interaction.coordinates,
-      objective.customizations.location.coordinates,
-      objective.customizations.location.horizontal_radius,
-      objective.customizations.location.vertical_radius
-    )) {
-      return { increment_progress: false, end_objective: false, fail_objective: false };
-    }
-    if (objective.customizations.timer && !utils_default.checks.timer_check(interaction.time, this.start_time, objective.customizations.timer.seconds)) {
-      return { increment_progress: false, end_objective: true, fail_objective: objective.customizations.timer.fail };
-    }
-    if (objective.objective_type == "mine" && objective.customizations.natural_block) {
-      return {
-        increment_progress: !await objective.check_if_natural(interaction.coordinates),
-        end_objective: false,
-        fail_objective: false
-      };
-    }
-    return { increment_progress: true, end_objective: false, fail_objective: false };
-  }
-  /**
-   * Increments the Target Progress.
-   *
-   * If the increment will be larger than the max count, it will not increment,
-   * unless the Objective has a Target Count, which overrides the individual counts.
-   */
-  increment_target(interaction) {
-    const targets = this.objective.get_target(interaction);
-    for (const blueprint of targets) {
-      const progress = this.target_progress.find(
-        (p) => p.target_uuid === blueprint.target_uuid
-      );
-      if (!progress) continue;
-      if (progress.count < blueprint.count || this.objective.target_count) {
-        progress.count += 1;
-      }
-    }
-    return targets;
-  }
-  async complete_objective(interaction, quest_progress, failed) {
-    const quest = quest_progress.quest;
-    const index = quest.objectives.indexOf(this.objective);
-    if (failed) {
-      utils_default.commands.play_quest_fail_sound(this.thorny_user.gamertag);
-    } else {
-      utils_default.commands.play_objective_complete_sound(this.thorny_user.gamertag);
-    }
-    utils_default.commands.send_title(
-      interaction.dimension,
-      this.thorny_user.gamertag,
-      "actionbar",
-      `\xA7l\xA7a${quest.title} Progress:\xA7r \xA77${index + 1}\xA7r/${quest.objectives.length}`
-    );
-    utils_default.commands.send_message(
-      interaction.dimension,
-      this.thorny_user.gamertag,
-      quest.objectives[index + 1].generate_objective_string(index + 1, quest.objectives.length, quest.title)
-    );
-  }
-  async increment_completion(interaction, quest) {
-    const requirement_check = await this.check_requirements(interaction);
-    if (requirement_check.increment_progress) {
-      const targets_data = this.increment_target(interaction);
-      utils_default.commands.play_quest_progress_sound(this.thorny_user.gamertag);
-      utils_default.commands.send_title(
-        interaction.dimension,
-        this.thorny_user.gamertag,
-        "actionbar",
-        this.get_progress_string(targets_data).join("\n")
-      );
-      if (this.get_total_progress() === this.objective.get_total_count()) {
-        this.status = "completed";
-        this.end_time = /* @__PURE__ */ new Date();
-        const index = quest.objectives.indexOf(this);
-        if (index < quest.objectives.length - 1) {
-          await this.complete_objective(interaction, quest, false);
-        }
-        await this.objective.give_rewards(interaction, this.thorny_user);
-      }
-      return true;
-    } else if (requirement_check.fail_objective) {
-      this.status = "failed";
-      this.end_time = /* @__PURE__ */ new Date();
-    } else if (interaction.type === "die" && this.customization_progress.maximum_deaths) {
-      this.customization_progress.maximum_deaths.deaths += 1;
-      const max_deaths = this.objective.customizations.maximum_deaths?.deaths ?? 0;
-      const deaths = this.customization_progress.maximum_deaths?.deaths ?? 0;
-      utils_default.commands.send_message(
-        interaction.dimension,
-        this.thorny_user.gamertag,
-        `\xA7l[\xA7aQuests\xA7f]\xA7r You have died. ${max_deaths - deaths} deaths remaining...`
-      );
-      if (deaths > max_deaths) {
-        this.status = "failed";
-        this.end_time = /* @__PURE__ */ new Date();
-      }
-      await this.update_user_objective();
-    }
-    if (this.status === "failed" && !this.objective.fail_quest_on_objective_fail()) {
-      const index = quest.objectives.indexOf(this);
-      if (index < quest.objectives.length - 1) {
-        await this.complete_objective(interaction, quest, true);
-      }
-      utils_default.commands.send_message(
-        interaction.dimension,
-        this.thorny_user.gamertag,
-        `\xA7l[\xA7aQuests\xA7f]\xA7r \xA74You have failed the previous objective, but the quest continues... You did not receive rewards for the previous objective.`
-      );
-    }
-    return false;
-  }
-};
-
-// behaviour_pack/scripts-dev/api/quests/quest_progress.ts
-var QuestProgress = class _QuestProgress {
-  static {
-    __name(this, "QuestProgress");
-  }
-  constructor(data, thorny_user) {
-    Object.assign(this, data);
-    this.thorny_user = thorny_user;
-    this.accept_time = new Date(data.accept_time);
-    this.start_time = data.start_time ? new Date(data.start_time) : null;
-    this.end_time = data.end_time ? new Date(data.end_time) : null;
-    this.objectives = data.objectives.map((o) => new ObjectiveProgress(o, thorny_user));
-  }
-  /**
-   * Updates the user's Quest and Objective Progress
-   */
-  async update_user_quest() {
-    await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPatch(this.progress_id, {
-      "start_time": this.start_time ? this.start_time.toISOString() : null,
-      "end_time": this.end_time ? this.end_time.toISOString() : null,
-      "status": this.status
-    });
-    for (let objective of this.objectives) {
-      await objective.update_user_objective();
-    }
-  }
-  /** Fails the QuestProgress **/
-  async fail_quest(thorny_id) {
-    this.status = "failed";
-    await failActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDelete(thorny_id);
-  }
-  /** Fetches QuestProgress **/
-  static async get_quest_progress(thorny_user) {
-    let quest_progress_response;
-    const thorny_id = thorny_user.thorny_id;
-    try {
-      quest_progress_response = await getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet(thorny_id);
-    } catch (error) {
-      if (error instanceof NotFoundError) {
-        return null;
-      }
-      throw error;
-    }
-    const quest_progress_data = quest_progress_response;
-    return new _QuestProgress(
-      quest_progress_data,
-      thorny_user
-    );
-  }
-  /**
-   * Returns the currently active objective, or null if there are none left.
-   *
-   * If there are no `active` objectives, but there are `pending` ones,
-   * it promotes the next objective in the order to `active`
-   */
-  get_active_objective() {
-    const active = this.objectives.find((o) => o.status === "active");
-    if (active) return active;
-    const nextPending = this.objectives.find((o) => o.status === "pending");
-    if (!nextPending) return null;
-    nextPending.status = "active";
-    nextPending.start_time = /* @__PURE__ */ new Date();
-    return nextPending;
-  }
-  /**
-   * Increments the active objective.
-   * Updates quest's and objectives start and end times.
-   */
-  async increment_active_objective(interaction) {
-    const active_objective = this.get_active_objective();
-    if (active_objective) {
-      if (active_objective.get_total_progress() === 0 && this.objectives.indexOf(active_objective) === 0) {
-        this.start_time = /* @__PURE__ */ new Date();
-        active_objective.start_time = /* @__PURE__ */ new Date();
-      }
-      const incremented = await active_objective.increment_completion(interaction, this);
-      if (active_objective.status === "completed") {
-        const next_objective = this.get_active_objective();
-        if (!next_objective) {
-          this.status = "completed";
-          this.end_time = /* @__PURE__ */ new Date();
-          utils_default.commands.play_quest_complete_sound(this.thorny_user.gamertag);
-          utils_default.commands.send_title(
-            interaction.dimension,
-            this.thorny_user.gamertag,
-            "title",
-            `\xA7l\xA7eQ\xA7du\xA7se\xA7as\xA7tt \xA7uC\xA7io\xA7mm\xA7pp\xA79l\xA7ee\xA7nt\xA7be!`
-          );
-          utils_default.commands.send_message(
-            interaction.dimension,
-            "@a",
-            `\xA7a+=+=+=+=+=+=+ Quest Completed! +=+=+=+=+=+=+\xA7r
-${this.thorny_user.gamertag} has just completed \xA7l\xA7n${this.quest.title}\xA7r!
-Run \xA75/quests view\xA7r on Discord to start it!`
-          );
-        }
-      } else if (active_objective.status === "failed" && active_objective.objective.fail_quest_on_objective_fail()) {
-        this.status = "failed";
-        this.end_time = /* @__PURE__ */ new Date();
-        utils_default.commands.play_quest_fail_sound(this.thorny_user.gamertag);
-        utils_default.commands.send_title(
-          interaction.dimension,
-          this.thorny_user.gamertag,
-          "title",
-          `\xA7lQuest Failed :(`
-        );
-        utils_default.commands.send_message(
-          interaction.dimension,
-          "@a",
-          `\xA7c+=+=+=+=+=+=+ Quest Failed :( +=+=+=+=+=+=+\xA7r
-${this.thorny_user.gamertag} has failed \xA7l\xA7n${this.quest.title}\xA7r!
-Think you can do better? Run \xA75/quests view\xA7r on Discord to start it!`
-        );
-      }
-      return incremented;
-    }
-    return false;
-  }
-};
-
 // behaviour_pack/scripts-dev/api/index.ts
 var api = {
   ThornyUser,
   Relay,
   Interaction,
-  Quest,
-  QuestProgress,
   Item,
   World
 };
@@ -6068,12 +5430,12 @@ function loadAltarComponent() {
           let modifier = 0;
           let enchantment_levels = 0;
           let enchantments = 0;
-          mainhand.getComponent(ItemComponentTypes4.Enchantable)?.getEnchantments().forEach((enchantment) => {
+          mainhand.getComponent(ItemComponentTypes3.Enchantable)?.getEnchantments().forEach((enchantment) => {
             enchantment_levels += enchantment.level;
             enchantments += 1;
           });
           modifier += enchantment_levels * enchantments * 0.3 / 100 + (mainhand.nameTag ? 0.1 : 0);
-          const durability = mainhand.getComponent(ItemComponentTypes4.Durability);
+          const durability = mainhand.getComponent(ItemComponentTypes3.Durability);
           if (durability) {
             modifier -= durability.damage / durability.maxDurability;
           }
@@ -6903,7 +6265,7 @@ function loadConnectionsFeature() {
         const thorny_user = api_default.ThornyUser.fetch_user(spawn_event.player.name);
         await thorny_user.send_connect_event("connect");
         api_default.Relay.event(`${spawn_event.player.name} has joined the server`, "", "join");
-        utils_default.send_motd(spawn_event.player, null);
+        utils_default.send_motd(spawn_event.player);
         if (thorny_user.patron) {
           spawn_event.player.nameTag = `\xA7l\xA7c${spawn_event.player.nameTag}\xA7r`;
         }
@@ -6961,11 +6323,67 @@ import { system as system27, TicksPerSecond as TicksPerSecond12, world as world2
 
 // behaviour_pack/scripts-dev/features/quests/quest-cache.ts
 import { system as system23, TicksPerSecond as TicksPerSecond9 } from "@minecraft/server";
+
+// behaviour_pack/scripts-dev/api/nexuscore/quests/quests.ts
+var getListQuestsV1GuildsMeQuestsGetUrl = /* @__PURE__ */ __name((params) => {
+  const normalizedParams = new URLSearchParams();
+  Object.entries(params || {}).forEach(([key, value]) => {
+    const arrayFormatParameters = ["creator_thorny_ids", "quest_types"];
+    if (Array.isArray(value) && arrayFormatParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? "null" : String(v));
+      });
+      return;
+    }
+    if (value !== void 0) {
+      normalizedParams.append(key, value === null ? "null" : String(value));
+    }
+  });
+  const stringifiedParams = normalizedParams.toString();
+  return stringifiedParams.length > 0 ? `/v1/guilds/me/quests?${stringifiedParams}` : `/v1/guilds/me/quests`;
+}, "getListQuestsV1GuildsMeQuestsGetUrl");
+var listQuestsV1GuildsMeQuestsGet = /* @__PURE__ */ __name(async (params, options) => {
+  return minecraftFetch(
+    getListQuestsV1GuildsMeQuestsGetUrl(params),
+    {
+      ...options,
+      method: "GET"
+    }
+  );
+}, "listQuestsV1GuildsMeQuestsGet");
+var getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl = /* @__PURE__ */ __name((thornyId) => {
+  return `/v1/guilds/me/quests/progress/user/${thornyId}/active`;
+}, "getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl");
+var getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet = /* @__PURE__ */ __name(async (thornyId, options) => {
+  return minecraftFetch(
+    getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl(thornyId),
+    {
+      ...options,
+      method: "GET"
+    }
+  );
+}, "getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet");
+var getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPutUrl = /* @__PURE__ */ __name((progressId) => {
+  return `/v1/guilds/me/quests/progress/${progressId}`;
+}, "getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPutUrl");
+var partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut = /* @__PURE__ */ __name(async (progressId, questProgressUpdate, options) => {
+  return minecraftFetch(
+    getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPutUrl(progressId),
+    {
+      ...options,
+      method: "PUT",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(questProgressUpdate)
+    }
+  );
+}, "partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut");
+
+// behaviour_pack/scripts-dev/features/quests/quest-cache.ts
 var QUEST_CACHE = /* @__PURE__ */ new Map();
 async function reload_quest_cache() {
-  const quests = await api_default.Quest.get_active_quests();
+  const quests_list = await listQuestsV1GuildsMeQuestsGet({ active: true });
   QUEST_CACHE.clear();
-  quests.forEach((quest) => QUEST_CACHE.set(quest.quest_id, quest));
+  quests_list.forEach((quest) => QUEST_CACHE.set(quest.quest_id, quest));
 }
 __name(reload_quest_cache, "reload_quest_cache");
 function loadQuestCache() {
@@ -7259,6 +6677,55 @@ __name(showTimer, "showTimer");
 
 // behaviour_pack/scripts-dev/features/quests/customizations/death-plugin.ts
 import { world as world23 } from "@minecraft/server";
+
+// behaviour_pack/scripts-dev/features/quests/write-back.ts
+import { system as system25, TicksPerSecond as TicksPerSecond10 } from "@minecraft/server";
+var DIRTY = /* @__PURE__ */ new Map();
+function markDirty(thorny_id) {
+  const progress = QUEST_PROGRESS_CACHE.get(thorny_id);
+  if (progress) DIRTY.set(thorny_id, progress);
+}
+__name(markDirty, "markDirty");
+function buildUpdate(progress) {
+  return {
+    status: progress.status,
+    start_time: progress.start_time,
+    end_time: progress.end_time,
+    objectives: progress.objectives.map((obj) => ({
+      progress_id: obj.progress_id,
+      objective_id: obj.objective_id,
+      status: obj.status,
+      start_time: obj.start_time,
+      end_time: obj.end_time,
+      target_progress: obj.target_progress,
+      customization_progress: obj.customization_progress
+    }))
+  };
+}
+__name(buildUpdate, "buildUpdate");
+async function flush() {
+  if (DIRTY.size === 0) return;
+  for (const [thorny_id, progress] of DIRTY) {
+    try {
+      await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut(
+        progress.progress_id,
+        buildUpdate(progress)
+      );
+      DIRTY.delete(thorny_id);
+    } catch (error) {
+      console.error(`[write-back] Failed to flush progress for thorny_id ${thorny_id}:`, error);
+    }
+  }
+}
+__name(flush, "flush");
+function loadWriteBackLoop() {
+  system25.runInterval(async () => {
+    await flush();
+  }, TicksPerSecond10 * 5);
+}
+__name(loadWriteBackLoop, "loadWriteBackLoop");
+
+// behaviour_pack/scripts-dev/features/quests/customizations/death-plugin.ts
 var DeathPlugin = class {
   constructor() {
     this.exceeded = false;
@@ -7272,10 +6739,16 @@ var DeathPlugin = class {
     if (!c) return;
     this.exceeded = false;
     this.shouldFail = c.fail ?? false;
+    const thornyUser = ThornyUser.fetch_user(player.name);
     let deaths = progress.customization_progress.maximum_deaths?.deaths ?? 0;
     const handler = /* @__PURE__ */ __name((event) => {
       if (event.deadEntity.id !== player.id) return;
       deaths++;
+      if (!progress.customization_progress.maximum_deaths) {
+        progress.customization_progress.maximum_deaths = { deaths: 0 };
+      }
+      progress.customization_progress.maximum_deaths.deaths = deaths;
+      markDirty(thornyUser.thorny_id);
       if (deaths >= c.deaths) this.exceeded = true;
     }, "handler");
     world23.afterEvents.entityDie.subscribe(handler);
@@ -7332,7 +6805,7 @@ var NaturalBlockPlugin = class {
 };
 
 // behaviour_pack/scripts-dev/features/quests/customizations/timer-plugin.ts
-import { system as system25, TicksPerSecond as TicksPerSecond10 } from "@minecraft/server";
+import { system as system26, TicksPerSecond as TicksPerSecond11 } from "@minecraft/server";
 var TimerPlugin = class {
   constructor() {
     this.expired = false;
@@ -7354,13 +6827,13 @@ var TimerPlugin = class {
       this.expired = true;
       return;
     }
-    this.runId = system25.runTimeout(() => {
+    this.runId = system26.runTimeout(() => {
       this.expired = true;
-    }, Math.ceil(this.remaining_seconds) * TicksPerSecond10);
+    }, Math.ceil(this.remaining_seconds) * TicksPerSecond11);
   }
   onDeactivate(_player, _objective, _progress) {
     if (this.runId !== void 0) {
-      system25.clearRun(this.runId);
+      system26.clearRun(this.runId);
       this.runId = void 0;
     }
     this.expired = false;
@@ -7516,53 +6989,6 @@ var ObjectiveProcessor = class {
   }
 };
 
-// behaviour_pack/scripts-dev/features/quests/write-back.ts
-import { system as system26, TicksPerSecond as TicksPerSecond11 } from "@minecraft/server";
-var DIRTY = /* @__PURE__ */ new Map();
-function markDirty(thorny_id) {
-  const progress = QUEST_PROGRESS_CACHE.get(thorny_id);
-  if (progress) DIRTY.set(thorny_id, progress);
-}
-__name(markDirty, "markDirty");
-function buildUpdate(progress) {
-  return {
-    status: progress.status,
-    start_time: progress.start_time,
-    end_time: progress.end_time,
-    objectives: progress.objectives.map((obj) => ({
-      progress_id: obj.progress_id,
-      objective_id: obj.objective_id,
-      status: obj.status,
-      start_time: obj.start_time,
-      end_time: obj.end_time,
-      target_progress: obj.target_progress,
-      customization_progress: obj.customization_progress
-    }))
-  };
-}
-__name(buildUpdate, "buildUpdate");
-async function flush() {
-  if (DIRTY.size === 0) return;
-  for (const [thorny_id, progress] of DIRTY) {
-    try {
-      await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut(
-        progress.progress_id,
-        buildUpdate(progress)
-      );
-      DIRTY.delete(thorny_id);
-    } catch (error) {
-      console.error(`[write-back] Failed to flush progress for thorny_id ${thorny_id}:`, error);
-    }
-  }
-}
-__name(flush, "flush");
-function loadWriteBackLoop() {
-  system26.runInterval(async () => {
-    await flush();
-  }, TicksPerSecond11 * 5);
-}
-__name(loadWriteBackLoop, "loadWriteBackLoop");
-
 // behaviour_pack/scripts-dev/features/quests/core/objective-lookup.ts
 function findActiveObjectiveProgress(questProgress) {
   return questProgress.objectives.find((o) => o.status === ObjectiveProgressOutStatus.active);
@@ -7578,7 +7004,7 @@ function getActiveObjective(quest, questProgress) {
 __name(getActiveObjective, "getActiveObjective");
 
 // behaviour_pack/scripts-dev/features/quests/rewards/metadata/enchantment-metadata.ts
-import { ItemComponentTypes as ItemComponentTypes5, EnchantmentTypes } from "@minecraft/server";
+import { ItemComponentTypes as ItemComponentTypes4, EnchantmentTypes } from "@minecraft/server";
 var EnchantmentMetadata = class {
   constructor() {
     this.metadata_type = "enchantment";
@@ -7587,7 +7013,7 @@ var EnchantmentMetadata = class {
     __name(this, "EnchantmentMetadata");
   }
   applyToItem(item, data) {
-    const enchants = item.getComponent(ItemComponentTypes5.Enchantable);
+    const enchants = item.getComponent(ItemComponentTypes4.Enchantable);
     enchants?.addEnchantment({
       type: EnchantmentTypes.get(data.enchantment_id),
       level: data.enchantment_level
@@ -7597,7 +7023,7 @@ var EnchantmentMetadata = class {
 };
 
 // behaviour_pack/scripts-dev/features/quests/rewards/metadata/random-enchantment-metadata.ts
-import { ItemComponentTypes as ItemComponentTypes6, EnchantmentTypes as EnchantmentTypes2 } from "@minecraft/server";
+import { ItemComponentTypes as ItemComponentTypes5, EnchantmentTypes as EnchantmentTypes2 } from "@minecraft/server";
 var ENCHANTABILITY = {
   "minecraft:leather_helmet": 15,
   "minecraft:leather_chestplate": 15,
@@ -7683,7 +7109,7 @@ var RandomEnchantmentMetadata = class {
     __name(this, "RandomEnchantmentMetadata");
   }
   applyToItem(item, data) {
-    const enchants = item.getComponent(ItemComponentTypes6.Enchantable);
+    const enchants = item.getComponent(ItemComponentTypes5.Enchantable);
     if (!enchants) return item;
     const xpLevel = data.level_min + Math.floor(Math.random() * (data.level_max - data.level_min + 1));
     const enchantability = ENCHANTABILITY[item.typeId] ?? DEFAULT_ENCHANTABILITY;
@@ -7757,7 +7183,7 @@ var LoreMetadata = class {
 };
 
 // behaviour_pack/scripts-dev/features/quests/rewards/metadata/damage-metadata.ts
-import { ItemComponentTypes as ItemComponentTypes8 } from "@minecraft/server";
+import { ItemComponentTypes as ItemComponentTypes7 } from "@minecraft/server";
 var DamageMetadata = class {
   constructor() {
     this.metadata_type = "damage";
@@ -7766,7 +7192,7 @@ var DamageMetadata = class {
     __name(this, "DamageMetadata");
   }
   applyToItem(item, data) {
-    const durability = item.getComponent(ItemComponentTypes8.Durability);
+    const durability = item.getComponent(ItemComponentTypes7.Durability);
     if (durability) {
       durability.damage = Math.floor(durability.maxDurability * data.damage_percentage / 100);
     }
@@ -7808,7 +7234,7 @@ var BalanceReward = class {
 };
 
 // behaviour_pack/scripts-dev/features/quests/rewards/item-reward.ts
-import { ItemStack as ItemStack7 } from "@minecraft/server";
+import { ItemStack as ItemStack6 } from "@minecraft/server";
 var ItemReward = class {
   static {
     __name(this, "ItemReward");
@@ -7827,7 +7253,7 @@ var ItemReward = class {
     );
   }
   buildItemStack(reward) {
-    let item = new ItemStack7(reward.item, 1);
+    let item = new ItemStack6(reward.item, 1);
     for (const m of reward.item_metadata) {
       const handler = REWARD_METADATA_REGISTRY.get(m.metadata_type);
       if (handler?.applyToItem) {

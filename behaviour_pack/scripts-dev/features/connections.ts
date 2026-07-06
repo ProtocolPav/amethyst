@@ -10,7 +10,7 @@ export default function loadConnectionsFeature() {
                 await thorny_user.send_connect_event('connect')
                 api.Relay.event(`${spawn_event.player.name} has joined the server`, '', 'join')
 
-                utils.send_motd(spawn_event.player, null)
+                utils.send_motd(spawn_event.player)
 
                 if (thorny_user.patron) {
                     spawn_event.player.nameTag = `§l§c${spawn_event.player.nameTag}§r`
