@@ -54,7 +54,6 @@ export default function entityDie() {
         )
 
         await death_interaction.post_interaction()
-        api.Interaction.enqueue(death_interaction)
 
         api.Relay.event(utils.DeathMessage.random_pvp(killer_player.name, dead_player.name), '', 'other')
     }
@@ -84,7 +83,6 @@ export default function entityDie() {
         )
 
         await death_interaction.post_interaction()
-        api.Interaction.enqueue(death_interaction)
 
         api.Relay.event(utils.DeathMessage.random_pve(player.name, entity.typeId), '', 'other')
     }
@@ -114,7 +112,6 @@ export default function entityDie() {
         )
 
         await death_interaction.post_interaction()
-        api.Interaction.enqueue(death_interaction)
 
         api.Relay.event(utils.DeathMessage.random_suicide(player.name, damageCause), '', 'other')
     }
