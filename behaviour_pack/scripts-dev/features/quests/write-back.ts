@@ -15,7 +15,7 @@ const DIRTY = new Map<number, QuestProgressOut>()  // thorny_id → snapshot
 
 export function markDirty(thorny_id: number): void {
     const progress = QUEST_PROGRESS_CACHE.get(thorny_id)
-    if (progress) DIRTY.set(thorny_id, { ...progress })  // snapshot at mark time
+    if (progress) DIRTY.set(thorny_id, progress)  // snapshot at mark time
 }
 
 /**
