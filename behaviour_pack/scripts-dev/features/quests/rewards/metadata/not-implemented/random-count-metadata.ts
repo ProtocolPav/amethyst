@@ -1,5 +1,5 @@
 import { RewardOut } from "../../../../../api/nexuscore/model";
-import { RewardMetadata } from "../../../core/reward-metadata";
+import { RewardMetadata } from "../../../core/reward/reward-metadata";
 
 /**
  * Transformer — overrides reward.count with a random value in [count_min, count_max].

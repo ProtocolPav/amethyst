@@ -1,5 +1,5 @@
 import {Player} from "@minecraft/server";
-import {ObjectiveOut, ObjectiveProgressOut} from "../../../api/nexuscore/model";
+import {ObjectiveOut, ObjectiveProgressOut} from "../../../../api/nexuscore/model";
 import {ACTIVE_PLUGINS} from "./objective-lifecycle";
 
 /**

@@ -1,6 +1,6 @@
 import { Player } from "@minecraft/server";
 import { RewardOut } from "../../../api/nexuscore/model";
-import { RewardGranter } from "../core/reward-granter";
+import { RewardGranter } from "../core/reward/reward-granter";
 import { partialUpdateUserV1GuildsMeUsersThornyIdPatch } from "../../../api/nexuscore/users/users";
 import utils from "../../../utils";
 

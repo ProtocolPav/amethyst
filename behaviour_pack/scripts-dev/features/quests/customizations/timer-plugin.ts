@@ -1,6 +1,6 @@
 import {Player, system, TicksPerSecond} from "@minecraft/server";
 import { ObjectiveOut, ObjectiveProgressOut } from "../../../api/nexuscore/model";
-import { CustomizationPlugin } from "../core/customization-plugin";
+import { CustomizationPlugin } from "../types/customization-plugin";
 import {showTimer} from "../core/notify";
 
 /**

@@ -1,5 +1,5 @@
 import {ItemStack, ItemComponentTypes, SetPotionFunction, Potions} from "@minecraft/server";
-import { RewardMetadata } from "../../core/reward-metadata";
+import { RewardMetadata } from "../../core/reward/reward-metadata";
 import {PotionModel} from "../../../../api/nexuscore/model";
 
 /** Sets the potion effect type and delivery method on a potion item. */

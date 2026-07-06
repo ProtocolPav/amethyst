@@ -1,5 +1,5 @@
 import { Player } from "@minecraft/server";
-import { RewardOut } from "../../../api/nexuscore/model";
+import { RewardOut } from "../../../../api/nexuscore/model";
 
 /**
  * Delivers one reward to a player.

@@ -1,5 +1,5 @@
 import { ItemStack } from "@minecraft/server";
-import { RewardMetadata } from "../../core/reward-metadata";
+import { RewardMetadata } from "../../core/reward/reward-metadata";
 import {LoreModel} from "../../../../api/nexuscore/model";
 
 /** Sets the item's lore lines. */

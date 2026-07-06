@@ -1,6 +1,6 @@
 import { ItemStack, Player } from "@minecraft/server";
 import { RewardOut } from "../../../api/nexuscore/model";
-import { RewardGranter } from "../core/reward-granter";
+import { RewardGranter } from "../core/reward/reward-granter";
 import { REWARD_METADATA_REGISTRY } from "./metadata/registry";
 import utils from "../../../utils";
 

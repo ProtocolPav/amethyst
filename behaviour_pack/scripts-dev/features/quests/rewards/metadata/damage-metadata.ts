@@ -1,5 +1,5 @@
 import { ItemStack, ItemComponentTypes } from "@minecraft/server";
-import { RewardMetadata } from "../../core/reward-metadata";
+import { RewardMetadata } from "../../core/reward/reward-metadata";
 import {DamageModel} from "../../../../api/nexuscore/model";
 
 /** Pre-damages the item by a percentage of its maximum durability. */

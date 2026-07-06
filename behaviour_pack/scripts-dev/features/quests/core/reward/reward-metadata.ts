@@ -1,6 +1,6 @@
 import { Player } from "@minecraft/server";
 import { ItemStack } from "@minecraft/server";
-import { RewardOut, ObjectiveProgressOut } from "../../../api/nexuscore/model";
+import { RewardOut, ObjectiveProgressOut } from "../../../../api/nexuscore/model";
 
 /**
  * A RewardMetadata is a modular participant in the reward delivery pipeline.

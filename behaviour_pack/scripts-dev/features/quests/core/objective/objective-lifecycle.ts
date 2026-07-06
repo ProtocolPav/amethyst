@@ -1,12 +1,12 @@
-import {CustomizationPlugin} from "./customization-plugin";
+import {CustomizationPlugin} from "../../types/customization-plugin";
 import {Player} from "@minecraft/server";
-import {ObjectiveOut, ObjectiveProgressOut} from "../../../api/nexuscore/model";
-import {TARGET_PROCESSORS} from "../processors/objective-processor";
-import {DeathPlugin} from "../customizations/death-plugin";
-import {LocationPlugin} from "../customizations/location-plugin";
-import {MainhandPlugin} from "../customizations/mainhand-plugin";
-import {NaturalBlockPlugin} from "../customizations/natural-block-plugin";
-import {TimerPlugin} from "../customizations/timer-plugin";
+import {ObjectiveOut, ObjectiveProgressOut} from "../../../../api/nexuscore/model";
+import {TARGET_PROCESSORS} from "../../processors/objective-processor";
+import {DeathPlugin} from "../../customizations/death-plugin";
+import {LocationPlugin} from "../../customizations/location-plugin";
+import {MainhandPlugin} from "../../customizations/mainhand-plugin";
+import {NaturalBlockPlugin} from "../../customizations/natural-block-plugin";
+import {TimerPlugin} from "../../customizations/timer-plugin";
 
 /**
  * Registry of customization plugin classes, keyed by the customization field

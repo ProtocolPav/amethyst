@@ -1,5 +1,5 @@
-import { CustomizationPlugin } from "../core/customization-plugin";
-import { GameAction } from "../core/action";
+import { CustomizationPlugin } from "../types/customization-plugin";
+import { GameAction } from "../types/action";
 import { ObjectiveOut, ObjectiveProgressOut } from "../../../api/nexuscore/model";
 
 /**

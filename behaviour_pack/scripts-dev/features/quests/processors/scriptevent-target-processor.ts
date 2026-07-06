@@ -1,6 +1,6 @@
 import {ObjectiveOut, KillTargetModel, ObjectiveProgressOut} from "../../../api/nexuscore/model";
-import {GameAction, KillAction, ScripteventAction} from "../core/action";
-import { AnyTargetProgress, TargetProcessor } from "../core/target-processor";
+import {GameAction, KillAction, ScripteventAction} from "../types/action";
+import { AnyTargetProgress, TargetProcessor } from "../types/target-processor";
 import {EntityDieAfterEvent, EquipmentSlot, Player, ScriptEventCommandMessageAfterEvent, system, world} from "@minecraft/server";
 import ThornyUser from "../../../api/user";
 import {processGameAction} from "../core/action-dispatch";

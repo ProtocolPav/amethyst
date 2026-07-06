@@ -1,6 +1,6 @@
-import { ObjectiveOut, ObjectiveOutLogic, RewardOut, MineTargetModel, KillTargetModel } from "../../../api/nexuscore/model";
-import { AnyTarget } from "./target-processor";
-import utils from "../../../utils";
+import { ObjectiveOut, ObjectiveOutLogic, RewardOut, MineTargetModel, KillTargetModel } from "../../../../api/nexuscore/model";
+import { AnyTarget } from "../../types/target-processor";
+import utils from "../../../../utils";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 

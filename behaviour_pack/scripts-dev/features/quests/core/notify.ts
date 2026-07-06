@@ -1,7 +1,7 @@
 import {Player, system, world} from "@minecraft/server";
-import {AnyTarget} from "./target-processor";
+import {AnyTarget} from "../types/target-processor";
 import utils from "../../../utils";
-import {generateObjectiveDisplayString} from "./objective-display";
+import {generateObjectiveDisplayString} from "./objective/objective-display";
 import {ObjectiveOut} from "../../../api/nexuscore/model";
 import api from "../../../api";
 

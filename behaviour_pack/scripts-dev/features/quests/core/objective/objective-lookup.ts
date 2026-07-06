@@ -1,5 +1,5 @@
 // core/objective-lookup.ts
-import { QuestOut, QuestProgressOut, ObjectiveOut, ObjectiveProgressOut, ObjectiveProgressOutStatus } from "../../../api/nexuscore/model";
+import { QuestOut, QuestProgressOut, ObjectiveOut, ObjectiveProgressOut, ObjectiveProgressOutStatus } from "../../../../api/nexuscore/model";
 
 export interface ActiveObjective {
     obj_def: ObjectiveOut

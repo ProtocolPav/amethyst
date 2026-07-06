@@ -1,6 +1,6 @@
 import { Player } from "@minecraft/server";
 import { RewardOut, ObjectiveProgressOut } from "../../../api/nexuscore/model";
-import { RewardGranter } from "../core/reward-granter";
+import { RewardGranter } from "../core/reward/reward-granter";
 import { REWARD_METADATA_REGISTRY } from "./metadata/registry";
 import { BalanceReward } from "./balance-reward";
 import { ItemReward }    from "./item-reward";

@@ -5,12 +5,12 @@ import {
     ObjectiveOutLogic, ObjectiveOutObjectiveType,
 } from "../../../api/nexuscore/model";
 import { Player } from "@minecraft/server";
-import { GameAction } from "../core/action";
-import { AnyTarget, AnyTargetProgress, TargetProcessor } from "../core/target-processor";
+import { GameAction } from "../types/action";
+import { AnyTarget, AnyTargetProgress, TargetProcessor } from "../types/target-processor";
 import { MineTargetProcessor } from "./mine-target-processor";
 import { KillTargetProcessor } from "./kill-target-processor";
 import {showProgressTick} from "../core/notify";
-import {ACTIVE_PLUGINS} from "../core/objective-lifecycle";
+import {ACTIVE_PLUGINS} from "../core/objective/objective-lifecycle";
 import {ScripteventTargetProcessor} from "./scriptevent-target-processor";
 
 /**

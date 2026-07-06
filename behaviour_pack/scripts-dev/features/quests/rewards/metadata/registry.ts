@@ -1,4 +1,4 @@
-import { RewardMetadata } from "../../core/reward-metadata";
+import { RewardMetadata } from "../../core/reward/reward-metadata";
 import { EnchantmentMetadata } from "./enchantment-metadata";
 import { RandomEnchantmentMetadata } from "./random-enchantment-metadata";
 import { PotionMetadata } from "./potion-metadata";

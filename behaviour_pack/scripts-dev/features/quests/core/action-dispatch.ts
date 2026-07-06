@@ -1,6 +1,6 @@
 // core/action-dispatch.ts
 import { Player } from "@minecraft/server";
-import { GameAction } from "./action";
+import { GameAction } from "../types/action";
 import { QUEST_PROGRESS_CACHE } from "../progress-cache";
 import { QUEST_CACHE } from "../quest-cache";
 import { QuestProcessor } from "../processors/quest-processor";

@@ -1,5 +1,5 @@
 import { ItemStack, ItemComponentTypes, EnchantmentTypes, EnchantmentType } from "@minecraft/server";
-import { RewardMetadata } from "../../core/reward-metadata";
+import { RewardMetadata } from "../../core/reward/reward-metadata";
 import { RandomEnchantmentModel } from "../../../../api/nexuscore/model";
 import { MinecraftEnchantmentTypes } from "@minecraft/vanilla-data";
 

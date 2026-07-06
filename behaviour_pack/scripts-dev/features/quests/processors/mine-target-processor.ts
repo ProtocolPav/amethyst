@@ -1,6 +1,6 @@
 import {ObjectiveOut, MineTargetModel, ObjectiveProgressOut} from "../../../api/nexuscore/model";
-import { GameAction, MineAction } from "../core/action";
-import { AnyTargetProgress, TargetProcessor } from "../core/target-processor";
+import { GameAction, MineAction } from "../types/action";
+import { AnyTargetProgress, TargetProcessor } from "../types/target-processor";
 import {EquipmentSlot, Player, PlayerBreakBlockAfterEvent, world} from "@minecraft/server";
 import ThornyUser from "../../../api/user";
 import {processGameAction} from "../core/action-dispatch";

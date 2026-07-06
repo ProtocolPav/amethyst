@@ -1,6 +1,6 @@
 import {EntityDieAfterEvent, Player, world} from "@minecraft/server";
 import { ObjectiveOut, ObjectiveProgressOut } from "../../../api/nexuscore/model";
-import { CustomizationPlugin } from "../core/customization-plugin";
+import { CustomizationPlugin } from "../types/customization-plugin";
 import {markDirty} from "../write-back";
 import ThornyUser from "../../../api/user";
 

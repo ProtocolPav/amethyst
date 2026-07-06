@@ -6,12 +6,12 @@ import {
     ObjectiveOut,
 } from "../../../api/nexuscore/model";
 import { Player } from "@minecraft/server";
-import { GameAction } from "../core/action";
+import { GameAction } from "../types/action";
 import { ObjectiveProcessor } from "./objective-processor";
 import { markDirty } from "../write-back";
 import ThornyUser from "../../../api/user";
-import { activateObjective, deactivateObjective } from "../core/objective-lifecycle";
-import {getActiveObjective} from "../core/objective-lookup";
+import { activateObjective, deactivateObjective } from "../core/objective/objective-lifecycle";
+import {getActiveObjective} from "../core/objective/objective-lookup";
 import {notifyQuestComplete, notifyQuestFailure, notifyQuestProgress} from "../core/notify";
 import {grantRewards} from "../rewards/grant-rewards";
 
