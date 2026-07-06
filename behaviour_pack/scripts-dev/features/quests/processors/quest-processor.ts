@@ -29,13 +29,13 @@ export class QuestProcessor {
 
         const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
 
-        const completed = objectiveProcessor.process(action, player, thorny_id, active.quest_def, active.quest_progress)
+        const completed = objectiveProcessor.process(action, player, thorny_id, active.obj_def, active.obj_progress)
 
         markDirty(thorny_id)
 
         if (!completed) return false
 
-        return this.completeObjective(player, thorny_id, quest, questProgress, active.quest_def, active.quest_progress)
+        return this.completeObjective(player, thorny_id, quest, questProgress, active.obj_def, active.obj_progress)
     }
 
     /**
@@ -53,10 +53,10 @@ export class QuestProcessor {
 
         const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
 
-        active.quest_progress.status = ObjectiveProgressOutStatus.failed
-        active.quest_progress.end_time = new Date().toISOString()
+        active.obj_progress.status = ObjectiveProgressOutStatus.failed
+        active.obj_progress.end_time = new Date().toISOString()
 
-        deactivateObjective(player, thorny_id, active.quest_def, active.quest_progress)
+        deactivateObjective(player, thorny_id, active.obj_def, active.obj_progress)
 
         this.advanceQuest(player, thorny_id, quest, questProgress)
     }
@@ -133,7 +133,7 @@ export class QuestProcessor {
 
         const active = getActiveObjective(quest, questProgress)
         if (active) {
-            deactivateObjective(player, thorny_id, active.quest_def, active.quest_progress)
+            deactivateObjective(player, thorny_id, active.obj_def, active.obj_progress)
         }
 
         questProgress.status = QuestProgressOutStatus.failed

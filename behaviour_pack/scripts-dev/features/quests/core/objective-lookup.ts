@@ -2,8 +2,8 @@
 import { QuestOut, QuestProgressOut, ObjectiveOut, ObjectiveProgressOut, ObjectiveProgressOutStatus } from "../../../api/nexuscore/model";
 
 export interface ActiveObjective {
-    quest_def: ObjectiveOut
-    quest_progress: ObjectiveProgressOut
+    obj_def: ObjectiveOut
+    obj_progress: ObjectiveProgressOut
 }
 
 /**
@@ -25,5 +25,5 @@ export function getActiveObjective(quest: QuestOut, questProgress: QuestProgress
     const quest_def = quest.objectives.find(o => o.objective_id === quest_progress.objective_id)
     if (!quest_def) return undefined
 
-    return { quest_def, quest_progress }
+    return { obj_def: quest_def, obj_progress: quest_progress }
 }

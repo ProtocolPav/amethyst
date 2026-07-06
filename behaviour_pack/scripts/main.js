@@ -7075,7 +7075,7 @@ function getActiveObjective(quest, questProgress) {
   if (!quest_progress) return void 0;
   const quest_def = quest.objectives.find((o) => o.objective_id === quest_progress.objective_id);
   if (!quest_def) return void 0;
-  return { quest_def, quest_progress };
+  return { obj_def: quest_def, obj_progress: quest_progress };
 }
 __name(getActiveObjective, "getActiveObjective");
 
@@ -7412,10 +7412,10 @@ var QuestProcessor = class {
     const active = getActiveObjective(quest, questProgress);
     if (!active) return false;
     const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
-    const completed = objectiveProcessor.process(action, player, thorny_id, active.quest_def, active.quest_progress);
+    const completed = objectiveProcessor.process(action, player, thorny_id, active.obj_def, active.obj_progress);
     markDirty(thorny_id);
     if (!completed) return false;
-    return this.completeObjective(player, thorny_id, quest, questProgress, active.quest_def, active.quest_progress);
+    return this.completeObjective(player, thorny_id, quest, questProgress, active.obj_def, active.obj_progress);
   }
   /**
    * Called by the tick loop when a watcher plugin signals 'advance'
@@ -7429,9 +7429,9 @@ var QuestProcessor = class {
     const active = getActiveObjective(quest, questProgress);
     if (!active) return;
     const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
-    active.quest_progress.status = ObjectiveProgressOutStatus.failed;
-    active.quest_progress.end_time = (/* @__PURE__ */ new Date()).toISOString();
-    deactivateObjective(player, thorny_id, active.quest_def, active.quest_progress);
+    active.obj_progress.status = ObjectiveProgressOutStatus.failed;
+    active.obj_progress.end_time = (/* @__PURE__ */ new Date()).toISOString();
+    deactivateObjective(player, thorny_id, active.obj_def, active.obj_progress);
     this.advanceQuest(player, thorny_id, quest, questProgress);
   }
   /**
@@ -7486,7 +7486,7 @@ var QuestProcessor = class {
     const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
     const active = getActiveObjective(quest, questProgress);
     if (active) {
-      deactivateObjective(player, thorny_id, active.quest_def, active.quest_progress);
+      deactivateObjective(player, thorny_id, active.obj_def, active.obj_progress);
     }
     questProgress.status = QuestProgressOutStatus.failed;
     questProgress.end_time = (/* @__PURE__ */ new Date()).toISOString();
@@ -7518,25 +7518,36 @@ function loadQuestProgressCache() {
   async function new_active_quest(questProgress, thornyUser, player) {
     const quest = QUEST_CACHE.get(questProgress.quest_id);
     QUEST_PROGRESS_CACHE.set(thornyUser.thorny_id, questProgress);
+    const active = getActiveObjective(quest, questProgress);
     if (questProgress.status === QuestProgressOutStatus.active) {
-      const active = getActiveObjective(quest, questProgress);
       if (active) {
-        activateObjective(player, thornyUser.thorny_id, active.quest_def, active.quest_progress);
+        activateObjective(player, thornyUser.thorny_id, active.obj_def, active.obj_progress);
       }
     }
     system27.runTimeout(() => {
-      notifyOfQuestUpdate(player, `You have a quest active: ${quest.title}`);
+      notifyOfQuestUpdate(
+        player,
+        generateObjectiveDisplayString(
+          active?.obj_def,
+          quest.objectives.indexOf(active?.obj_def) + 1,
+          quest.objectives.length,
+          quest.title
+        )
+      );
     }, TicksPerSecond12 * 10);
   }
   __name(new_active_quest, "new_active_quest");
   async function dropped_quest(questProgress, thornyUser, player) {
     const cached_quest = QUEST_CACHE.get(questProgress.quest_id);
+    const cached_quest_progress = QUEST_PROGRESS_CACHE.get(thornyUser.thorny_id);
     const active = getActiveObjective(cached_quest, questProgress);
     if (active) {
-      deactivateObjective(player, thornyUser.thorny_id, active.quest_def, active.quest_progress);
+      deactivateObjective(player, thornyUser.thorny_id, active.obj_def, active.obj_progress);
     }
     QUEST_PROGRESS_CACHE.delete(thornyUser.thorny_id);
-    notifyOfQuestUpdate(player, `You have dropped your quest: ${cached_quest.title}`);
+    if (cached_quest_progress.status !== "completed") {
+      notifyOfQuestUpdate(player, `You have dropped your quest: ${cached_quest.title}`);
+    }
   }
   __name(dropped_quest, "dropped_quest");
   async function update_player_quest(player_name) {
@@ -7562,7 +7573,7 @@ function loadQuestProgressCache() {
     if (!quest) return;
     const active = getActiveObjective(quest, cachedQuestProgress);
     if (!active) return;
-    const signal = tickPlugins(player, thorny_user.thorny_id, active.quest_def, active.quest_progress);
+    const signal = tickPlugins(player, thorny_user.thorny_id, active.obj_def, active.obj_progress);
     if (signal === "fail") {
       questProcessor2.fail(player, quest, cachedQuestProgress);
     } else if (signal === "skip") {
@@ -7603,7 +7614,7 @@ function loadQuestProgressCache() {
         if (active) {
           const player = world26.getPlayers().find((p) => p.name === leave_event.playerName);
           if (player) {
-            deactivateObjective(player, thorny_user.thorny_id, active.quest_def, active.quest_progress);
+            deactivateObjective(player, thorny_user.thorny_id, active.obj_def, active.obj_progress);
           }
         }
       }

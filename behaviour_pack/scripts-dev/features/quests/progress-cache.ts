@@ -8,6 +8,7 @@ import { notifyOfQuestUpdate } from "./core/notify";
 import { activateObjective, deactivateObjective } from "./processors/objective-lifecycle";
 import { tickPlugins } from "./processors/objective-tick";
 import { getActiveObjective } from "./core/objective-lookup";
+import {generateObjectiveDisplayString} from "./core/objective-display";
 
 export const QUEST_PROGRESS_CACHE = new Map<number, QuestProgressOut>()
 
@@ -20,32 +21,43 @@ export default function loadQuestProgressCache() {
         const quest = QUEST_CACHE.get(questProgress.quest_id)!
 
         QUEST_PROGRESS_CACHE.set(thornyUser.thorny_id, questProgress)
+        const active = getActiveObjective(quest, questProgress)
 
         // Activate the current objective if the quest is active
         if (questProgress.status === QuestProgressOutStatus.active) {
-            const active = getActiveObjective(quest as any, questProgress)
             if (active) {
-                activateObjective(player, thornyUser.thorny_id, active.quest_def, active.quest_progress)
+                activateObjective(player, thornyUser.thorny_id, active.obj_def, active.obj_progress)
             }
         }
 
         system.runTimeout(() => {
-            notifyOfQuestUpdate(player, `You have a quest active: ${quest.title}`)
+            notifyOfQuestUpdate(
+                player,
+                generateObjectiveDisplayString(
+                    active?.obj_def!,
+                    quest.objectives.indexOf(active?.obj_def!) + 1,
+                    quest.objectives.length,
+                    quest.title
+                )
+            )
         }, TicksPerSecond * 10)
     }
 
     async function dropped_quest(questProgress: QuestProgressOut, thornyUser: ThornyUser, player: Player) {
         const cached_quest = QUEST_CACHE.get(questProgress.quest_id)!
+        const cached_quest_progress = QUEST_PROGRESS_CACHE.get(thornyUser.thorny_id)!
 
         // Deactivate the active objective before evicting
         const active = getActiveObjective(cached_quest as any, questProgress)
         if (active) {
-            deactivateObjective(player, thornyUser.thorny_id, active.quest_def, active.quest_progress)
+            deactivateObjective(player, thornyUser.thorny_id, active.obj_def, active.obj_progress)
         }
 
         QUEST_PROGRESS_CACHE.delete(thornyUser.thorny_id)
 
-        notifyOfQuestUpdate(player, `You have dropped your quest: ${cached_quest.title}`)
+        if (cached_quest_progress.status !== "completed") {
+            notifyOfQuestUpdate(player, `You have dropped your quest: ${cached_quest.title}`)
+        }
     }
 
     async function update_player_quest(player_name: string) {
@@ -81,7 +93,7 @@ export default function loadQuestProgressCache() {
         const active = getActiveObjective(quest as any, cachedQuestProgress)
         if (!active) return
 
-        const signal = tickPlugins(player, thorny_user.thorny_id, active.quest_def, active.quest_progress)
+        const signal = tickPlugins(player, thorny_user.thorny_id, active.obj_def, active.obj_progress)
         if (signal === 'fail') {
             questProcessor.fail(player, quest as any, cachedQuestProgress)
         } else if (signal === 'skip') {
@@ -131,7 +143,7 @@ export default function loadQuestProgressCache() {
                 if (active) {
                     const player = world.getPlayers().find(p => p.name === leave_event.playerName)
                     if (player) {
-                        deactivateObjective(player, thorny_user.thorny_id, active.quest_def, active.quest_progress)
+                        deactivateObjective(player, thorny_user.thorny_id, active.obj_def, active.obj_progress)
                     }
                 }
             }
