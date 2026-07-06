@@ -6186,7 +6186,6 @@ function entityDie() {
       }
     );
     await death_interaction.post_interaction();
-    api_default.Interaction.enqueue(death_interaction);
     api_default.Relay.event(utils_default.DeathMessage.random_pvp(killer_player.name, dead_player.name), "", "other");
   }
   __name(playerDieByPlayer, "playerDieByPlayer");
@@ -6205,7 +6204,6 @@ function entityDie() {
       }
     );
     await death_interaction.post_interaction();
-    api_default.Interaction.enqueue(death_interaction);
     api_default.Relay.event(utils_default.DeathMessage.random_pve(player.name, entity.typeId), "", "other");
   }
   __name(playerDieByEntity, "playerDieByEntity");
@@ -6224,7 +6222,6 @@ function entityDie() {
       }
     );
     await death_interaction.post_interaction();
-    api_default.Interaction.enqueue(death_interaction);
     api_default.Relay.event(utils_default.DeathMessage.random_suicide(player.name, damageCause), "", "other");
   }
   __name(playerDieByOther, "playerDieByOther");
@@ -6319,7 +6316,7 @@ function loadLocationLogger() {
 __name(loadLocationLogger, "loadLocationLogger");
 
 // behaviour_pack/scripts-dev/features/quests/progress-cache.ts
-import { system as system27, TicksPerSecond as TicksPerSecond12, world as world24 } from "@minecraft/server";
+import { system as system27, TicksPerSecond as TicksPerSecond12, world as world26 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/features/quests/quest-cache.ts
 import { system as system23, TicksPerSecond as TicksPerSecond9 } from "@minecraft/server";
@@ -6435,9 +6432,58 @@ var QuestProgressOutStatus = {
 };
 
 // behaviour_pack/scripts-dev/features/quests/processors/mine-target-processor.ts
+import { EquipmentSlot as EquipmentSlot13, world as world22 } from "@minecraft/server";
+
+// behaviour_pack/scripts-dev/features/quests/core/action-dispatch.ts
+var questProcessor;
+function processGameAction(player, action) {
+  questProcessor ??= new QuestProcessor();
+  const thorny_user = ThornyUser.fetch_user(player.name);
+  if (!thorny_user) return;
+  const questProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
+  if (!questProgress) return;
+  const quest = QUEST_CACHE.get(questProgress.quest_id);
+  if (!quest) return;
+  questProcessor.process(action, player, quest, questProgress);
+}
+__name(processGameAction, "processGameAction");
+
+// behaviour_pack/scripts-dev/features/quests/processors/mine-target-processor.ts
 var MineTargetProcessor = class {
+  constructor() {
+    this.subscriptions = /* @__PURE__ */ new Map();
+  }
   static {
     __name(this, "MineTargetProcessor");
+  }
+  onActivate(player, _objective, _objectiveProgress) {
+    const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
+    const blockTypes = _objective.targets.filter((t) => t.target_type === "mine").map((t) => t.block);
+    const handler = /* @__PURE__ */ __name(async (event) => {
+      if (event.player.id !== player.id) return;
+      const mainhand = event.player.getComponent("minecraft:equippable")?.getEquipment(EquipmentSlot13.Mainhand)?.typeId ?? null;
+      const interactions = await listInteractionsV1GuildsMeInteractionsGet({
+        coordinates: [event.block.x, event.block.y, event.block.z]
+      });
+      const action = {
+        type: "mine",
+        time: /* @__PURE__ */ new Date(),
+        player: event.player,
+        coordinates: event.block.location,
+        dimension: event.dimension.id,
+        mainhand,
+        block_id: event.brokenBlockPermutation.type.id,
+        naturally_mined: interactions.length <= 1
+      };
+      processGameAction(event.player, action);
+    }, "handler");
+    world22.afterEvents.playerBreakBlock.subscribe(handler, { blockTypes });
+    this.subscriptions.set(thorny_id, () => world22.afterEvents.playerBreakBlock.unsubscribe(handler));
+  }
+  onDeactivate(player, _objective, _objectiveProgress) {
+    const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
+    this.subscriptions.get(thorny_id)?.();
+    this.subscriptions.delete(thorny_id);
   }
   evaluate(action, objective, targetProgress) {
     if (action.type !== "mine") return 0;
@@ -6460,9 +6506,39 @@ var MineTargetProcessor = class {
 };
 
 // behaviour_pack/scripts-dev/features/quests/processors/kill-target-processor.ts
+import { EquipmentSlot as EquipmentSlot14, world as world23 } from "@minecraft/server";
 var KillTargetProcessor = class {
+  constructor() {
+    this.subscriptions = /* @__PURE__ */ new Map();
+  }
   static {
     __name(this, "KillTargetProcessor");
+  }
+  onActivate(player, _objective, _objectiveProgress) {
+    const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
+    const entityTypes = _objective.targets.filter((t) => t.target_type === "kill").map((t) => t.entity);
+    const handler = /* @__PURE__ */ __name((event) => {
+      const killer = event.damageSource.damagingEntity;
+      if (!killer || killer.id !== player.id) return;
+      const mainhand = player.getComponent("minecraft:equippable")?.getEquipment(EquipmentSlot14.Mainhand)?.typeId ?? null;
+      const action = {
+        type: "kill",
+        time: /* @__PURE__ */ new Date(),
+        player,
+        coordinates: event.deadEntity.location,
+        dimension: event.deadEntity.dimension.id,
+        mainhand,
+        entity_id: event.deadEntity.typeId
+      };
+      processGameAction(player, action);
+    }, "handler");
+    world23.afterEvents.entityDie.subscribe(handler, { entityTypes });
+    this.subscriptions.set(thorny_id, () => world23.afterEvents.entityDie.unsubscribe(handler));
+  }
+  onDeactivate(player, _objective, _objectiveProgress) {
+    const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
+    this.subscriptions.get(thorny_id)?.();
+    this.subscriptions.delete(thorny_id);
   }
   evaluate(action, objective, targetProgress) {
     if (action.type !== "kill") return 0;
@@ -6485,7 +6561,7 @@ var KillTargetProcessor = class {
 };
 
 // behaviour_pack/scripts-dev/features/quests/core/notify.ts
-import { system as system24, world as world22 } from "@minecraft/server";
+import { system as system24, world as world24 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/features/quests/core/objective-display.ts
 var SECTION = "\xA78\xA7m                              \xA7r";
@@ -6644,7 +6720,7 @@ function notifyQuestProgress(player, objective, objectiveIndex, totalObjectives,
 }
 __name(notifyQuestProgress, "notifyQuestProgress");
 function notifyQuestComplete(player, questTitle) {
-  world22.sendMessage(
+  world24.sendMessage(
     `\xA7a+=+=+=+=+=+=+ Quest Completed! +=+=+=+=+=+=+\xA7r
 ${player.name} has just completed \xA7l\xA7n${questTitle}\xA7r!
 Run \xA75/quests view\xA7r on Discord to start it!`
@@ -6676,7 +6752,7 @@ function showTimer(player, remaining_seconds) {
 __name(showTimer, "showTimer");
 
 // behaviour_pack/scripts-dev/features/quests/customizations/death-plugin.ts
-import { world as world23 } from "@minecraft/server";
+import { world as world25 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/features/quests/write-back.ts
 import { system as system25, TicksPerSecond as TicksPerSecond10 } from "@minecraft/server";
@@ -6751,8 +6827,8 @@ var DeathPlugin = class {
       markDirty(thornyUser.thorny_id);
       if (deaths >= c.deaths) this.exceeded = true;
     }, "handler");
-    world23.afterEvents.entityDie.subscribe(handler);
-    this.unsubscribe = () => world23.afterEvents.entityDie.unsubscribe(handler);
+    world25.afterEvents.entityDie.subscribe(handler);
+    this.unsubscribe = () => world25.afterEvents.entityDie.unsubscribe(handler);
   }
   onDeactivate(_player, _objective, _progress) {
     this.unsubscribe?.();
@@ -7436,7 +7512,7 @@ __name(tickPlugins, "tickPlugins");
 
 // behaviour_pack/scripts-dev/features/quests/progress-cache.ts
 var QUEST_PROGRESS_CACHE = /* @__PURE__ */ new Map();
-var questProcessor = new QuestProcessor();
+var questProcessor2 = new QuestProcessor();
 function loadQuestProgressCache() {
   const PLAYER_LOOP_RUN_IDS = /* @__PURE__ */ new Map();
   async function new_active_quest(questProgress, thornyUser, player) {
@@ -7464,7 +7540,7 @@ function loadQuestProgressCache() {
   }
   __name(dropped_quest, "dropped_quest");
   async function update_player_quest(player_name) {
-    const player = world24.getPlayers().find((p) => p.name == player_name);
+    const player = world26.getPlayers().find((p) => p.name == player_name);
     if (!player) return;
     const thorny_user = ThornyUser.fetch_user(player_name);
     const questProgress = await get_quest_progress(thorny_user.thorny_id);
@@ -7477,7 +7553,7 @@ function loadQuestProgressCache() {
   }
   __name(update_player_quest, "update_player_quest");
   async function tickQuest(player_name) {
-    const player = world24.getPlayers().find((p) => p.name == player_name);
+    const player = world26.getPlayers().find((p) => p.name == player_name);
     if (!player) return;
     const thorny_user = ThornyUser.fetch_user(player_name);
     const cachedQuestProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
@@ -7488,13 +7564,13 @@ function loadQuestProgressCache() {
     if (!active) return;
     const signal = tickPlugins(player, thorny_user.thorny_id, active.quest_def, active.quest_progress);
     if (signal === "fail") {
-      questProcessor.fail(player, quest, cachedQuestProgress);
+      questProcessor2.fail(player, quest, cachedQuestProgress);
     } else if (signal === "skip") {
-      questProcessor.skipObjective(player, quest, cachedQuestProgress);
+      questProcessor2.skipObjective(player, quest, cachedQuestProgress);
     }
   }
   __name(tickQuest, "tickQuest");
-  world24.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
+  world26.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
     if (spawn_event.initialSpawn) {
       const thorny_user = ThornyUser.fetch_user(spawn_event.player.name);
       if (thorny_user) {
@@ -7512,7 +7588,7 @@ function loadQuestProgressCache() {
       PLAYER_LOOP_RUN_IDS.set(spawn_event.player.name, [cacheRunId, tickRunId]);
     }
   });
-  world24.afterEvents.playerLeave.subscribe((leave_event) => {
+  world26.afterEvents.playerLeave.subscribe((leave_event) => {
     const runIds = PLAYER_LOOP_RUN_IDS.get(leave_event.playerName);
     if (runIds !== void 0) {
       runIds.map((i) => system27.clearRun(i));
@@ -7525,7 +7601,7 @@ function loadQuestProgressCache() {
         const quest = QUEST_CACHE.get(questProgress.quest_id);
         const active = quest ? getActiveObjective(quest, questProgress) : void 0;
         if (active) {
-          const player = world24.getPlayers().find((p) => p.name === leave_event.playerName);
+          const player = world26.getPlayers().find((p) => p.name === leave_event.playerName);
           if (player) {
             deactivateObjective(player, thorny_user.thorny_id, active.quest_def, active.quest_progress);
           }
@@ -7537,69 +7613,10 @@ function loadQuestProgressCache() {
 }
 __name(loadQuestProgressCache, "loadQuestProgressCache");
 
-// behaviour_pack/scripts-dev/features/quests/handlers/mine.ts
-import { world as world25 } from "@minecraft/server";
-var questProcessor2 = new QuestProcessor();
-function loadMineHandler() {
-  world25.afterEvents.playerBreakBlock.subscribe(async (event) => {
-    const thorny_user = ThornyUser.fetch_user(event.player.name);
-    if (!thorny_user) return;
-    const quest_progress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
-    if (!quest_progress) return;
-    const quest = QUEST_CACHE.get(quest_progress.quest_id);
-    if (!quest) return;
-    const interactions = await listInteractionsV1GuildsMeInteractionsGet({
-      coordinates: [event.block.x, event.block.y, event.block.z]
-    });
-    const mining_action = {
-      type: "mine",
-      time: /* @__PURE__ */ new Date(),
-      coordinates: event.block.location,
-      dimension: event.player.dimension.id,
-      block_id: event.brokenBlockPermutation.type.id,
-      mainhand: event.itemStackBeforeBreak?.typeId ?? null,
-      naturally_mined: interactions.length <= 1,
-      player: event.player
-    };
-    questProcessor2.process(mining_action, event.player, quest, quest_progress);
-  });
-}
-__name(loadMineHandler, "loadMineHandler");
-
-// behaviour_pack/scripts-dev/features/quests/handlers/kill.ts
-import { EquipmentSlot as EquipmentSlot13, world as world26 } from "@minecraft/server";
-var questProcessor3 = new QuestProcessor();
-function loadKillHandler() {
-  world26.afterEvents.entityDie.subscribe((event) => {
-    const attacker = event.damageSource.damagingEntity;
-    if (!attacker || attacker.typeId !== "minecraft:player") return;
-    const player = attacker;
-    const thorny_user = ThornyUser.fetch_user(player.name);
-    if (!thorny_user) return;
-    const quest_progress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
-    if (!quest_progress) return;
-    const quest = QUEST_CACHE.get(quest_progress.quest_id);
-    if (!quest) return;
-    const kill_action = {
-      type: "kill",
-      time: /* @__PURE__ */ new Date(),
-      coordinates: event.deadEntity.location,
-      dimension: event.deadEntity.dimension.id,
-      entity_id: event.deadEntity.typeId,
-      mainhand: player.getComponent("equippable")?.getEquipment(EquipmentSlot13.Mainhand)?.typeId ?? null,
-      player
-    };
-    questProcessor3.process(kill_action, player, quest, quest_progress);
-  });
-}
-__name(loadKillHandler, "loadKillHandler");
-
 // behaviour_pack/scripts-dev/features/quests/index.ts
 function loadQuestsFeature() {
   loadQuestCache();
   loadQuestProgressCache();
-  loadMineHandler();
-  loadKillHandler();
   loadWriteBackLoop();
 }
 __name(loadQuestsFeature, "loadQuestsFeature");

@@ -6,7 +6,7 @@ import { QUEST_CACHE } from "../quest-cache";
 import { QuestProcessor } from "../processors/quest-processor";
 import ThornyUser from "../../../api/user";
 
-const questProcessor = new QuestProcessor()
+let questProcessor: QuestProcessor
 
 /**
  * Resolves the player's cached quest + progress and hands the action to
@@ -15,6 +15,8 @@ const questProcessor = new QuestProcessor()
  * lookups process() actually requires as arguments are done.
  */
 export function processGameAction(player: Player, action: GameAction): void {
+    questProcessor ??= new QuestProcessor()
+
     const thorny_user = ThornyUser.fetch_user(player.name)
     if (!thorny_user) return
 
