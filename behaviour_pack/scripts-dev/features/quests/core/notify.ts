@@ -45,14 +45,14 @@ export function notifyQuestProgress(player: Player, objective: ObjectiveOut, obj
 
 export function notifyQuestComplete(player: Player, questTitle: string) {
     world.sendMessage(
-        `§a+=+=+=+=+=+=+ Quest Completed! +=+=+=+=+=+=+§r\n` +
+        `§l§a[ §l§eQ§du§se§as§tt §uC§io§mm§pp§9l§ee§nt§be§f!§a ]§r\n` +
         `${player.name} has just completed §l§n${questTitle}§r!\n` +
         `Run §5/quests view§r on Discord to start it!`
     )
 
     api.Relay.event(
         "Quest Complete!",
-        `${player.name} has just completed §l§n${questTitle}§r!\nRun §5/quests view§r on Discord to start it!`,
+        `${player.name} has just completed **${questTitle}**!\nRun \`/quests view\` to try your luck with it!`,
         'other'
     )
 
@@ -71,14 +71,14 @@ export function notifyQuestComplete(player: Player, questTitle: string) {
 
 export function notifyQuestFailure(player: Player, questTitle: string) {
     world.sendMessage(
-        `§a+=+=+=+=+=+=+ Quest Failed :( +=+=+=+=+=+=+§r\n` +
+        `§l§c[ Quest Failed :( ]§r\n` +
         `${player.name} has failed §l§n${questTitle}§r.\n` +
         `Think you can do better? Run §5/quests view§r on Discord to try your luck with it.`
     )
 
     api.Relay.event(
         "Quest Failed :(",
-        `${player.name} has failed §l§n${questTitle}§r.\nThink you can do better? Run §5/quests view§r on Discord to try your luck with it.`,
+        `${player.name} has failed **${questTitle}**.\nThink you can do better? Run \`/quests view\` to try your luck with it.`,
         'other'
     )
 

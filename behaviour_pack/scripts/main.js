@@ -6721,14 +6721,14 @@ function notifyQuestProgress(player, objective, objectiveIndex, totalObjectives,
 __name(notifyQuestProgress, "notifyQuestProgress");
 function notifyQuestComplete(player, questTitle) {
   world24.sendMessage(
-    `\xA7a+=+=+=+=+=+=+ Quest Completed! +=+=+=+=+=+=+\xA7r
+    `\xA7l\xA7a[ \xA7l\xA7eQ\xA7du\xA7se\xA7as\xA7tt \xA7uC\xA7io\xA7mm\xA7pp\xA79l\xA7ee\xA7nt\xA7be! ]\xA7r
 ${player.name} has just completed \xA7l\xA7n${questTitle}\xA7r!
 Run \xA75/quests view\xA7r on Discord to start it!`
   );
   api_default.Relay.event(
     "Quest Complete!",
-    `${player.name} has just completed \xA7l\xA7n${questTitle}\xA7r!
-Run \xA75/quests view\xA7r on Discord to start it!`,
+    `${player.name} has just completed **${questTitle}**!
+Run \`/quests view\` to try your luck with it!`,
     "other"
   );
   player.onScreenDisplay.setTitle(`\xA7l\xA7eQ\xA7du\xA7se\xA7as\xA7tt \xA7uC\xA7io\xA7mm\xA7pp\xA79l\xA7ee\xA7nt\xA7be!`);
@@ -6746,14 +6746,14 @@ Run \xA75/quests view\xA7r on Discord to start it!`,
 __name(notifyQuestComplete, "notifyQuestComplete");
 function notifyQuestFailure(player, questTitle) {
   world24.sendMessage(
-    `\xA7a+=+=+=+=+=+=+ Quest Failed :( +=+=+=+=+=+=+\xA7r
+    `\xA7l\xA7c[ Quest Failed :( ]\xA7r
 ${player.name} has failed \xA7l\xA7n${questTitle}\xA7r.
 Think you can do better? Run \xA75/quests view\xA7r on Discord to try your luck with it.`
   );
   api_default.Relay.event(
     "Quest Failed :(",
-    `${player.name} has failed \xA7l\xA7n${questTitle}\xA7r.
-Think you can do better? Run \xA75/quests view\xA7r on Discord to try your luck with it.`,
+    `${player.name} has failed **${questTitle}**.
+Think you can do better? Run \`/quests view\` to try your luck with it.`,
     "other"
   );
   player.onScreenDisplay.setTitle(`\xA7l\xA7cQuest Failed :(`);
