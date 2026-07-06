@@ -1,8 +1,58 @@
-import { ObjectiveOut, MineTargetModel } from "../../../api/nexuscore/model";
+import {ObjectiveOut, MineTargetModel, ObjectiveProgressOut} from "../../../api/nexuscore/model";
 import { GameAction, MineAction } from "../core/action";
 import { AnyTargetProgress, TargetProcessor } from "../core/target-processor";
+import {EquipmentSlot, Player, PlayerBreakBlockAfterEvent, world} from "@minecraft/server";
+import ThornyUser from "../../../api/user";
+import {processGameAction} from "../core/action-dispatch";
+import {listInteractionsV1GuildsMeInteractionsGet} from "../../../api/nexuscore/guilds/guilds";
 
 export class MineTargetProcessor implements TargetProcessor {
+    private subscriptions = new Map<number, () => void>()
+
+    onActivate(player: Player, _objective: ObjectiveOut, _objectiveProgress: ObjectiveProgressOut): void {
+        const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
+
+        const blockTypes = _objective.targets
+            .filter((t): t is MineTargetModel => t.target_type === 'mine')
+            .map(t => t.block)
+
+        const handler = async (event: PlayerBreakBlockAfterEvent) => {
+            if (event.player.id !== player.id) return
+
+            const mainhand = event.player
+                .getComponent('minecraft:equippable')
+                ?.getEquipment(EquipmentSlot.Mainhand)
+                ?.typeId ?? null
+
+            const interactions = await listInteractionsV1GuildsMeInteractionsGet({
+                coordinates: [event.block.x, event.block.y, event.block.z]
+            })
+
+            const action: MineAction = {
+                type: 'mine',
+                time: new Date(),
+                player: event.player,
+                coordinates: event.block.location,
+                dimension: event.dimension.id,
+                mainhand,
+                block_id: event.brokenBlockPermutation.type.id,
+                naturally_mined: interactions.length <= 1,
+            }
+
+            processGameAction(event.player, action)
+        }
+
+        world.afterEvents.playerBreakBlock.subscribe(handler, {blockTypes})
+
+        this.subscriptions.set(thorny_id, () => world.afterEvents.playerBreakBlock.unsubscribe(handler))
+    }
+
+    onDeactivate(player: Player, _objective: ObjectiveOut, _objectiveProgress: ObjectiveProgressOut): void {
+        const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
+        this.subscriptions.get(thorny_id)?.()
+        this.subscriptions.delete(thorny_id)
+    }
+
     evaluate(action: GameAction, objective: ObjectiveOut, targetProgress: AnyTargetProgress): number {
         if (action.type !== 'mine') return 0
         if (targetProgress.target_type !== 'mine') return 0
