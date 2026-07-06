@@ -21,4 +21,9 @@ export interface KillAction extends BaseAction {
     entity_id: string
 }
 
-export type GameAction = MineAction | KillAction
+export interface ScripteventAction extends BaseAction {
+    type: 'scriptevent'
+    script_id: string
+}
+
+export type GameAction = MineAction | KillAction | ScripteventAction

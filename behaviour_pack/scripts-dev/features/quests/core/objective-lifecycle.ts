@@ -1,7 +1,7 @@
-import {CustomizationPlugin} from "../core/customization-plugin";
+import {CustomizationPlugin} from "./customization-plugin";
 import {Player} from "@minecraft/server";
 import {ObjectiveOut, ObjectiveProgressOut} from "../../../api/nexuscore/model";
-import {TARGET_PROCESSORS} from "./objective-processor";
+import {TARGET_PROCESSORS} from "../processors/objective-processor";
 import {DeathPlugin} from "../customizations/death-plugin";
 import {LocationPlugin} from "../customizations/location-plugin";
 import {MainhandPlugin} from "../customizations/mainhand-plugin";

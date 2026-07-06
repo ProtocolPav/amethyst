@@ -1,44 +1,39 @@
 import {ObjectiveOut, KillTargetModel, ObjectiveProgressOut} from "../../../api/nexuscore/model";
-import {GameAction, KillAction} from "../core/action";
+import {GameAction, KillAction, ScripteventAction} from "../core/action";
 import { AnyTargetProgress, TargetProcessor } from "../core/target-processor";
-import {EntityDieAfterEvent, EquipmentSlot, Player, world} from "@minecraft/server";
+import {EntityDieAfterEvent, EquipmentSlot, Player, ScriptEventCommandMessageAfterEvent, system, world} from "@minecraft/server";
 import ThornyUser from "../../../api/user";
 import {processGameAction} from "../core/action-dispatch";
 
-export class KillTargetProcessor implements TargetProcessor {
+export class ScripteventTargetProcessor implements TargetProcessor {
     private subscriptions = new Map<number, () => void>()
 
     onActivate(player: Player, _objective: ObjectiveOut, _objectiveProgress: ObjectiveProgressOut): void {
         const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
 
-        const entityTypes = _objective.targets
-            .filter((t): t is KillTargetModel => t.target_type === 'kill')
-            .map(t => t.entity)
+        const handler = (event: ScriptEventCommandMessageAfterEvent) => {
+            if (event.message !== player.name) return
 
-        const handler = (event: EntityDieAfterEvent) => {
-            const killer = event.damageSource.damagingEntity
-            if (!killer || killer.id !== player.id) return
-
-            const mainhand = killer
+            const mainhand = player
                 .getComponent('minecraft:equippable')
                 ?.getEquipment(EquipmentSlot.Mainhand)
                 ?.typeId ?? null
 
-            const action: KillAction = {
-                type: 'kill',
+            const action: ScripteventAction = {
+                type: 'scriptevent',
                 time: new Date(),
-                player: killer as Player,
-                coordinates: event.deadEntity.location,
-                dimension: event.deadEntity.dimension.id,
+                player,
+                coordinates: player.location,
+                dimension: player.dimension.id,
                 mainhand,
-                entity_id: event.deadEntity.typeId,
+                script_id: event.id,
             }
 
             processGameAction(player, action)
         }
 
-        world.afterEvents.entityDie.subscribe(handler, {entityTypes})
-        this.subscriptions.set(thorny_id, () => world.afterEvents.entityDie.unsubscribe(handler))
+        system.afterEvents.scriptEventReceive.subscribe(handler)
+        this.subscriptions.set(thorny_id, () => system.afterEvents.scriptEventReceive.unsubscribe(handler))
     }
 
     onDeactivate(player: Player, _objective: ObjectiveOut, _objectiveProgress: ObjectiveProgressOut): void {
@@ -48,16 +43,16 @@ export class KillTargetProcessor implements TargetProcessor {
     }
 
     evaluate(action: GameAction, objective: ObjectiveOut, targetProgress: AnyTargetProgress): number {
-        if (action.type !== 'kill') return 0
-        if (targetProgress.target_type !== 'kill') return 0
+        if (action.type !== 'scriptevent') return 0
+        if (targetProgress.target_type !== 'scriptevent') return 0
 
-        const kill = action as KillAction
+        const kill = action as ScripteventAction
         const target = objective.targets.find(
             t => t.target_type === 'kill' && t.target_uuid === targetProgress.target_uuid
-        ) as KillTargetModel | undefined
+        ) as ScripteventAction | undefined
 
         if (!target) return 0
-        if (!this.matchesEntity(kill.entity_id, target.entity)) return 0
+        if (!this.matchesEntity(kill.script_id, target.script_id)) return 0
 
         return 1
     }

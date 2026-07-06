@@ -10,7 +10,7 @@ import { GameAction } from "../core/action";
 import { ObjectiveProcessor } from "./objective-processor";
 import { markDirty } from "../write-back";
 import ThornyUser from "../../../api/user";
-import { activateObjective, deactivateObjective } from "./objective-lifecycle";
+import { activateObjective, deactivateObjective } from "../core/objective-lifecycle";
 import {getActiveObjective} from "../core/objective-lookup";
 import {notifyQuestComplete, notifyQuestFailure, notifyQuestProgress} from "../core/notify";
 import {grantRewards} from "../rewards/grant-rewards";

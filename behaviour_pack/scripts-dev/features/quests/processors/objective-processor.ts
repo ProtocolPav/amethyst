@@ -2,7 +2,7 @@ import {
     ObjectiveOut,
     ObjectiveProgressOut,
     ObjectiveProgressOutStatus,
-    ObjectiveOutLogic,
+    ObjectiveOutLogic, ObjectiveOutObjectiveType,
 } from "../../../api/nexuscore/model";
 import { Player } from "@minecraft/server";
 import { GameAction } from "../core/action";
@@ -10,15 +10,17 @@ import { AnyTarget, AnyTargetProgress, TargetProcessor } from "../core/target-pr
 import { MineTargetProcessor } from "./mine-target-processor";
 import { KillTargetProcessor } from "./kill-target-processor";
 import {showProgressTick} from "../core/notify";
-import {ACTIVE_PLUGINS} from "./objective-lifecycle";
+import {ACTIVE_PLUGINS} from "../core/objective-lifecycle";
+import {ScripteventTargetProcessor} from "./scriptevent-target-processor";
 
 /**
  * Registry of target processors, keyed by objective_type.
  * Each processor owns evaluate() and optional lifecycle hooks for its type.
  */
-export const TARGET_PROCESSORS: Record<string, TargetProcessor> = {
+export const TARGET_PROCESSORS: Record<ObjectiveOutObjectiveType, TargetProcessor> = {
     mine: new MineTargetProcessor(),
     kill: new KillTargetProcessor(),
+    scriptevent: new ScripteventTargetProcessor(),
 }
 
 function targetCount(target: AnyTarget): number {

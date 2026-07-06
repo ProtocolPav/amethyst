@@ -5,8 +5,8 @@ import { get_quest_progress } from "./core/fetch";
 import { QuestProgressOut, QuestProgressOutStatus } from "../../api/nexuscore/model";
 import { QuestProcessor } from "./processors/quest-processor";
 import { notifyOfQuestUpdate } from "./core/notify";
-import { activateObjective, deactivateObjective } from "./processors/objective-lifecycle";
-import { tickPlugins } from "./processors/objective-tick";
+import { activateObjective, deactivateObjective } from "./core/objective-lifecycle";
+import { tickPlugins } from "./core/objective-tick";
 import { getActiveObjective } from "./core/objective-lookup";
 import {generateObjectiveDisplayString} from "./core/objective-display";
 
