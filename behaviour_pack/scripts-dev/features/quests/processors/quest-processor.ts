@@ -12,7 +12,7 @@ import { markDirty } from "../write-back";
 import ThornyUser from "../../../api/user";
 import { activateObjective, deactivateObjective } from "./objective-lifecycle";
 import {getActiveObjective} from "../core/objective-lookup";
-import {notifyQuestComplete, notifyQuestProgress} from "../core/notify";
+import {notifyQuestComplete, notifyQuestFailure, notifyQuestProgress} from "../core/notify";
 import {grantRewards} from "../rewards/grant-rewards";
 
 const objectiveProcessor = new ObjectiveProcessor()
@@ -147,6 +147,7 @@ export class QuestProcessor {
         }
 
         markDirty(thorny_id)
-        // TODO: notify player of failure
+
+        notifyQuestFailure(player, quest.title)
     }
 }

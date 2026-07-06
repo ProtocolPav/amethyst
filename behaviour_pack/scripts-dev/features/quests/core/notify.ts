@@ -3,6 +3,7 @@ import {AnyTarget} from "./target-processor";
 import utils from "../../../utils";
 import {generateObjectiveDisplayString} from "./objective-display";
 import {ObjectiveOut} from "../../../api/nexuscore/model";
+import api from "../../../api";
 
 export function showProgressTick(player: Player, target: AnyTarget | undefined, current: number, goal: number) {
     let label = "Progress"
@@ -49,6 +50,12 @@ export function notifyQuestComplete(player: Player, questTitle: string) {
         `Run §5/quests view§r on Discord to start it!`
     )
 
+    api.Relay.event(
+        "Quest Complete!",
+        `${player.name} has just completed §l§n${questTitle}§r!\nRun §5/quests view§r on Discord to start it!`,
+        'other'
+    )
+
     player.onScreenDisplay.setTitle(`§l§eQ§du§se§as§tt §uC§io§mm§pp§9l§ee§nt§be!`)
 
     player.dimension.playSound(
@@ -60,6 +67,28 @@ export function notifyQuestComplete(player: Player, questTitle: string) {
     for (let i = 0; i < 5; i++) {
         system.runTimeout(() => {player.runCommand(`particle minecraft:totem_particle ~ ~2 ~`)}, 10)
     }
+}
+
+export function notifyQuestFailure(player: Player, questTitle: string) {
+    world.sendMessage(
+        `§a+=+=+=+=+=+=+ Quest Failed :( +=+=+=+=+=+=+§r\n` +
+        `${player.name} has failed §l§n${questTitle}§r.\n` +
+        `Think you can do better? Run §5/quests view§r on Discord to try your luck with it.`
+    )
+
+    api.Relay.event(
+        "Quest Failed :(",
+        `${player.name} has failed §l§n${questTitle}§r.\nThink you can do better? Run §5/quests view§r on Discord to try your luck with it.`,
+        'other'
+    )
+
+    player.onScreenDisplay.setTitle(`§l§cQuest Failed :(`)
+
+    player.dimension.playSound(
+        'quest.fail',
+        player.location,
+        {volume: 10000}
+    )
 }
 
 export function showTimer(player: Player, remaining_seconds: number) {
