@@ -46,13 +46,13 @@ export class ScripteventTargetProcessor implements TargetProcessor {
         if (action.type !== 'scriptevent') return 0
         if (targetProgress.target_type !== 'scriptevent') return 0
 
-        const kill = action as ScripteventAction
+        const scriptevent = action as ScripteventAction
         const target = objective.targets.find(
-            t => t.target_type === 'kill' && t.target_uuid === targetProgress.target_uuid
+            t => t.target_type === 'scriptevent' && t.target_uuid === targetProgress.target_uuid
         ) as ScripteventAction | undefined
 
         if (!target) return 0
-        if (!this.matchesEntity(kill.script_id, target.script_id)) return 0
+        if (!this.matchesEntity(scriptevent.script_id, target.script_id)) return 0
 
         return 1
     }
