@@ -1,14 +1,14 @@
-import Quest from "../../api/quests/quest";
 import {system, TicksPerSecond} from "@minecraft/server";
-import api from "../../api";
+import {listQuestsV1GuildsMeQuestsGet} from "../../api/nexuscore/quests/quests";
+import {QuestOut} from "../../api/nexuscore/model";
 
-export const QUEST_CACHE = new Map<number, Quest>()
+export const QUEST_CACHE = new Map<number, QuestOut>()
 
 async function reload_quest_cache() {
-    const quests = await api.Quest.get_active_quests()
+    const quests_list = await listQuestsV1GuildsMeQuestsGet({active: true})
 
     QUEST_CACHE.clear()
-    quests.forEach(quest => QUEST_CACHE.set(quest.quest_id, quest))
+    quests_list.forEach(quest => QUEST_CACHE.set(quest.quest_id, quest))
 }
 
 export default function loadQuestCache() {
