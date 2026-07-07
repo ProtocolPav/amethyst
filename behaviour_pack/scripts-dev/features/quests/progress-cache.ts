@@ -55,7 +55,7 @@ export default function loadQuestProgressCache() {
 
         QUEST_PROGRESS_CACHE.delete(thornyUser.thorny_id)
 
-        if (cached_quest_progress.status !== "completed") {
+        if (cached_quest_progress.status !== "completed" && cached_quest_progress.status !== "failed") {
             notifyOfQuestUpdate(player, `You have dropped your quest: ${cached_quest.title}`)
         }
     }
