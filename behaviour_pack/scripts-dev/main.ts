@@ -1,4 +1,4 @@
-import './polyfills/url-search-params';
+import './polyfills/url-search-params'
 
 import loadWorldBorder from "./features/border";
 import loadItemComponents from "./features/items";
@@ -10,7 +10,7 @@ import loadChatDecorationFeature from "./features/chat";
 import loadInteractionHandlers from "./features/interactions";
 import loadConnectionsFeature from "./features/connections";
 import loadLocationLogger from "./features/location-logger";
-import load_quest_loop from "./features/quests";
+import loadQuestsFeature from "./features/quests";
 import loadWhitelistFeature from "./features/whitelist";
 
 function load(name: string, fn: () => void): void
@@ -37,5 +37,5 @@ load("World Border Feature", loadWorldBorder)
 load("Chat Decoration Feature", loadChatDecorationFeature)
 load("Connection Logging Feature", loadConnectionsFeature)
 load("Location Logging Feature", loadLocationLogger)
-load("Quests Feature", load_quest_loop)
+load("Quests Feature", loadQuestsFeature)
 load("Whitelist Feature", loadWhitelistFeature)

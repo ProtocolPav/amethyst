@@ -1,8 +1,7 @@
 import { Player, world } from '@minecraft/server';
 import { MinecraftDimensionTypes } from '@minecraft/vanilla-data';
-import QuestProgress from "../api/quests/quest_progress";
 
-export default function send_motd(player: Player, quest_progress: QuestProgress | null) {
+export default function send_motd(player: Player) {
     const motd_shorts = [
         "You're a star! ",
         "Your adventure awaits...",
@@ -37,11 +36,6 @@ export default function send_motd(player: Player, quest_progress: QuestProgress 
 
     if (Math.random() < 0.005) {
         randomLong = "§o§p§lLucky you! You just found 1 Nug! Send a screenshot in #general and ping a CM to claim it!"
-    }
-
-    if (quest_progress) {
-        const quest = quest_progress.quest
-        questReminder = `§l§aActive Quest:§r ${quest.title}\n---------\n`
     }
 
     world.getDimension(MinecraftDimensionTypes.Overworld).runCommand(

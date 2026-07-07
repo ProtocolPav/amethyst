@@ -10,8 +10,7 @@ export default function loadConnectionsFeature() {
                 await thorny_user.send_connect_event('connect')
                 api.Relay.event(`${spawn_event.player.name} has joined the server`, '', 'join')
 
-                const quest = await api.QuestProgress.get_quest_progress(thorny_user)
-                utils.send_motd(spawn_event.player, quest)
+                utils.send_motd(spawn_event.player)
 
                 if (thorny_user.patron) {
                     spawn_event.player.nameTag = `§l§c${spawn_event.player.nameTag}§r`
@@ -26,10 +25,6 @@ export default function loadConnectionsFeature() {
 
     world.afterEvents.playerLeave.subscribe(async (leave_event) => {
         const thorny_user = api.ThornyUser.fetch_user(leave_event.playerName)!
-
-        if (thorny_user) {
-            api.QuestProgress.clear_cache(thorny_user)
-        }
 
         await thorny_user?.send_connect_event('disconnect')
 

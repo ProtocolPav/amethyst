@@ -1,6 +1,5 @@
 import {EntityComponentTypes, EquipmentSlot, system, world} from "@minecraft/server";
 import api from "../../api";
-import {interaction_preprocess} from "../../utils/interaction_preprocess";
 
 export default function blockBreak() {
     world.beforeEvents.playerBreakBlock.subscribe(async (event) => {
@@ -10,7 +9,6 @@ export default function blockBreak() {
         const mainhand = event.player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)
 
         const thorny_user = api.ThornyUser.fetch_user(event.player.name)!
-        const active_quest = await api.QuestProgress.get_quest_progress(thorny_user)
 
         system.run(() => {
             const interaction = new api.Interaction(
@@ -26,10 +24,6 @@ export default function blockBreak() {
             )
 
             interaction.post_interaction()
-
-            if (interaction_preprocess(interaction, active_quest)) {
-                api.Interaction.enqueue(interaction)
-            }
         })
     })
 }
