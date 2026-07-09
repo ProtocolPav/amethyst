@@ -29,8 +29,10 @@ interface IThornyUser {
 }
 
 export default class ThornyUser implements IThornyUser {
-    private static thorny_user_map: {[gamertag: string]: ThornyUser} = {}
-    private static thorny_id_map: {[thorny_id: number]: ThornyUser} = {}
+    public static thorny_user_map: Record<string, ThornyUser> = {}
+    public static thorny_id_map: Record<string, ThornyUser> = {}
+    public static cache_expiry: Record<string, Date> = {}
+    private static pending_fetches: Record<string, Promise<ThornyUser>> = {}
 
     thorny_id: number
     user_id: number
@@ -77,32 +79,64 @@ export default class ThornyUser implements IThornyUser {
     }
 
     public static async get_user_from_api(gamertag: string): Promise<ThornyUser> {
-        const response = await lookupUserV1GuildsMeUsersLookupGet({gamertag: gamertag})
+        const response = await lookupUserV1GuildsMeUsersLookupGet({ gamertag })
         const thorny_user = new ThornyUser(response as unknown as IThornyUser)
 
-        // Adds user to the map for quick fetching
+        thorny_user.gamertag = gamertag
         ThornyUser.thorny_user_map[gamertag] = thorny_user
         ThornyUser.thorny_id_map[thorny_user.thorny_id] = thorny_user
-        thorny_user.gamertag = gamertag
+        ThornyUser.cache_expiry[thorny_user.thorny_id] = new Date(Date.now() + 1000 * 60 * 5) // 5 minute cache expiry time
 
         return thorny_user
     }
 
     public static fetch_user(gamertag: string): ThornyUser | undefined {
-        return ThornyUser.thorny_user_map[gamertag]
+        const cached = ThornyUser.thorny_user_map[gamertag]
+        const exp = cached ? ThornyUser.cache_expiry[cached.thorny_id] : undefined
+        const is_fresh = cached && exp && exp > new Date()
+
+        if (!is_fresh && !ThornyUser.pending_fetches[gamertag]) {
+            const request = ThornyUser.get_user_from_api(gamertag)
+                .catch((err) => {
+                    console.error(`Failed to refresh ThornyUser for ${gamertag}:`, err)
+                    return cached as ThornyUser
+                })
+                .finally(() => {
+                    delete ThornyUser.pending_fetches[gamertag]
+                })
+
+            ThornyUser.pending_fetches[gamertag] = request
+        }
+
+        return cached
     }
 
-    public static fetch_user_by_id(thorny_id: number): ThornyUser {
-        return ThornyUser.thorny_id_map[thorny_id]
+    public static fetch_user_by_id(thorny_id: number): ThornyUser | undefined {
+        const cached = ThornyUser.thorny_id_map[thorny_id]
+        const exp = cached ? ThornyUser.cache_expiry[thorny_id] : undefined
+        const is_fresh = cached && exp && exp > new Date()
+
+        if (!is_fresh && cached && !ThornyUser.pending_fetches[cached.gamertag]) {
+            const request = ThornyUser.get_user_from_api(cached.gamertag)
+                .catch((err) => {
+                    console.error(`Failed to refresh ThornyUser for id ${thorny_id}:`, err)
+                    return cached
+                })
+                .finally(() => {
+                    delete ThornyUser.pending_fetches[cached.gamertag]
+                })
+
+            ThornyUser.pending_fetches[cached.gamertag] = request
+        }
+
+        return cached
     }
     
     /**
      * Update this user in NexusCore.
-     * Currently only updates balance.
      */
     public async update() {
         await partialUpdateUserV1GuildsMeUsersThornyIdPatch(this.thorny_id, {
-            "balance": this.balance,
             "location": this.location as [number, number, number],
             "dimension": this.dimension,
             "hidden": this.hidden
@@ -114,8 +148,6 @@ export default class ThornyUser implements IThornyUser {
      * connect or disconnect
      */
     public async send_connect_event(event_type: "connect" | "disconnect") {
-        console.log(`[CONNECTION] Sending ${event_type} to nexuscore for ThornyID ${this.thorny_id} (${this.whitelist})`);
-
         await createConnectionV1GuildsMeConnectionPost({
             "type": event_type,
             "thorny_id": this.thorny_id

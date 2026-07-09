@@ -5197,6 +5197,12 @@ var ThornyUser = class _ThornyUser {
   static {
     this.thorny_id_map = {};
   }
+  static {
+    this.cache_expiry = {};
+  }
+  static {
+    this.pending_fetches = {};
+  }
   constructor(api_data) {
     this.thorny_id = api_data.thorny_id;
     this.user_id = api_data.user_id;
@@ -5222,24 +5228,47 @@ var ThornyUser = class _ThornyUser {
   static async get_user_from_api(gamertag) {
     const response = await lookupUserV1GuildsMeUsersLookupGet({ gamertag });
     const thorny_user = new _ThornyUser(response);
+    thorny_user.gamertag = gamertag;
     _ThornyUser.thorny_user_map[gamertag] = thorny_user;
     _ThornyUser.thorny_id_map[thorny_user.thorny_id] = thorny_user;
-    thorny_user.gamertag = gamertag;
+    _ThornyUser.cache_expiry[thorny_user.thorny_id] = new Date(Date.now() + 1e3 * 60 * 5);
     return thorny_user;
   }
   static fetch_user(gamertag) {
-    return _ThornyUser.thorny_user_map[gamertag];
+    const cached = _ThornyUser.thorny_user_map[gamertag];
+    const exp = cached ? _ThornyUser.cache_expiry[cached.thorny_id] : void 0;
+    const is_fresh = cached && exp && exp > /* @__PURE__ */ new Date();
+    if (!is_fresh && !_ThornyUser.pending_fetches[gamertag]) {
+      const request = _ThornyUser.get_user_from_api(gamertag).catch((err) => {
+        console.error(`Failed to refresh ThornyUser for ${gamertag}:`, err);
+        return cached;
+      }).finally(() => {
+        delete _ThornyUser.pending_fetches[gamertag];
+      });
+      _ThornyUser.pending_fetches[gamertag] = request;
+    }
+    return cached;
   }
   static fetch_user_by_id(thorny_id) {
-    return _ThornyUser.thorny_id_map[thorny_id];
+    const cached = _ThornyUser.thorny_id_map[thorny_id];
+    const exp = cached ? _ThornyUser.cache_expiry[thorny_id] : void 0;
+    const is_fresh = cached && exp && exp > /* @__PURE__ */ new Date();
+    if (!is_fresh && cached && !_ThornyUser.pending_fetches[cached.gamertag]) {
+      const request = _ThornyUser.get_user_from_api(cached.gamertag).catch((err) => {
+        console.error(`Failed to refresh ThornyUser for id ${thorny_id}:`, err);
+        return cached;
+      }).finally(() => {
+        delete _ThornyUser.pending_fetches[cached.gamertag];
+      });
+      _ThornyUser.pending_fetches[cached.gamertag] = request;
+    }
+    return cached;
   }
   /**
    * Update this user in NexusCore.
-   * Currently only updates balance.
    */
   async update() {
     await partialUpdateUserV1GuildsMeUsersThornyIdPatch(this.thorny_id, {
-      "balance": this.balance,
       "location": this.location,
       "dimension": this.dimension,
       "hidden": this.hidden
@@ -5250,7 +5279,6 @@ var ThornyUser = class _ThornyUser {
    * connect or disconnect
    */
   async send_connect_event(event_type) {
-    console.log(`[CONNECTION] Sending ${event_type} to nexuscore for ThornyID ${this.thorny_id} (${this.whitelist})`);
     await createConnectionV1GuildsMeConnectionPost({
       "type": event_type,
       "thorny_id": this.thorny_id
@@ -6721,7 +6749,7 @@ function notifyQuestProgress(player, objective, objectiveIndex, totalObjectives,
 __name(notifyQuestProgress, "notifyQuestProgress");
 function notifyQuestComplete(player, questTitle) {
   world24.sendMessage(
-    `\xA7l\xA7a[ \xA7l\xA7eQ\xA7du\xA7se\xA7as\xA7tt \xA7uC\xA7io\xA7mm\xA7pp\xA79l\xA7ee\xA7nt\xA7be! ]\xA7r
+    `\xA7l\xA7a[ \xA7l\xA7eQ\xA7du\xA7se\xA7as\xA7tt \xA7uC\xA7io\xA7mm\xA7pp\xA79l\xA7ee\xA7nt\xA7be\xA7f!\xA7a ]\xA7r
 ${player.name} has just completed \xA7l\xA7n${questTitle}\xA7r!
 Run \xA75/quests view\xA7r on Discord to start it!`
   );
@@ -7626,7 +7654,7 @@ function loadQuestProgressCache() {
       deactivateObjective(player, thornyUser.thorny_id, active.obj_def, active.obj_progress);
     }
     QUEST_PROGRESS_CACHE.delete(thornyUser.thorny_id);
-    if (cached_quest_progress.status !== "completed") {
+    if (cached_quest_progress.status !== "completed" && cached_quest_progress.status !== "failed") {
       notifyOfQuestUpdate(player, `You have dropped your quest: ${cached_quest.title}`);
     }
   }
