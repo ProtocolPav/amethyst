@@ -107,22 +107,26 @@ function requirementLines(objective: ObjectiveOut): string[] {
     // utils.emojis.PIN
     if (c.location) {
         const [x, y, z] = c.location.coordinates
-        lines.push(`§7- Around §f${x}, ${y}, ${z}`)
-        lines.push(`§7- Radius: §f${c.location.horizontal_radius}h §7/ §f${c.location.vertical_radius}v§r`)
+        const { horizontal_radius: h, vertical_radius: v } = c.location
+
+        const coords = v > 0 ? `${x}, ${y}, ${z}` : `${x}, ${z}`
+        const radiusText = v > 0 ? `Radius: ${h}, Height: ${v}` : `Radius: ${h}`
+
+        lines.push(`§7- Near §f${coords} §7(${radiusText})§r`)
     }
 
     // utils.emojis.TIMER
     if (c.timer) {
-        const skull = c.timer.fail ? ` ${utils.emojis.KNIGHT}` : ''
+        const skull = c.timer.fail ? ` §c!!!§r` : ''
         lines.push(`§7-${skull} Time limit: §f${utils.convert_seconds_to_hms(c.timer.seconds)}§r`)
-        if (c.timer.fail) failables.push('Time Limit')
+        if (c.timer.fail) failables.push('Exceeding time limit')
     }
 
     // utils.emojis.SKULL
     if (c.maximum_deaths) {
-        const skull = c.maximum_deaths.fail ? ` ${utils.emojis.KNIGHT}` : ''
+        const skull = c.maximum_deaths.fail ? ` §c!!!§r` : ''
         lines.push(`§7-${skull} Die no more than §f${c.maximum_deaths.deaths}§r times`)
-        if (c.maximum_deaths.fail) failables.push('Exceed Death Limit')
+        if (c.maximum_deaths.fail) failables.push('Exceeding death limit')
     }
 
     if (failables.length > 0)
