@@ -13,6 +13,8 @@ export interface VisitTargetModel {
   target_type: 'visit';
   /** The number of this target to be reached. At least 1. */
   count: number;
+  /** The helper text to be shown to the player, after the verb 'Locate' */
+  helper_text: string;
   /**
      * The coordinates
      * @minItems 3
