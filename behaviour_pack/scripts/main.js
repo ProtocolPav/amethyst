@@ -6671,18 +6671,20 @@ function requirementLines(objective) {
     lines.push(`\xA77- Using \xA7f${utils_default.clean_id(c.mainhand.item)}\xA7r`);
   if (c.location) {
     const [x, y, z] = c.location.coordinates;
-    lines.push(`\xA77- Around \xA7f${x}, ${y}, ${z}`);
-    lines.push(`\xA77- Radius: \xA7f${c.location.horizontal_radius}h \xA77/ \xA7f${c.location.vertical_radius}v\xA7r`);
+    const { horizontal_radius: h, vertical_radius: v } = c.location;
+    const coords = v > 0 ? `${x}, ${y}, ${z}` : `${x}, ${z}`;
+    const radiusText = v > 0 ? `Radius: ${h}, Height: ${v}` : `Radius: ${h}`;
+    lines.push(`\xA77- Near \xA7f${coords} \xA77(${radiusText})\xA7r`);
   }
   if (c.timer) {
-    const skull = c.timer.fail ? ` ${utils_default.emojis.KNIGHT}` : "";
+    const skull = c.timer.fail ? ` \xA7c!!!\xA7r` : "";
     lines.push(`\xA77-${skull} Time limit: \xA7f${utils_default.convert_seconds_to_hms(c.timer.seconds)}\xA7r`);
-    if (c.timer.fail) failables.push("Time Limit");
+    if (c.timer.fail) failables.push("Exceeding time limit");
   }
   if (c.maximum_deaths) {
-    const skull = c.maximum_deaths.fail ? ` ${utils_default.emojis.KNIGHT}` : "";
+    const skull = c.maximum_deaths.fail ? ` \xA7c!!!\xA7r` : "";
     lines.push(`\xA77-${skull} Die no more than \xA7f${c.maximum_deaths.deaths}\xA7r times`);
-    if (c.maximum_deaths.fail) failables.push("Exceed Death Limit");
+    if (c.maximum_deaths.fail) failables.push("Exceeding death limit");
   }
   if (failables.length > 0)
     lines.push(`\xA7c- Failing these will fail the entire quest: \xA7f${failables.join("\xA7c, \xA7f")}\xA7r`);
@@ -6906,7 +6908,9 @@ var LocationPlugin = class {
     const dx = Math.abs(action.coordinates.x - loc.coordinates[0]);
     const dy = Math.abs(action.coordinates.y - loc.coordinates[1]);
     const dz = Math.abs(action.coordinates.z - loc.coordinates[2]);
-    return dx <= loc.horizontal_radius && dz <= loc.horizontal_radius && dy <= loc.vertical_radius;
+    const horizontalOk = dx <= loc.horizontal_radius && dz <= loc.horizontal_radius;
+    const verticalOk = loc.vertical_radius <= 0 || dy <= loc.vertical_radius;
+    return horizontalOk && verticalOk;
   }
 };
 
