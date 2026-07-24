@@ -1,12 +1,9 @@
 import { Player } from "@minecraft/server";
-import {
-    KillTargetModel, KillTargetProgressModel, MineTargetModel, MineTargetProgressModel, ObjectiveOut, ObjectiveProgressOut,
-    ScriptEventTargetModel, ScriptEventTargetProgressModel
-} from "../../../api/nexuscore/model";
+import {ObjectiveOut, ObjectiveProgressOut} from "../../../api/nexuscore/model";
 import { GameAction } from "./action";
 
-export type AnyTargetProgress = MineTargetProgressModel | KillTargetProgressModel | ScriptEventTargetProgressModel
-export type AnyTarget = MineTargetModel | KillTargetModel | ScriptEventTargetModel
+export type AnyTargetProgress = ObjectiveProgressOut["target_progress"][number]
+export type AnyTarget = ObjectiveOut["targets"][number]
 
 export interface TargetProcessor {
     /**
