@@ -132,6 +132,7 @@ var MinecraftBiomeTypes = ((MinecraftBiomeTypes2) => {
   MinecraftBiomeTypes2["SoulsandValley"] = "minecraft:soulsand_valley";
   MinecraftBiomeTypes2["StoneBeach"] = "minecraft:stone_beach";
   MinecraftBiomeTypes2["StonyPeaks"] = "minecraft:stony_peaks";
+  MinecraftBiomeTypes2["SulfurCaves"] = "minecraft:sulfur_caves";
   MinecraftBiomeTypes2["SunflowerPlains"] = "minecraft:sunflower_plains";
   MinecraftBiomeTypes2["Swampland"] = "minecraft:swampland";
   MinecraftBiomeTypes2["SwamplandMutated"] = "minecraft:swampland_mutated";
@@ -331,6 +332,7 @@ var MinecraftBlockTypes = ((MinecraftBlockTypes2) => {
   MinecraftBlockTypes2["Chest"] = "minecraft:chest";
   MinecraftBlockTypes2["ChippedAnvil"] = "minecraft:chipped_anvil";
   MinecraftBlockTypes2["ChiseledBookshelf"] = "minecraft:chiseled_bookshelf";
+  MinecraftBlockTypes2["ChiseledCinnabar"] = "minecraft:chiseled_cinnabar";
   MinecraftBlockTypes2["ChiseledCopper"] = "minecraft:chiseled_copper";
   MinecraftBlockTypes2["ChiseledDeepslate"] = "minecraft:chiseled_deepslate";
   MinecraftBlockTypes2["ChiseledNetherBricks"] = "minecraft:chiseled_nether_bricks";
@@ -340,10 +342,21 @@ var MinecraftBlockTypes = ((MinecraftBlockTypes2) => {
   MinecraftBlockTypes2["ChiseledResinBricks"] = "minecraft:chiseled_resin_bricks";
   MinecraftBlockTypes2["ChiseledSandstone"] = "minecraft:chiseled_sandstone";
   MinecraftBlockTypes2["ChiseledStoneBricks"] = "minecraft:chiseled_stone_bricks";
+  MinecraftBlockTypes2["ChiseledSulfur"] = "minecraft:chiseled_sulfur";
   MinecraftBlockTypes2["ChiseledTuff"] = "minecraft:chiseled_tuff";
   MinecraftBlockTypes2["ChiseledTuffBricks"] = "minecraft:chiseled_tuff_bricks";
   MinecraftBlockTypes2["ChorusFlower"] = "minecraft:chorus_flower";
   MinecraftBlockTypes2["ChorusPlant"] = "minecraft:chorus_plant";
+  MinecraftBlockTypes2["Cinnabar"] = "minecraft:cinnabar";
+  MinecraftBlockTypes2["CinnabarBrickDoubleSlab"] = "minecraft:cinnabar_brick_double_slab";
+  MinecraftBlockTypes2["CinnabarBrickSlab"] = "minecraft:cinnabar_brick_slab";
+  MinecraftBlockTypes2["CinnabarBrickStairs"] = "minecraft:cinnabar_brick_stairs";
+  MinecraftBlockTypes2["CinnabarBrickWall"] = "minecraft:cinnabar_brick_wall";
+  MinecraftBlockTypes2["CinnabarBricks"] = "minecraft:cinnabar_bricks";
+  MinecraftBlockTypes2["CinnabarDoubleSlab"] = "minecraft:cinnabar_double_slab";
+  MinecraftBlockTypes2["CinnabarSlab"] = "minecraft:cinnabar_slab";
+  MinecraftBlockTypes2["CinnabarStairs"] = "minecraft:cinnabar_stairs";
+  MinecraftBlockTypes2["CinnabarWall"] = "minecraft:cinnabar_wall";
   MinecraftBlockTypes2["Clay"] = "minecraft:clay";
   MinecraftBlockTypes2["ClosedEyeblossom"] = "minecraft:closed_eyeblossom";
   MinecraftBlockTypes2["CoalBlock"] = "minecraft:coal_block";
@@ -690,6 +703,7 @@ var MinecraftBlockTypes = ((MinecraftBlockTypes2) => {
   MinecraftBlockTypes2["Glowstone"] = "minecraft:glowstone";
   MinecraftBlockTypes2["GoldBlock"] = "minecraft:gold_block";
   MinecraftBlockTypes2["GoldOre"] = "minecraft:gold_ore";
+  MinecraftBlockTypes2["GoldenDandelion"] = "minecraft:golden_dandelion";
   MinecraftBlockTypes2["GoldenRail"] = "minecraft:golden_rail";
   MinecraftBlockTypes2["Granite"] = "minecraft:granite";
   MinecraftBlockTypes2["GraniteDoubleSlab"] = "minecraft:granite_double_slab";
@@ -1057,6 +1071,11 @@ var MinecraftBlockTypes = ((MinecraftBlockTypes2) => {
   MinecraftBlockTypes2["PolishedBlackstoneSlab"] = "minecraft:polished_blackstone_slab";
   MinecraftBlockTypes2["PolishedBlackstoneStairs"] = "minecraft:polished_blackstone_stairs";
   MinecraftBlockTypes2["PolishedBlackstoneWall"] = "minecraft:polished_blackstone_wall";
+  MinecraftBlockTypes2["PolishedCinnabar"] = "minecraft:polished_cinnabar";
+  MinecraftBlockTypes2["PolishedCinnabarDoubleSlab"] = "minecraft:polished_cinnabar_double_slab";
+  MinecraftBlockTypes2["PolishedCinnabarSlab"] = "minecraft:polished_cinnabar_slab";
+  MinecraftBlockTypes2["PolishedCinnabarStairs"] = "minecraft:polished_cinnabar_stairs";
+  MinecraftBlockTypes2["PolishedCinnabarWall"] = "minecraft:polished_cinnabar_wall";
   MinecraftBlockTypes2["PolishedDeepslate"] = "minecraft:polished_deepslate";
   MinecraftBlockTypes2["PolishedDeepslateDoubleSlab"] = "minecraft:polished_deepslate_double_slab";
   MinecraftBlockTypes2["PolishedDeepslateSlab"] = "minecraft:polished_deepslate_slab";
@@ -1070,6 +1089,11 @@ var MinecraftBlockTypes = ((MinecraftBlockTypes2) => {
   MinecraftBlockTypes2["PolishedGraniteDoubleSlab"] = "minecraft:polished_granite_double_slab";
   MinecraftBlockTypes2["PolishedGraniteSlab"] = "minecraft:polished_granite_slab";
   MinecraftBlockTypes2["PolishedGraniteStairs"] = "minecraft:polished_granite_stairs";
+  MinecraftBlockTypes2["PolishedSulfur"] = "minecraft:polished_sulfur";
+  MinecraftBlockTypes2["PolishedSulfurDoubleSlab"] = "minecraft:polished_sulfur_double_slab";
+  MinecraftBlockTypes2["PolishedSulfurSlab"] = "minecraft:polished_sulfur_slab";
+  MinecraftBlockTypes2["PolishedSulfurStairs"] = "minecraft:polished_sulfur_stairs";
+  MinecraftBlockTypes2["PolishedSulfurWall"] = "minecraft:polished_sulfur_wall";
   MinecraftBlockTypes2["PolishedTuff"] = "minecraft:polished_tuff";
   MinecraftBlockTypes2["PolishedTuffDoubleSlab"] = "minecraft:polished_tuff_double_slab";
   MinecraftBlockTypes2["PolishedTuffSlab"] = "minecraft:polished_tuff_slab";
@@ -1078,6 +1102,7 @@ var MinecraftBlockTypes = ((MinecraftBlockTypes2) => {
   MinecraftBlockTypes2["Poppy"] = "minecraft:poppy";
   MinecraftBlockTypes2["Portal"] = "minecraft:portal";
   MinecraftBlockTypes2["Potatoes"] = "minecraft:potatoes";
+  MinecraftBlockTypes2["PotentSulfur"] = "minecraft:potent_sulfur";
   MinecraftBlockTypes2["PowderSnow"] = "minecraft:powder_snow";
   MinecraftBlockTypes2["PoweredComparator"] = "minecraft:powered_comparator";
   MinecraftBlockTypes2["PoweredRepeater"] = "minecraft:powered_repeater";
@@ -1270,6 +1295,17 @@ var MinecraftBlockTypes = ((MinecraftBlockTypes2) => {
   MinecraftBlockTypes2["StrippedWarpedStem"] = "minecraft:stripped_warped_stem";
   MinecraftBlockTypes2["StructureBlock"] = "minecraft:structure_block";
   MinecraftBlockTypes2["StructureVoid"] = "minecraft:structure_void";
+  MinecraftBlockTypes2["Sulfur"] = "minecraft:sulfur";
+  MinecraftBlockTypes2["SulfurBrickDoubleSlab"] = "minecraft:sulfur_brick_double_slab";
+  MinecraftBlockTypes2["SulfurBrickSlab"] = "minecraft:sulfur_brick_slab";
+  MinecraftBlockTypes2["SulfurBrickStairs"] = "minecraft:sulfur_brick_stairs";
+  MinecraftBlockTypes2["SulfurBrickWall"] = "minecraft:sulfur_brick_wall";
+  MinecraftBlockTypes2["SulfurBricks"] = "minecraft:sulfur_bricks";
+  MinecraftBlockTypes2["SulfurDoubleSlab"] = "minecraft:sulfur_double_slab";
+  MinecraftBlockTypes2["SulfurSlab"] = "minecraft:sulfur_slab";
+  MinecraftBlockTypes2["SulfurSpike"] = "minecraft:sulfur_spike";
+  MinecraftBlockTypes2["SulfurStairs"] = "minecraft:sulfur_stairs";
+  MinecraftBlockTypes2["SulfurWall"] = "minecraft:sulfur_wall";
   MinecraftBlockTypes2["Sunflower"] = "minecraft:sunflower";
   MinecraftBlockTypes2["SuspiciousGravel"] = "minecraft:suspicious_gravel";
   MinecraftBlockTypes2["SuspiciousSand"] = "minecraft:suspicious_sand";
@@ -1661,6 +1697,7 @@ var MinecraftEntityTypes = ((MinecraftEntityTypes2) => {
   MinecraftEntityTypes2["Squid"] = "minecraft:squid";
   MinecraftEntityTypes2["Stray"] = "minecraft:stray";
   MinecraftEntityTypes2["Strider"] = "minecraft:strider";
+  MinecraftEntityTypes2["SulfurCube"] = "minecraft:sulfur_cube";
   MinecraftEntityTypes2["Tadpole"] = "minecraft:tadpole";
   MinecraftEntityTypes2["ThrownTrident"] = "minecraft:thrown_trident";
   MinecraftEntityTypes2["Tnt"] = "minecraft:tnt";
@@ -1947,6 +1984,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["ChickenSpawnEgg"] = "minecraft:chicken_spawn_egg";
   MinecraftItemTypes2["ChippedAnvil"] = "minecraft:chipped_anvil";
   MinecraftItemTypes2["ChiseledBookshelf"] = "minecraft:chiseled_bookshelf";
+  MinecraftItemTypes2["ChiseledCinnabar"] = "minecraft:chiseled_cinnabar";
   MinecraftItemTypes2["ChiseledCopper"] = "minecraft:chiseled_copper";
   MinecraftItemTypes2["ChiseledDeepslate"] = "minecraft:chiseled_deepslate";
   MinecraftItemTypes2["ChiseledNetherBricks"] = "minecraft:chiseled_nether_bricks";
@@ -1956,11 +1994,20 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["ChiseledResinBricks"] = "minecraft:chiseled_resin_bricks";
   MinecraftItemTypes2["ChiseledSandstone"] = "minecraft:chiseled_sandstone";
   MinecraftItemTypes2["ChiseledStoneBricks"] = "minecraft:chiseled_stone_bricks";
+  MinecraftItemTypes2["ChiseledSulfur"] = "minecraft:chiseled_sulfur";
   MinecraftItemTypes2["ChiseledTuff"] = "minecraft:chiseled_tuff";
   MinecraftItemTypes2["ChiseledTuffBricks"] = "minecraft:chiseled_tuff_bricks";
   MinecraftItemTypes2["ChorusFlower"] = "minecraft:chorus_flower";
   MinecraftItemTypes2["ChorusFruit"] = "minecraft:chorus_fruit";
   MinecraftItemTypes2["ChorusPlant"] = "minecraft:chorus_plant";
+  MinecraftItemTypes2["Cinnabar"] = "minecraft:cinnabar";
+  MinecraftItemTypes2["CinnabarBrickSlab"] = "minecraft:cinnabar_brick_slab";
+  MinecraftItemTypes2["CinnabarBrickStairs"] = "minecraft:cinnabar_brick_stairs";
+  MinecraftItemTypes2["CinnabarBrickWall"] = "minecraft:cinnabar_brick_wall";
+  MinecraftItemTypes2["CinnabarBricks"] = "minecraft:cinnabar_bricks";
+  MinecraftItemTypes2["CinnabarSlab"] = "minecraft:cinnabar_slab";
+  MinecraftItemTypes2["CinnabarStairs"] = "minecraft:cinnabar_stairs";
+  MinecraftItemTypes2["CinnabarWall"] = "minecraft:cinnabar_wall";
   MinecraftItemTypes2["Clay"] = "minecraft:clay";
   MinecraftItemTypes2["ClayBall"] = "minecraft:clay_ball";
   MinecraftItemTypes2["Clock"] = "minecraft:clock";
@@ -2272,6 +2319,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["GoldenBoots"] = "minecraft:golden_boots";
   MinecraftItemTypes2["GoldenCarrot"] = "minecraft:golden_carrot";
   MinecraftItemTypes2["GoldenChestplate"] = "minecraft:golden_chestplate";
+  MinecraftItemTypes2["GoldenDandelion"] = "minecraft:golden_dandelion";
   MinecraftItemTypes2["GoldenHelmet"] = "minecraft:golden_helmet";
   MinecraftItemTypes2["GoldenHoe"] = "minecraft:golden_hoe";
   MinecraftItemTypes2["GoldenHorseArmor"] = "minecraft:golden_horse_armor";
@@ -2546,6 +2594,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["MusicDisc13"] = "minecraft:music_disc_13";
   MinecraftItemTypes2["MusicDisc5"] = "minecraft:music_disc_5";
   MinecraftItemTypes2["MusicDiscBlocks"] = "minecraft:music_disc_blocks";
+  MinecraftItemTypes2["MusicDiscBounce"] = "minecraft:music_disc_bounce";
   MinecraftItemTypes2["MusicDiscCat"] = "minecraft:music_disc_cat";
   MinecraftItemTypes2["MusicDiscChirp"] = "minecraft:music_disc_chirp";
   MinecraftItemTypes2["MusicDiscCreator"] = "minecraft:music_disc_creator";
@@ -2726,6 +2775,10 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["PolishedBlackstoneSlab"] = "minecraft:polished_blackstone_slab";
   MinecraftItemTypes2["PolishedBlackstoneStairs"] = "minecraft:polished_blackstone_stairs";
   MinecraftItemTypes2["PolishedBlackstoneWall"] = "minecraft:polished_blackstone_wall";
+  MinecraftItemTypes2["PolishedCinnabar"] = "minecraft:polished_cinnabar";
+  MinecraftItemTypes2["PolishedCinnabarSlab"] = "minecraft:polished_cinnabar_slab";
+  MinecraftItemTypes2["PolishedCinnabarStairs"] = "minecraft:polished_cinnabar_stairs";
+  MinecraftItemTypes2["PolishedCinnabarWall"] = "minecraft:polished_cinnabar_wall";
   MinecraftItemTypes2["PolishedDeepslate"] = "minecraft:polished_deepslate";
   MinecraftItemTypes2["PolishedDeepslateSlab"] = "minecraft:polished_deepslate_slab";
   MinecraftItemTypes2["PolishedDeepslateStairs"] = "minecraft:polished_deepslate_stairs";
@@ -2736,6 +2789,10 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["PolishedGranite"] = "minecraft:polished_granite";
   MinecraftItemTypes2["PolishedGraniteSlab"] = "minecraft:polished_granite_slab";
   MinecraftItemTypes2["PolishedGraniteStairs"] = "minecraft:polished_granite_stairs";
+  MinecraftItemTypes2["PolishedSulfur"] = "minecraft:polished_sulfur";
+  MinecraftItemTypes2["PolishedSulfurSlab"] = "minecraft:polished_sulfur_slab";
+  MinecraftItemTypes2["PolishedSulfurStairs"] = "minecraft:polished_sulfur_stairs";
+  MinecraftItemTypes2["PolishedSulfurWall"] = "minecraft:polished_sulfur_wall";
   MinecraftItemTypes2["PolishedTuff"] = "minecraft:polished_tuff";
   MinecraftItemTypes2["PolishedTuffSlab"] = "minecraft:polished_tuff_slab";
   MinecraftItemTypes2["PolishedTuffStairs"] = "minecraft:polished_tuff_stairs";
@@ -2744,6 +2801,7 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["Poppy"] = "minecraft:poppy";
   MinecraftItemTypes2["Porkchop"] = "minecraft:porkchop";
   MinecraftItemTypes2["Potato"] = "minecraft:potato";
+  MinecraftItemTypes2["PotentSulfur"] = "minecraft:potent_sulfur";
   MinecraftItemTypes2["Potion"] = "minecraft:potion";
   MinecraftItemTypes2["PowderSnowBucket"] = "minecraft:powder_snow_bucket";
   MinecraftItemTypes2["Prismarine"] = "minecraft:prismarine";
@@ -2989,6 +3047,17 @@ var MinecraftItemTypes = ((MinecraftItemTypes2) => {
   MinecraftItemTypes2["StructureVoid"] = "minecraft:structure_void";
   MinecraftItemTypes2["Sugar"] = "minecraft:sugar";
   MinecraftItemTypes2["SugarCane"] = "minecraft:sugar_cane";
+  MinecraftItemTypes2["Sulfur"] = "minecraft:sulfur";
+  MinecraftItemTypes2["SulfurBrickSlab"] = "minecraft:sulfur_brick_slab";
+  MinecraftItemTypes2["SulfurBrickStairs"] = "minecraft:sulfur_brick_stairs";
+  MinecraftItemTypes2["SulfurBrickWall"] = "minecraft:sulfur_brick_wall";
+  MinecraftItemTypes2["SulfurBricks"] = "minecraft:sulfur_bricks";
+  MinecraftItemTypes2["SulfurCubeBucket"] = "minecraft:sulfur_cube_bucket";
+  MinecraftItemTypes2["SulfurCubeSpawnEgg"] = "minecraft:sulfur_cube_spawn_egg";
+  MinecraftItemTypes2["SulfurSlab"] = "minecraft:sulfur_slab";
+  MinecraftItemTypes2["SulfurSpike"] = "minecraft:sulfur_spike";
+  MinecraftItemTypes2["SulfurStairs"] = "minecraft:sulfur_stairs";
+  MinecraftItemTypes2["SulfurWall"] = "minecraft:sulfur_wall";
   MinecraftItemTypes2["Sunflower"] = "minecraft:sunflower";
   MinecraftItemTypes2["SuspiciousGravel"] = "minecraft:suspicious_gravel";
   MinecraftItemTypes2["SuspiciousSand"] = "minecraft:suspicious_sand";
@@ -6344,7 +6413,7 @@ function loadLocationLogger() {
 __name(loadLocationLogger, "loadLocationLogger");
 
 // behaviour_pack/scripts-dev/features/quests/progress-cache.ts
-import { system as system28, TicksPerSecond as TicksPerSecond12, world as world27 } from "@minecraft/server";
+import { system as system30, TicksPerSecond as TicksPerSecond13, world as world29 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/features/quests/quest-cache.ts
 import { system as system23, TicksPerSecond as TicksPerSecond9 } from "@minecraft/server";
@@ -6600,6 +6669,8 @@ function targetId(target) {
       return target.block;
     case "kill":
       return target.entity;
+    case "visit":
+      return target.helper_text;
     default:
       return "unknown";
   }
@@ -6611,6 +6682,8 @@ function logicVerb(type) {
       return "Mine";
     case "kill":
       return "Kill";
+    case "visit":
+      return "Locate";
     default:
       return "Complete";
   }
@@ -6641,6 +6714,7 @@ function taskLine(objective) {
   }
   const targetParts = targets.map((t) => {
     const name = utils_default.clean_id(targetId(t));
+    if (t.target_type === "visit") return `\xA7f${name}\xA7r`;
     return `\xA7f${t.count} ${name}\xA7r`;
   });
   switch (objective.logic) {
@@ -6980,13 +7054,47 @@ var TimerPlugin = class {
   }
 };
 
+// behaviour_pack/scripts-dev/features/quests/customizations/waypoint-plugin.ts
+import { LocationWaypoint, WaypointTexture, world as world26 } from "@minecraft/server";
+var WaypointPlugin = class {
+  static {
+    __name(this, "WaypointPlugin");
+  }
+  onActivate(player, objective, progress) {
+    const c = objective.customizations.waypoint;
+    if (!c) return;
+    player.locatorBar.addWaypoint(new LocationWaypoint(
+      {
+        dimension: world26.getDimension(MinecraftDimensionTypes.Overworld),
+        x: c.coordinates[0],
+        y: c.coordinates[1],
+        z: c.coordinates[2]
+      },
+      {
+        textureBoundsList: [
+          { lowerBound: 0, texture: WaypointTexture.SmallSquare }
+        ]
+      },
+      {
+        red: 1,
+        green: 0,
+        blue: 0
+      }
+    ));
+  }
+  onDeactivate(player, _objective, _progress) {
+    player.locatorBar.removeAllWaypoints();
+  }
+};
+
 // behaviour_pack/scripts-dev/features/quests/core/objective/objective-lifecycle.ts
 var CUSTOMIZATION_PLUGINS = {
   location: LocationPlugin,
   mainhand: MainhandPlugin,
   natural_block: NaturalBlockPlugin,
   timer: TimerPlugin,
-  maximum_deaths: DeathPlugin
+  maximum_deaths: DeathPlugin,
+  waypoint: WaypointPlugin
 };
 var ACTIVE_PLUGINS = /* @__PURE__ */ new Map();
 function activateObjective(player, thorny_id, objective, objectiveProgress) {
@@ -7016,7 +7124,7 @@ function deactivateObjective(player, thorny_id, objective, objectiveProgress) {
 __name(deactivateObjective, "deactivateObjective");
 
 // behaviour_pack/scripts-dev/features/quests/processors/scriptevent-target-processor.ts
-import { EquipmentSlot as EquipmentSlot15, system as system27 } from "@minecraft/server";
+import { EquipmentSlot as EquipmentSlot15, system as system28 } from "@minecraft/server";
 var ScripteventTargetProcessor = class {
   constructor() {
     this.subscriptions = /* @__PURE__ */ new Map();
@@ -7040,8 +7148,8 @@ var ScripteventTargetProcessor = class {
       };
       processGameAction(player, action);
     }, "handler");
-    system27.afterEvents.scriptEventReceive.subscribe(handler);
-    this.subscriptions.set(thorny_id, () => system27.afterEvents.scriptEventReceive.unsubscribe(handler));
+    system28.afterEvents.scriptEventReceive.subscribe(handler);
+    this.subscriptions.set(thorny_id, () => system28.afterEvents.scriptEventReceive.unsubscribe(handler));
   }
   onDeactivate(player, _objective, _objectiveProgress) {
     const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
@@ -7068,11 +7176,65 @@ var ScripteventTargetProcessor = class {
   }
 };
 
+// behaviour_pack/scripts-dev/features/quests/processors/visit-target-processor.ts
+import { EquipmentSlot as EquipmentSlot16, system as system29, TicksPerSecond as TicksPerSecond12 } from "@minecraft/server";
+var VisitTargetProcessor = class {
+  constructor() {
+    this.subscriptions = /* @__PURE__ */ new Map();
+  }
+  static {
+    __name(this, "VisitTargetProcessor");
+  }
+  checkCoordinates(action, target) {
+    const dx = Math.abs(action.coordinates.x - target.coordinates[0]);
+    const dy = Math.abs(action.coordinates.y - target.coordinates[1]);
+    const dz = Math.abs(action.coordinates.z - target.coordinates[2]);
+    const horizontalOk = dx <= target.horizontal_radius && dz <= target.horizontal_radius;
+    const verticalOk = target.vertical_radius <= 0 || dy <= target.vertical_radius;
+    return horizontalOk && verticalOk;
+  }
+  onActivate(player, _objective, _objectiveProgress) {
+    const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
+    const handler = /* @__PURE__ */ __name(() => {
+      const mainhand = player.getComponent("minecraft:equippable")?.getEquipment(EquipmentSlot16.Mainhand)?.typeId ?? null;
+      const action = {
+        type: "visit",
+        time: /* @__PURE__ */ new Date(),
+        player,
+        coordinates: player.location,
+        dimension: player.dimension.id,
+        mainhand
+      };
+      processGameAction(player, action);
+    }, "handler");
+    const runId = system29.runInterval(handler, TicksPerSecond12);
+    this.subscriptions.set(thorny_id, () => system29.clearRun(runId));
+  }
+  onDeactivate(player, _objective, _objectiveProgress) {
+    const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
+    this.subscriptions.get(thorny_id)?.();
+    this.subscriptions.delete(thorny_id);
+  }
+  evaluate(action, objective, targetProgress) {
+    if (action.type !== "visit") return 0;
+    if (targetProgress.target_type !== "visit") return 0;
+    const target = objective.targets.find(
+      (t) => t.target_type === "visit" && t.target_uuid === targetProgress.target_uuid
+    );
+    if (!target) return 0;
+    if (!this.checkCoordinates(action, target)) return 0;
+    targetProgress.seconds = (targetProgress.seconds ?? 0) + 1;
+    if (targetProgress.seconds < (target.seconds ?? 1)) return 0;
+    return 1;
+  }
+};
+
 // behaviour_pack/scripts-dev/features/quests/processors/objective-processor.ts
 var TARGET_PROCESSORS = {
   mine: new MineTargetProcessor(),
   kill: new KillTargetProcessor(),
-  scriptevent: new ScripteventTargetProcessor()
+  scriptevent: new ScripteventTargetProcessor(),
+  visit: new VisitTargetProcessor()
 };
 function targetCount(target) {
   return target.count ?? 1;
@@ -7637,7 +7799,7 @@ function loadQuestProgressCache() {
         activateObjective(player, thornyUser.thorny_id, active.obj_def, active.obj_progress);
       }
     }
-    system28.runTimeout(() => {
+    system30.runTimeout(() => {
       notifyOfQuestUpdate(
         player,
         generateObjectiveDisplayString(
@@ -7647,7 +7809,7 @@ function loadQuestProgressCache() {
           quest.title
         )
       );
-    }, TicksPerSecond12 * 10);
+    }, TicksPerSecond13 * 10);
   }
   __name(new_active_quest, "new_active_quest");
   async function dropped_quest(questProgress, thornyUser, player) {
@@ -7664,7 +7826,7 @@ function loadQuestProgressCache() {
   }
   __name(dropped_quest, "dropped_quest");
   async function update_player_quest(player_name) {
-    const player = world27.getPlayers().find((p) => p.name == player_name);
+    const player = world29.getPlayers().find((p) => p.name == player_name);
     if (!player) return;
     const thorny_user = ThornyUser.fetch_user(player_name);
     const questProgress = await get_quest_progress(thorny_user.thorny_id);
@@ -7677,7 +7839,7 @@ function loadQuestProgressCache() {
   }
   __name(update_player_quest, "update_player_quest");
   async function tickQuest(player_name) {
-    const player = world27.getPlayers().find((p) => p.name == player_name);
+    const player = world29.getPlayers().find((p) => p.name == player_name);
     if (!player) return;
     const thorny_user = ThornyUser.fetch_user(player_name);
     const cachedQuestProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
@@ -7694,7 +7856,7 @@ function loadQuestProgressCache() {
     }
   }
   __name(tickQuest, "tickQuest");
-  world27.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
+  world29.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
     if (spawn_event.initialSpawn) {
       const thorny_user = ThornyUser.fetch_user(spawn_event.player.name);
       if (thorny_user) {
@@ -7703,19 +7865,19 @@ function loadQuestProgressCache() {
           await new_active_quest(questProgress, thorny_user, spawn_event.player);
         }
       }
-      const cacheRunId = system28.runInterval(async () => {
+      const cacheRunId = system30.runInterval(async () => {
         await update_player_quest(spawn_event.player.name);
-      }, TicksPerSecond12 * 2);
-      const tickRunId = system28.runInterval(async () => {
+      }, TicksPerSecond13 * 2);
+      const tickRunId = system30.runInterval(async () => {
         await tickQuest(spawn_event.player.name);
-      }, TicksPerSecond12);
+      }, TicksPerSecond13);
       PLAYER_LOOP_RUN_IDS.set(spawn_event.player.name, [cacheRunId, tickRunId]);
     }
   });
-  world27.afterEvents.playerLeave.subscribe((leave_event) => {
+  world29.afterEvents.playerLeave.subscribe((leave_event) => {
     const runIds = PLAYER_LOOP_RUN_IDS.get(leave_event.playerName);
     if (runIds !== void 0) {
-      runIds.map((i) => system28.clearRun(i));
+      runIds.map((i) => system30.clearRun(i));
       PLAYER_LOOP_RUN_IDS.delete(leave_event.playerName);
     }
     const thorny_user = ThornyUser.fetch_user(leave_event.playerName);
@@ -7725,7 +7887,7 @@ function loadQuestProgressCache() {
         const quest = QUEST_CACHE.get(questProgress.quest_id);
         const active = quest ? getActiveObjective(quest, questProgress) : void 0;
         if (active) {
-          const player = world27.getPlayers().find((p) => p.name === leave_event.playerName);
+          const player = world29.getPlayers().find((p) => p.name === leave_event.playerName);
           if (player) {
             deactivateObjective(player, thorny_user.thorny_id, active.obj_def, active.obj_progress);
           }
@@ -7747,7 +7909,7 @@ __name(loadQuestsFeature, "loadQuestsFeature");
 
 // behaviour_pack/scripts-dev/features/whitelist.ts
 import { beforeEvents } from "@minecraft/server-admin";
-import { world as world28 } from "@minecraft/server";
+import { world as world30 } from "@minecraft/server";
 var BlockMessageMap = {
   "no_whitelist": "You are not whitelisted. Check the guidelines to see how to whitelist yourself.",
   "not_active": "WAIT! Don't go!\n\nCouldn't resist a peek, could you? We don't blame you. Let's get you back to where you belong.\n\nRejoin us at everthorn.net/apply or reach out on Discord. We'll get you right back in!",
@@ -7765,7 +7927,7 @@ async function blockJoin(join_event, reason = "other") {
 }
 __name(blockJoin, "blockJoin");
 function loadWhitelistFeature() {
-  world28.afterEvents.worldLoad.subscribe(() => {
+  world30.afterEvents.worldLoad.subscribe(() => {
     beforeEvents.asyncPlayerJoin.subscribe(async (join_event) => {
       try {
         const thorny_user = await api_default.ThornyUser.get_user_from_api(join_event.name);

@@ -7,6 +7,7 @@ import {LocationPlugin} from "../../customizations/location-plugin";
 import {MainhandPlugin} from "../../customizations/mainhand-plugin";
 import {NaturalBlockPlugin} from "../../customizations/natural-block-plugin";
 import {TimerPlugin} from "../../customizations/timer-plugin";
+import {WaypointPlugin} from "../../customizations/waypoint-plugin";
 
 /**
  * Registry of customization plugin classes, keyed by the customization field
@@ -17,11 +18,12 @@ import {TimerPlugin} from "../../customizations/timer-plugin";
  * Add future plugins here — no other changes needed.
  */
 const CUSTOMIZATION_PLUGINS: Record<string, new () => CustomizationPlugin> = {
-    location:       LocationPlugin,
-    mainhand:       MainhandPlugin,
-    natural_block:  NaturalBlockPlugin,
-    timer:          TimerPlugin,
+    location: LocationPlugin,
+    mainhand: MainhandPlugin,
+    natural_block: NaturalBlockPlugin,
+    timer: TimerPlugin,
     maximum_deaths: DeathPlugin,
+    waypoint: WaypointPlugin,
 }
 
 /**
