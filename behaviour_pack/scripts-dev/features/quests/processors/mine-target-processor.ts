@@ -25,7 +25,8 @@ export class MineTargetProcessor implements TargetProcessor {
                 ?.typeId ?? null
 
             const interactions = await listInteractionsV1GuildsMeInteractionsGet({
-                coordinates: [event.block.x, event.block.y, event.block.z]
+                coordinates: [event.block.x, event.block.y, event.block.z],
+                interaction_types: ['mine', 'place'],
             })
 
             const action: MineAction = {
