@@ -45,6 +45,19 @@
             "category": "record",
             "max_distance": 48.0,
             "sounds": ["sounds/laughs/laugh-1", "sounds/laughs/laugh-2"]
+        },
+        "record.fallen_kingdom": {
+            "category": "record",
+            "sounds": [
+                {
+                    "name": "sounds/records/fallen_kingdom",
+                    "stream": true
+                }
+            ],
+            "music_info": {
+                "artist": "CaptainSparklez",
+                "title": "Fallen Kingdom"
+            }
         }
-	}
+    }
 }

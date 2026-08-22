@@ -85,6 +85,9 @@
         },
         "rainbow_shell": {
             "textures": "textures/items/fish/rainbow_shell.png"
+        },
+        "record_fallen_kingdom": {
+            "textures": "textures/items/record_fallen_kingdom.png"
         }
     }
 }
