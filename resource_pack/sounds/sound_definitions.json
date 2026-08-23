@@ -48,10 +48,10 @@
         },
         "record.fallen_kingdom": {
             "category": "record",
+            "max_distance": 64.0,
             "sounds": [
                 {
-                    "name": "sounds/records/fallen_kingdom",
-                    "stream": true
+                    "name": "sounds/records/fallen_kingdom"
                 }
             ],
             "music_info": {
