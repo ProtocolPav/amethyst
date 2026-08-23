@@ -9,12 +9,6 @@
             }
         },
         "components": {
-            "minecraft:record": {
-                "duration": 288.0,
-                "comparator_signal": 1,
-                "sound_event": "record.fallen_kingdom"
-            },
-            "minecraft:max_stack_size": 1,
             "minecraft:icon": {
                 "textures": {
                     "default": "record_fallen_kingdom"
@@ -22,7 +16,13 @@
             },
             "minecraft:display_name": {
                 "value": "Fallen Kingdom"
-            }
+            },
+            "minecraft:record": {
+                "duration": 288.0,
+                "comparator_signal": 1,
+                "sound_event": "record.fallen_kingdom"
+            },
+            "minecraft:max_stack_size": 1
         }
     }
 }
