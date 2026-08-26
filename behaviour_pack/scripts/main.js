@@ -6413,7 +6413,7 @@ function loadLocationLogger() {
 __name(loadLocationLogger, "loadLocationLogger");
 
 // behaviour_pack/scripts-dev/features/quests/progress-cache.ts
-import { system as system30, TicksPerSecond as TicksPerSecond13, world as world29 } from "@minecraft/server";
+import { system as system29, TicksPerSecond as TicksPerSecond13, world as world29 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/features/quests/quest-cache.ts
 import { system as system23, TicksPerSecond as TicksPerSecond9 } from "@minecraft/server";
@@ -7129,7 +7129,7 @@ function deactivateObjective(player, thorny_id, objective, objectiveProgress) {
 __name(deactivateObjective, "deactivateObjective");
 
 // behaviour_pack/scripts-dev/features/quests/processors/scriptevent-target-processor.ts
-import { EquipmentSlot as EquipmentSlot15, system as system28 } from "@minecraft/server";
+import { EquipmentSlot as EquipmentSlot15, system as system27 } from "@minecraft/server";
 var ScripteventTargetProcessor = class {
   constructor() {
     this.subscriptions = /* @__PURE__ */ new Map();
@@ -7153,8 +7153,8 @@ var ScripteventTargetProcessor = class {
       };
       processGameAction(player, action);
     }, "handler");
-    system28.afterEvents.scriptEventReceive.subscribe(handler);
-    this.subscriptions.set(thorny_id, () => system28.afterEvents.scriptEventReceive.unsubscribe(handler));
+    system27.afterEvents.scriptEventReceive.subscribe(handler);
+    this.subscriptions.set(thorny_id, () => system27.afterEvents.scriptEventReceive.unsubscribe(handler));
   }
   onDeactivate(player, _objective, _objectiveProgress) {
     const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
@@ -7182,7 +7182,7 @@ var ScripteventTargetProcessor = class {
 };
 
 // behaviour_pack/scripts-dev/features/quests/processors/visit-target-processor.ts
-import { EquipmentSlot as EquipmentSlot16, system as system29, TicksPerSecond as TicksPerSecond12 } from "@minecraft/server";
+import { EquipmentSlot as EquipmentSlot16, system as system28, TicksPerSecond as TicksPerSecond12 } from "@minecraft/server";
 var VisitTargetProcessor = class {
   constructor() {
     this.subscriptions = /* @__PURE__ */ new Map();
@@ -7212,8 +7212,8 @@ var VisitTargetProcessor = class {
       };
       processGameAction(player, action);
     }, "handler");
-    const runId = system29.runInterval(handler, TicksPerSecond12);
-    this.subscriptions.set(thorny_id, () => system29.clearRun(runId));
+    const runId = system28.runInterval(handler, TicksPerSecond12);
+    this.subscriptions.set(thorny_id, () => system28.clearRun(runId));
   }
   onDeactivate(player, _objective, _objectiveProgress) {
     const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
@@ -7804,7 +7804,7 @@ function loadQuestProgressCache() {
         activateObjective(player, thornyUser.thorny_id, active.obj_def, active.obj_progress);
       }
     }
-    system30.runTimeout(() => {
+    system29.runTimeout(() => {
       notifyOfQuestUpdate(
         player,
         generateObjectiveDisplayString(
@@ -7869,16 +7869,16 @@ function loadQuestProgressCache() {
         await new_active_quest(questProgress, thorny_user, player);
       }
     }
-    const cacheRunId = system30.runInterval(async () => {
+    const cacheRunId = system29.runInterval(async () => {
       if (!player.isValid) {
-        system30.clearRun(cacheRunId);
+        system29.clearRun(cacheRunId);
         return;
       }
       await update_player_quest(playerName);
     }, TicksPerSecond13 * 2);
-    const tickRunId = system30.runInterval(async () => {
+    const tickRunId = system29.runInterval(async () => {
       if (!player.isValid) {
-        system30.clearRun(tickRunId);
+        system29.clearRun(tickRunId);
         return;
       }
       await tickQuest(playerName);
@@ -7892,20 +7892,20 @@ function loadQuestProgressCache() {
     const playerName = player.name;
     let attempts = 0;
     const MAX_ATTEMPTS = 100;
-    const readyCheckId = system30.runInterval(() => {
+    const readyCheckId = system29.runInterval(() => {
       attempts++;
       if (!player.isValid) {
-        if (attempts >= MAX_ATTEMPTS) system30.clearRun(readyCheckId);
+        if (attempts >= MAX_ATTEMPTS) system29.clearRun(readyCheckId);
         return;
       }
-      system30.clearRun(readyCheckId);
+      system29.clearRun(readyCheckId);
       runPlayerInit(player, playerName).then();
     }, 1);
   });
   world29.beforeEvents.playerLeave.subscribe((leave_event) => {
     const runIds = PLAYER_LOOP_RUN_IDS.get(leave_event.player.name);
     if (runIds !== void 0) {
-      runIds.map((i) => system30.clearRun(i));
+      runIds.map((i) => system29.clearRun(i));
       PLAYER_LOOP_RUN_IDS.delete(leave_event.player.name);
     }
     const thorny_user = ThornyUser.fetch_user(leave_event.player.name);
@@ -7915,7 +7915,7 @@ function loadQuestProgressCache() {
         const quest = QUEST_CACHE.get(questProgress.quest_id);
         const active = quest ? getActiveObjective(quest, questProgress) : void 0;
         if (active) {
-          deactivateObjective(leave_event.player, thorny_user.thorny_id, active.obj_def, active.obj_progress);
+          system29.run(() => deactivateObjective(leave_event.player, thorny_user.thorny_id, active.obj_def, active.obj_progress));
         }
       }
       QUEST_PROGRESS_CACHE.delete(thorny_user.thorny_id);

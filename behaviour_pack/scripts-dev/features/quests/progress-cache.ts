@@ -170,7 +170,7 @@ export default function loadQuestProgressCache() {
                 const quest = QUEST_CACHE.get(questProgress.quest_id)
                 const active = quest ? getActiveObjective(quest as any, questProgress) : undefined
                 if (active) {
-                    deactivateObjective(leave_event.player, thorny_user.thorny_id, active.obj_def, active.obj_progress)
+                    system.run(() => deactivateObjective(leave_event.player, thorny_user.thorny_id, active.obj_def, active.obj_progress))
                 }
             }
 
