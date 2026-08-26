@@ -23,6 +23,8 @@ export class VisitTargetProcessor implements TargetProcessor {
         const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
 
         const handler = () => {
+            if (!player.isValid) {system.clearRun(runId)}
+
             const mainhand = player
                 .getComponent('minecraft:equippable')
                 ?.getEquipment(EquipmentSlot.Mainhand)
