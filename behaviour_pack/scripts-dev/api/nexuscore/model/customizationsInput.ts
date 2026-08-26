@@ -10,8 +10,9 @@ import type { MainhandCustomization } from './mainhandCustomization';
 import type { MaximumDeathsCustomization } from './maximumDeathsCustomization';
 import type { NaturalBlockCustomization } from './naturalBlockCustomization';
 import type { TimerCustomization } from './timerCustomization';
+import type { WaypointCustomization } from './waypointCustomization';
 
-export interface Customizations {
+export interface CustomizationsInput {
   /** Mainhand Customization */
   mainhand?: MainhandCustomization | null;
   /** Location Customization */
@@ -22,4 +23,6 @@ export interface Customizations {
   maximum_deaths?: MaximumDeathsCustomization | null;
   /** Natural Block Customization */
   natural_block?: NaturalBlockCustomization | null;
+  /** Waypoint Customization */
+  waypoint?: WaypointCustomization | null;
 }

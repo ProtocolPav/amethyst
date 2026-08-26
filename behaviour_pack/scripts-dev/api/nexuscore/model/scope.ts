@@ -20,6 +20,8 @@ export const Scope = {
   'guildspins:write': 'guilds.pins:write',
   'guildsquests:read': 'guilds.quests:read',
   'guildsquests:write': 'guilds.quests:write',
+  'guildswiki:read': 'guilds.wiki:read',
+  'guildswiki:write': 'guilds.wiki:write',
   'events:read': 'events:read',
   'events:write': 'events:write',
   'server:read': 'server:read',

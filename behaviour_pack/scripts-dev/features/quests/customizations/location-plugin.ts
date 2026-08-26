@@ -21,6 +21,9 @@ export class LocationPlugin implements CustomizationPlugin {
         const dy = Math.abs(action.coordinates.y - loc.coordinates[1])
         const dz = Math.abs(action.coordinates.z - loc.coordinates[2])
 
-        return dx <= loc.horizontal_radius && dz <= loc.horizontal_radius && dy <= loc.vertical_radius
+        const horizontalOk = dx <= loc.horizontal_radius && dz <= loc.horizontal_radius
+        const verticalOk = loc.vertical_radius <= 0 || dy <= loc.vertical_radius
+
+        return horizontalOk && verticalOk
     }
 }

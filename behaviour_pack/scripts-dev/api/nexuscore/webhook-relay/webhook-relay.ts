@@ -25,9 +25,9 @@ export const getServerRelayV1RelayPostUrl = () => {
  * webhook, just send a POST to here.
  * @summary Server Relay
  */
-export const serverRelayV1RelayPost = async (relayModel: RelayModel, options?: RequestInit): Promise<unknown> => {
+export const serverRelayV1RelayPost = async (relayModel: RelayModel, options?: RequestInit): Promise<RelayModel> => {
 
-  return minecraftFetch<unknown>(getServerRelayV1RelayPostUrl(),
+  return minecraftFetch<RelayModel>(getServerRelayV1RelayPostUrl(),
   {
     ...options,
     method: 'POST',
