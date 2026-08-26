@@ -1,4 +1,11 @@
-import { ObjectiveOut, ObjectiveOutLogic, RewardOut, MineTargetModel, KillTargetModel } from "../../../../api/nexuscore/model";
+import {
+    ObjectiveOut,
+    ObjectiveOutLogic,
+    RewardOut,
+    MineTargetModel,
+    KillTargetModel,
+    VisitTargetModel
+} from "../../../../api/nexuscore/model";
 import { AnyTarget } from "../../types/target-processor";
 import utils from "../../../../utils";
 
@@ -11,7 +18,8 @@ function targetId(target: AnyTarget): string {
     switch (target.target_type) {
         case 'mine': return (target as MineTargetModel).block
         case 'kill': return (target as KillTargetModel).entity
-        default:     return 'unknown'
+        case 'visit': return (target as VisitTargetModel).helper_text
+        default: return 'unknown'
     }
 }
 
@@ -19,7 +27,8 @@ function logicVerb(type: string): string {
     switch (type) {
         case 'mine': return 'Mine'
         case 'kill': return 'Kill'
-        default:     return 'Complete'
+        case 'visit': return 'Locate'
+        default: return 'Complete'
     }
 }
 
@@ -64,6 +73,9 @@ function taskLine(objective: ObjectiveOut): string {
 
     const targetParts = targets.map(t => {
         const name = utils.clean_id(targetId(t))
+
+        if (t.target_type === 'visit') return `§f${name}§r`
+
         return `§f${t.count} ${name}§r`
     })
 

@@ -12,6 +12,7 @@ import type {
   QuestProgressIn,
   QuestProgressOut,
   QuestProgressUpdate,
+  QuestStatisticsOut,
   QuestUpdate
 } from '../model';
 
@@ -158,6 +159,34 @@ export const partialUpdateQuestV1GuildsMeQuestsQuestIdPatch = async (questId: nu
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
     body: JSON.stringify(questUpdate)
+  }
+);}
+
+
+export const getGetQuestStatisticsV1GuildsMeQuestsQuestIdStatisticsGetUrl = (questId: number,) => {
+
+
+
+
+  return `/v1/guilds/me/quests/${questId}/statistics`
+}
+
+/**
+ * Get Quest Statistics
+ *
+ * Returns aggregated statistics for a specific quest, including funnel data,
+ * completion timing, per-objective drop-off analysis, and daily activity.
+ * Useful for quest admins to analyse difficulty, engagement, and player behaviour.
+ * @summary Get Quest Statistics
+ */
+export const getQuestStatisticsV1GuildsMeQuestsQuestIdStatisticsGet = async (questId: number, options?: RequestInit): Promise<QuestStatisticsOut> => {
+
+  return minecraftFetch<QuestStatisticsOut>(getGetQuestStatisticsV1GuildsMeQuestsQuestIdStatisticsGetUrl(questId),
+  {
+    ...options,
+    method: 'GET'
+
+
   }
 );}
 
