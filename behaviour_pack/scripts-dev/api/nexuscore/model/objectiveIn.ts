@@ -5,7 +5,7 @@
  * The backend for all Everthorn internal services
  * OpenAPI spec version: 1.0.0
  */
-import type { Customizations } from './customizations';
+import type { CustomizationsInput } from './customizationsInput';
 import type { KillTargetModel } from './killTargetModel';
 import type { MineTargetModel } from './mineTargetModel';
 import type { ObjectiveInLogic } from './objectiveInLogic';
@@ -28,6 +28,6 @@ export interface ObjectiveIn {
   /** The targets of the objective. Target types must be equal to `objective_type` */
   targets: (MineTargetModel | KillTargetModel | ScriptEventTargetModel | VisitTargetModel)[];
   /** The customizations of the objective */
-  customizations: Customizations;
+  customizations: CustomizationsInput;
   rewards: RewardIn[];
 }

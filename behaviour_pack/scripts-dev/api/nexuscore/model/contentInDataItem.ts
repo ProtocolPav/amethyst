@@ -5,9 +5,5 @@
  * The backend for all Everthorn internal services
  * OpenAPI spec version: 1.0.0
  */
-import type { Waypoint } from './waypoint';
 
-export interface WaypointCustomization {
-  /** The waypoints to show */
-  waypoints: Waypoint[];
-}
+export type ContentInDataItem = { [key: string]: unknown };

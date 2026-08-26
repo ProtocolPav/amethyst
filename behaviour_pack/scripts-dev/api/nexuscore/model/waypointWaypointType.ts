@@ -9,11 +9,10 @@
 /**
  * The type of waypoint to show
  */
-export type WaypointCustomizationWaypointType = typeof WaypointCustomizationWaypointType[keyof typeof WaypointCustomizationWaypointType];
+export type WaypointWaypointType = typeof WaypointWaypointType[keyof typeof WaypointWaypointType];
 
 
-export const WaypointCustomizationWaypointType = {
-  boss: 'boss',
-  house: 'house',
+export const WaypointWaypointType = {
+  star: 'star',
   question: 'question',
 } as const;

@@ -12,7 +12,7 @@ import type { NaturalBlockCustomization } from './naturalBlockCustomization';
 import type { TimerCustomization } from './timerCustomization';
 import type { WaypointCustomization } from './waypointCustomization';
 
-export interface Customizations {
+export interface CustomizationsInput {
   /** Mainhand Customization */
   mainhand?: MainhandCustomization | null;
   /** Location Customization */
