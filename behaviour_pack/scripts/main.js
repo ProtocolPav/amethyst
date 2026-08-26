@@ -6560,7 +6560,8 @@ var MineTargetProcessor = class {
       if (event.player.id !== player.id) return;
       const mainhand = event.player.getComponent("minecraft:equippable")?.getEquipment(EquipmentSlot13.Mainhand)?.typeId ?? null;
       const interactions = await listInteractionsV1GuildsMeInteractionsGet({
-        coordinates: [event.block.x, event.block.y, event.block.z]
+        coordinates: [event.block.x, event.block.y, event.block.z],
+        interaction_types: ["mine", "place"]
       });
       const action = {
         type: "mine",
@@ -7055,32 +7056,36 @@ var TimerPlugin = class {
 };
 
 // behaviour_pack/scripts-dev/features/quests/customizations/waypoint-plugin.ts
-import { LocationWaypoint, WaypointTexture, world as world26 } from "@minecraft/server";
+import { LocationWaypoint, world as world26 } from "@minecraft/server";
 var WaypointPlugin = class {
   static {
     __name(this, "WaypointPlugin");
   }
-  onActivate(player, objective, progress) {
+  onActivate(player, objective, _progress) {
     const c = objective.customizations.waypoint;
     if (!c) return;
-    player.locatorBar.addWaypoint(new LocationWaypoint(
-      {
-        dimension: world26.getDimension(MinecraftDimensionTypes.Overworld),
-        x: c.coordinates[0],
-        y: c.coordinates[1],
-        z: c.coordinates[2]
-      },
-      {
-        textureBoundsList: [
-          { lowerBound: 0, texture: WaypointTexture.SmallSquare }
-        ]
-      },
-      {
-        red: 1,
-        green: 0,
-        blue: 0
-      }
-    ));
+    c.waypoints.forEach((waypoint) => {
+      player.locatorBar.addWaypoint(new LocationWaypoint(
+        {
+          dimension: world26.getDimension(waypoint.dimension ?? MinecraftDimensionTypes.Overworld),
+          x: waypoint.coordinates[0],
+          y: waypoint.coordinates[1],
+          z: waypoint.coordinates[2]
+        },
+        {
+          textureBoundsList: [
+            {
+              lowerBound: 0,
+              texture: {
+                iconHeight: 1,
+                iconWidth: 1,
+                path: `textures/waypoints/${waypoint.waypoint_type}.png`
+              }
+            }
+          ]
+        }
+      ));
+    });
   }
   onDeactivate(player, _objective, _progress) {
     player.locatorBar.removeAllWaypoints();
@@ -7190,7 +7195,7 @@ var VisitTargetProcessor = class {
     const dy = Math.abs(action.coordinates.y - target.coordinates[1]);
     const dz = Math.abs(action.coordinates.z - target.coordinates[2]);
     const horizontalOk = dx <= target.horizontal_radius && dz <= target.horizontal_radius;
-    const verticalOk = target.vertical_radius <= 0 || dy <= target.vertical_radius;
+    const verticalOk = !!target.vertical_radius && (target.vertical_radius <= 0 || dy <= target.vertical_radius);
     return horizontalOk && verticalOk;
   }
   onActivate(player, _objective, _objectiveProgress) {
@@ -7856,41 +7861,61 @@ function loadQuestProgressCache() {
     }
   }
   __name(tickQuest, "tickQuest");
-  world29.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
-    if (spawn_event.initialSpawn) {
-      const thorny_user = ThornyUser.fetch_user(spawn_event.player.name);
-      if (thorny_user) {
-        const questProgress = await get_quest_progress(thorny_user.thorny_id);
-        if (questProgress) {
-          await new_active_quest(questProgress, thorny_user, spawn_event.player);
-        }
+  async function runPlayerInit(player, playerName) {
+    const thorny_user = ThornyUser.fetch_user(playerName);
+    if (thorny_user) {
+      const questProgress = await get_quest_progress(thorny_user.thorny_id);
+      if (questProgress) {
+        await new_active_quest(questProgress, thorny_user, player);
       }
-      const cacheRunId = system30.runInterval(async () => {
-        await update_player_quest(spawn_event.player.name);
-      }, TicksPerSecond13 * 2);
-      const tickRunId = system30.runInterval(async () => {
-        await tickQuest(spawn_event.player.name);
-      }, TicksPerSecond13);
-      PLAYER_LOOP_RUN_IDS.set(spawn_event.player.name, [cacheRunId, tickRunId]);
     }
+    const cacheRunId = system30.runInterval(async () => {
+      if (!player.isValid) {
+        system30.clearRun(cacheRunId);
+        return;
+      }
+      await update_player_quest(playerName);
+    }, TicksPerSecond13 * 2);
+    const tickRunId = system30.runInterval(async () => {
+      if (!player.isValid) {
+        system30.clearRun(tickRunId);
+        return;
+      }
+      await tickQuest(playerName);
+    }, TicksPerSecond13);
+    PLAYER_LOOP_RUN_IDS.set(playerName, [cacheRunId, tickRunId]);
+  }
+  __name(runPlayerInit, "runPlayerInit");
+  world29.afterEvents.playerSpawn.subscribe((spawn_event) => {
+    if (!spawn_event.initialSpawn) return;
+    const player = spawn_event.player;
+    const playerName = player.name;
+    let attempts = 0;
+    const MAX_ATTEMPTS = 100;
+    const readyCheckId = system30.runInterval(() => {
+      attempts++;
+      if (!player.isValid) {
+        if (attempts >= MAX_ATTEMPTS) system30.clearRun(readyCheckId);
+        return;
+      }
+      system30.clearRun(readyCheckId);
+      runPlayerInit(player, playerName).then();
+    }, 1);
   });
-  world29.afterEvents.playerLeave.subscribe((leave_event) => {
-    const runIds = PLAYER_LOOP_RUN_IDS.get(leave_event.playerName);
+  world29.beforeEvents.playerLeave.subscribe((leave_event) => {
+    const runIds = PLAYER_LOOP_RUN_IDS.get(leave_event.player.name);
     if (runIds !== void 0) {
       runIds.map((i) => system30.clearRun(i));
-      PLAYER_LOOP_RUN_IDS.delete(leave_event.playerName);
+      PLAYER_LOOP_RUN_IDS.delete(leave_event.player.name);
     }
-    const thorny_user = ThornyUser.fetch_user(leave_event.playerName);
+    const thorny_user = ThornyUser.fetch_user(leave_event.player.name);
     if (thorny_user) {
       const questProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
       if (questProgress) {
         const quest = QUEST_CACHE.get(questProgress.quest_id);
         const active = quest ? getActiveObjective(quest, questProgress) : void 0;
         if (active) {
-          const player = world29.getPlayers().find((p) => p.name === leave_event.playerName);
-          if (player) {
-            deactivateObjective(player, thorny_user.thorny_id, active.obj_def, active.obj_progress);
-          }
+          deactivateObjective(leave_event.player, thorny_user.thorny_id, active.obj_def, active.obj_progress);
         }
       }
       QUEST_PROGRESS_CACHE.delete(thorny_user.thorny_id);

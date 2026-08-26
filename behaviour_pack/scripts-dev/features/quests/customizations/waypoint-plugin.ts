@@ -5,7 +5,7 @@ import {MinecraftDimensionTypes} from "@minecraft/vanilla-data";
 
 
 export class WaypointPlugin implements CustomizationPlugin {
-    onActivate(player: Player, objective: ObjectiveOut, progress: ObjectiveProgressOut): void {
+    onActivate(player: Player, objective: ObjectiveOut, _progress: ObjectiveProgressOut): void {
         const c = objective.customizations.waypoint
         if (!c) return
 
@@ -20,9 +20,9 @@ export class WaypointPlugin implements CustomizationPlugin {
                         {
                             lowerBound: 0,
                             texture: {
-                                iconHeight: 16,
-                                iconWidth: 16,
-                                path: `/textures/waypoints/${waypoint.waypoint_type}`
+                                iconHeight: 1,
+                                iconWidth: 1,
+                                path: `textures/waypoints/${waypoint.waypoint_type}.png`
                             }
                         }
                     ]
