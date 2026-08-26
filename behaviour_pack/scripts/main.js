@@ -7201,6 +7201,9 @@ var VisitTargetProcessor = class {
   onActivate(player, _objective, _objectiveProgress) {
     const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
     const handler = /* @__PURE__ */ __name(() => {
+      if (!player.isValid) {
+        system28.clearRun(runId);
+      }
       const mainhand = player.getComponent("minecraft:equippable")?.getEquipment(EquipmentSlot16.Mainhand)?.typeId ?? null;
       const action = {
         type: "visit",
