@@ -101,37 +101,66 @@ export default function loadQuestProgressCache() {
         }
     }
 
-    world.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
-        if (spawn_event.initialSpawn) {
-            // Load quest progress into cache on initial join
-            const thorny_user = ThornyUser.fetch_user(spawn_event.player.name)!
-            if (thorny_user) {
-                const questProgress = await get_quest_progress(thorny_user.thorny_id)
-                if (questProgress) {
-                    await new_active_quest(questProgress, thorny_user, spawn_event.player)
-                }
+    async function runPlayerInit(player: Player, playerName: string) {
+        const thorny_user = ThornyUser.fetch_user(playerName)!
+        if (thorny_user) {
+            const questProgress = await get_quest_progress(thorny_user.thorny_id)
+            if (questProgress) {
+                await new_active_quest(questProgress, thorny_user, player)
+            }
+        }
+
+        const cacheRunId = system.runInterval(async () => {
+            if (!player.isValid) {
+                system.clearRun(cacheRunId)
+                return
+            }
+            await update_player_quest(playerName)
+        }, TicksPerSecond * 2)
+
+        const tickRunId = system.runInterval(async () => {
+            if (!player.isValid) {
+                system.clearRun(tickRunId)
+                return
+            }
+            await tickQuest(playerName)
+        }, TicksPerSecond)
+
+        PLAYER_LOOP_RUN_IDS.set(playerName, [cacheRunId, tickRunId])
+    }
+
+    world.afterEvents.playerSpawn.subscribe((spawn_event) => {
+        if (!spawn_event.initialSpawn) return
+
+        const player = spawn_event.player
+        const playerName = player.name
+        let attempts = 0
+        const MAX_ATTEMPTS = 100 // ~5 seconds at 20 ticks/sec, tune as needed
+
+        const readyCheckId = system.runInterval(() => {
+            attempts++
+
+            if (!player.isValid) {
+                // Player left before finishing load, or never became valid — bail out
+                if (attempts >= MAX_ATTEMPTS) system.clearRun(readyCheckId)
+                return
             }
 
-            const cacheRunId = system.runInterval(async () => {
-                await update_player_quest(spawn_event.player.name)
-            }, TicksPerSecond * 2)
+            // Player is valid — stop polling and run the real init logic once
+            system.clearRun(readyCheckId)
 
-            const tickRunId = system.runInterval(async () => {
-                await tickQuest(spawn_event.player.name)
-            }, TicksPerSecond)
-
-            PLAYER_LOOP_RUN_IDS.set(spawn_event.player.name, [cacheRunId, tickRunId])
-        }
+            runPlayerInit(player, playerName).then()
+        }, 1) // check every tick
     })
 
-    world.afterEvents.playerLeave.subscribe((leave_event) => {
-        const runIds = PLAYER_LOOP_RUN_IDS.get(leave_event.playerName)
+    world.beforeEvents.playerLeave.subscribe((leave_event) => {
+        const runIds = PLAYER_LOOP_RUN_IDS.get(leave_event.player.name)
         if (runIds !== undefined) {
             runIds.map(i => system.clearRun(i))
-            PLAYER_LOOP_RUN_IDS.delete(leave_event.playerName)
+            PLAYER_LOOP_RUN_IDS.delete(leave_event.player.name)
         }
 
-        const thorny_user = ThornyUser.fetch_user(leave_event.playerName)!
+        const thorny_user = ThornyUser.fetch_user(leave_event.player.name)!
 
         if (thorny_user) {
             const questProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id)
@@ -141,10 +170,7 @@ export default function loadQuestProgressCache() {
                 const quest = QUEST_CACHE.get(questProgress.quest_id)
                 const active = quest ? getActiveObjective(quest as any, questProgress) : undefined
                 if (active) {
-                    const player = world.getPlayers().find(p => p.name === leave_event.playerName)
-                    if (player) {
-                        deactivateObjective(player, thorny_user.thorny_id, active.obj_def, active.obj_progress)
-                    }
+                    deactivateObjective(leave_event.player, thorny_user.thorny_id, active.obj_def, active.obj_progress)
                 }
             }
 
