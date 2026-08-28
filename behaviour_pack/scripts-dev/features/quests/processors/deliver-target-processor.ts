@@ -153,7 +153,7 @@ export class DeliverTargetProcessor implements TargetProcessor {
         const dim = e.dimension;
 
         // Debug: trace over-consume
-        // console.log(`[deliver] item ${original.typeId} x${original.amount} need=${need} consume=${consumed} remaining=${remaining}`);
+        console.log(`[deliver] item ${original.typeId} x${original.amount} need=${need} consume=${consumed} remaining=${remaining}`);
 
         let remainder: ItemStack | undefined;
         if (remaining > 0) {
