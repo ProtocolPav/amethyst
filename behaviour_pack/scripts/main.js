@@ -6413,7 +6413,7 @@ function loadLocationLogger() {
 __name(loadLocationLogger, "loadLocationLogger");
 
 // behaviour_pack/scripts-dev/features/quests/progress-cache.ts
-import { system as system29, TicksPerSecond as TicksPerSecond13, world as world29 } from "@minecraft/server";
+import { system as system29, TicksPerSecond as TicksPerSecond13, world as world27 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/features/quests/quest-cache.ts
 import { system as system23, TicksPerSecond as TicksPerSecond9 } from "@minecraft/server";
@@ -6578,10 +6578,9 @@ var MineTargetProcessor = class {
     world22.afterEvents.playerBreakBlock.subscribe(handler, { blockTypes });
     this.subscriptions.set(thorny_id, () => world22.afterEvents.playerBreakBlock.unsubscribe(handler));
   }
-  onDeactivate(player, _objective, _objectiveProgress) {
-    const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
-    this.subscriptions.get(thorny_id)?.();
-    this.subscriptions.delete(thorny_id);
+  onDeactivate(ctx, _objective, _objectiveProgress) {
+    this.subscriptions.get(ctx.thornyId)?.();
+    this.subscriptions.delete(ctx.thornyId);
   }
   evaluate(action, objective, targetProgress) {
     if (action.type !== "mine") return 0;
@@ -6633,10 +6632,9 @@ var KillTargetProcessor = class {
     world23.afterEvents.entityDie.subscribe(handler, { entityTypes });
     this.subscriptions.set(thorny_id, () => world23.afterEvents.entityDie.unsubscribe(handler));
   }
-  onDeactivate(player, _objective, _objectiveProgress) {
-    const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
-    this.subscriptions.get(thorny_id)?.();
-    this.subscriptions.delete(thorny_id);
+  onDeactivate(ctx, _objective, _objectiveProgress) {
+    this.subscriptions.get(ctx.thornyId)?.();
+    this.subscriptions.delete(ctx.thornyId);
   }
   evaluate(action, objective, targetProgress) {
     if (action.type !== "kill") return 0;
@@ -6961,7 +6959,7 @@ var DeathPlugin = class {
     world25.afterEvents.entityDie.subscribe(handler);
     this.unsubscribe = () => world25.afterEvents.entityDie.unsubscribe(handler);
   }
-  onDeactivate(_player, _objective, _progress) {
+  onDeactivate(_ctx, _objective, _progress) {
     this.unsubscribe?.();
     this.unsubscribe = void 0;
     this.exceeded = false;
@@ -7040,7 +7038,7 @@ var TimerPlugin = class {
       this.expired = true;
     }, Math.ceil(this.remaining_seconds) * TicksPerSecond11);
   }
-  onDeactivate(_player, _objective, _progress) {
+  onDeactivate(_ctx, _objective, _progress) {
     if (this.runId !== void 0) {
       system26.clearRun(this.runId);
       this.runId = void 0;
@@ -7087,8 +7085,9 @@ var WaypointPlugin = class {
       ));
     });
   }
-  onDeactivate(player, _objective, _progress) {
-    player.locatorBar.removeAllWaypoints();
+  onDeactivate(ctx, _objective, _progress) {
+    if (ctx.isLeaving || !ctx.player?.isValid) return;
+    ctx.player.locatorBar.removeAllWaypoints();
   }
 };
 
@@ -7117,14 +7116,14 @@ function activateObjective(player, thorny_id, objective, objectiveProgress) {
   ACTIVE_PLUGINS.set(thorny_id, plugins);
 }
 __name(activateObjective, "activateObjective");
-function deactivateObjective(player, thorny_id, objective, objectiveProgress) {
+function deactivateObjective(ctx, objective, objectiveProgress) {
   const processor = TARGET_PROCESSORS[objective.objective_type];
-  processor?.onDeactivate?.(player, objective, objectiveProgress);
-  const plugins = ACTIVE_PLUGINS.get(thorny_id) ?? [];
+  processor?.onDeactivate?.(ctx, objective, objectiveProgress);
+  const plugins = ACTIVE_PLUGINS.get(ctx.thornyId) ?? [];
   for (const plugin of plugins) {
-    plugin.onDeactivate?.(player, objective, objectiveProgress);
+    plugin.onDeactivate?.(ctx, objective, objectiveProgress);
   }
-  ACTIVE_PLUGINS.delete(thorny_id);
+  ACTIVE_PLUGINS.delete(ctx.thornyId);
 }
 __name(deactivateObjective, "deactivateObjective");
 
@@ -7156,10 +7155,9 @@ var ScripteventTargetProcessor = class {
     system27.afterEvents.scriptEventReceive.subscribe(handler);
     this.subscriptions.set(thorny_id, () => system27.afterEvents.scriptEventReceive.unsubscribe(handler));
   }
-  onDeactivate(player, _objective, _objectiveProgress) {
-    const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
-    this.subscriptions.get(thorny_id)?.();
-    this.subscriptions.delete(thorny_id);
+  onDeactivate(ctx, _objective, _objectiveProgress) {
+    this.subscriptions.get(ctx.thornyId)?.();
+    this.subscriptions.delete(ctx.thornyId);
   }
   evaluate(action, objective, targetProgress) {
     if (action.type !== "scriptevent") return 0;
@@ -7203,6 +7201,7 @@ var VisitTargetProcessor = class {
     const handler = /* @__PURE__ */ __name(() => {
       if (!player.isValid) {
         system28.clearRun(runId);
+        return;
       }
       const mainhand = player.getComponent("minecraft:equippable")?.getEquipment(EquipmentSlot16.Mainhand)?.typeId ?? null;
       const action = {
@@ -7218,10 +7217,9 @@ var VisitTargetProcessor = class {
     const runId = system28.runInterval(handler, TicksPerSecond12);
     this.subscriptions.set(thorny_id, () => system28.clearRun(runId));
   }
-  onDeactivate(player, _objective, _objectiveProgress) {
-    const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
-    this.subscriptions.get(thorny_id)?.();
-    this.subscriptions.delete(thorny_id);
+  onDeactivate(ctx, _objective, _objectiveProgress) {
+    this.subscriptions.get(ctx.thornyId)?.();
+    this.subscriptions.delete(ctx.thornyId);
   }
   evaluate(action, objective, targetProgress) {
     if (action.type !== "visit") return 0;
@@ -7713,7 +7711,7 @@ var QuestProcessor = class {
     const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
     active.obj_progress.status = ObjectiveProgressOutStatus.failed;
     active.obj_progress.end_time = (/* @__PURE__ */ new Date()).toISOString();
-    deactivateObjective(player, thorny_id, active.obj_def, active.obj_progress);
+    deactivateObjective({ thornyId: thorny_id, playerName: player.name, player, isLeaving: false }, active.obj_def, active.obj_progress);
     this.advanceQuest(player, thorny_id, quest, questProgress);
   }
   /**
@@ -7721,7 +7719,7 @@ var QuestProcessor = class {
    * Deactivates it, grants its rewards, then transitions onward.
    */
   completeObjective(player, thorny_id, quest, questProgress, objectiveDef, objectiveProgress) {
-    deactivateObjective(player, thorny_id, objectiveDef, objectiveProgress);
+    deactivateObjective({ thornyId: thorny_id, playerName: player.name, player, isLeaving: false }, objectiveDef, objectiveProgress);
     const thorny_user = ThornyUser.fetch_user_by_id(thorny_id);
     grantRewards(player, thorny_id, thorny_user.balance, objectiveDef.rewards, objectiveProgress).then();
     return this.advanceQuest(player, thorny_id, quest, questProgress);
@@ -7768,7 +7766,7 @@ var QuestProcessor = class {
     const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
     const active = getActiveObjective(quest, questProgress);
     if (active) {
-      deactivateObjective(player, thorny_id, active.obj_def, active.obj_progress);
+      deactivateObjective({ thornyId: thorny_id, playerName: player.name, player, isLeaving: false }, active.obj_def, active.obj_progress);
     }
     questProgress.status = QuestProgressOutStatus.failed;
     questProgress.end_time = (/* @__PURE__ */ new Date()).toISOString();
@@ -7825,7 +7823,7 @@ function loadQuestProgressCache() {
     const cached_quest_progress = QUEST_PROGRESS_CACHE.get(thornyUser.thorny_id);
     const active = getActiveObjective(cached_quest, questProgress);
     if (active) {
-      deactivateObjective(player, thornyUser.thorny_id, active.obj_def, active.obj_progress);
+      deactivateObjective({ thornyId: thornyUser.thorny_id, playerName: player.name, player, isLeaving: false }, active.obj_def, active.obj_progress);
     }
     QUEST_PROGRESS_CACHE.delete(thornyUser.thorny_id);
     if (cached_quest_progress.status !== "completed" && cached_quest_progress.status !== "failed") {
@@ -7834,7 +7832,7 @@ function loadQuestProgressCache() {
   }
   __name(dropped_quest, "dropped_quest");
   async function update_player_quest(player_name) {
-    const player = world29.getPlayers().find((p) => p.name == player_name);
+    const player = world27.getPlayers().find((p) => p.name == player_name);
     if (!player) return;
     const thorny_user = ThornyUser.fetch_user(player_name);
     const questProgress = await get_quest_progress(thorny_user.thorny_id);
@@ -7847,7 +7845,7 @@ function loadQuestProgressCache() {
   }
   __name(update_player_quest, "update_player_quest");
   async function tickQuest(player_name) {
-    const player = world29.getPlayers().find((p) => p.name == player_name);
+    const player = world27.getPlayers().find((p) => p.name == player_name);
     if (!player) return;
     const thorny_user = ThornyUser.fetch_user(player_name);
     const cachedQuestProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
@@ -7889,7 +7887,7 @@ function loadQuestProgressCache() {
     PLAYER_LOOP_RUN_IDS.set(playerName, [cacheRunId, tickRunId]);
   }
   __name(runPlayerInit, "runPlayerInit");
-  world29.afterEvents.playerSpawn.subscribe((spawn_event) => {
+  world27.afterEvents.playerSpawn.subscribe((spawn_event) => {
     if (!spawn_event.initialSpawn) return;
     const player = spawn_event.player;
     const playerName = player.name;
@@ -7905,24 +7903,24 @@ function loadQuestProgressCache() {
       runPlayerInit(player, playerName).then();
     }, 1);
   });
-  world29.beforeEvents.playerLeave.subscribe((leave_event) => {
-    const runIds = PLAYER_LOOP_RUN_IDS.get(leave_event.player.name);
+  world27.afterEvents.playerLeave.subscribe((leave_event) => {
+    const playerName = leave_event.playerName;
+    const runIds = PLAYER_LOOP_RUN_IDS.get(playerName);
     if (runIds !== void 0) {
       runIds.map((i) => system29.clearRun(i));
-      PLAYER_LOOP_RUN_IDS.delete(leave_event.player.name);
+      PLAYER_LOOP_RUN_IDS.delete(playerName);
     }
-    const thorny_user = ThornyUser.fetch_user(leave_event.player.name);
-    if (thorny_user) {
-      const questProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
-      if (questProgress) {
-        const quest = QUEST_CACHE.get(questProgress.quest_id);
-        const active = quest ? getActiveObjective(quest, questProgress) : void 0;
-        if (active) {
-          system29.run(() => deactivateObjective(leave_event.player, thorny_user.thorny_id, active.obj_def, active.obj_progress));
-        }
+    const thorny_user = ThornyUser.fetch_user(playerName);
+    if (!thorny_user) return;
+    const questProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
+    if (questProgress) {
+      const quest = QUEST_CACHE.get(questProgress.quest_id);
+      const active = quest ? getActiveObjective(quest, questProgress) : void 0;
+      if (active) {
+        deactivateObjective({ thornyId: thorny_user.thorny_id, playerName, isLeaving: true }, active.obj_def, active.obj_progress);
       }
-      QUEST_PROGRESS_CACHE.delete(thorny_user.thorny_id);
     }
+    QUEST_PROGRESS_CACHE.delete(thorny_user.thorny_id);
   });
 }
 __name(loadQuestProgressCache, "loadQuestProgressCache");
@@ -7937,7 +7935,7 @@ __name(loadQuestsFeature, "loadQuestsFeature");
 
 // behaviour_pack/scripts-dev/features/whitelist.ts
 import { beforeEvents } from "@minecraft/server-admin";
-import { world as world30 } from "@minecraft/server";
+import { world as world28 } from "@minecraft/server";
 var BlockMessageMap = {
   "no_whitelist": "You are not whitelisted. Check the guidelines to see how to whitelist yourself.",
   "not_active": "WAIT! Don't go!\n\nCouldn't resist a peek, could you? We don't blame you. Let's get you back to where you belong.\n\nRejoin us at everthorn.net/apply or reach out on Discord. We'll get you right back in!",
@@ -7955,7 +7953,7 @@ async function blockJoin(join_event, reason = "other") {
 }
 __name(blockJoin, "blockJoin");
 function loadWhitelistFeature() {
-  world30.afterEvents.worldLoad.subscribe(() => {
+  world28.afterEvents.worldLoad.subscribe(() => {
     beforeEvents.asyncPlayerJoin.subscribe(async (join_event) => {
       try {
         const thorny_user = await api_default.ThornyUser.get_user_from_api(join_event.name);
