@@ -4,6 +4,7 @@ import { AnyTargetProgress, TargetProcessor } from "../types/target-processor";
 import {EquipmentSlot, Player, PlayerBreakBlockAfterEvent, world} from "@minecraft/server";
 import ThornyUser from "../../../api/user";
 import {processGameAction} from "../core/action-dispatch";
+import { DeactivationContext } from "../types/deactivation-context";
 import {listInteractionsV1GuildsMeInteractionsGet} from "../../../api/nexuscore/guilds/guilds";
 
 export class MineTargetProcessor implements TargetProcessor {
@@ -48,10 +49,9 @@ export class MineTargetProcessor implements TargetProcessor {
         this.subscriptions.set(thorny_id, () => world.afterEvents.playerBreakBlock.unsubscribe(handler))
     }
 
-    onDeactivate(player: Player, _objective: ObjectiveOut, _objectiveProgress: ObjectiveProgressOut): void {
-        const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
-        this.subscriptions.get(thorny_id)?.()
-        this.subscriptions.delete(thorny_id)
+    onDeactivate(ctx: DeactivationContext, _objective: ObjectiveOut, _objectiveProgress: ObjectiveProgressOut): void {
+        this.subscriptions.get(ctx.thornyId)?.()
+        this.subscriptions.delete(ctx.thornyId)
     }
 
     evaluate(action: GameAction, objective: ObjectiveOut, targetProgress: AnyTargetProgress): number {
