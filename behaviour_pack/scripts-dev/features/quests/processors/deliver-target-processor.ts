@@ -134,32 +134,41 @@ export class DeliverTargetProcessor implements TargetProcessor {
         return 0;
     }
 
-    // Items: fungible — consume by amount, never globally claimed.
-    // e.g. need 2, stack 20 -> consume 2, re-spawn remainder 18. Cannot mutate itemStack
-    // via component (readonly), so remove and re-spawn as new item entity if partially needed.
     private deliverItem(a: DeliverAction, e: Entity, pattern: string, need: number): number {
-        if (a.entity_id !== 'minecraft:item') return 0;
-        if (!a.item_id || !matches(a.item_id, pattern)) return 0;
+        if (e.typeId !== "minecraft:item" || need <= 0) return 0;
+        const itemComponent = e.getComponent(EntityComponentTypes.Item)
+        if (!itemComponent) return 0;
 
-        const consume = Math.min(a.item_count, need);
-        if (consume <= 0) return 0;
+        // Treat this as a snapshot. Do not attempt to mutate it in place.
+        const original = itemComponent.itemStack;
+
+        if (!matches(original.typeId, pattern)) return 0;
+
+        const consumed = Math.min(original.amount, need);
+        if (consumed <= 0) return 0;
+
+        const remaining = original.amount - consumed;
+
+        // Take the item snapshot and its spatial data before invalidating e.
+        const replacement = remaining > 0 ? original.clone() : undefined;
+        const location = { ...e.location };
+        const dimension = e.dimension;
+
+        if (replacement) {
+            replacement.amount = remaining;
+        }
 
         markSeen(e.id);
 
-        const loc = e.location;
-        const dim = e.dimension;
-
+        // remove() silently removes the dropped entity, rather than triggering
+        // item drops / death behaviour.
         e.remove();
 
-        const remaining = a.item_count - consume;
-        if (remaining > 0) {
-            // Preserve stack identity by cloning amount; use ItemStack with same type.
-            // If original had extra components, they are lost with simple construction —
-            // acceptable for deliver quests which use vanilla items.
-            dim.spawnItem(new ItemStack(a.item_id!, remaining), loc);
+        if (replacement) {
+            dimension.spawnItem(replacement, location);
         }
 
-        return consume;
+        return consumed;
     }
 
     // Entities: non-fungible — never removed, globally claimed once via CLAIMED (bounded).

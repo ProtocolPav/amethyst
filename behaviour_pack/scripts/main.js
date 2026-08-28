@@ -7247,7 +7247,7 @@ var VisitTargetProcessor = class {
 };
 
 // behaviour_pack/scripts-dev/features/quests/processors/deliver-target-processor.ts
-import { EntityComponentTypes as EntityComponentTypes17, EquipmentSlot as EquipmentSlot17, ItemStack as ItemStack2, system as system29, TicksPerSecond as TicksPerSecond13 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes17, EquipmentSlot as EquipmentSlot17, system as system29, TicksPerSecond as TicksPerSecond13 } from "@minecraft/server";
 var TICK = TicksPerSecond13;
 var R = 4;
 var ClaimedRegistry = class {
@@ -7365,23 +7365,27 @@ var DeliverTargetProcessor = class {
     if (target.entity) return this.deliverEntity(a, e, target.entity);
     return 0;
   }
-  // Items: fungible — consume by amount, never globally claimed.
-  // e.g. need 2, stack 20 -> consume 2, re-spawn remainder 18. Cannot mutate itemStack
-  // via component (readonly), so remove and re-spawn as new item entity if partially needed.
   deliverItem(a, e, pattern, need) {
-    if (a.entity_id !== "minecraft:item") return 0;
-    if (!a.item_id || !matches(a.item_id, pattern)) return 0;
-    const consume = Math.min(a.item_count, need);
-    if (consume <= 0) return 0;
-    markSeen(e.id);
-    const loc = e.location;
-    const dim = e.dimension;
-    e.remove();
-    const remaining = a.item_count - consume;
-    if (remaining > 0) {
-      dim.spawnItem(new ItemStack2(a.item_id, remaining), loc);
+    if (e.typeId !== "minecraft:item" || need <= 0) return 0;
+    const itemComponent = e.getComponent(EntityComponentTypes17.Item);
+    if (!itemComponent) return 0;
+    const original = itemComponent.itemStack;
+    if (!matches(original.typeId, pattern)) return 0;
+    const consumed = Math.min(original.amount, need);
+    if (consumed <= 0) return 0;
+    const remaining = original.amount - consumed;
+    const replacement = remaining > 0 ? original.clone() : void 0;
+    const location = { ...e.location };
+    const dimension = e.dimension;
+    if (replacement) {
+      replacement.amount = remaining;
     }
-    return consume;
+    markSeen(e.id);
+    e.remove();
+    if (replacement) {
+      dimension.spawnItem(replacement, location);
+    }
+    return consumed;
   }
   // Entities: non-fungible — never removed, globally claimed once via CLAIMED (bounded).
   // Per-tick SEEN prevents same-tick double-count from concurrent handlers.
