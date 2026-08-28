@@ -134,38 +134,47 @@ export class DeliverTargetProcessor implements TargetProcessor {
         return 0;
     }
 
+    // Items: fungible — consume by amount, never globally claimed.
+    // e.g. need 2, stack 20 -> consume 2, re-spawn remainder 18. Cannot mutate itemStack
+    // via component (readonly), so remove and re-spawn as new item entity if partially needed.
     private deliverItem(a: DeliverAction, e: Entity, pattern: string, need: number): number {
         if (e.typeId !== "minecraft:item" || need <= 0) return 0;
-        const itemComponent = e.getComponent(EntityComponentTypes.Item)
-        if (!itemComponent) return 0;
+        const itemComponent = e.getComponent(EntityComponentTypes.Item);
+        if (!itemComponent?.itemStack) return 0;
 
-        // Treat this as a snapshot. Do not attempt to mutate it in place.
         const original = itemComponent.itemStack;
-
         if (!matches(original.typeId, pattern)) return 0;
 
         const consumed = Math.min(original.amount, need);
         if (consumed <= 0) return 0;
 
         const remaining = original.amount - consumed;
+        const loc = { x: e.location.x, y: e.location.y + 0.3, z: e.location.z };
+        const dim = e.dimension;
 
-        // Take the item snapshot and its spatial data before invalidating e.
-        const replacement = remaining > 0 ? original.clone() : undefined;
-        const location = { ...e.location };
-        const dimension = e.dimension;
+        // Debug: trace over-consume
+        // console.log(`[deliver] item ${original.typeId} x${original.amount} need=${need} consume=${consumed} remaining=${remaining}`);
 
-        if (replacement) {
-            replacement.amount = remaining;
+        let remainder: ItemStack | undefined;
+        if (remaining > 0) {
+            try {
+                remainder = (original as any).clone ? (original as any).clone() : new ItemStack(original.typeId, remaining);
+                if (remainder) remainder.amount = remaining;
+            } catch {
+                try { remainder = new ItemStack(original.typeId, remaining); } catch { remainder = undefined; }
+            }
         }
 
         markSeen(e.id);
-
-        // remove() silently removes the dropped entity, rather than triggering
-        // item drops / death behaviour.
         e.remove();
 
-        if (replacement) {
-            dimension.spawnItem(replacement, location);
+        if (remainder) {
+            try {
+                dim.spawnItem(remainder, loc);
+            } catch (err) {
+                console.warn(`[deliver] spawnItem failed for ${original.typeId} x${remaining}: ${err}`);
+                try { dim.spawnItem(remainder, { x: loc.x, y: loc.y + 0.5, z: loc.z }); } catch {}
+            }
         }
 
         return consumed;
