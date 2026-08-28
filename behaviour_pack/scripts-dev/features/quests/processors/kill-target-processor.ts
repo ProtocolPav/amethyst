@@ -4,6 +4,7 @@ import { AnyTargetProgress, TargetProcessor } from "../types/target-processor";
 import {EntityDieAfterEvent, EquipmentSlot, Player, world} from "@minecraft/server";
 import ThornyUser from "../../../api/user";
 import {processGameAction} from "../core/action-dispatch";
+import { DeactivationContext } from "../types/deactivation-context";
 
 export class KillTargetProcessor implements TargetProcessor {
     private subscriptions = new Map<number, () => void>()
@@ -41,10 +42,9 @@ export class KillTargetProcessor implements TargetProcessor {
         this.subscriptions.set(thorny_id, () => world.afterEvents.entityDie.unsubscribe(handler))
     }
 
-    onDeactivate(player: Player, _objective: ObjectiveOut, _objectiveProgress: ObjectiveProgressOut): void {
-        const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
-        this.subscriptions.get(thorny_id)?.()
-        this.subscriptions.delete(thorny_id)
+    onDeactivate(ctx: DeactivationContext, _objective: ObjectiveOut, _objectiveProgress: ObjectiveProgressOut): void {
+        this.subscriptions.get(ctx.thornyId)?.()
+        this.subscriptions.delete(ctx.thornyId)
     }
 
     evaluate(action: GameAction, objective: ObjectiveOut, targetProgress: AnyTargetProgress): number {

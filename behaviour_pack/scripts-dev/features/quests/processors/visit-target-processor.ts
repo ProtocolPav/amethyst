@@ -1,9 +1,10 @@
 import {ObjectiveOut, ObjectiveProgressOut, VisitTargetModel, VisitTargetProgressModel} from "../../../api/nexuscore/model";
 import {GameAction, ScripteventAction, VisitAction} from "../types/action";
 import { AnyTargetProgress, TargetProcessor } from "../types/target-processor";
-import {EquipmentSlot, Player, ScriptEventCommandMessageAfterEvent, system, TicksPerSecond, world} from "@minecraft/server";
+import {EquipmentSlot, Player, system, TicksPerSecond} from "@minecraft/server";
 import ThornyUser from "../../../api/user";
 import {processGameAction} from "../core/action-dispatch";
+import { DeactivationContext } from "../types/deactivation-context";
 
 export class VisitTargetProcessor implements TargetProcessor {
     private subscriptions = new Map<number, () => void>()
@@ -23,7 +24,7 @@ export class VisitTargetProcessor implements TargetProcessor {
         const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
 
         const handler = () => {
-            if (!player.isValid) {system.clearRun(runId)}
+            if (!player.isValid) {system.clearRun(runId); return;}
 
             const mainhand = player
                 .getComponent('minecraft:equippable')
@@ -46,10 +47,9 @@ export class VisitTargetProcessor implements TargetProcessor {
         this.subscriptions.set(thorny_id, () => system.clearRun(runId))
     }
 
-    onDeactivate(player: Player, _objective: ObjectiveOut, _objectiveProgress: ObjectiveProgressOut): void {
-        const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
-        this.subscriptions.get(thorny_id)?.()
-        this.subscriptions.delete(thorny_id)
+    onDeactivate(ctx: DeactivationContext, _objective: ObjectiveOut, _objectiveProgress: ObjectiveProgressOut): void {
+        this.subscriptions.get(ctx.thornyId)?.()
+        this.subscriptions.delete(ctx.thornyId)
     }
 
     evaluate(action: VisitAction, objective: ObjectiveOut, targetProgress: VisitTargetProgressModel): number {

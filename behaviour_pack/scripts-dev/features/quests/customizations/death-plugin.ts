@@ -1,6 +1,7 @@
 import {EntityDieAfterEvent, Player, world} from "@minecraft/server";
 import { ObjectiveOut, ObjectiveProgressOut } from "../../../api/nexuscore/model";
 import { CustomizationPlugin } from "../types/customization-plugin";
+import { DeactivationContext } from "../types/deactivation-context";
 import {markDirty} from "../write-back";
 import ThornyUser from "../../../api/user";
 
@@ -52,7 +53,7 @@ export class DeathPlugin implements CustomizationPlugin {
         this.unsubscribe = () => world.afterEvents.entityDie.unsubscribe(handler)
     }
 
-    onDeactivate(_player: Player, _objective: ObjectiveOut, _progress: ObjectiveProgressOut): void {
+    onDeactivate(_ctx: DeactivationContext, _objective: ObjectiveOut, _progress: ObjectiveProgressOut): void {
         this.unsubscribe?.()
         this.unsubscribe = undefined
         this.exceeded = false
