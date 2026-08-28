@@ -152,9 +152,6 @@ export class DeliverTargetProcessor implements TargetProcessor {
         const loc = { x: e.location.x, y: e.location.y + 0.3, z: e.location.z };
         const dim = e.dimension;
 
-        // Debug: trace over-consume
-        console.log(`[deliver] item ${original.typeId} x${original.amount} need=${need} consume=${consumed} remaining=${remaining}`);
-
         let remainder: ItemStack | undefined;
         if (remaining > 0) {
             try {
@@ -172,7 +169,6 @@ export class DeliverTargetProcessor implements TargetProcessor {
             try {
                 dim.spawnItem(remainder, loc);
             } catch (err) {
-                console.warn(`[deliver] spawnItem failed for ${original.typeId} x${remaining}: ${err}`);
                 try { dim.spawnItem(remainder, { x: loc.x, y: loc.y + 0.5, z: loc.z }); } catch {}
             }
         }
