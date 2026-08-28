@@ -14,4 +14,5 @@ export const ObjectiveUpdateObjectiveType = {
   mine: 'mine',
   scriptevent: 'scriptevent',
   visit: 'visit',
+  deliver: 'deliver',
 } as const;

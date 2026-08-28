@@ -17,4 +17,5 @@ export const ObjectiveInObjectiveType = {
   mine: 'mine',
   scriptevent: 'scriptevent',
   visit: 'visit',
+  deliver: 'deliver',
 } as const;

@@ -6,6 +6,7 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { CustomizationProgress } from './customizationProgress';
+import type { DeliverTargetProgressModel } from './deliverTargetProgressModel';
 import type { KillTargetProgressModel } from './killTargetProgressModel';
 import type { MineTargetProgressModel } from './mineTargetProgressModel';
 import type { ObjectiveProgressUpdateStatus } from './objectiveProgressUpdateStatus';
@@ -17,6 +18,6 @@ export interface ObjectiveProgressUpdate {
   start_time?: string | null;
   end_time?: string | null;
   status?: ObjectiveProgressUpdateStatus;
-  target_progress?: (MineTargetProgressModel | KillTargetProgressModel | ScriptEventTargetProgressModel | VisitTargetProgressModel)[] | null;
+  target_progress?: (MineTargetProgressModel | KillTargetProgressModel | ScriptEventTargetProgressModel | VisitTargetProgressModel | DeliverTargetProgressModel)[] | null;
   customization_progress?: CustomizationProgress | null;
 }

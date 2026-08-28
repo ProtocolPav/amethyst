@@ -5,7 +5,8 @@
  * The backend for all Everthorn internal services
  * OpenAPI spec version: 1.0.0
  */
-import type { CustomizationsOutput } from './customizationsOutput';
+import type { Customizations } from './customizations';
+import type { DeliverTargetModel } from './deliverTargetModel';
 import type { KillTargetModel } from './killTargetModel';
 import type { MineTargetModel } from './mineTargetModel';
 import type { ObjectiveOutLogic } from './objectiveOutLogic';
@@ -28,8 +29,8 @@ export interface ObjectiveOut {
   logic: ObjectiveOutLogic;
   target_count?: number | null;
   /** The targets of the objective. Target types must be equal to `objective_type` */
-  targets: (MineTargetModel | KillTargetModel | ScriptEventTargetModel | VisitTargetModel)[];
+  targets: (MineTargetModel | KillTargetModel | ScriptEventTargetModel | VisitTargetModel | DeliverTargetModel)[];
   /** The customizations of the objective */
-  customizations: CustomizationsOutput;
+  customizations: Customizations;
   rewards: RewardOut[];
 }

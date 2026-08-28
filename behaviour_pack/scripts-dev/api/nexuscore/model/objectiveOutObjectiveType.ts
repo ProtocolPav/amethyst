@@ -17,4 +17,5 @@ export const ObjectiveOutObjectiveType = {
   mine: 'mine',
   scriptevent: 'scriptevent',
   visit: 'visit',
+  deliver: 'deliver',
 } as const;
