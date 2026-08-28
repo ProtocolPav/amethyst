@@ -15,7 +15,7 @@ export class VisitTargetProcessor implements TargetProcessor {
         const dz = Math.abs(action.coordinates.z - target.coordinates[2])
 
         const horizontalOk = dx <= target.horizontal_radius && dz <= target.horizontal_radius
-        const verticalOk = !!target.vertical_radius && (target.vertical_radius <= 0 || dy <= target.vertical_radius)
+        const verticalOk = target.vertical_radius == null || target.vertical_radius <= 0 || dy <= target.vertical_radius
 
         return horizontalOk && verticalOk
     }
@@ -24,8 +24,6 @@ export class VisitTargetProcessor implements TargetProcessor {
         const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
 
         const handler = () => {
-            if (!player.isValid) {system.clearRun(runId); return;}
-
             const mainhand = player
                 .getComponent('minecraft:equippable')
                 ?.getEquipment(EquipmentSlot.Mainhand)

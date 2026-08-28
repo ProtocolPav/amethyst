@@ -7193,16 +7193,12 @@ var VisitTargetProcessor = class {
     const dy = Math.abs(action.coordinates.y - target.coordinates[1]);
     const dz = Math.abs(action.coordinates.z - target.coordinates[2]);
     const horizontalOk = dx <= target.horizontal_radius && dz <= target.horizontal_radius;
-    const verticalOk = !!target.vertical_radius && (target.vertical_radius <= 0 || dy <= target.vertical_radius);
+    const verticalOk = target.vertical_radius == null || target.vertical_radius <= 0 || dy <= target.vertical_radius;
     return horizontalOk && verticalOk;
   }
   onActivate(player, _objective, _objectiveProgress) {
     const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
     const handler = /* @__PURE__ */ __name(() => {
-      if (!player.isValid) {
-        system28.clearRun(runId);
-        return;
-      }
       const mainhand = player.getComponent("minecraft:equippable")?.getEquipment(EquipmentSlot16.Mainhand)?.typeId ?? null;
       const action = {
         type: "visit",
