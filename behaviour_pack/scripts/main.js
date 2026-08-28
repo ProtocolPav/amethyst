@@ -6413,7 +6413,7 @@ function loadLocationLogger() {
 __name(loadLocationLogger, "loadLocationLogger");
 
 // behaviour_pack/scripts-dev/features/quests/progress-cache.ts
-import { system as system29, TicksPerSecond as TicksPerSecond13, world as world27 } from "@minecraft/server";
+import { system as system30, TicksPerSecond as TicksPerSecond14, world as world27 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/features/quests/quest-cache.ts
 import { system as system23, TicksPerSecond as TicksPerSecond9 } from "@minecraft/server";
@@ -6670,6 +6670,10 @@ function targetId(target) {
       return target.entity;
     case "visit":
       return target.helper_text;
+    case "deliver": {
+      const t = target;
+      return t.item ?? t.entity ?? "unknown";
+    }
     default:
       return "unknown";
   }
@@ -6683,6 +6687,8 @@ function logicVerb(type) {
       return "Kill";
     case "visit":
       return "Locate";
+    case "deliver":
+      return "Drop Off";
     default:
       return "Complete";
   }
@@ -6797,6 +6803,15 @@ function showProgressTick(player, target, current, goal) {
       break;
     case "kill":
       label = utils_default.clean_id(target.entity);
+      break;
+    case "deliver": {
+      const t = target;
+      const id = t.item ?? t.entity ?? "unknown";
+      label = utils_default.clean_id(id);
+      break;
+    }
+    case "visit":
+      label = utils_default.clean_id(target.helper_text ?? "visit");
       break;
   }
   player.playSound(
@@ -7231,12 +7246,161 @@ var VisitTargetProcessor = class {
   }
 };
 
+// behaviour_pack/scripts-dev/features/quests/processors/deliver-target-processor.ts
+import { EntityComponentTypes as EntityComponentTypes17, EquipmentSlot as EquipmentSlot17, ItemStack as ItemStack2, system as system29, TicksPerSecond as TicksPerSecond13 } from "@minecraft/server";
+var TICK = TicksPerSecond13;
+var R = 4;
+var ClaimedRegistry = class {
+  constructor(cap = 1e3) {
+    this.cap = cap;
+    this.set = /* @__PURE__ */ new Set();
+    this.order = [];
+  }
+  static {
+    __name(this, "ClaimedRegistry");
+  }
+  has(id) {
+    return this.set.has(id);
+  }
+  add(id) {
+    if (this.set.has(id)) return;
+    this.set.add(id);
+    this.order.push(id);
+    if (this.set.size > this.cap) {
+      const n = Math.floor(this.cap / 2);
+      for (let i = 0; i < n; i++) this.set.delete(this.order[i]);
+      this.order.splice(0, n);
+    }
+  }
+};
+var CLAIMED = new ClaimedRegistry(1e3);
+var SEEN_TICK = /* @__PURE__ */ new Set();
+function markSeen(id) {
+  SEEN_TICK.add(id);
+  system29.runTimeout(() => SEEN_TICK.delete(id), 1);
+}
+__name(markSeen, "markSeen");
+function matches(actual, pattern) {
+  return pattern.endsWith(":*") ? actual.startsWith(pattern.slice(0, -2) + ":") : actual === pattern;
+}
+__name(matches, "matches");
+function neededFor(objective, target, progress, playerName) {
+  const cur = progress.count ?? 0;
+  const pool = objective.target_count ?? null;
+  if (pool === null) return target.count - cur;
+  const tid = ThornyUser.fetch_user(playerName)?.thorny_id;
+  let total = 0;
+  if (tid != null) {
+    const qp = QUEST_PROGRESS_CACHE.get(tid);
+    const op = qp?.objectives.find((o) => o.objective_id === objective.objective_id);
+    if (op) total = op.target_progress.reduce((s, t) => s + (t.count ?? 0), 0);
+  }
+  if (total === 0 && cur > 0) total = cur;
+  return pool - total;
+}
+__name(neededFor, "neededFor");
+var DeliverTargetProcessor = class {
+  constructor() {
+    this.subs = /* @__PURE__ */ new Map();
+  }
+  static {
+    __name(this, "DeliverTargetProcessor");
+  }
+  // Dumb handler: emits one DeliverAction per nearby entity/item, no target checks.
+  // All filtering (location, pattern, claimed) happens in evaluate().
+  onActivate(player, _obj, _prog) {
+    const thornyId = ThornyUser.fetch_user(player.name).thorny_id;
+    const handler = /* @__PURE__ */ __name(() => {
+      if (!player.isValid) return;
+      const mainhand = player.getComponent(EntityComponentTypes17.Equippable)?.getEquipment(EquipmentSlot17.Mainhand)?.typeId ?? null;
+      let entities;
+      try {
+        entities = player.dimension.getEntities({ location: player.location, maxDistance: R });
+      } catch {
+        return;
+      }
+      for (const e of entities) {
+        if (!e.isValid) continue;
+        let itemId = null;
+        let itemCount = 1;
+        if (e.typeId === "minecraft:item") {
+          const stack = e.getComponent(EntityComponentTypes17.Item)?.itemStack;
+          if (!stack) continue;
+          itemId = stack.typeId;
+          itemCount = stack.amount ?? 1;
+          if (itemCount <= 0) continue;
+        }
+        processGameAction(player, {
+          type: "deliver",
+          time: /* @__PURE__ */ new Date(),
+          player,
+          coordinates: e.location,
+          dimension: player.dimension.id,
+          mainhand,
+          entity_id: e.typeId,
+          item_id: itemId,
+          item_count: itemCount,
+          deliveredEntities: [e]
+        });
+      }
+    }, "handler");
+    const id = system29.runInterval(handler, TICK);
+    this.subs.set(thornyId, () => system29.clearRun(id));
+  }
+  onDeactivate(ctx) {
+    this.subs.get(ctx.thornyId)?.();
+    this.subs.delete(ctx.thornyId);
+  }
+  evaluate(action, objective, targetProgress) {
+    if (action.type !== "deliver" || targetProgress.target_type !== "deliver") return 0;
+    const a = action;
+    const target = objective.targets.find((t) => t.target_type === "deliver" && t.target_uuid === targetProgress.target_uuid);
+    if (!target) return 0;
+    const e = a.deliveredEntities[0];
+    if (!e?.isValid || SEEN_TICK.has(e.id)) return 0;
+    if (e.id === a.player.id) return 0;
+    const need = neededFor(objective, target, targetProgress, a.player.name);
+    if (need <= 0) return 0;
+    if (target.item) return this.deliverItem(a, e, target.item, need);
+    if (target.entity) return this.deliverEntity(a, e, target.entity);
+    return 0;
+  }
+  // Items: fungible — consume by amount, never globally claimed.
+  // e.g. need 2, stack 20 -> consume 2, re-spawn remainder 18. Cannot mutate itemStack
+  // via component (readonly), so remove and re-spawn as new item entity if partially needed.
+  deliverItem(a, e, pattern, need) {
+    if (a.entity_id !== "minecraft:item") return 0;
+    if (!a.item_id || !matches(a.item_id, pattern)) return 0;
+    const consume = Math.min(a.item_count, need);
+    if (consume <= 0) return 0;
+    markSeen(e.id);
+    const loc = e.location;
+    const dim = e.dimension;
+    e.remove();
+    const remaining = a.item_count - consume;
+    if (remaining > 0) {
+      dim.spawnItem(new ItemStack2(a.item_id, remaining), loc);
+    }
+    return consume;
+  }
+  // Entities: non-fungible — never removed, globally claimed once via CLAIMED (bounded).
+  // Per-tick SEEN prevents same-tick double-count from concurrent handlers.
+  deliverEntity(a, e, pattern) {
+    if (!matches(a.entity_id, pattern) || a.item_id) return 0;
+    if (CLAIMED.has(e.id)) return 0;
+    markSeen(e.id);
+    CLAIMED.add(e.id);
+    return 1;
+  }
+};
+
 // behaviour_pack/scripts-dev/features/quests/processors/objective-processor.ts
 var TARGET_PROCESSORS = {
   mine: new MineTargetProcessor(),
   kill: new KillTargetProcessor(),
   scriptevent: new ScripteventTargetProcessor(),
-  visit: new VisitTargetProcessor()
+  visit: new VisitTargetProcessor(),
+  deliver: new DeliverTargetProcessor()
 };
 function targetCount(target) {
   return target.count ?? 1;
@@ -7586,7 +7750,7 @@ var BalanceReward = class {
 };
 
 // behaviour_pack/scripts-dev/features/quests/rewards/item-reward.ts
-import { ItemStack as ItemStack6 } from "@minecraft/server";
+import { ItemStack as ItemStack7 } from "@minecraft/server";
 var ItemReward = class {
   static {
     __name(this, "ItemReward");
@@ -7605,7 +7769,7 @@ var ItemReward = class {
     );
   }
   buildItemStack(reward) {
-    let item = new ItemStack6(reward.item, 1);
+    let item = new ItemStack7(reward.item, 1);
     for (const m of reward.item_metadata) {
       const handler = REWARD_METADATA_REGISTRY.get(m.metadata_type);
       if (handler?.applyToItem) {
@@ -7801,7 +7965,7 @@ function loadQuestProgressCache() {
         activateObjective(player, thornyUser.thorny_id, active.obj_def, active.obj_progress);
       }
     }
-    system29.runTimeout(() => {
+    system30.runTimeout(() => {
       notifyOfQuestUpdate(
         player,
         generateObjectiveDisplayString(
@@ -7811,7 +7975,7 @@ function loadQuestProgressCache() {
           quest.title
         )
       );
-    }, TicksPerSecond13 * 10);
+    }, TicksPerSecond14 * 10);
   }
   __name(new_active_quest, "new_active_quest");
   async function dropped_quest(questProgress, thornyUser, player) {
@@ -7866,20 +8030,20 @@ function loadQuestProgressCache() {
         await new_active_quest(questProgress, thorny_user, player);
       }
     }
-    const cacheRunId = system29.runInterval(async () => {
+    const cacheRunId = system30.runInterval(async () => {
       if (!player.isValid) {
-        system29.clearRun(cacheRunId);
+        system30.clearRun(cacheRunId);
         return;
       }
       await update_player_quest(playerName);
-    }, TicksPerSecond13 * 2);
-    const tickRunId = system29.runInterval(async () => {
+    }, TicksPerSecond14 * 2);
+    const tickRunId = system30.runInterval(async () => {
       if (!player.isValid) {
-        system29.clearRun(tickRunId);
+        system30.clearRun(tickRunId);
         return;
       }
       await tickQuest(playerName);
-    }, TicksPerSecond13);
+    }, TicksPerSecond14);
     PLAYER_LOOP_RUN_IDS.set(playerName, [cacheRunId, tickRunId]);
   }
   __name(runPlayerInit, "runPlayerInit");
@@ -7889,13 +8053,13 @@ function loadQuestProgressCache() {
     const playerName = player.name;
     let attempts = 0;
     const MAX_ATTEMPTS = 100;
-    const readyCheckId = system29.runInterval(() => {
+    const readyCheckId = system30.runInterval(() => {
       attempts++;
       if (!player.isValid) {
-        if (attempts >= MAX_ATTEMPTS) system29.clearRun(readyCheckId);
+        if (attempts >= MAX_ATTEMPTS) system30.clearRun(readyCheckId);
         return;
       }
-      system29.clearRun(readyCheckId);
+      system30.clearRun(readyCheckId);
       runPlayerInit(player, playerName).then();
     }, 1);
   });
@@ -7903,7 +8067,7 @@ function loadQuestProgressCache() {
     const playerName = leave_event.playerName;
     const runIds = PLAYER_LOOP_RUN_IDS.get(playerName);
     if (runIds !== void 0) {
-      runIds.map((i) => system29.clearRun(i));
+      runIds.map((i) => system30.clearRun(i));
       PLAYER_LOOP_RUN_IDS.delete(playerName);
     }
     const thorny_user = ThornyUser.fetch_user(playerName);

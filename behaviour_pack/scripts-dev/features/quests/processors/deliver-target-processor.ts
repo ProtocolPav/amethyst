@@ -5,7 +5,7 @@ import {DeactivationContext} from "../types/deactivation-context";
 import {QUEST_PROGRESS_CACHE} from "../progress-cache";
 import ThornyUser from "../../../api/user";
 import {processGameAction} from "../core/action-dispatch";
-import {Entity, EquipmentSlot, Player, system, TicksPerSecond} from "@minecraft/server";
+import {Entity, EntityComponentTypes, EquipmentSlot, ItemStack, Player, system, TicksPerSecond} from "@minecraft/server";
 
 const TICK = TicksPerSecond;
 const R = 4; // player must be within this radius of the dropped entity/item to claim ownership (enforced by handler radius)
@@ -68,7 +68,7 @@ export class DeliverTargetProcessor implements TargetProcessor {
         const handler = () => {
             if (!player.isValid) return;
 
-            const mainhand = player.getComponent('minecraft:equippable')?.getEquipment(EquipmentSlot.Mainhand)?.typeId ?? null;
+            const mainhand = player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand)?.typeId ?? null;
 
             let entities: Entity[];
             try {
@@ -82,7 +82,7 @@ export class DeliverTargetProcessor implements TargetProcessor {
                 let itemCount = 1;
 
                 if (e.typeId === 'minecraft:item') {
-                    const stack = (e.getComponent('minecraft:item' as any) as any)?.itemStack;
+                    const stack = e.getComponent(EntityComponentTypes.Item)?.itemStack;
                     if (!stack) continue;
                     itemId = stack.typeId;
                     itemCount = stack.amount ?? 1;
@@ -134,8 +134,9 @@ export class DeliverTargetProcessor implements TargetProcessor {
         return 0;
     }
 
-    // Items: fungible — consume by amount, mutate stack if partially needed, never globally claimed.
-    // e.g. need 2, stack 20 -> consume 2, leave 18 in world. De-duped only per-tick.
+    // Items: fungible — consume by amount, never globally claimed.
+    // e.g. need 2, stack 20 -> consume 2, re-spawn remainder 18. Cannot mutate itemStack
+    // via component (readonly), so remove and re-spawn as new item entity if partially needed.
     private deliverItem(a: DeliverAction, e: Entity, pattern: string, need: number): number {
         if (a.entity_id !== 'minecraft:item') return 0;
         if (!a.item_id || !matches(a.item_id, pattern)) return 0;
@@ -145,18 +146,19 @@ export class DeliverTargetProcessor implements TargetProcessor {
 
         markSeen(e.id);
 
-        if (consume >= a.item_count) {
-            e.remove();
-        } else {
-            const comp = e.getComponent('minecraft:item' as any) as any;
-            const stack = comp?.itemStack;
-            if (stack) {
-                stack.amount -= consume;
-                comp.itemStack = stack;
-            } else {
-                e.remove();
-            }
+        const loc = e.location;
+        const dim = e.dimension;
+
+        e.remove();
+
+        const remaining = a.item_count - consume;
+        if (remaining > 0) {
+            // Preserve stack identity by cloning amount; use ItemStack with same type.
+            // If original had extra components, they are lost with simple construction —
+            // acceptable for deliver quests which use vanilla items.
+            dim.spawnItem(new ItemStack(a.item_id!, remaining), loc);
         }
+
         return consume;
     }
 
