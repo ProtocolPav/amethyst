@@ -1,210 +1,173 @@
-import {ObjectiveOut, ObjectiveProgressOut, DeliverTargetModel, DeliverTargetProgressModel} from "../../../api/nexuscore/model";
-import {GameAction, DeliverAction} from "../types/action";
+import {DeliverTargetModel, DeliverTargetProgressModel, ObjectiveOut, ObjectiveProgressOut} from "../../../api/nexuscore/model";
+import {DeliverAction, GameAction} from "../types/action";
 import {AnyTargetProgress, TargetProcessor} from "../types/target-processor";
-import {Entity, EquipmentSlot, Player, system, TicksPerSecond, Vector3} from "@minecraft/server";
-import ThornyUser from "../../../api/user";
-import {processGameAction} from "../core/action-dispatch";
 import {DeactivationContext} from "../types/deactivation-context";
 import {QUEST_PROGRESS_CACHE} from "../progress-cache";
+import ThornyUser from "../../../api/user";
+import {processGameAction} from "../core/action-dispatch";
+import {Entity, EquipmentSlot, Player, system, TicksPerSecond} from "@minecraft/server";
 
-const PLAYER_PROXIMITY_RADIUS = 4;
-const PLAYER_PROXIMITY_RADIUS_SQ = PLAYER_PROXIMITY_RADIUS * PLAYER_PROXIMITY_RADIUS;
-const DELIVER_TICK = TicksPerSecond;
+const TICK = TicksPerSecond;
+const R = 4; // player must be within this radius of the dropped entity/item to claim ownership (enforced by handler radius)
 
-// Bounded registry for entity IDs that have already been claimed.
-// Keeps insertion order; when bound exceeded, prunes oldest half.
-class ClaimedEntityRegistry {
+// Entities are never removed — once claimed by anyone they are blocked globally via bounded registry.
+// Items are fungible and consumed by amount, never added here.
+class ClaimedRegistry {
     private set = new Set<string>();
     private order: string[] = [];
-    constructor(private bound = 1000) {}
-
-    has(id: string): boolean {
-        return this.set.has(id);
-    }
-
-    add(id: string): void {
+    constructor(private cap = 1000) {}
+    has(id: string) { return this.set.has(id); }
+    add(id: string) {
         if (this.set.has(id)) return;
         this.set.add(id);
         this.order.push(id);
-        if (this.set.size > this.bound) {
-            const pruneCount = Math.floor(this.bound / 2);
-            for (let i = 0; i < pruneCount; i++) {
-                this.set.delete(this.order[i]);
-            }
-            this.order.splice(0, pruneCount);
+        if (this.set.size > this.cap) {
+            const n = Math.floor(this.cap / 2);
+            for (let i = 0; i < n; i++) this.set.delete(this.order[i]);
+            this.order.splice(0, n);
         }
-    }
-
-    clear(): void {
-        this.set.clear();
-        this.order.length = 0;
     }
 }
 
-// Global across all players - if an entity has been claimed at all, it cannot be claimed again by anyone.
-// Separate from per-tick dedupe; this persists (bounded).
-const CLAIMED_ENTITIES = new ClaimedEntityRegistry(1000);
+const CLAIMED = new ClaimedRegistry(1000); // persistent global block for entities (prunes oldest half at cap)
+const SEEN_TICK = new Set<string>(); // per-tick dedupe: same entity emitted by multiple players in same tick
 
-// Per-tick dedupe to prevent same entity being dispatched twice in same tick across concurrent player handlers.
-const CLAIMED_THIS_TICK = new Set<string>();
+function markSeen(id: string) {
+    SEEN_TICK.add(id);
+    system.runTimeout(() => SEEN_TICK.delete(id), 1);
+}
+
+function matches(actual: string, pattern: string): boolean {
+    return pattern.endsWith(':*') ? actual.startsWith(pattern.slice(0, -2) + ':') : actual === pattern;
+}
+
+function neededFor(objective: ObjectiveOut, target: DeliverTargetModel, progress: DeliverTargetProgressModel, playerName: string): number {
+    const cur = progress.count ?? 0;
+    const pool = objective.target_count ?? null;
+    if (pool === null) return target.count - cur;
+
+    const tid = ThornyUser.fetch_user(playerName)?.thorny_id;
+    let total = 0;
+    if (tid != null) {
+        const qp = QUEST_PROGRESS_CACHE.get(tid);
+        const op = qp?.objectives.find(o => o.objective_id === objective.objective_id);
+        if (op) total = op.target_progress.reduce((s, t) => s + (t.count ?? 0), 0);
+    }
+    if (total === 0 && cur > 0) total = cur;
+    return pool - total;
+}
 
 export class DeliverTargetProcessor implements TargetProcessor {
-    private subscriptions = new Map<number, () => void>();
+    private subs = new Map<number, () => void>();
 
-    private distanceSq(a: Vector3, b: Vector3): number {
-        const dx = a.x - b.x;
-        const dy = a.y - b.y;
-        const dz = a.z - b.z;
-        return dx * dx + dy * dy + dz * dz;
-    }
-
-    private matchesPattern(actual: string, pattern: string): boolean {
-        if (pattern.endsWith(':*')) {
-            const namespace = pattern.slice(0, -2);
-            return actual.startsWith(namespace + ':');
-        }
-        return actual === pattern;
-    }
-
-    onActivate(player: Player, _objective: ObjectiveOut, _objectiveProgress: ObjectiveProgressOut): void {
-        const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id;
+    // Dumb handler: emits one DeliverAction per nearby entity/item, no target checks.
+    // All filtering (location, pattern, claimed) happens in evaluate().
+    onActivate(player: Player, _obj: ObjectiveOut, _prog: ObjectiveProgressOut): void {
+        const thornyId = ThornyUser.fetch_user(player.name)!.thorny_id;
 
         const handler = () => {
             if (!player.isValid) return;
 
-            const mainhand = player
-                .getComponent('minecraft:equippable')
-                ?.getEquipment(EquipmentSlot.Mainhand)
-                ?.typeId ?? null;
+            const mainhand = player.getComponent('minecraft:equippable')?.getEquipment(EquipmentSlot.Mainhand)?.typeId ?? null;
 
             let entities: Entity[];
             try {
-                entities = player.dimension.getEntities({
-                    location: player.location,
-                    maxDistance: PLAYER_PROXIMITY_RADIUS,
-                });
-            } catch {
-                return;
-            }
+                entities = player.dimension.getEntities({location: player.location, maxDistance: R});
+            } catch { return; }
 
-            for (const entity of entities) {
-                if (!entity.isValid) continue;
+            for (const e of entities) {
+                if (!e.isValid) continue;
 
-                let item_id: string | null = null;
-                let item_count = 1;
-                if (entity.typeId === 'minecraft:item') {
-                    const itemComp = entity.getComponent('minecraft:item' as any) as any;
-                    const stack = itemComp?.itemStack;
+                let itemId: string | null = null;
+                let itemCount = 1;
+
+                if (e.typeId === 'minecraft:item') {
+                    const stack = (e.getComponent('minecraft:item' as any) as any)?.itemStack;
                     if (!stack) continue;
-                    item_id = stack.typeId;
-                    item_count = stack.amount ?? 1;
-                    if (item_count <= 0) continue;
+                    itemId = stack.typeId;
+                    itemCount = stack.amount ?? 1;
+                    if (itemCount <= 0) continue;
                 }
 
-                const action: DeliverAction = {
+                processGameAction(player, {
                     type: 'deliver',
                     time: new Date(),
                     player,
-                    coordinates: entity.location,
+                    coordinates: e.location,
                     dimension: player.dimension.id,
                     mainhand,
-                    entity_id: entity.typeId,
-                    item_id,
-                    item_count,
-                    deliveredEntities: [entity],
-                };
-                processGameAction(player, action);
+                    entity_id: e.typeId,
+                    item_id: itemId,
+                    item_count: itemCount,
+                    deliveredEntities: [e],
+                } satisfies DeliverAction);
             }
         };
 
-        const runId = system.runInterval(handler, DELIVER_TICK);
-        this.subscriptions.set(thorny_id, () => system.clearRun(runId));
+        const id = system.runInterval(handler, TICK);
+        this.subs.set(thornyId, () => system.clearRun(id));
     }
 
-    onDeactivate(ctx: DeactivationContext, _objective: ObjectiveOut, _objectiveProgress: ObjectiveProgressOut): void {
-        this.subscriptions.get(ctx.thornyId)?.();
-        this.subscriptions.delete(ctx.thornyId);
+    onDeactivate(ctx: DeactivationContext): void {
+        this.subs.get(ctx.thornyId)?.();
+        this.subs.delete(ctx.thornyId);
     }
 
     evaluate(action: GameAction, objective: ObjectiveOut, targetProgress: AnyTargetProgress): number {
-        if (action.type !== 'deliver') return 0;
-        if (targetProgress.target_type !== 'deliver') return 0;
+        if (action.type !== 'deliver' || targetProgress.target_type !== 'deliver') return 0;
 
-        const deliverAction = action as DeliverAction;
-        const target = objective.targets.find(
-            t => t.target_type === 'deliver' && t.target_uuid === targetProgress.target_uuid
-        ) as DeliverTargetModel | undefined;
+        const a = action as DeliverAction;
+        const target = objective.targets.find(t => t.target_type === 'deliver' && t.target_uuid === targetProgress.target_uuid) as DeliverTargetModel | undefined;
         if (!target) return 0;
 
-        const entity = deliverAction.deliveredEntities[0];
-        if (!entity || !entity.isValid) return 0;
+        const e = a.deliveredEntities[0];
+        if (!e?.isValid || SEEN_TICK.has(e.id)) return 0; // already handled this tick (multi-player race)
+        if (e.id === a.player.id) return 0; // self-delivery guard: player cannot deliver themselves
 
-        // Per-tick dedupe: same entity dispatched by concurrent player handlers in same tick
-        if (CLAIMED_THIS_TICK.has(entity.id)) return 0;
+        const need = neededFor(objective, target, targetProgress as DeliverTargetProgressModel, a.player.name);
+        if (need <= 0) return 0;
 
-        // Player proximity check (entity must be near the player who triggered the action)
-        if (this.distanceSq(deliverAction.player.location, deliverAction.coordinates) > PLAYER_PROXIMITY_RADIUS_SQ) return 0;
-
-        const currentCount = (targetProgress as DeliverTargetProgressModel).count ?? 0;
-        const sharedPool = objective.target_count ?? null;
-
-        let neededForThisTarget: number;
-        if (sharedPool !== null) {
-            const thornyId = ThornyUser.fetch_user(deliverAction.player.name)?.thorny_id;
-            let total = 0;
-            if (thornyId != null) {
-                const qp = QUEST_PROGRESS_CACHE.get(thornyId);
-                const objProg = qp?.objectives.find(o => o.objective_id === objective.objective_id);
-                if (objProg) {
-                    total = objProg.target_progress.reduce((s, tp) => s + (tp.count ?? 0), 0);
-                }
-            }
-            if (total === 0 && currentCount > 0) total = currentCount;
-            neededForThisTarget = sharedPool - total;
-        } else {
-            neededForThisTarget = target.count - currentCount;
-        }
-        if (neededForThisTarget <= 0) return 0;
-
-        if (target.item) {
-            if (deliverAction.entity_id !== 'minecraft:item') return 0;
-            const itemId = deliverAction.item_id;
-            if (!itemId || !this.matchesPattern(itemId, target.item)) return 0;
-
-            const consume = Math.min(deliverAction.item_count, neededForThisTarget);
-            if (consume <= 0) return 0;
-
-            // Dedupe this entity for this tick before mutating
-            CLAIMED_THIS_TICK.add(entity.id);
-            system.runTimeout(() => CLAIMED_THIS_TICK.delete(entity.id), 1);
-
-            if (consume >= deliverAction.item_count) {
-                entity.remove();
-            } else {
-                const comp = entity.getComponent('minecraft:item' as any) as any;
-                const stack = comp?.itemStack;
-                if (stack) {
-                    stack.amount -= consume;
-                    comp.itemStack = stack;
-                } else {
-                    entity.remove();
-                }
-            }
-
-            return consume;
-        } else if (target.entity) {
-            if (!this.matchesPattern(deliverAction.entity_id, target.entity)) return 0;
-            if (deliverAction.item_id) return 0;
-
-            if (CLAIMED_ENTITIES.has(entity.id)) return 0;
-
-            // Mark claimed for this tick and persistently
-            CLAIMED_THIS_TICK.add(entity.id);
-            system.runTimeout(() => CLAIMED_THIS_TICK.delete(entity.id), 1);
-            CLAIMED_ENTITIES.add(entity.id);
-            return 1;
-        }
+        // Branch on target type: items are consumed, entities are claimed.
+        if (target.item) return this.deliverItem(a, e, target.item, need);
+        if (target.entity) return this.deliverEntity(a, e, target.entity);
 
         return 0;
+    }
+
+    // Items: fungible — consume by amount, mutate stack if partially needed, never globally claimed.
+    // e.g. need 2, stack 20 -> consume 2, leave 18 in world. De-duped only per-tick.
+    private deliverItem(a: DeliverAction, e: Entity, pattern: string, need: number): number {
+        if (a.entity_id !== 'minecraft:item') return 0;
+        if (!a.item_id || !matches(a.item_id, pattern)) return 0;
+
+        const consume = Math.min(a.item_count, need);
+        if (consume <= 0) return 0;
+
+        markSeen(e.id);
+
+        if (consume >= a.item_count) {
+            e.remove();
+        } else {
+            const comp = e.getComponent('minecraft:item' as any) as any;
+            const stack = comp?.itemStack;
+            if (stack) {
+                stack.amount -= consume;
+                comp.itemStack = stack;
+            } else {
+                e.remove();
+            }
+        }
+        return consume;
+    }
+
+    // Entities: non-fungible — never removed, globally claimed once via CLAIMED (bounded).
+    // Per-tick SEEN prevents same-tick double-count from concurrent handlers.
+    private deliverEntity(a: DeliverAction, e: Entity, pattern: string): number {
+        if (!matches(a.entity_id, pattern) || a.item_id) return 0;
+        if (CLAIMED.has(e.id)) return 0; // already claimed by any player
+
+        markSeen(e.id);
+        CLAIMED.add(e.id);
+        return 1;
     }
 }
