@@ -1,6 +1,7 @@
 import { Player } from "@minecraft/server";
 import { ObjectiveOut, ObjectiveProgressOut } from "../../../api/nexuscore/model";
 import { GameAction } from "./action";
+import { DeactivationContext } from "./deactivation-context";
 
 /**
  * A CustomizationPlugin is a modular participant in an objective's lifecycle.
@@ -35,7 +36,7 @@ export interface CustomizationPlugin {
      * (completion, failure, quest abandonment, player leave).
      * Use to clear timers, unsubscribe events, stop music, etc.
      */
-    onDeactivate?(player: Player, objective: ObjectiveOut, progress: ObjectiveProgressOut): void
+    onDeactivate?(ctx: DeactivationContext, objective: ObjectiveOut, progress: ObjectiveProgressOut): void
 
     /**
      * Called before processor.evaluate() on every incoming game action.

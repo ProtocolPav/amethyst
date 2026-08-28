@@ -1,6 +1,7 @@
 import { Player } from "@minecraft/server";
 import {ObjectiveOut, ObjectiveProgressOut} from "../../../api/nexuscore/model";
 import { GameAction } from "./action";
+import { DeactivationContext } from "./deactivation-context";
 
 export type AnyTargetProgress = ObjectiveProgressOut["target_progress"][number]
 export type AnyTarget = ObjectiveOut["targets"][number]
@@ -35,5 +36,5 @@ export interface TargetProcessor {
      *
      * Optional — processors that need no teardown can omit this.
      */
-    onDeactivate?(player: Player, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): void
+    onDeactivate?(ctx: DeactivationContext, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): void
 }

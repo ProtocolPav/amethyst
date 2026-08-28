@@ -50,7 +50,7 @@ export default function loadQuestProgressCache() {
         // Deactivate the active objective before evicting
         const active = getActiveObjective(cached_quest as any, questProgress)
         if (active) {
-            deactivateObjective(player, thornyUser.thorny_id, active.obj_def, active.obj_progress)
+            deactivateObjective({ thornyId: thornyUser.thorny_id, playerName: player.name, player, isLeaving: false }, active.obj_def, active.obj_progress)
         }
 
         QUEST_PROGRESS_CACHE.delete(thornyUser.thorny_id)
@@ -153,28 +153,29 @@ export default function loadQuestProgressCache() {
         }, 1) // check every tick
     })
 
-    world.beforeEvents.playerLeave.subscribe((leave_event) => {
-        const runIds = PLAYER_LOOP_RUN_IDS.get(leave_event.player.name)
+    world.afterEvents.playerLeave.subscribe((leave_event) => {
+        const playerName = leave_event.playerName
+
+        const runIds = PLAYER_LOOP_RUN_IDS.get(playerName)
         if (runIds !== undefined) {
             runIds.map(i => system.clearRun(i))
-            PLAYER_LOOP_RUN_IDS.delete(leave_event.player.name)
+            PLAYER_LOOP_RUN_IDS.delete(playerName)
         }
 
-        const thorny_user = ThornyUser.fetch_user(leave_event.player.name)!
+        const thorny_user = ThornyUser.fetch_user(playerName)
+        if (!thorny_user) return
 
-        if (thorny_user) {
-            const questProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id)
+        const questProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id)
 
-            // Deactivate the active objective before evicting the cache entry
-            if (questProgress) {
-                const quest = QUEST_CACHE.get(questProgress.quest_id)
-                const active = quest ? getActiveObjective(quest as any, questProgress) : undefined
-                if (active) {
-                    system.run(() => deactivateObjective(leave_event.player, thorny_user.thorny_id, active.obj_def, active.obj_progress))
-                }
+        // Deactivate the active objective before evicting the cache entry
+        if (questProgress) {
+            const quest = QUEST_CACHE.get(questProgress.quest_id)
+            const active = quest ? getActiveObjective(quest as any, questProgress) : undefined
+            if (active) {
+                deactivateObjective({ thornyId: thorny_user.thorny_id, playerName, isLeaving: true }, active.obj_def, active.obj_progress)
             }
-
-            QUEST_PROGRESS_CACHE.delete(thorny_user.thorny_id)
         }
+
+        QUEST_PROGRESS_CACHE.delete(thorny_user.thorny_id)
     })
 }

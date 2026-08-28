@@ -56,7 +56,7 @@ export class QuestProcessor {
         active.obj_progress.status = ObjectiveProgressOutStatus.failed
         active.obj_progress.end_time = new Date().toISOString()
 
-        deactivateObjective(player, thorny_id, active.obj_def, active.obj_progress)
+        deactivateObjective({ thornyId: thorny_id, playerName: player.name, player, isLeaving: false }, active.obj_def, active.obj_progress)
 
         this.advanceQuest(player, thorny_id, quest, questProgress)
     }
@@ -73,7 +73,7 @@ export class QuestProcessor {
         objectiveDef: ObjectiveOut,
         objectiveProgress: QuestProgressOut['objectives'][number]
     ): boolean {
-        deactivateObjective(player, thorny_id, objectiveDef, objectiveProgress)
+        deactivateObjective({ thornyId: thorny_id, playerName: player.name, player, isLeaving: false }, objectiveDef, objectiveProgress)
 
         const thorny_user = ThornyUser.fetch_user_by_id(thorny_id)
         grantRewards(player, thorny_id, thorny_user.balance, objectiveDef.rewards, objectiveProgress).then()
@@ -133,7 +133,7 @@ export class QuestProcessor {
 
         const active = getActiveObjective(quest, questProgress)
         if (active) {
-            deactivateObjective(player, thorny_id, active.obj_def, active.obj_progress)
+            deactivateObjective({ thornyId: thorny_id, playerName: player.name, player, isLeaving: false }, active.obj_def, active.obj_progress)
         }
 
         questProgress.status = QuestProgressOutStatus.failed

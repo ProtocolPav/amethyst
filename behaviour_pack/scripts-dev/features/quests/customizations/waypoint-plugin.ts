@@ -1,6 +1,7 @@
 import {LocationWaypoint, Player, world} from "@minecraft/server";
 import {ObjectiveOut, ObjectiveProgressOut} from "../../../api/nexuscore/model";
 import {CustomizationPlugin} from "../types/customization-plugin";
+import { DeactivationContext } from "../types/deactivation-context";
 import {MinecraftDimensionTypes} from "@minecraft/vanilla-data";
 
 
@@ -31,7 +32,8 @@ export class WaypointPlugin implements CustomizationPlugin {
         })
     }
 
-    onDeactivate(player: Player, _objective: ObjectiveOut, _progress: ObjectiveProgressOut): void {
-        player.locatorBar.removeAllWaypoints()
+    onDeactivate(ctx: DeactivationContext, _objective: ObjectiveOut, _progress: ObjectiveProgressOut): void {
+        if (ctx.isLeaving || !ctx.player?.isValid) return;
+        ctx.player!.locatorBar.removeAllWaypoints()
     }
 }

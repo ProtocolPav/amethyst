@@ -133,3 +133,5 @@ dist
 /.idea/swagger-settings.xml
 
 .idea/
+
+*.DS_Store

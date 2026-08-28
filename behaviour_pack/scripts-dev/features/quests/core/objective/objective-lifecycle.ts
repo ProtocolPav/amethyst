@@ -1,6 +1,7 @@
 import {CustomizationPlugin} from "../../types/customization-plugin";
 import {Player} from "@minecraft/server";
 import {ObjectiveOut, ObjectiveProgressOut} from "../../../../api/nexuscore/model";
+import { DeactivationContext } from "../../types/deactivation-context";
 import {TARGET_PROCESSORS} from "../../processors/objective-processor";
 import {DeathPlugin} from "../../customizations/death-plugin";
 import {LocationPlugin} from "../../customizations/location-plugin";
@@ -61,15 +62,15 @@ export function activateObjective(player: Player, thorny_id: number, objective: 
  * Calls onDeactivate on the matching target processor if defined,
  * then deactivates and discards all active customization plugins.
  */
-export function deactivateObjective(player: Player, thorny_id: number, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): void {
+export function deactivateObjective(ctx: DeactivationContext, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): void {
     // Deactivate the target processor lifecycle hook
     const processor = TARGET_PROCESSORS[objective.objective_type]
-    processor?.onDeactivate?.(player, objective, objectiveProgress)
+    processor?.onDeactivate?.(ctx, objective, objectiveProgress)
 
     // Deactivate all plugins and remove them from the map
-    const plugins = ACTIVE_PLUGINS.get(thorny_id) ?? []
+    const plugins = ACTIVE_PLUGINS.get(ctx.thornyId) ?? []
     for (const plugin of plugins) {
-        plugin.onDeactivate?.(player, objective, objectiveProgress)
+        plugin.onDeactivate?.(ctx, objective, objectiveProgress)
     }
-    ACTIVE_PLUGINS.delete(thorny_id)
+    ACTIVE_PLUGINS.delete(ctx.thornyId)
 }

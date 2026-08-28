@@ -1,6 +1,7 @@
 import {Player, system, TicksPerSecond} from "@minecraft/server";
 import { ObjectiveOut, ObjectiveProgressOut } from "../../../api/nexuscore/model";
 import { CustomizationPlugin } from "../types/customization-plugin";
+import { DeactivationContext } from "../types/deactivation-context";
 import {showTimer} from "../core/notify";
 
 /**
@@ -44,7 +45,7 @@ export class TimerPlugin implements CustomizationPlugin {
         }, Math.ceil(this.remaining_seconds) * TicksPerSecond)
     }
 
-    onDeactivate(_player: Player, _objective: ObjectiveOut, _progress: ObjectiveProgressOut): void {
+    onDeactivate(_ctx: DeactivationContext, _objective: ObjectiveOut, _progress: ObjectiveProgressOut): void {
         // Clear the pending timeout if the objective ends before the timer fires
         if (this.runId !== undefined) {
             system.clearRun(this.runId)
