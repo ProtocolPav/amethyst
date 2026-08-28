@@ -10,10 +10,19 @@ export function showProgressTick(player: Player, target: AnyTarget | undefined, 
 
     switch (target?.target_type) {
         case 'mine':
-            label = utils.clean_id(target.block)
+            label = utils.clean_id((target as any).block)
             break;
         case 'kill':
-            label = utils.clean_id(target.entity)
+            label = utils.clean_id((target as any).entity)
+            break;
+        case 'deliver': {
+            const t = target as any;
+            const id = t.item ?? t.entity ?? 'unknown';
+            label = utils.clean_id(id);
+            break;
+        }
+        case 'visit':
+            label = utils.clean_id((target as any).helper_text ?? 'visit')
             break;
     }
 

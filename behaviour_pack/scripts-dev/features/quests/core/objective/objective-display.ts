@@ -4,7 +4,8 @@ import {
     RewardOut,
     MineTargetModel,
     KillTargetModel,
-    VisitTargetModel
+    VisitTargetModel,
+    DeliverTargetModel
 } from "../../../../api/nexuscore/model";
 import { AnyTarget } from "../../types/target-processor";
 import utils from "../../../../utils";
@@ -19,6 +20,10 @@ function targetId(target: AnyTarget): string {
         case 'mine': return (target as MineTargetModel).block
         case 'kill': return (target as KillTargetModel).entity
         case 'visit': return (target as VisitTargetModel).helper_text
+        case 'deliver': {
+            const t = target as DeliverTargetModel;
+            return t.item ?? t.entity ?? 'unknown';
+        }
         default: return 'unknown'
     }
 }
@@ -28,6 +33,7 @@ function logicVerb(type: string): string {
         case 'mine': return 'Mine'
         case 'kill': return 'Kill'
         case 'visit': return 'Locate'
+        case 'deliver': return 'Drop Off'
         default: return 'Complete'
     }
 }

@@ -13,6 +13,7 @@ import {showProgressTick} from "../core/notify";
 import {ACTIVE_PLUGINS} from "../core/objective/objective-lifecycle";
 import {ScripteventTargetProcessor} from "./scriptevent-target-processor";
 import {VisitTargetProcessor} from "./visit-target-processor";
+import {DeliverTargetProcessor} from "./deliver-target-processor";
 
 /**
  * Registry of target processors, keyed by objective_type.
@@ -23,6 +24,7 @@ export const TARGET_PROCESSORS: Record<ObjectiveOutObjectiveType, TargetProcesso
     kill: new KillTargetProcessor(),
     scriptevent: new ScripteventTargetProcessor(),
     visit: new VisitTargetProcessor(),
+    deliver: new DeliverTargetProcessor(),
 }
 
 function targetCount(target: AnyTarget): number {

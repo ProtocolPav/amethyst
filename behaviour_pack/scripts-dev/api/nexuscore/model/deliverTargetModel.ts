@@ -13,16 +13,6 @@ export interface DeliverTargetModel {
   target_type: 'deliver';
   /** The number of this target to be reached. At least 1. */
   count: number;
-  /**
-     * The coordinates
-     * @minItems 3
-     * @maxItems 3
-     */
-  coordinates: [number, number, number];
-  /** The horizontal radius to check for (x and z axis) */
-  horizontal_radius: number;
-  /** The vertical radius to check for (y axis) */
-  vertical_radius?: number | null;
   /** The item to be delivered. If this is present, `entity` should not be. */
   item?: string | null;
   /** The entity to be delivered. If this is present, `item` should not be. */

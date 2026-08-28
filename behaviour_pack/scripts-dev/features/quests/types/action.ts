@@ -30,4 +30,12 @@ export interface VisitAction extends BaseAction {
     type: 'visit'
 }
 
-export type GameAction = MineAction | KillAction | ScripteventAction | VisitAction
+export interface DeliverAction extends BaseAction {
+    type: 'deliver'
+    entity_id: string
+    item_id?: string | null
+    item_count: number
+    deliveredEntities: import("@minecraft/server").Entity[]
+}
+
+export type GameAction = MineAction | KillAction | ScripteventAction | VisitAction | DeliverAction
