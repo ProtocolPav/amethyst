@@ -13,7 +13,12 @@
             },
 
             "minecraft:scale": {
-                "value": 1.5
+                "value": 4.5
+            },
+
+            "minecraft:collision_box": {
+                "height": 4.05,
+                "width": 6.3
             },
 
             "minecraft:behavior.avoid_mob_type": {
@@ -78,10 +83,6 @@
                 "total_supply": 15
             },
             "minecraft:can_climb": {},
-            "minecraft:collision_box": {
-                "height": 0.9,
-                "width": 1.4
-            },
             "minecraft:conditional_bandwidth_optimization": {},
             "minecraft:despawn": {
                 "despawn_from_distance": {}
