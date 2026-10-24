@@ -13,7 +13,7 @@
             },
 
             "minecraft:scale": {
-                "value": 4.5
+                "value": 2.5
             },
 
             "minecraft:behavior.avoid_mob_type": {
@@ -90,8 +90,8 @@
                 "on_death": "query.last_hit_by_player ? 5 : 0"
             },
             "minecraft:health": {
-                "max": 16,
-                "value": 16
+                "max": 26,
+                "value": 26
             },
             "minecraft:hurt_on_condition": {
                 "damage_conditions": [
