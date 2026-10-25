@@ -1,7 +1,10 @@
 import { Player } from "@minecraft/server";
 import { RewardOut } from "../../../api/nexuscore/model";
 import { RewardGranter } from "../core/reward/reward-granter";
-import { partialUpdateUserV1GuildsMeUsersThornyIdPatch } from "../../../api/nexuscore/users/users";
+import {
+    getUserV1GuildsMeUsersThornyIdGet,
+    partialUpdateUserV1GuildsMeUsersThornyIdPatch
+} from "../../../api/nexuscore/users/users";
 import utils from "../../../utils";
 
 /**
@@ -16,6 +19,10 @@ export class BalanceReward implements RewardGranter {
     }
 
     async grant(player: Player, thorny_id: number, reward: RewardOut): Promise<void> {
+        const thorny_user = await getUserV1GuildsMeUsersThornyIdGet(thorny_id)
+
+        const delta = reward.balance! - thorny_user.balance
+
         await partialUpdateUserV1GuildsMeUsersThornyIdPatch(thorny_id, {
             balance: reward.balance,
         })
@@ -23,7 +30,7 @@ export class BalanceReward implements RewardGranter {
         utils.commands.send_message(
             player.dimension.id,
             player.name,
-            `§l[§aQuests§f]§r You received §6${reward.balance}${utils.emojis.NUGS}§r!`
+            `§l[§aQuests§f]§r You received §6${delta}${utils.emojis.NUGS}§r!`
         )
     }
 }

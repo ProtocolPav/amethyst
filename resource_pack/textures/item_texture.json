@@ -88,6 +88,9 @@
         },
         "record_fallen_kingdom": {
             "textures": "textures/items/record_fallen_kingdom.png"
+        },
+        "candy_corn": {
+            "textures": "textures/items/candy_corn.png"
         }
     }
 }
