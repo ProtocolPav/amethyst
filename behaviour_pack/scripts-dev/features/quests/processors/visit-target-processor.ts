@@ -2,12 +2,12 @@ import {ObjectiveOut, ObjectiveProgressOut, VisitTargetModel, VisitTargetProgres
 import {GameAction, ScripteventAction, VisitAction} from "../types/action";
 import { AnyTargetProgress, TargetProcessor } from "../types/target-processor";
 import {EquipmentSlot, Player, system, TicksPerSecond} from "@minecraft/server";
-import ThornyUser from "../../../api/user";
 import {processGameAction} from "../core/action-dispatch";
 import { DeactivationContext } from "../types/deactivation-context";
+import { ActivationContext, SlotRef, slotKey } from "../types/slot";
 
 export class VisitTargetProcessor implements TargetProcessor {
-    private subscriptions = new Map<number, () => void>()
+    private subscriptions = new Map<string, () => void>()  // slotKey → unsubscribe
 
     checkCoordinates(action: VisitAction, target: VisitTargetModel): boolean {
         const dx = Math.abs(action.coordinates.x - target.coordinates[0])
@@ -20,8 +20,9 @@ export class VisitTargetProcessor implements TargetProcessor {
         return horizontalOk && verticalOk
     }
 
-    onActivate(player: Player, _objective: ObjectiveOut, _objectiveProgress: ObjectiveProgressOut): void {
-        const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
+    onActivate(ctx: ActivationContext, _objective: ObjectiveOut, _objectiveProgress: ObjectiveProgressOut): void {
+        const player = ctx.player
+        const ref: SlotRef = { thornyId: ctx.thornyId, slot: ctx.slot }
 
         const handler = () => {
             const mainhand = player
@@ -38,16 +39,16 @@ export class VisitTargetProcessor implements TargetProcessor {
                 mainhand,
             }
 
-            processGameAction(player, action)
+            processGameAction(player, action, ref)
         }
 
         const runId = system.runInterval(handler, TicksPerSecond)
-        this.subscriptions.set(thorny_id, () => system.clearRun(runId))
+        this.subscriptions.set(slotKey(ctx), () => system.clearRun(runId))
     }
 
     onDeactivate(ctx: DeactivationContext, _objective: ObjectiveOut, _objectiveProgress: ObjectiveProgressOut): void {
-        this.subscriptions.get(ctx.thornyId)?.()
-        this.subscriptions.delete(ctx.thornyId)
+        this.subscriptions.get(slotKey(ctx))?.()
+        this.subscriptions.delete(slotKey(ctx))
     }
 
     evaluate(action: VisitAction, objective: ObjectiveOut, targetProgress: VisitTargetProgressModel): number {

@@ -3,19 +3,37 @@ import { QuestProgressOut, QuestProgressUpdate } from "../../api/nexuscore/model
 import {
     partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut
 } from "../../api/nexuscore/quests/quests";
-import { QUEST_PROGRESS_CACHE } from "./progress-cache";
+import { ConflictError } from "../../api/http-errors";
 
-// Dirty set — thorny_ids of players whose progress needs flushing
-const DIRTY = new Map<number, QuestProgressOut>()  // thorny_id → snapshot
+// Dirty set — quest progress that needs flushing, keyed by progress_id.
+// Keyed by progress rather than player so that a player moving on to new
+// progress (e.g. a new daily quest) can't overwrite an unflushed old one.
+// `mark` increases on every markDirty, so a flush can tell whether the
+// progress changed again while its request was in flight.
+const DIRTY = new Map<number, { progress: QuestProgressOut, mark: number }>()  // progress_id → entry
+let markCounter = 0
+
+// Saves currently in flight, keyed by progress_id
+const IN_FLIGHT = new Map<number, Promise<boolean>>()
 
 /**
- * Mark a player's progress as dirty.
- * Call this after any mutation to QUEST_PROGRESS_CACHE.
+ * Called when Nexuscore rejects a save because it has already finished the
+ * progress (409 progress_finished), usually because the quest expired.
+ * Registered by progress-cache.ts, which evicts the progress from its slot.
  */
+type FinishedProgressHandler = (progress: QuestProgressOut, serverStatus: string | undefined) => void
+let onProgressFinished: FinishedProgressHandler | undefined
 
-export function markDirty(thorny_id: number): void {
-    const progress = QUEST_PROGRESS_CACHE.get(thorny_id)
-    if (progress) DIRTY.set(thorny_id, progress)  // snapshot at mark time
+export function setFinishedProgressHandler(handler: FinishedProgressHandler): void {
+    onProgressFinished = handler
+}
+
+/**
+ * Mark quest progress as dirty.
+ * Call this after any mutation to cached quest progress.
+ */
+export function markDirty(progress: QuestProgressOut): void {
+    DIRTY.set(progress.progress_id, { progress, mark: ++markCounter })
 }
 
 /**
@@ -40,23 +58,81 @@ function buildUpdate(progress: QuestProgressOut): QuestProgressUpdate {
 }
 
 /**
+ * Saves one dirty progress entry. Returns false if the save failed and the
+ * entry is still dirty, true otherwise.
+ */
+async function saveEntry(progress_id: number): Promise<boolean> {
+    const entry = DIRTY.get(progress_id)
+    if (!entry) return true
+    const { progress, mark } = entry
+
+    try {
+        await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut(
+            progress.progress_id,
+            buildUpdate(progress)
+        )
+        // Only remove on success, and only if it wasn't marked again mid-flush
+        if (DIRTY.get(progress_id)?.mark === mark) DIRTY.delete(progress_id)
+        return true
+    } catch (error) {
+        if (error instanceof ConflictError && error.detail?.error === 'progress_finished') {
+            // The server finished this progress (e.g. the quest expired).
+            // Finished progress is final, so retrying can never succeed.
+            DIRTY.delete(progress_id)
+            console.warn(`[write-back] Progress ${progress_id} was already ${error.detail.status} on the server, dropping it`)
+            try {
+                onProgressFinished?.(progress, error.detail.status)
+            } catch (handlerError) {
+                console.error(`[write-back] Failed to handle finished progress ${progress_id}:`, handlerError)
+            }
+            return true
+        }
+
+        // Leave in DIRTY — retries next interval
+        console.error(`[write-back] Failed to flush progress ${progress_id} (thorny_id ${progress.thorny_id}):`, error)
+        return false
+    }
+}
+
+/**
+ * Saves a progress entry, or joins the save already in flight for it, so the
+ * same progress is never sent twice at once.
+ */
+function save(progress_id: number): Promise<boolean> {
+    const inFlight = IN_FLIGHT.get(progress_id)
+    if (inFlight) return inFlight
+
+    const request = (async () => {
+        try {
+            return await saveEntry(progress_id)
+        } finally {
+            IN_FLIGHT.delete(progress_id)
+        }
+    })()
+    IN_FLIGHT.set(progress_id, request)
+    return request
+}
+
+/**
+ * Saves a progress entry now instead of waiting for the next interval,
+ * including changes made while an earlier save was in flight.
+ * Returns true once nothing is left unsaved, false if a save failed.
+ */
+export async function flushProgress(progress_id: number): Promise<boolean> {
+    for (let attempt = 0; attempt < 3 && DIRTY.has(progress_id); attempt++) {
+        if (!await save(progress_id)) return false
+    }
+    return !DIRTY.has(progress_id)
+}
+
+/**
  * Flushes all dirty progress entries to the API.
- * Failures are logged but do not throw — a missed flush will retry next tick.
+ * Failures are logged but do not throw — a missed flush will retry next tick,
+ * except for progress Nexuscore has already finished, which is never retried.
  */
 async function flush(): Promise<void> {
-    if (DIRTY.size === 0) return
-
-    for (const [thorny_id, progress] of DIRTY) {
-        try {
-            await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut(
-                progress.progress_id,
-                buildUpdate(progress)
-            )
-            DIRTY.delete(thorny_id)  // only remove on success
-        } catch (error) {
-            // Leave in DIRTY — retries next interval with the same snapshot
-            console.error(`[write-back] Failed to flush progress for thorny_id ${thorny_id}:`, error)
-        }
+    for (const progress_id of Array.from(DIRTY.keys())) {
+        await save(progress_id)
     }
 }
 

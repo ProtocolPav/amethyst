@@ -3,7 +3,8 @@ import { ObjectiveOut, ObjectiveProgressOut } from "../../../api/nexuscore/model
 import { CustomizationPlugin } from "../types/customization-plugin";
 import { DeactivationContext } from "../types/deactivation-context";
 import {markDirty} from "../write-back";
-import ThornyUser from "../../../api/user";
+import {getCachedProgress} from "../progress-store";
+import {ActivationContext, SlotRef} from "../types/slot";
 
 /**
  * Watcher — fails the objective if the player dies too many times.
@@ -21,14 +22,15 @@ export class DeathPlugin implements CustomizationPlugin {
     private shouldFail = false
     private unsubscribe: (() => void) | undefined
 
-    onActivate(player: Player, objective: ObjectiveOut, progress: ObjectiveProgressOut): void {
+    onActivate(ctx: ActivationContext, objective: ObjectiveOut, progress: ObjectiveProgressOut): void {
         const c = objective.customizations.maximum_deaths
         if (!c) return
 
         this.exceeded = false
         this.shouldFail = c.fail ?? false
 
-        const thornyUser = ThornyUser.fetch_user(player.name)!
+        const player = ctx.player
+        const ref: SlotRef = { thornyId: ctx.thornyId, slot: ctx.slot }
 
         // Seed from existing progress so reloads don't reset the count
         let deaths = progress.customization_progress.maximum_deaths?.deaths ?? 0
@@ -42,7 +44,8 @@ export class DeathPlugin implements CustomizationPlugin {
             }
             progress.customization_progress.maximum_deaths.deaths = deaths
 
-            markDirty(thornyUser.thorny_id)
+            const cached = getCachedProgress(ref)
+            if (cached) markDirty(cached.progress)
 
             if (deaths >= c.deaths) this.exceeded = true
         }

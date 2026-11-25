@@ -1,7 +1,7 @@
-import { Player } from "@minecraft/server";
 import {ObjectiveOut, ObjectiveProgressOut} from "../../../api/nexuscore/model";
 import { GameAction } from "./action";
 import { DeactivationContext } from "./deactivation-context";
+import { ActivationContext } from "./slot";
 
 export type AnyTargetProgress = ObjectiveProgressOut["target_progress"][number]
 export type AnyTarget = ObjectiveOut["targets"][number]
@@ -22,15 +22,16 @@ export interface TargetProcessor {
     evaluate(action: GameAction, objective: ObjectiveOut, targetProgress: AnyTargetProgress): number
 
     /**
-     * Called when the objective this processor owns becomes active for a player.
-     * Use to register event listeners, spawn entities, start timers, etc.
+     * Called when the objective this processor owns becomes active for a player's
+     * quest slot. Use to register event listeners, spawn entities, start timers, etc.
+     * Subscriptions must dispatch actions to ctx's slot only, and be keyed by slotKey(ctx).
      *
      * Optional — processors that need no setup can omit this.
      */
-    onActivate?(player: Player, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): void
+    onActivate?(ctx: ActivationContext, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): void
 
     /**
-     * Called when the objective this processor owns is deactivated for a player.
+     * Called when the objective this processor owns is deactivated for a player's quest slot.
      * Fires on completion, failure, quest abandonment, or player leave.
      * Use to clean up any listeners or runtime state registered in onActivate.
      *

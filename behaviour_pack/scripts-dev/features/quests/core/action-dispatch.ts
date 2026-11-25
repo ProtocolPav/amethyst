@@ -1,30 +1,27 @@
 // core/action-dispatch.ts
 import { Player } from "@minecraft/server";
 import { GameAction } from "../types/action";
-import { QUEST_PROGRESS_CACHE } from "../progress-cache";
-import { QUEST_CACHE } from "../quest-cache";
+import { getCachedProgress } from "../progress-store";
 import { QuestProcessor } from "../processors/quest-processor";
-import ThornyUser from "../../../api/user";
+import { SlotRef } from "../types/slot";
 
 let questProcessor: QuestProcessor
 
 /**
- * Resolves the player's cached quest + progress and hands the action to
+ * Resolves a slot's cached quest + progress and hands the action to
  * QuestProcessor.process(). process() already no-ops safely if there's
- * no active objective, so no need to pre-check that here — only the
- * lookups process() actually requires as arguments are done.
+ * no active objective, so no need to pre-check that here.
+ *
+ * Each slot's target processor subscription dispatches to its own slot only.
+ * When both of a player's quests want the same action (e.g. both want sheep
+ * kills), each slot has its own subscription, so the action counts once
+ * towards each quest.
  */
-export function processGameAction(player: Player, action: GameAction): void {
+export function processGameAction(player: Player, action: GameAction, ref: SlotRef): void {
     questProcessor ??= new QuestProcessor()
 
-    const thorny_user = ThornyUser.fetch_user(player.name)
-    if (!thorny_user) return
+    const cached = getCachedProgress(ref)
+    if (!cached) return
 
-    const questProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id)
-    if (!questProgress) return
-
-    const quest = QUEST_CACHE.get(questProgress.quest_id)
-    if (!quest) return
-
-    questProcessor.process(action, player, quest, questProgress)
+    questProcessor.process(action, player, cached)
 }

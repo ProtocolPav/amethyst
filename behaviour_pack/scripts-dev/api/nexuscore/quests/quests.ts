@@ -6,6 +6,8 @@
  * OpenAPI spec version: 1.0.0
  */
 import type {
+  AbandonActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDeleteParams,
+  GetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetParams,
   ListQuestsV1GuildsMeQuestsGetParams,
   QuestIn,
   QuestOut,
@@ -50,7 +52,7 @@ export const getListQuestsV1GuildsMeQuestsGetUrl = (params?: ListQuestsV1GuildsM
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    const arrayFormatParameters = ["creator_thorny_ids","quest_types"];
+    const arrayFormatParameters = ["creator_thorny_ids","quest_types","exclude_quest_types"];
 
     if (Array.isArray(value) && arrayFormatParameters.includes(key)) {
       value.forEach((v) => { normalizedParams.append(key, v === null ? 'null' : String(v)); });
@@ -204,6 +206,8 @@ export const getCreateQuestProgressV1GuildsMeQuestsProgressPostUrl = () => {
  *
  * Adds a new quest to a user, tracking their progress.
  * Automatically sets the quest progress to "active".
+ *
+ * Quests can only be accepted while they are running, and daily quests only once per user.
  * @summary Create Quest Progress
  */
 export const createQuestProgressV1GuildsMeQuestsProgressPost = async (questProgressIn: QuestProgressIn, options?: RequestInit): Promise<QuestProgressOut> => {
@@ -244,23 +248,34 @@ export const listQuestProgressV1GuildsMeQuestsProgressUserThornyIdGet = async (t
 );}
 
 
-export const getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl = (thornyId: number,) => {
+export const getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl = (thornyId: number,
+    params?: GetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/v1/guilds/me/quests/progress/user/${thornyId}/active`
+  return stringifiedParams.length > 0 ? `/v1/guilds/me/quests/progress/user/${thornyId}/active?${stringifiedParams}` : `/v1/guilds/me/quests/progress/user/${thornyId}/active`
 }
 
 /**
  * Get User's Active Quest
  *
  * Returns the user's currently active quest.
+ * By default this is their regular (accepted) quest. Use `?quest_type=daily`
+ * to get their active daily quest instead.
  * @summary Get Active Quest Progress
  */
-export const getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet = async (thornyId: number, options?: RequestInit): Promise<QuestProgressOut> => {
+export const getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet = async (thornyId: number,
+    params?: GetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetParams, options?: RequestInit): Promise<QuestProgressOut> => {
 
-  return minecraftFetch<QuestProgressOut>(getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl(thornyId),
+  return minecraftFetch<QuestProgressOut>(getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl(thornyId,params),
   {
     ...options,
     method: 'GET'
@@ -270,26 +285,74 @@ export const getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet
 );}
 
 
-export const getFailActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDeleteUrl = (thornyId: number,) => {
+export const getAbandonActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDeleteUrl = (thornyId: number,
+    params?: AbandonActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDeleteParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/v1/guilds/me/quests/progress/user/${thornyId}/active`
+  return stringifiedParams.length > 0 ? `/v1/guilds/me/quests/progress/user/${thornyId}/active?${stringifiedParams}` : `/v1/guilds/me/quests/progress/user/${thornyId}/active`
 }
 
 /**
- * Fail User's Active Quest
+ * Abandon User's Active Quest
  *
- * This marks the active quest and all of its objectives as "failed".
- * @summary Fail Active Quest Progress
+ * Use this when the player chooses to drop their quest.
+ * Marks the active quest and the objective the player was on as `abandoned`.
+ * Objectives the player never reached stay `pending`.
+ * Use `?quest_type=daily` to abandon the active daily quest instead.
+ *
+ * To record a genuine failure (e.g. the player died), update the progress
+ * with status `failed` instead.
+ * @summary Abandon Active Quest Progress
  */
-export const failActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDelete = async (thornyId: number, options?: RequestInit): Promise<void> => {
+export const abandonActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDelete = async (thornyId: number,
+    params?: AbandonActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDeleteParams, options?: RequestInit): Promise<void> => {
 
-  return minecraftFetch<void>(getFailActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDeleteUrl(thornyId),
+  return minecraftFetch<void>(getAbandonActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveDeleteUrl(thornyId,params),
   {
     ...options,
     method: 'DELETE'
+
+
+  }
+);}
+
+
+export const getAcceptDailyQuestV1GuildsMeQuestsProgressUserThornyIdDailyPostUrl = (thornyId: number,) => {
+
+
+
+
+  return `/v1/guilds/me/quests/progress/user/${thornyId}/daily`
+}
+
+/**
+ * Accept Daily Quest
+ *
+ * Returns the user's current daily quest progress, accepting today's daily if needed.
+ * Players have one daily at a time: while consecutive dailies overlap, an unfinished
+ * daily from the previous day is returned until it is finished or expires. After that,
+ * today's daily is accepted.
+ *
+ * Safe to call repeatedly: if the user already accepted today's daily, their existing
+ * progress is returned, whatever its status (active, completed, failed or abandoned).
+ * Clients should call this when a player joins, and again when their daily finishes.
+ * @summary Accept Daily Quest
+ */
+export const acceptDailyQuestV1GuildsMeQuestsProgressUserThornyIdDailyPost = async (thornyId: number, options?: RequestInit): Promise<QuestProgressOut> => {
+
+  return minecraftFetch<QuestProgressOut>(getAcceptDailyQuestV1GuildsMeQuestsProgressUserThornyIdDailyPostUrl(thornyId),
+  {
+    ...options,
+    method: 'POST'
 
 
   }

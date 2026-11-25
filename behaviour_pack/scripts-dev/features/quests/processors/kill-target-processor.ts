@@ -2,15 +2,16 @@ import {ObjectiveOut, KillTargetModel, ObjectiveProgressOut} from "../../../api/
 import {GameAction, KillAction} from "../types/action";
 import { AnyTargetProgress, TargetProcessor } from "../types/target-processor";
 import {EntityDieAfterEvent, EquipmentSlot, Player, world} from "@minecraft/server";
-import ThornyUser from "../../../api/user";
 import {processGameAction} from "../core/action-dispatch";
 import { DeactivationContext } from "../types/deactivation-context";
+import { ActivationContext, SlotRef, slotKey } from "../types/slot";
 
 export class KillTargetProcessor implements TargetProcessor {
-    private subscriptions = new Map<number, () => void>()
+    private subscriptions = new Map<string, () => void>()  // slotKey → unsubscribe
 
-    onActivate(player: Player, _objective: ObjectiveOut, _objectiveProgress: ObjectiveProgressOut): void {
-        const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
+    onActivate(ctx: ActivationContext, _objective: ObjectiveOut, _objectiveProgress: ObjectiveProgressOut): void {
+        const player = ctx.player
+        const ref: SlotRef = { thornyId: ctx.thornyId, slot: ctx.slot }
 
         const entityTypes = _objective.targets
             .filter((t): t is KillTargetModel => t.target_type === 'kill')
@@ -35,16 +36,16 @@ export class KillTargetProcessor implements TargetProcessor {
                 entity_id: event.deadEntity.typeId,
             }
 
-            processGameAction(player, action)
+            processGameAction(player, action, ref)
         }
 
         world.afterEvents.entityDie.subscribe(handler, {entityTypes})
-        this.subscriptions.set(thorny_id, () => world.afterEvents.entityDie.unsubscribe(handler))
+        this.subscriptions.set(slotKey(ctx), () => world.afterEvents.entityDie.unsubscribe(handler))
     }
 
     onDeactivate(ctx: DeactivationContext, _objective: ObjectiveOut, _objectiveProgress: ObjectiveProgressOut): void {
-        this.subscriptions.get(ctx.thornyId)?.()
-        this.subscriptions.delete(ctx.thornyId)
+        this.subscriptions.get(slotKey(ctx))?.()
+        this.subscriptions.delete(slotKey(ctx))
     }
 
     evaluate(action: GameAction, objective: ObjectiveOut, targetProgress: AnyTargetProgress): number {

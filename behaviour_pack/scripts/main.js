@@ -3388,6 +3388,22 @@ var UnauthorizedError = class extends HttpError {
     this.name = "UnauthorizedError";
   }
 };
+var ConflictError = class extends HttpError {
+  static {
+    __name(this, "ConflictError");
+  }
+  constructor(body) {
+    super(409, body);
+    this.name = "ConflictError";
+    let detail = null;
+    try {
+      const parsed = JSON.parse(body);
+      if (parsed && typeof parsed.detail === "object") detail = parsed.detail;
+    } catch {
+    }
+    this.detail = detail;
+  }
+};
 
 // behaviour_pack/scripts-dev/api/minecraft-fetch.ts
 var BASE_URL2 = "http://nexuscore:8000/api";
@@ -3428,6 +3444,8 @@ var minecraftFetch = /* @__PURE__ */ __name(async (url, options = {}) => {
         throw new NotFoundError(response.body);
       case 401:
         throw new UnauthorizedError(response.body);
+      case 409:
+        throw new ConflictError(response.body);
       default:
         throw new HttpError(response.status, response.body);
     }
@@ -5184,6 +5202,18 @@ var lookupUserV1GuildsMeUsersLookupGet = /* @__PURE__ */ __name(async (params, o
     }
   );
 }, "lookupUserV1GuildsMeUsersLookupGet");
+var getGetUserV1GuildsMeUsersThornyIdGetUrl = /* @__PURE__ */ __name((thornyId) => {
+  return `/v1/guilds/me/users/${thornyId}`;
+}, "getGetUserV1GuildsMeUsersThornyIdGetUrl");
+var getUserV1GuildsMeUsersThornyIdGet = /* @__PURE__ */ __name(async (thornyId, options) => {
+  return minecraftFetch(
+    getGetUserV1GuildsMeUsersThornyIdGetUrl(thornyId),
+    {
+      ...options,
+      method: "GET"
+    }
+  );
+}, "getUserV1GuildsMeUsersThornyIdGet");
 var getPartialUpdateUserV1GuildsMeUsersThornyIdPatchUrl = /* @__PURE__ */ __name((thornyId) => {
   return `/v1/guilds/me/users/${thornyId}`;
 }, "getPartialUpdateUserV1GuildsMeUsersThornyIdPatchUrl");
@@ -5800,629 +5830,48 @@ function loreCommand() {
 }
 __name(loreCommand, "loreCommand");
 
-// behaviour_pack/scripts-dev/features/commands/index.ts
-function loadCommands() {
-  loreCommand();
-}
-__name(loadCommands, "loadCommands");
-
-// behaviour_pack/scripts-dev/features/wine-n-beer/components.ts
+// behaviour_pack/scripts-dev/features/commands/daily.ts
 import {
-  system as system14
+  CommandPermissionLevel as CommandPermissionLevel2,
+  CustomCommandStatus as CustomCommandStatus2,
+  Player as Player12,
+  system as system16
 } from "@minecraft/server";
-function loadOnDrinkComponent() {
-  async function on_drink(event) {
-    const player = event.source;
-    const drunk_data_string = player.getDynamicProperty("amethyst:drunk_data");
-    if (!drunk_data_string) {
-      player.setDynamicProperty("amethyst:drunk_data", JSON.stringify({ type: event.itemStack.typeId, drinks: 1 }));
-    } else {
-      let drunk_data = JSON.parse(drunk_data_string);
-      drunk_data.drinks += 1;
-      drunk_data.type = event.itemStack.typeId;
-      player.setDynamicProperty("amethyst:drunk_data", JSON.stringify(drunk_data));
-    }
-  }
-  __name(on_drink, "on_drink");
-  system14.beforeEvents.startup.subscribe((initEvent) => {
-    initEvent.itemComponentRegistry.registerCustomComponent(
-      "amethyst:alcohol",
-      {
-        async onConsume(event) {
-          await on_drink(event);
-        }
-      }
-    );
-  });
-}
-__name(loadOnDrinkComponent, "loadOnDrinkComponent");
 
-// behaviour_pack/scripts-dev/features/wine-n-beer/loops.ts
-import { system as system15, TicksPerSecond as TicksPerSecond7, world as world13 } from "@minecraft/server";
-function sober_up(drunk_data) {
-  const sober_chance = 0.06;
-  const drunk_up_chance = 5e-3 * drunk_data.drinks;
-  if (Math.random() < sober_chance) {
-    drunk_data.drinks -= 1;
-  } else if (Math.random() < drunk_up_chance) {
-    drunk_data.drinks += 1;
-  }
-  return drunk_data;
+// behaviour_pack/scripts-dev/features/quests/types/slot.ts
+var QUEST_SLOTS = ["regular", "daily"];
+function slotKey(ref) {
+  return `${ref.thornyId}:${ref.slot}`;
 }
-__name(sober_up, "sober_up");
-function cumulative_drunk_effects(player, drunk_data) {
-  player.addEffect(MinecraftEffectTypes.Oozing, TicksPerSecond7 * 2);
-  if (drunk_data.drinks > 4) {
-    player.addEffect(MinecraftEffectTypes.Hunger, TicksPerSecond7 * drunk_data.drinks);
-  }
-  if (drunk_data.drinks > 18) {
-    player.addEffect(MinecraftEffectTypes.Slowness, TicksPerSecond7 * 2, { amplifier: 3 });
-  }
-  if (drunk_data.drinks > 20) {
-    player.addEffect(MinecraftEffectTypes.FatalPoison, TicksPerSecond7 * 2);
-  }
-}
-__name(cumulative_drunk_effects, "cumulative_drunk_effects");
-function drunk(player) {
-  const drunk_data_string = player.getDynamicProperty("amethyst:drunk_data");
-  if (drunk_data_string) {
-    let drunk_data = JSON.parse(drunk_data_string);
-    let effect_choices = [];
-    cumulative_drunk_effects(player, drunk_data);
-    if (drunk_data.type === "amethyst:beer") {
-      effect_choices = [
-        { item: "fart", weight: 2 },
-        { item: "blink", weight: 3 },
-        { item: "nausea", weight: 2 },
-        { item: "burp", weight: 4 },
-        { item: "slowness", weight: 1 },
-        { item: "none", weight: 3 }
-      ];
-    } else if (drunk_data.type === "amethyst:wine") {
-      effect_choices = [
-        { item: "blink", weight: 3 },
-        { item: "nausea", weight: 1 },
-        { item: "slowness", weight: 2 },
-        { item: "laugh", weight: 4 }
-      ];
-    } else if (drunk_data.type === "amethyst:glow_wine") {
-      effect_choices = [
-        { item: "blink", weight: 3 },
-        { item: "nausea", weight: 1 },
-        { item: "burp", weight: 1 },
-        { item: "laugh", weight: 5 },
-        { item: "night_vision", weight: 4 },
-        { item: "speed", weight: 2 }
-      ];
-    }
-    drunk_data = drunk_effects(player, drunk_data, effect_choices);
-    drunk_data = sober_up(drunk_data);
-    if (drunk_data.drinks <= 0) {
-      player.camera.setFov({ easeOptions: { easeTime: 2.5 } });
-      player.setDynamicProperty("amethyst:drunk_data", void 0);
-    } else {
-      player.setDynamicProperty("amethyst:drunk_data", JSON.stringify(drunk_data));
-    }
-  }
-}
-__name(drunk, "drunk");
-function drunk_effects(player, drunk_data, effect_choices) {
-  const dimension = player.dimension;
-  const location = player.location;
-  const target_fov_level = Math.max(45, 73 - drunk_data.drinks * 2);
-  if (drunk_data.fov_level !== target_fov_level) {
-    drunk_data.fov_level = target_fov_level;
-    player.camera.setFov({ fov: drunk_data.fov_level, easeOptions: { easeTime: 4 } });
-  }
-  const effect_chance = 0.11 + drunk_data.drinks * 0.04;
-  if (Math.random() < effect_chance) {
-    const chosen_effect = utils_default.getWeightedChoice(effect_choices);
-    if (chosen_effect === "fart") {
-      dimension.playSound("fart", location, { volume: 1, pitch: Math.max(0.45, Math.random() * 1.5) });
-      const particle_location = { ...location };
-      particle_location.y += 1;
-      dimension.spawnParticle("minecraft:explosion_particle", particle_location);
-    } else if (chosen_effect === "burp") {
-      dimension.playSound("burp", location, { volume: 1, pitch: Math.max(0.7, Math.random() * 1.5) });
-      const particle_location = { ...location };
-      particle_location.y += 2;
-      dimension.spawnParticle("minecraft:explosion_particle", particle_location);
-    } else if (chosen_effect === "laugh") {
-      dimension.playSound("laugh", location, { volume: 1, pitch: Math.max(0.83, Math.random() * 1.7) });
-    } else if (chosen_effect === "blink") {
-      player.camera.fade({ fadeTime: { fadeInTime: 0.5, holdTime: 0.1, fadeOutTime: 0.25 } });
-    } else if (chosen_effect === "nausea") {
-      player.addEffect(MinecraftEffectTypes.Nausea, TicksPerSecond7 * drunk_data.drinks * 2.5);
-    } else if (chosen_effect === "slowness") {
-      player.addEffect(MinecraftEffectTypes.Slowness, TicksPerSecond7 * drunk_data.drinks);
-    } else if (chosen_effect === "night_vision") {
-      player.addEffect(MinecraftEffectTypes.NightVision, TicksPerSecond7 * drunk_data.drinks);
-    } else if (chosen_effect === "speed") {
-      player.addEffect(MinecraftEffectTypes.Speed, TicksPerSecond7 * drunk_data.drinks);
-    }
-  }
-  return drunk_data;
-}
-__name(drunk_effects, "drunk_effects");
-function drunkDataManager() {
-  system15.runInterval(() => {
-    let playerlist = world13.getPlayers();
-    playerlist.forEach((player) => {
-      drunk(player);
-    });
-  }, TicksPerSecond7);
-  world13.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
-    let player = spawn_event.player;
-    if (player.getDynamicProperty("amethyst:drunk_data")) {
-      player.camera.setFov();
-      player.setDynamicProperty("amethyst:drunk_data", void 0);
-    }
-  });
-}
-__name(drunkDataManager, "drunkDataManager");
+__name(slotKey, "slotKey");
 
-// behaviour_pack/scripts-dev/features/wine-n-beer/index.ts
-function loadWineAndBeerFeature() {
-  loadOnDrinkComponent();
-  drunkDataManager();
+// behaviour_pack/scripts-dev/features/quests/progress-store.ts
+var QUEST_PROGRESS_CACHE = /* @__PURE__ */ new Map();
+function getCachedProgress(ref) {
+  return QUEST_PROGRESS_CACHE.get(slotKey(ref));
 }
-__name(loadWineAndBeerFeature, "loadWineAndBeerFeature");
-
-// behaviour_pack/scripts-dev/features/chat.ts
-import { system as system16, world as world14 } from "@minecraft/server";
-function loadChatDecorationFeature() {
-  world14.beforeEvents.chatSend.subscribe((chat_event) => {
-    const gamertag = chat_event.sender.name;
-    const thorny_user = api_default.ThornyUser.fetch_user(gamertag);
-    world14.sendMessage({
-      rawtext: [{ text: `${thorny_user?.get_role_display()} \xA77${gamertag}:\xA7r ${chat_event.message}` }]
-    });
-    system16.run(() => {
-      api_default.Relay.message(gamertag, chat_event.message);
-    });
-    chat_event.cancel = true;
-  });
+__name(getCachedProgress, "getCachedProgress");
+function setCachedProgress(entry) {
+  QUEST_PROGRESS_CACHE.set(slotKey(entry.ref), entry);
 }
-__name(loadChatDecorationFeature, "loadChatDecorationFeature");
-
-// behaviour_pack/scripts-dev/features/interactions/block-interact.ts
-import { world as world15, system as system17 } from "@minecraft/server";
-import { EntityComponentTypes as EntityComponentTypes11, EquipmentSlot as EquipmentSlot7 } from "@minecraft/server";
-function blockInteract() {
-  const LOGGABLE_BLOCKS = [
-    // Containers
-    MinecraftBlockTypes.Chest,
-    MinecraftBlockTypes.Barrel,
-    MinecraftBlockTypes.EnderChest,
-    MinecraftBlockTypes.TrappedChest,
-    MinecraftBlockTypes.CopperChest,
-    MinecraftBlockTypes.ExposedCopperChest,
-    MinecraftBlockTypes.WeatheredCopperChest,
-    MinecraftBlockTypes.OxidizedCopperChest,
-    MinecraftBlockTypes.WaxedCopperChest,
-    MinecraftBlockTypes.WaxedExposedCopperChest,
-    MinecraftBlockTypes.WaxedOxidizedCopperChest,
-    MinecraftBlockTypes.WaxedWeatheredCopperChest,
-    // Shulkers
-    MinecraftBlockTypes.RedShulkerBox,
-    MinecraftBlockTypes.LightGrayShulkerBox,
-    MinecraftBlockTypes.LightBlueShulkerBox,
-    MinecraftBlockTypes.BlueShulkerBox,
-    MinecraftBlockTypes.CyanShulkerBox,
-    MinecraftBlockTypes.GrayShulkerBox,
-    MinecraftBlockTypes.LimeShulkerBox,
-    MinecraftBlockTypes.PinkShulkerBox,
-    MinecraftBlockTypes.BlackShulkerBox,
-    MinecraftBlockTypes.BrownShulkerBox,
-    MinecraftBlockTypes.GreenShulkerBox,
-    MinecraftBlockTypes.WhiteShulkerBox,
-    MinecraftBlockTypes.OrangeShulkerBox,
-    MinecraftBlockTypes.PurpleShulkerBox,
-    MinecraftBlockTypes.UndyedShulkerBox,
-    MinecraftBlockTypes.YellowShulkerBox,
-    MinecraftBlockTypes.MagentaShulkerBox,
-    // Other Blocks
-    MinecraftBlockTypes.Crafter,
-    MinecraftBlockTypes.CraftingTable,
-    MinecraftBlockTypes.Furnace,
-    MinecraftBlockTypes.BlastFurnace,
-    MinecraftBlockTypes.LitFurnace,
-    MinecraftBlockTypes.LitBlastFurnace,
-    MinecraftBlockTypes.LitSmoker,
-    MinecraftBlockTypes.Smoker,
-    MinecraftBlockTypes.Hopper,
-    MinecraftBlockTypes.EnchantingTable,
-    MinecraftBlockTypes.Anvil,
-    MinecraftBlockTypes.ChippedAnvil,
-    MinecraftBlockTypes.DamagedAnvil,
-    MinecraftBlockTypes.BrewingStand,
-    MinecraftBlockTypes.Beacon,
-    MinecraftBlockTypes.CartographyTable,
-    MinecraftBlockTypes.Grindstone,
-    MinecraftBlockTypes.Lectern,
-    MinecraftBlockTypes.Loom,
-    MinecraftBlockTypes.SmithingTable,
-    MinecraftBlockTypes.StonecutterBlock,
-    MinecraftBlockTypes.ChiseledBookshelf,
-    MinecraftBlockTypes.Jukebox,
-    // Buttons
-    MinecraftBlockTypes.Lever,
-    MinecraftBlockTypes.WoodenButton,
-    MinecraftBlockTypes.SpruceButton,
-    MinecraftBlockTypes.BirchButton,
-    MinecraftBlockTypes.JungleButton,
-    MinecraftBlockTypes.AcaciaButton,
-    MinecraftBlockTypes.DarkOakButton,
-    MinecraftBlockTypes.MangroveButton,
-    MinecraftBlockTypes.CherryButton,
-    MinecraftBlockTypes.PaleOakButton,
-    MinecraftBlockTypes.BambooButton,
-    MinecraftBlockTypes.CrimsonButton,
-    MinecraftBlockTypes.WarpedButton,
-    MinecraftBlockTypes.PolishedBlackstoneButton,
-    MinecraftBlockTypes.StoneButton,
-    // Doors
-    MinecraftBlockTypes.WoodenDoor,
-    MinecraftBlockTypes.SpruceDoor,
-    MinecraftBlockTypes.BirchDoor,
-    MinecraftBlockTypes.JungleDoor,
-    MinecraftBlockTypes.AcaciaDoor,
-    MinecraftBlockTypes.DarkOakDoor,
-    MinecraftBlockTypes.MangroveDoor,
-    MinecraftBlockTypes.CherryDoor,
-    MinecraftBlockTypes.PaleOakDoor,
-    MinecraftBlockTypes.BambooDoor,
-    MinecraftBlockTypes.CrimsonDoor,
-    MinecraftBlockTypes.WarpedDoor,
-    MinecraftBlockTypes.IronDoor,
-    MinecraftBlockTypes.CopperDoor,
-    MinecraftBlockTypes.ExposedCopperDoor,
-    MinecraftBlockTypes.WeatheredCopperDoor,
-    MinecraftBlockTypes.OxidizedCopperDoor,
-    MinecraftBlockTypes.WaxedCopperDoor,
-    MinecraftBlockTypes.WaxedExposedCopperDoor,
-    MinecraftBlockTypes.WaxedOxidizedCopperDoor,
-    MinecraftBlockTypes.WaxedWeatheredCopperDoor,
-    // Trapdoors
-    MinecraftBlockTypes.Trapdoor,
-    MinecraftBlockTypes.SpruceTrapdoor,
-    MinecraftBlockTypes.BirchTrapdoor,
-    MinecraftBlockTypes.JungleTrapdoor,
-    MinecraftBlockTypes.AcaciaTrapdoor,
-    MinecraftBlockTypes.DarkOakTrapdoor,
-    MinecraftBlockTypes.MangroveTrapdoor,
-    MinecraftBlockTypes.CherryTrapdoor,
-    MinecraftBlockTypes.PaleOakTrapdoor,
-    MinecraftBlockTypes.BambooTrapdoor,
-    MinecraftBlockTypes.CrimsonTrapdoor,
-    MinecraftBlockTypes.WarpedTrapdoor,
-    MinecraftBlockTypes.IronTrapdoor,
-    MinecraftBlockTypes.CopperTrapdoor,
-    MinecraftBlockTypes.ExposedCopperTrapdoor,
-    MinecraftBlockTypes.WeatheredCopperTrapdoor,
-    MinecraftBlockTypes.OxidizedCopperTrapdoor,
-    MinecraftBlockTypes.WaxedCopperTrapdoor,
-    MinecraftBlockTypes.WaxedExposedCopperTrapdoor,
-    MinecraftBlockTypes.WaxedOxidizedCopperTrapdoor,
-    MinecraftBlockTypes.WaxedWeatheredCopperTrapdoor
-  ];
-  function blockInteraction(event) {
-    const block_id = event.block.typeId;
-    const block_location = [event.block.x, event.block.y, event.block.z];
-    const dimension = event.player.dimension;
-    const mainhand = event.player.getComponent(EntityComponentTypes11.Equippable)?.getEquipment(EquipmentSlot7.Mainhand);
-    const isPlacing = event.beforeItemStack?.typeId === block_id && event.itemStack?.amount !== event.beforeItemStack?.amount;
-    if (!isPlacing) {
-      system17.run(() => {
-        const interaction = new api_default.Interaction(
-          {
-            thorny_id: api_default.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
-            type: "use",
-            coordinates: block_location,
-            reference: block_id,
-            mainhand: mainhand?.typeId ?? null,
-            dimension: dimension.id
-          }
-        );
-        interaction.post_interaction();
-      });
-    }
+__name(setCachedProgress, "setCachedProgress");
+function deleteCachedProgress(ref) {
+  QUEST_PROGRESS_CACHE.delete(slotKey(ref));
+}
+__name(deleteCachedProgress, "deleteCachedProgress");
+function findCachedProgressById(progress_id) {
+  for (const entry of QUEST_PROGRESS_CACHE.values()) {
+    if (entry.progress.progress_id === progress_id) return entry;
   }
-  __name(blockInteraction, "blockInteraction");
-  world15.afterEvents.playerInteractWithBlock.subscribe((event) => {
-    if (LOGGABLE_BLOCKS.includes(event.block.typeId)) {
-      blockInteraction(event);
-    }
-  });
+  return void 0;
 }
-__name(blockInteract, "blockInteract");
-
-// behaviour_pack/scripts-dev/features/interactions/block-break.ts
-import { EntityComponentTypes as EntityComponentTypes12, EquipmentSlot as EquipmentSlot8, system as system18, world as world16 } from "@minecraft/server";
-function blockBreak() {
-  world16.beforeEvents.playerBreakBlock.subscribe(async (event) => {
-    const block_id = event.block.typeId;
-    const block_location = [event.block.x, event.block.y, event.block.z];
-    const dimension = event.player.dimension;
-    const mainhand = event.player.getComponent(EntityComponentTypes12.Equippable)?.getEquipment(EquipmentSlot8.Mainhand);
-    const thorny_user = api_default.ThornyUser.fetch_user(event.player.name);
-    system18.run(() => {
-      const interaction = new api_default.Interaction(
-        {
-          thorny_id: thorny_user?.thorny_id ?? 0,
-          type: "mine",
-          coordinates: block_location,
-          reference: block_id,
-          mainhand: mainhand?.typeId ?? null,
-          dimension: dimension.id
-        }
-      );
-      interaction.post_interaction();
-    });
-  });
-}
-__name(blockBreak, "blockBreak");
-
-// behaviour_pack/scripts-dev/features/interactions/block-place.ts
-import { EntityComponentTypes as EntityComponentTypes13, EquipmentSlot as EquipmentSlot9, system as system19, world as world17 } from "@minecraft/server";
-function blockPlace() {
-  world17.afterEvents.playerPlaceBlock.subscribe((event) => {
-    const block_id = event.block.typeId;
-    const block_location = [event.block.x, event.block.y, event.block.z];
-    const dimension = event.player.dimension;
-    const mainhand = event.player.getComponent(EntityComponentTypes13.Equippable)?.getEquipment(EquipmentSlot9.Mainhand);
-    system19.run(() => {
-      const interaction = new api_default.Interaction(
-        {
-          thorny_id: api_default.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
-          type: "place",
-          coordinates: block_location,
-          reference: block_id,
-          mainhand: mainhand?.typeId ?? null,
-          dimension: dimension.id
-        }
-      );
-      interaction.post_interaction();
-    });
-  });
-}
-__name(blockPlace, "blockPlace");
-
-// behaviour_pack/scripts-dev/features/interactions/entity-interact.ts
-import { EntityComponentTypes as EntityComponentTypes14, EquipmentSlot as EquipmentSlot10, system as system20, world as world18 } from "@minecraft/server";
-function entityInteract() {
-  const LOGGABLE_ENTITIES = [
-    // Villagers
-    MinecraftEntityTypes.VillagerV2,
-    MinecraftEntityTypes.WanderingTrader,
-    // Rideable Entities
-    MinecraftEntityTypes.Horse,
-    MinecraftEntityTypes.Donkey,
-    MinecraftEntityTypes.Mule,
-    MinecraftEntityTypes.Minecart,
-    MinecraftEntityTypes.Strider,
-    MinecraftEntityTypes.Pig,
-    MinecraftEntityTypes.Boat,
-    MinecraftEntityTypes.Camel,
-    MinecraftEntityTypes.ZombieHorse,
-    MinecraftEntityTypes.SkeletonHorse,
-    MinecraftEntityTypes.Nautilus,
-    MinecraftEntityTypes.ZombieNautilus,
-    MinecraftEntityTypes.CamelHusk,
-    MinecraftEntityTypes.HappyGhast,
-    MinecraftEntityTypes.Llama,
-    MinecraftEntityTypes.TraderLlama,
-    // Entity Containers
-    MinecraftEntityTypes.ChestBoat,
-    MinecraftEntityTypes.ChestMinecart,
-    MinecraftEntityTypes.HopperMinecart,
-    // Amethyst Entities
-    "amethyst:james_collector"
-  ];
-  function entityInteraction(event) {
-    const entity_id = event.target.typeId;
-    const entity_location = [event.target.location.x, event.target.location.y, event.target.location.z];
-    const dimension = event.player.dimension;
-    const mainhand = event.player.getComponent(EntityComponentTypes14.Equippable)?.getEquipment(EquipmentSlot10.Mainhand);
-    system20.run(() => {
-      const interaction = new api_default.Interaction(
-        {
-          thorny_id: api_default.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
-          type: "use",
-          coordinates: entity_location,
-          reference: entity_id,
-          mainhand: mainhand?.typeId ?? null,
-          dimension: dimension.id
-        }
-      );
-      interaction.post_interaction();
-    });
-  }
-  __name(entityInteraction, "entityInteraction");
-  world18.afterEvents.playerInteractWithEntity.subscribe((event) => {
-    if (LOGGABLE_ENTITIES.includes(event.target.typeId)) {
-      entityInteraction(event);
-    }
-  });
-}
-__name(entityInteract, "entityInteract");
-
-// behaviour_pack/scripts-dev/features/interactions/entity-die.ts
-import { world as world19 } from "@minecraft/server";
-import { EntityComponentTypes as EntityComponentTypes15, EquipmentSlot as EquipmentSlot11, Player as Player13 } from "@minecraft/server";
-function entityDie() {
-  async function playerKillEntity(player, entity) {
-    const dimension = player.dimension;
-    const mainhand = player.getComponent(EntityComponentTypes15.Equippable)?.getEquipment(EquipmentSlot11.Mainhand);
-    const thorny_user = api_default.ThornyUser.fetch_user(player.name);
-    const interaction = new api_default.Interaction(
-      {
-        thorny_id: thorny_user?.thorny_id ?? 0,
-        type: "kill",
-        coordinates: [entity.location.x, entity.location.y, entity.location.z],
-        reference: entity.typeId,
-        mainhand: mainhand?.typeId ?? null,
-        dimension: dimension.id
-      }
-    );
-    await interaction.post_interaction();
-  }
-  __name(playerKillEntity, "playerKillEntity");
-  async function playerDieByPlayer(killer_player, dead_player) {
-    const dimension = killer_player.dimension;
-    const entity_mainhand = dead_player.getComponent(EntityComponentTypes15.Equippable)?.getEquipment(EquipmentSlot11.Mainhand);
-    const dead_thorny_user = api_default.ThornyUser.fetch_user(dead_player.name);
-    const death_interaction = new api_default.Interaction(
-      {
-        thorny_id: dead_thorny_user?.thorny_id ?? 0,
-        type: "die",
-        coordinates: [dead_player.location.x, dead_player.location.y, dead_player.location.z],
-        reference: killer_player.name,
-        mainhand: entity_mainhand?.typeId ?? null,
-        dimension: dimension.id
-      }
-    );
-    await death_interaction.post_interaction();
-    api_default.Relay.event(utils_default.DeathMessage.random_pvp(killer_player.name, dead_player.name), "", "other");
-  }
-  __name(playerDieByPlayer, "playerDieByPlayer");
-  async function playerDieByEntity(player, entity) {
-    const dimension = player.dimension;
-    const mainhand = player.getComponent(EntityComponentTypes15.Equippable)?.getEquipment(EquipmentSlot11.Mainhand);
-    const thorny_user = api_default.ThornyUser.fetch_user(player.name);
-    const death_interaction = new api_default.Interaction(
-      {
-        thorny_id: thorny_user?.thorny_id ?? 0,
-        type: "die",
-        coordinates: [player.location.x, player.location.y, player.location.z],
-        reference: entity.typeId,
-        mainhand: mainhand?.typeId ?? null,
-        dimension: dimension.id
-      }
-    );
-    await death_interaction.post_interaction();
-    api_default.Relay.event(utils_default.DeathMessage.random_pve(player.name, entity.typeId), "", "other");
-  }
-  __name(playerDieByEntity, "playerDieByEntity");
-  async function playerDieByOther(player, damageCause) {
-    const dimension = player.dimension;
-    const mainhand = player.getComponent(EntityComponentTypes15.Equippable)?.getEquipment(EquipmentSlot11.Mainhand);
-    const thorny_user = api_default.ThornyUser.fetch_user(player.name);
-    const death_interaction = new api_default.Interaction(
-      {
-        thorny_id: thorny_user?.thorny_id ?? 0,
-        type: "die",
-        coordinates: [player.location.x, player.location.y, player.location.z],
-        reference: damageCause,
-        mainhand: mainhand?.typeId ?? null,
-        dimension: dimension.id
-      }
-    );
-    await death_interaction.post_interaction();
-    api_default.Relay.event(utils_default.DeathMessage.random_suicide(player.name, damageCause), "", "other");
-  }
-  __name(playerDieByOther, "playerDieByOther");
-  world19.afterEvents.entityDie.subscribe(async (event) => {
-    const damage_cause = event.damageSource.cause;
-    const damaging_entity = event.damageSource.damagingEntity;
-    const dead_entity = event.deadEntity;
-    if (damaging_entity instanceof Player13) {
-      await playerKillEntity(damaging_entity, dead_entity);
-      if (dead_entity instanceof Player13) {
-        await playerDieByPlayer(damaging_entity, dead_entity);
-      }
-    } else if (dead_entity instanceof Player13 && damaging_entity) {
-      await playerDieByEntity(dead_entity, damaging_entity);
-    } else if (dead_entity instanceof Player13 && !damaging_entity) {
-      await playerDieByOther(dead_entity, damage_cause);
-    }
-  });
-}
-__name(entityDie, "entityDie");
-
-// behaviour_pack/scripts-dev/features/interactions/index.ts
-function loadInteractionHandlers() {
-  blockInteract();
-  blockBreak();
-  blockPlace();
-  entityInteract();
-  entityDie();
-}
-__name(loadInteractionHandlers, "loadInteractionHandlers");
-
-// behaviour_pack/scripts-dev/features/connections.ts
-import { world as world20 } from "@minecraft/server";
-function loadConnectionsFeature() {
-  world20.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
-    if (spawn_event.initialSpawn) {
-      try {
-        const thorny_user = api_default.ThornyUser.fetch_user(spawn_event.player.name);
-        await thorny_user.send_connect_event("connect");
-        api_default.Relay.event(`${spawn_event.player.name} has joined the server`, "", "join");
-        utils_default.send_motd(spawn_event.player);
-        if (thorny_user.patron) {
-          spawn_event.player.nameTag = `\xA7l\xA7c${spawn_event.player.nameTag}\xA7r`;
-        }
-      } catch (e) {
-        api_default.Relay.event(`${spawn_event.player.name} has joined the server`, "API Issue Detected", "join");
-        console.error(e);
-      }
-    }
-  });
-  world20.afterEvents.playerLeave.subscribe(async (leave_event) => {
-    const thorny_user = api_default.ThornyUser.fetch_user(leave_event.playerName);
-    await thorny_user?.send_connect_event("disconnect");
-    api_default.Relay.event(`${leave_event.playerName} has left the server`, "", "leave");
-  });
-}
-__name(loadConnectionsFeature, "loadConnectionsFeature");
-
-// behaviour_pack/scripts-dev/features/location-logger.ts
-import { EntityComponentTypes as EntityComponentTypes16, EquipmentSlot as EquipmentSlot12, system as system22, world as world21, TicksPerSecond as TicksPerSecond8 } from "@minecraft/server";
-var HEAD_GEAR = [
-  MinecraftItemTypes.SkeletonSkull,
-  MinecraftItemTypes.WitherSkeletonSkull,
-  MinecraftItemTypes.CarvedPumpkin,
-  MinecraftItemTypes.PlayerHead,
-  MinecraftItemTypes.PiglinHead,
-  MinecraftItemTypes.CreeperHead,
-  MinecraftItemTypes.ZombieHead,
-  MinecraftItemTypes.DragonHead
-];
-function location_log(player) {
-  const head_gear = player.getComponent(EntityComponentTypes16.Equippable)?.getEquipment(EquipmentSlot12.Head);
-  let hidden = (head_gear?.typeId ? HEAD_GEAR.includes(head_gear.typeId) : false) || player.isSneaking;
-  const location = [Math.round(player.location.x), Math.round(player.location.y), Math.round(player.location.z)];
-  const thorny_user = api_default.ThornyUser.fetch_user(player.name);
-  if (thorny_user) {
-    thorny_user.location = location;
-    thorny_user.dimension = player.dimension.id;
-    thorny_user.hidden = hidden;
-    thorny_user.update().then();
-  }
-}
-__name(location_log, "location_log");
-function loadLocationLogger() {
-  system22.runInterval(() => {
-    let playerlist = world21.getPlayers();
-    playerlist.forEach((player) => {
-      location_log(player);
-    });
-  }, TicksPerSecond8 * 5);
-}
-__name(loadLocationLogger, "loadLocationLogger");
-
-// behaviour_pack/scripts-dev/features/quests/progress-cache.ts
-import { system as system29, TicksPerSecond as TicksPerSecond13, world as world27 } from "@minecraft/server";
-
-// behaviour_pack/scripts-dev/features/quests/quest-cache.ts
-import { system as system23, TicksPerSecond as TicksPerSecond9 } from "@minecraft/server";
+__name(findCachedProgressById, "findCachedProgressById");
 
 // behaviour_pack/scripts-dev/api/nexuscore/quests/quests.ts
 var getListQuestsV1GuildsMeQuestsGetUrl = /* @__PURE__ */ __name((params) => {
   const normalizedParams = new URLSearchParams();
   Object.entries(params || {}).forEach(([key, value]) => {
-    const arrayFormatParameters = ["creator_thorny_ids", "quest_types"];
+    const arrayFormatParameters = ["creator_thorny_ids", "quest_types", "exclude_quest_types"];
     if (Array.isArray(value) && arrayFormatParameters.includes(key)) {
       value.forEach((v) => {
         normalizedParams.append(key, v === null ? "null" : String(v));
@@ -6445,18 +5894,49 @@ var listQuestsV1GuildsMeQuestsGet = /* @__PURE__ */ __name(async (params, option
     }
   );
 }, "listQuestsV1GuildsMeQuestsGet");
-var getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl = /* @__PURE__ */ __name((thornyId) => {
-  return `/v1/guilds/me/quests/progress/user/${thornyId}/active`;
-}, "getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl");
-var getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet = /* @__PURE__ */ __name(async (thornyId, options) => {
+var getGetQuestV1GuildsMeQuestsQuestIdGetUrl = /* @__PURE__ */ __name((questId) => {
+  return `/v1/guilds/me/quests/${questId}`;
+}, "getGetQuestV1GuildsMeQuestsQuestIdGetUrl");
+var getQuestV1GuildsMeQuestsQuestIdGet = /* @__PURE__ */ __name(async (questId, options) => {
   return minecraftFetch(
-    getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl(thornyId),
+    getGetQuestV1GuildsMeQuestsQuestIdGetUrl(questId),
+    {
+      ...options,
+      method: "GET"
+    }
+  );
+}, "getQuestV1GuildsMeQuestsQuestIdGet");
+var getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl = /* @__PURE__ */ __name((thornyId, params) => {
+  const normalizedParams = new URLSearchParams();
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== void 0) {
+      normalizedParams.append(key, value === null ? "null" : String(value));
+    }
+  });
+  const stringifiedParams = normalizedParams.toString();
+  return stringifiedParams.length > 0 ? `/v1/guilds/me/quests/progress/user/${thornyId}/active?${stringifiedParams}` : `/v1/guilds/me/quests/progress/user/${thornyId}/active`;
+}, "getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl");
+var getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet = /* @__PURE__ */ __name(async (thornyId, params, options) => {
+  return minecraftFetch(
+    getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl(thornyId, params),
     {
       ...options,
       method: "GET"
     }
   );
 }, "getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet");
+var getAcceptDailyQuestV1GuildsMeQuestsProgressUserThornyIdDailyPostUrl = /* @__PURE__ */ __name((thornyId) => {
+  return `/v1/guilds/me/quests/progress/user/${thornyId}/daily`;
+}, "getAcceptDailyQuestV1GuildsMeQuestsProgressUserThornyIdDailyPostUrl");
+var acceptDailyQuestV1GuildsMeQuestsProgressUserThornyIdDailyPost = /* @__PURE__ */ __name(async (thornyId, options) => {
+  return minecraftFetch(
+    getAcceptDailyQuestV1GuildsMeQuestsProgressUserThornyIdDailyPostUrl(thornyId),
+    {
+      ...options,
+      method: "POST"
+    }
+  );
+}, "acceptDailyQuestV1GuildsMeQuestsProgressUserThornyIdDailyPost");
 var getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPutUrl = /* @__PURE__ */ __name((progressId) => {
   return `/v1/guilds/me/quests/progress/${progressId}`;
 }, "getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPutUrl");
@@ -6472,24 +5952,6 @@ var partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut = /* @__PURE
   );
 }, "partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut");
 
-// behaviour_pack/scripts-dev/features/quests/quest-cache.ts
-var QUEST_CACHE = /* @__PURE__ */ new Map();
-async function reload_quest_cache() {
-  const quests_list = await listQuestsV1GuildsMeQuestsGet({ active: true });
-  QUEST_CACHE.clear();
-  quests_list.forEach((quest) => QUEST_CACHE.set(quest.quest_id, quest));
-}
-__name(reload_quest_cache, "reload_quest_cache");
-function loadQuestCache() {
-  system23.run(async () => {
-    await reload_quest_cache();
-  });
-  system23.runInterval(async () => {
-    await reload_quest_cache();
-  }, TicksPerSecond9 * 60 * 5);
-}
-__name(loadQuestCache, "loadQuestCache");
-
 // behaviour_pack/scripts-dev/features/quests/core/fetch.ts
 async function get_quest_progress(thorny_id) {
   let quest_progress_response;
@@ -6504,6 +5966,48 @@ async function get_quest_progress(thorny_id) {
   return quest_progress_response;
 }
 __name(get_quest_progress, "get_quest_progress");
+async function accept_daily_quest(thorny_id) {
+  try {
+    return await acceptDailyQuestV1GuildsMeQuestsProgressUserThornyIdDailyPost(thorny_id);
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      return null;
+    }
+    throw error;
+  }
+}
+__name(accept_daily_quest, "accept_daily_quest");
+
+// behaviour_pack/scripts-dev/features/quests/quest-cache.ts
+import { system as system14, TicksPerSecond as TicksPerSecond6 } from "@minecraft/server";
+var QUEST_CACHE = /* @__PURE__ */ new Map();
+async function reload_quest_cache() {
+  const quests_list = await listQuestsV1GuildsMeQuestsGet({ active: true });
+  QUEST_CACHE.clear();
+  quests_list.forEach((quest) => QUEST_CACHE.set(quest.quest_id, quest));
+  for (const cached of QUEST_PROGRESS_CACHE.values()) {
+    const fresh = QUEST_CACHE.get(cached.quest.quest_id);
+    if (fresh) cached.quest = fresh;
+  }
+}
+__name(reload_quest_cache, "reload_quest_cache");
+async function getQuest(quest_id) {
+  const cached = QUEST_CACHE.get(quest_id);
+  if (cached) return cached;
+  const quest = await getQuestV1GuildsMeQuestsQuestIdGet(quest_id);
+  QUEST_CACHE.set(quest.quest_id, quest);
+  return quest;
+}
+__name(getQuest, "getQuest");
+function loadQuestCache() {
+  system14.run(async () => {
+    await reload_quest_cache();
+  });
+  system14.runInterval(async () => {
+    await reload_quest_cache();
+  }, TicksPerSecond6 * 60 * 5);
+}
+__name(loadQuestCache, "loadQuestCache");
 
 // behaviour_pack/scripts-dev/api/nexuscore/model/objectiveOutLogic.ts
 var ObjectiveOutLogic = {
@@ -6517,7 +6021,8 @@ var ObjectiveProgressOutStatus = {
   active: "active",
   pending: "pending",
   completed: "completed",
-  failed: "failed"
+  failed: "failed",
+  abandoned: "abandoned"
 };
 
 // behaviour_pack/scripts-dev/api/nexuscore/model/questProgressOutStatus.ts
@@ -6525,139 +6030,9 @@ var QuestProgressOutStatus = {
   active: "active",
   pending: "pending",
   completed: "completed",
-  failed: "failed"
+  failed: "failed",
+  abandoned: "abandoned"
 };
-
-// behaviour_pack/scripts-dev/features/quests/processors/mine-target-processor.ts
-import { EquipmentSlot as EquipmentSlot13, world as world22 } from "@minecraft/server";
-
-// behaviour_pack/scripts-dev/features/quests/core/action-dispatch.ts
-var questProcessor;
-function processGameAction(player, action) {
-  questProcessor ??= new QuestProcessor();
-  const thorny_user = ThornyUser.fetch_user(player.name);
-  if (!thorny_user) return;
-  const questProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
-  if (!questProgress) return;
-  const quest = QUEST_CACHE.get(questProgress.quest_id);
-  if (!quest) return;
-  questProcessor.process(action, player, quest, questProgress);
-}
-__name(processGameAction, "processGameAction");
-
-// behaviour_pack/scripts-dev/features/quests/processors/mine-target-processor.ts
-var MineTargetProcessor = class {
-  constructor() {
-    this.subscriptions = /* @__PURE__ */ new Map();
-  }
-  static {
-    __name(this, "MineTargetProcessor");
-  }
-  onActivate(player, _objective, _objectiveProgress) {
-    const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
-    const blockTypes = _objective.targets.filter((t) => t.target_type === "mine").map((t) => t.block);
-    const handler = /* @__PURE__ */ __name(async (event) => {
-      if (event.player.id !== player.id) return;
-      const mainhand = event.player.getComponent("minecraft:equippable")?.getEquipment(EquipmentSlot13.Mainhand)?.typeId ?? null;
-      const interactions = await listInteractionsV1GuildsMeInteractionsGet({
-        coordinates: [event.block.x, event.block.y, event.block.z],
-        interaction_types: ["mine", "place"]
-      });
-      const action = {
-        type: "mine",
-        time: /* @__PURE__ */ new Date(),
-        player: event.player,
-        coordinates: event.block.location,
-        dimension: event.dimension.id,
-        mainhand,
-        block_id: event.brokenBlockPermutation.type.id,
-        naturally_mined: interactions.length <= 1
-      };
-      processGameAction(event.player, action);
-    }, "handler");
-    world22.afterEvents.playerBreakBlock.subscribe(handler, { blockTypes });
-    this.subscriptions.set(thorny_id, () => world22.afterEvents.playerBreakBlock.unsubscribe(handler));
-  }
-  onDeactivate(ctx, _objective, _objectiveProgress) {
-    this.subscriptions.get(ctx.thornyId)?.();
-    this.subscriptions.delete(ctx.thornyId);
-  }
-  evaluate(action, objective, targetProgress) {
-    if (action.type !== "mine") return 0;
-    if (targetProgress.target_type !== "mine") return 0;
-    const mine = action;
-    const target = objective.targets.find(
-      (t) => t.target_type === "mine" && t.target_uuid === targetProgress.target_uuid
-    );
-    if (!target) return 0;
-    if (!this.matchesBlock(mine.block_id, target.block)) return 0;
-    return 1;
-  }
-  matchesBlock(actual, pattern) {
-    if (pattern.endsWith(":*")) {
-      const namespace = pattern.slice(0, -2);
-      return actual.startsWith(namespace + ":");
-    }
-    return actual === pattern;
-  }
-};
-
-// behaviour_pack/scripts-dev/features/quests/processors/kill-target-processor.ts
-import { EquipmentSlot as EquipmentSlot14, world as world23 } from "@minecraft/server";
-var KillTargetProcessor = class {
-  constructor() {
-    this.subscriptions = /* @__PURE__ */ new Map();
-  }
-  static {
-    __name(this, "KillTargetProcessor");
-  }
-  onActivate(player, _objective, _objectiveProgress) {
-    const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
-    const entityTypes = _objective.targets.filter((t) => t.target_type === "kill").map((t) => t.entity);
-    const handler = /* @__PURE__ */ __name((event) => {
-      const killer = event.damageSource.damagingEntity;
-      if (!killer || killer.id !== player.id) return;
-      const mainhand = killer.getComponent("minecraft:equippable")?.getEquipment(EquipmentSlot14.Mainhand)?.typeId ?? null;
-      const action = {
-        type: "kill",
-        time: /* @__PURE__ */ new Date(),
-        player: killer,
-        coordinates: event.deadEntity.location,
-        dimension: event.deadEntity.dimension.id,
-        mainhand,
-        entity_id: event.deadEntity.typeId
-      };
-      processGameAction(player, action);
-    }, "handler");
-    world23.afterEvents.entityDie.subscribe(handler, { entityTypes });
-    this.subscriptions.set(thorny_id, () => world23.afterEvents.entityDie.unsubscribe(handler));
-  }
-  onDeactivate(ctx, _objective, _objectiveProgress) {
-    this.subscriptions.get(ctx.thornyId)?.();
-    this.subscriptions.delete(ctx.thornyId);
-  }
-  evaluate(action, objective, targetProgress) {
-    if (action.type !== "kill") return 0;
-    if (targetProgress.target_type !== "kill") return 0;
-    const kill = action;
-    const target = objective.targets.find(
-      (t) => t.target_type === "kill" && t.target_uuid === targetProgress.target_uuid
-    );
-    if (!target) return 0;
-    if (!this.matchesEntity(kill.entity_id, target.entity)) return 0;
-    return 1;
-  }
-  matchesEntity(actual, pattern) {
-    if (pattern.endsWith(":*")) {
-      const namespace = pattern.slice(0, -2);
-      return actual.startsWith(namespace + ":");
-    }
-    return actual === pattern;
-  }
-};
-
-// behaviour_pack/scripts-dev/features/quests/core/notify.ts
-import { system as system24, world as world24 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/features/quests/core/objective/objective-display.ts
 var SECTION = "\xA78\xA7m                              \xA7r";
@@ -6789,6 +6164,8 @@ ${reqLines.join("\n")}` : null;
 __name(generateObjectiveDisplayString, "generateObjectiveDisplayString");
 
 // behaviour_pack/scripts-dev/features/quests/core/notify.ts
+import { system as system15, world as world13 } from "@minecraft/server";
+var DAILY_COMMAND = "/daily";
 function showProgressTick(player, target, current, goal) {
   let label = "Progress";
   switch (target?.target_type) {
@@ -6822,8 +6199,12 @@ function notifyQuestProgress(player, objective, objectiveIndex, totalObjectives,
   player.sendMessage(generateObjectiveDisplayString(objective, objectiveIndex, totalObjectives, questTitle));
 }
 __name(notifyQuestProgress, "notifyQuestProgress");
-function notifyQuestComplete(player, questTitle) {
-  world24.sendMessage(
+function notifyQuestComplete(player, questTitle, slot = "regular") {
+  if (slot === "daily") {
+    notifyDailyQuestComplete(player, questTitle);
+    return;
+  }
+  world13.sendMessage(
     `\xA7l\xA7a[ \xA7l\xA7eQ\xA7du\xA7se\xA7as\xA7tt \xA7uC\xA7io\xA7mm\xA7pp\xA79l\xA7ee\xA7nt\xA7be\xA7f!\xA7a ]\xA7r
 ${player.name} has just completed \xA7l\xA7n${questTitle}\xA7r!
 Run \xA75/quests view\xA7r on Discord to start it!`
@@ -6841,14 +6222,43 @@ Run \`/quests view\` to try your luck with it!`,
     { volume: 1e4 }
   );
   for (let i = 0; i < 5; i++) {
-    system24.runTimeout(() => {
+    system15.runTimeout(() => {
       player.runCommand(`particle minecraft:totem_particle ~ ~2 ~`);
     }, 10);
   }
 }
 __name(notifyQuestComplete, "notifyQuestComplete");
-function notifyQuestFailure(player, questTitle) {
-  world24.sendMessage(
+function notifyDailyQuestComplete(player, questTitle) {
+  world13.sendMessage(
+    `\xA7l\xA7a[ \xA7eDaily Quest Complete! \xA7a]\xA7r
+${player.name} has just completed the daily quest \xA7l\xA7n${questTitle}\xA7r!
+Run \xA75${DAILY_COMMAND}\xA7r to see yours!`
+  );
+  api_default.Relay.event(
+    "Daily Quest Complete!",
+    `${player.name} has just completed the daily quest **${questTitle}**!
+Run \`/quests daily\` to see yours!`,
+    "other"
+  );
+  player.onScreenDisplay.setTitle(`\xA7l\xA7eDaily Quest Complete!`);
+  player.dimension.playSound(
+    "quest.complete",
+    player.location,
+    { volume: 1e4 }
+  );
+  for (let i = 0; i < 5; i++) {
+    system15.runTimeout(() => {
+      player.runCommand(`particle minecraft:totem_particle ~ ~2 ~`);
+    }, 10);
+  }
+}
+__name(notifyDailyQuestComplete, "notifyDailyQuestComplete");
+function notifyQuestFailure(player, questTitle, slot = "regular") {
+  if (slot === "daily") {
+    notifyDailyQuestFailure(player, questTitle);
+    return;
+  }
+  world13.sendMessage(
     `\xA7l\xA7c[ Quest Failed :( ]\xA7r
 ${player.name} has failed \xA7l\xA7n${questTitle}\xA7r.
 Think you can do better? Run \xA75/quests view\xA7r on Discord to try your luck with it.`
@@ -6867,6 +6277,18 @@ Think you can do better? Run \`/quests view\` to try your luck with it.`,
   );
 }
 __name(notifyQuestFailure, "notifyQuestFailure");
+function notifyDailyQuestFailure(player, questTitle) {
+  player.sendMessage(
+    `\xA7l\xA7c[ Daily Quest Failed ]\xA7r
+You have failed the daily quest \xA7l\xA7n${questTitle}\xA7r.`
+  );
+  player.onScreenDisplay.setTitle(`\xA7l\xA7cDaily Quest Failed`);
+  player.playSound(
+    "quest.fail",
+    { volume: 100, location: player.location }
+  );
+}
+__name(notifyDailyQuestFailure, "notifyDailyQuestFailure");
 function showTimer(player, remaining_seconds) {
   const minutes = Math.floor(remaining_seconds / 60);
   const seconds = Math.floor(remaining_seconds % 60);
@@ -6880,15 +6302,923 @@ function showTimer(player, remaining_seconds) {
 }
 __name(showTimer, "showTimer");
 
+// behaviour_pack/scripts-dev/features/quests/core/daily-display.ts
+function formatDuration(ms) {
+  const totalMinutes = Math.max(0, Math.ceil(ms / 6e4));
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+}
+__name(formatDuration, "formatDuration");
+function nextUtcMidnight(now) {
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
+}
+__name(nextUtcMidnight, "nextUtcMidnight");
+function displayedObjective(quest, progress) {
+  const byOrder = /* @__PURE__ */ __name((a, b) => a.order_index - b.order_index, "byOrder");
+  const objectives = [...quest.objectives].sort(byOrder);
+  if (objectives.length === 0) return void 0;
+  const progressFor = /* @__PURE__ */ __name((def) => progress?.objectives.find((o) => o.objective_id === def.objective_id), "progressFor");
+  const active = objectives.find((def) => progressFor(def)?.status === ObjectiveProgressOutStatus.active);
+  if (active) return { def: active, progress: progressFor(active) };
+  const reached = objectives.filter((def) => {
+    const status = progressFor(def)?.status;
+    return status !== void 0 && status !== ObjectiveProgressOutStatus.pending;
+  });
+  const last = reached[reached.length - 1] ?? objectives[0];
+  return { def: last, progress: progressFor(last) };
+}
+__name(displayedObjective, "displayedObjective");
+function progressLine(objective, objectiveProgress) {
+  const targetProgress = objectiveProgress?.target_progress ?? [];
+  const countFor = /* @__PURE__ */ __name((target) => targetProgress.find((tp) => tp.target_uuid === target.target_uuid)?.count ?? 0, "countFor");
+  const targets = objective.targets;
+  if (objective.logic === ObjectiveOutLogic.or && objective.target_count !== null && objective.target_count !== void 0) {
+    const total = Math.min(targets.reduce((sum, t) => sum + countFor(t), 0), objective.target_count);
+    return `\xA7f${total}\xA77/${objective.target_count}\xA7r`;
+  }
+  return targets.map((target) => {
+    const name = utils_default.clean_id(targetId(target));
+    const goal = target.count ?? 1;
+    const count = Math.min(countFor(target), goal);
+    if (target.target_type === "visit") {
+      return count >= goal ? `\xA7f${name} \xA7a(visited)\xA7r` : `\xA7f${name} \xA77(not yet)\xA7r`;
+    }
+    return `\xA7f${name} \xA77${count}/${goal}\xA7r`;
+  }).join("\xA77, \xA7r");
+}
+__name(progressLine, "progressLine");
+function statusLine(progress, quest, now) {
+  const endsIn = formatDuration(new Date(quest.end_time).getTime() - now.getTime());
+  const nextIn = formatDuration(nextUtcMidnight(now).getTime() - now.getTime());
+  switch (progress?.status) {
+    case "completed":
+      return `\xA7aCompleted!\xA7r \xA77Next daily quest in \xA7f${nextIn}\xA7r`;
+    case "failed":
+      return `\xA7cFailed\xA7r \xA77Next daily quest in \xA7f${nextIn}\xA7r`;
+    case "abandoned":
+      return `\xA77Ended. Next daily quest in \xA7f${nextIn}\xA7r`;
+    case "active":
+    case "pending":
+      return `\xA7eIn progress\xA7r \xA77Ends in \xA7f${endsIn}\xA7r`;
+    default:
+      return `\xA77Not started.\xA7r \xA77Ends in \xA7f${endsIn}\xA7r`;
+  }
+}
+__name(statusLine, "statusLine");
+function generateDailyDisplayString(quest, progress, withCommand, now = /* @__PURE__ */ new Date()) {
+  const parts = [
+    SECTION,
+    `\xA7e\xA7l[ Daily Quest ]\xA7r \xA7f\xA7l${quest.title}\xA7r`,
+    DIVIDER
+  ];
+  const shown = displayedObjective(quest, progress);
+  if (shown) {
+    const { def, progress: objectiveProgress } = shown;
+    if (quest.objectives.length > 1) {
+      const index = [...quest.objectives].sort((a, b) => a.order_index - b.order_index).indexOf(def) + 1;
+      parts.push(`\xA77Objective ${index} of ${quest.objectives.length}\xA7r`);
+    }
+    if (def.description) parts.push(`\xA77${def.description}\xA7r`);
+    parts.push(`\xA7aTask:\xA7r ${taskLine(def)}`);
+    parts.push(`\xA7bProgress:\xA7r ${progressLine(def, objectiveProgress)}`);
+    parts.push(`\xA76Rewards:\xA7r ${rewardsLine(def.rewards)}`);
+    const requirements = requirementLines(def);
+    if (requirements.length > 0) {
+      parts.push(DIVIDER, `\xA7eRequirements:\xA7r`, ...requirements);
+    }
+  }
+  parts.push(DIVIDER, `\xA77Status:\xA7r ${statusLine(progress, quest, now)}`);
+  if (withCommand) parts.push(`\xA77Run \xA75${DAILY_COMMAND}\xA77 to see this again\xA7r`);
+  parts.push(SECTION);
+  return parts.join("\n");
+}
+__name(generateDailyDisplayString, "generateDailyDisplayString");
+
+// behaviour_pack/scripts-dev/features/commands/daily.ts
+async function showDaily(player) {
+  const thornyUser = api_default.ThornyUser.fetch_user(player.name) ?? await api_default.ThornyUser.get_user_from_api(player.name);
+  const cached = getCachedProgress({ thornyId: thornyUser.thorny_id, slot: "daily" });
+  if (cached) {
+    player.sendMessage(generateDailyDisplayString(cached.quest, cached.progress, false));
+    return;
+  }
+  const progress = await accept_daily_quest(thornyUser.thorny_id);
+  if (!progress) {
+    player.sendMessage(`\xA77There is no daily quest today. Check back tomorrow!\xA7r`);
+    return;
+  }
+  const quest = await getQuest(progress.quest_id);
+  player.sendMessage(generateDailyDisplayString(quest, progress, false));
+}
+__name(showDaily, "showDaily");
+function dailyCommand() {
+  system16.beforeEvents.startup.subscribe((initEvent) => {
+    const command = {
+      name: "amethyst:daily",
+      description: "Show your daily quest and progress",
+      permissionLevel: CommandPermissionLevel2.Any
+    };
+    initEvent.customCommandRegistry.registerCommand(
+      command,
+      (origin) => {
+        const player = origin.sourceEntity;
+        if (!(player instanceof Player12)) {
+          return {
+            status: CustomCommandStatus2.Failure,
+            message: "Only players can see their daily quest"
+          };
+        }
+        system16.run(() => {
+          showDaily(player).catch((e) => {
+            console.error("[daily] Failed to show the daily quest:", e);
+            if (player.isValid) player.sendMessage(`\xA7cCouldn't load your daily quest. Try again in a moment.\xA7r`);
+          });
+        });
+        return {
+          status: CustomCommandStatus2.Success
+        };
+      }
+    );
+  });
+}
+__name(dailyCommand, "dailyCommand");
+
+// behaviour_pack/scripts-dev/features/commands/index.ts
+function loadCommands() {
+  loreCommand();
+  dailyCommand();
+}
+__name(loadCommands, "loadCommands");
+
+// behaviour_pack/scripts-dev/features/wine-n-beer/components.ts
+import {
+  system as system17
+} from "@minecraft/server";
+function loadOnDrinkComponent() {
+  async function on_drink(event) {
+    const player = event.source;
+    const drunk_data_string = player.getDynamicProperty("amethyst:drunk_data");
+    if (!drunk_data_string) {
+      player.setDynamicProperty("amethyst:drunk_data", JSON.stringify({ type: event.itemStack.typeId, drinks: 1 }));
+    } else {
+      let drunk_data = JSON.parse(drunk_data_string);
+      drunk_data.drinks += 1;
+      drunk_data.type = event.itemStack.typeId;
+      player.setDynamicProperty("amethyst:drunk_data", JSON.stringify(drunk_data));
+    }
+  }
+  __name(on_drink, "on_drink");
+  system17.beforeEvents.startup.subscribe((initEvent) => {
+    initEvent.itemComponentRegistry.registerCustomComponent(
+      "amethyst:alcohol",
+      {
+        async onConsume(event) {
+          await on_drink(event);
+        }
+      }
+    );
+  });
+}
+__name(loadOnDrinkComponent, "loadOnDrinkComponent");
+
+// behaviour_pack/scripts-dev/features/wine-n-beer/loops.ts
+import { system as system18, TicksPerSecond as TicksPerSecond8, world as world14 } from "@minecraft/server";
+function sober_up(drunk_data) {
+  const sober_chance = 0.06;
+  const drunk_up_chance = 5e-3 * drunk_data.drinks;
+  if (Math.random() < sober_chance) {
+    drunk_data.drinks -= 1;
+  } else if (Math.random() < drunk_up_chance) {
+    drunk_data.drinks += 1;
+  }
+  return drunk_data;
+}
+__name(sober_up, "sober_up");
+function cumulative_drunk_effects(player, drunk_data) {
+  player.addEffect(MinecraftEffectTypes.Oozing, TicksPerSecond8 * 2);
+  if (drunk_data.drinks > 4) {
+    player.addEffect(MinecraftEffectTypes.Hunger, TicksPerSecond8 * drunk_data.drinks);
+  }
+  if (drunk_data.drinks > 18) {
+    player.addEffect(MinecraftEffectTypes.Slowness, TicksPerSecond8 * 2, { amplifier: 3 });
+  }
+  if (drunk_data.drinks > 20) {
+    player.addEffect(MinecraftEffectTypes.FatalPoison, TicksPerSecond8 * 2);
+  }
+}
+__name(cumulative_drunk_effects, "cumulative_drunk_effects");
+function drunk(player) {
+  const drunk_data_string = player.getDynamicProperty("amethyst:drunk_data");
+  if (drunk_data_string) {
+    let drunk_data = JSON.parse(drunk_data_string);
+    let effect_choices = [];
+    cumulative_drunk_effects(player, drunk_data);
+    if (drunk_data.type === "amethyst:beer") {
+      effect_choices = [
+        { item: "fart", weight: 2 },
+        { item: "blink", weight: 3 },
+        { item: "nausea", weight: 2 },
+        { item: "burp", weight: 4 },
+        { item: "slowness", weight: 1 },
+        { item: "none", weight: 3 }
+      ];
+    } else if (drunk_data.type === "amethyst:wine") {
+      effect_choices = [
+        { item: "blink", weight: 3 },
+        { item: "nausea", weight: 1 },
+        { item: "slowness", weight: 2 },
+        { item: "laugh", weight: 4 }
+      ];
+    } else if (drunk_data.type === "amethyst:glow_wine") {
+      effect_choices = [
+        { item: "blink", weight: 3 },
+        { item: "nausea", weight: 1 },
+        { item: "burp", weight: 1 },
+        { item: "laugh", weight: 5 },
+        { item: "night_vision", weight: 4 },
+        { item: "speed", weight: 2 }
+      ];
+    }
+    drunk_data = drunk_effects(player, drunk_data, effect_choices);
+    drunk_data = sober_up(drunk_data);
+    if (drunk_data.drinks <= 0) {
+      player.camera.setFov({ easeOptions: { easeTime: 2.5 } });
+      player.setDynamicProperty("amethyst:drunk_data", void 0);
+    } else {
+      player.setDynamicProperty("amethyst:drunk_data", JSON.stringify(drunk_data));
+    }
+  }
+}
+__name(drunk, "drunk");
+function drunk_effects(player, drunk_data, effect_choices) {
+  const dimension = player.dimension;
+  const location = player.location;
+  const target_fov_level = Math.max(45, 73 - drunk_data.drinks * 2);
+  if (drunk_data.fov_level !== target_fov_level) {
+    drunk_data.fov_level = target_fov_level;
+    player.camera.setFov({ fov: drunk_data.fov_level, easeOptions: { easeTime: 4 } });
+  }
+  const effect_chance = 0.11 + drunk_data.drinks * 0.04;
+  if (Math.random() < effect_chance) {
+    const chosen_effect = utils_default.getWeightedChoice(effect_choices);
+    if (chosen_effect === "fart") {
+      dimension.playSound("fart", location, { volume: 1, pitch: Math.max(0.45, Math.random() * 1.5) });
+      const particle_location = { ...location };
+      particle_location.y += 1;
+      dimension.spawnParticle("minecraft:explosion_particle", particle_location);
+    } else if (chosen_effect === "burp") {
+      dimension.playSound("burp", location, { volume: 1, pitch: Math.max(0.7, Math.random() * 1.5) });
+      const particle_location = { ...location };
+      particle_location.y += 2;
+      dimension.spawnParticle("minecraft:explosion_particle", particle_location);
+    } else if (chosen_effect === "laugh") {
+      dimension.playSound("laugh", location, { volume: 1, pitch: Math.max(0.83, Math.random() * 1.7) });
+    } else if (chosen_effect === "blink") {
+      player.camera.fade({ fadeTime: { fadeInTime: 0.5, holdTime: 0.1, fadeOutTime: 0.25 } });
+    } else if (chosen_effect === "nausea") {
+      player.addEffect(MinecraftEffectTypes.Nausea, TicksPerSecond8 * drunk_data.drinks * 2.5);
+    } else if (chosen_effect === "slowness") {
+      player.addEffect(MinecraftEffectTypes.Slowness, TicksPerSecond8 * drunk_data.drinks);
+    } else if (chosen_effect === "night_vision") {
+      player.addEffect(MinecraftEffectTypes.NightVision, TicksPerSecond8 * drunk_data.drinks);
+    } else if (chosen_effect === "speed") {
+      player.addEffect(MinecraftEffectTypes.Speed, TicksPerSecond8 * drunk_data.drinks);
+    }
+  }
+  return drunk_data;
+}
+__name(drunk_effects, "drunk_effects");
+function drunkDataManager() {
+  system18.runInterval(() => {
+    let playerlist = world14.getPlayers();
+    playerlist.forEach((player) => {
+      drunk(player);
+    });
+  }, TicksPerSecond8);
+  world14.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
+    let player = spawn_event.player;
+    if (player.getDynamicProperty("amethyst:drunk_data")) {
+      player.camera.setFov();
+      player.setDynamicProperty("amethyst:drunk_data", void 0);
+    }
+  });
+}
+__name(drunkDataManager, "drunkDataManager");
+
+// behaviour_pack/scripts-dev/features/wine-n-beer/index.ts
+function loadWineAndBeerFeature() {
+  loadOnDrinkComponent();
+  drunkDataManager();
+}
+__name(loadWineAndBeerFeature, "loadWineAndBeerFeature");
+
+// behaviour_pack/scripts-dev/features/chat.ts
+import { system as system19, world as world15 } from "@minecraft/server";
+function loadChatDecorationFeature() {
+  world15.beforeEvents.chatSend.subscribe((chat_event) => {
+    const gamertag = chat_event.sender.name;
+    const thorny_user = api_default.ThornyUser.fetch_user(gamertag);
+    world15.sendMessage({
+      rawtext: [{ text: `${thorny_user?.get_role_display()} \xA77${gamertag}:\xA7r ${chat_event.message}` }]
+    });
+    system19.run(() => {
+      api_default.Relay.message(gamertag, chat_event.message);
+    });
+    chat_event.cancel = true;
+  });
+}
+__name(loadChatDecorationFeature, "loadChatDecorationFeature");
+
+// behaviour_pack/scripts-dev/features/interactions/block-interact.ts
+import { world as world16, system as system20 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes11, EquipmentSlot as EquipmentSlot7 } from "@minecraft/server";
+function blockInteract() {
+  const LOGGABLE_BLOCKS = [
+    // Containers
+    MinecraftBlockTypes.Chest,
+    MinecraftBlockTypes.Barrel,
+    MinecraftBlockTypes.EnderChest,
+    MinecraftBlockTypes.TrappedChest,
+    MinecraftBlockTypes.CopperChest,
+    MinecraftBlockTypes.ExposedCopperChest,
+    MinecraftBlockTypes.WeatheredCopperChest,
+    MinecraftBlockTypes.OxidizedCopperChest,
+    MinecraftBlockTypes.WaxedCopperChest,
+    MinecraftBlockTypes.WaxedExposedCopperChest,
+    MinecraftBlockTypes.WaxedOxidizedCopperChest,
+    MinecraftBlockTypes.WaxedWeatheredCopperChest,
+    // Shulkers
+    MinecraftBlockTypes.RedShulkerBox,
+    MinecraftBlockTypes.LightGrayShulkerBox,
+    MinecraftBlockTypes.LightBlueShulkerBox,
+    MinecraftBlockTypes.BlueShulkerBox,
+    MinecraftBlockTypes.CyanShulkerBox,
+    MinecraftBlockTypes.GrayShulkerBox,
+    MinecraftBlockTypes.LimeShulkerBox,
+    MinecraftBlockTypes.PinkShulkerBox,
+    MinecraftBlockTypes.BlackShulkerBox,
+    MinecraftBlockTypes.BrownShulkerBox,
+    MinecraftBlockTypes.GreenShulkerBox,
+    MinecraftBlockTypes.WhiteShulkerBox,
+    MinecraftBlockTypes.OrangeShulkerBox,
+    MinecraftBlockTypes.PurpleShulkerBox,
+    MinecraftBlockTypes.UndyedShulkerBox,
+    MinecraftBlockTypes.YellowShulkerBox,
+    MinecraftBlockTypes.MagentaShulkerBox,
+    // Other Blocks
+    MinecraftBlockTypes.Crafter,
+    MinecraftBlockTypes.CraftingTable,
+    MinecraftBlockTypes.Furnace,
+    MinecraftBlockTypes.BlastFurnace,
+    MinecraftBlockTypes.LitFurnace,
+    MinecraftBlockTypes.LitBlastFurnace,
+    MinecraftBlockTypes.LitSmoker,
+    MinecraftBlockTypes.Smoker,
+    MinecraftBlockTypes.Hopper,
+    MinecraftBlockTypes.EnchantingTable,
+    MinecraftBlockTypes.Anvil,
+    MinecraftBlockTypes.ChippedAnvil,
+    MinecraftBlockTypes.DamagedAnvil,
+    MinecraftBlockTypes.BrewingStand,
+    MinecraftBlockTypes.Beacon,
+    MinecraftBlockTypes.CartographyTable,
+    MinecraftBlockTypes.Grindstone,
+    MinecraftBlockTypes.Lectern,
+    MinecraftBlockTypes.Loom,
+    MinecraftBlockTypes.SmithingTable,
+    MinecraftBlockTypes.StonecutterBlock,
+    MinecraftBlockTypes.ChiseledBookshelf,
+    MinecraftBlockTypes.Jukebox,
+    // Buttons
+    MinecraftBlockTypes.Lever,
+    MinecraftBlockTypes.WoodenButton,
+    MinecraftBlockTypes.SpruceButton,
+    MinecraftBlockTypes.BirchButton,
+    MinecraftBlockTypes.JungleButton,
+    MinecraftBlockTypes.AcaciaButton,
+    MinecraftBlockTypes.DarkOakButton,
+    MinecraftBlockTypes.MangroveButton,
+    MinecraftBlockTypes.CherryButton,
+    MinecraftBlockTypes.PaleOakButton,
+    MinecraftBlockTypes.BambooButton,
+    MinecraftBlockTypes.CrimsonButton,
+    MinecraftBlockTypes.WarpedButton,
+    MinecraftBlockTypes.PolishedBlackstoneButton,
+    MinecraftBlockTypes.StoneButton,
+    // Doors
+    MinecraftBlockTypes.WoodenDoor,
+    MinecraftBlockTypes.SpruceDoor,
+    MinecraftBlockTypes.BirchDoor,
+    MinecraftBlockTypes.JungleDoor,
+    MinecraftBlockTypes.AcaciaDoor,
+    MinecraftBlockTypes.DarkOakDoor,
+    MinecraftBlockTypes.MangroveDoor,
+    MinecraftBlockTypes.CherryDoor,
+    MinecraftBlockTypes.PaleOakDoor,
+    MinecraftBlockTypes.BambooDoor,
+    MinecraftBlockTypes.CrimsonDoor,
+    MinecraftBlockTypes.WarpedDoor,
+    MinecraftBlockTypes.IronDoor,
+    MinecraftBlockTypes.CopperDoor,
+    MinecraftBlockTypes.ExposedCopperDoor,
+    MinecraftBlockTypes.WeatheredCopperDoor,
+    MinecraftBlockTypes.OxidizedCopperDoor,
+    MinecraftBlockTypes.WaxedCopperDoor,
+    MinecraftBlockTypes.WaxedExposedCopperDoor,
+    MinecraftBlockTypes.WaxedOxidizedCopperDoor,
+    MinecraftBlockTypes.WaxedWeatheredCopperDoor,
+    // Trapdoors
+    MinecraftBlockTypes.Trapdoor,
+    MinecraftBlockTypes.SpruceTrapdoor,
+    MinecraftBlockTypes.BirchTrapdoor,
+    MinecraftBlockTypes.JungleTrapdoor,
+    MinecraftBlockTypes.AcaciaTrapdoor,
+    MinecraftBlockTypes.DarkOakTrapdoor,
+    MinecraftBlockTypes.MangroveTrapdoor,
+    MinecraftBlockTypes.CherryTrapdoor,
+    MinecraftBlockTypes.PaleOakTrapdoor,
+    MinecraftBlockTypes.BambooTrapdoor,
+    MinecraftBlockTypes.CrimsonTrapdoor,
+    MinecraftBlockTypes.WarpedTrapdoor,
+    MinecraftBlockTypes.IronTrapdoor,
+    MinecraftBlockTypes.CopperTrapdoor,
+    MinecraftBlockTypes.ExposedCopperTrapdoor,
+    MinecraftBlockTypes.WeatheredCopperTrapdoor,
+    MinecraftBlockTypes.OxidizedCopperTrapdoor,
+    MinecraftBlockTypes.WaxedCopperTrapdoor,
+    MinecraftBlockTypes.WaxedExposedCopperTrapdoor,
+    MinecraftBlockTypes.WaxedOxidizedCopperTrapdoor,
+    MinecraftBlockTypes.WaxedWeatheredCopperTrapdoor
+  ];
+  function blockInteraction(event) {
+    const block_id = event.block.typeId;
+    const block_location = [event.block.x, event.block.y, event.block.z];
+    const dimension = event.player.dimension;
+    const mainhand = event.player.getComponent(EntityComponentTypes11.Equippable)?.getEquipment(EquipmentSlot7.Mainhand);
+    const isPlacing = event.beforeItemStack?.typeId === block_id && event.itemStack?.amount !== event.beforeItemStack?.amount;
+    if (!isPlacing) {
+      system20.run(() => {
+        const interaction = new api_default.Interaction(
+          {
+            thorny_id: api_default.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
+            type: "use",
+            coordinates: block_location,
+            reference: block_id,
+            mainhand: mainhand?.typeId ?? null,
+            dimension: dimension.id
+          }
+        );
+        interaction.post_interaction();
+      });
+    }
+  }
+  __name(blockInteraction, "blockInteraction");
+  world16.afterEvents.playerInteractWithBlock.subscribe((event) => {
+    if (LOGGABLE_BLOCKS.includes(event.block.typeId)) {
+      blockInteraction(event);
+    }
+  });
+}
+__name(blockInteract, "blockInteract");
+
+// behaviour_pack/scripts-dev/features/interactions/block-break.ts
+import { EntityComponentTypes as EntityComponentTypes12, EquipmentSlot as EquipmentSlot8, system as system21, world as world17 } from "@minecraft/server";
+function blockBreak() {
+  world17.beforeEvents.playerBreakBlock.subscribe(async (event) => {
+    const block_id = event.block.typeId;
+    const block_location = [event.block.x, event.block.y, event.block.z];
+    const dimension = event.player.dimension;
+    const mainhand = event.player.getComponent(EntityComponentTypes12.Equippable)?.getEquipment(EquipmentSlot8.Mainhand);
+    const thorny_user = api_default.ThornyUser.fetch_user(event.player.name);
+    system21.run(() => {
+      const interaction = new api_default.Interaction(
+        {
+          thorny_id: thorny_user?.thorny_id ?? 0,
+          type: "mine",
+          coordinates: block_location,
+          reference: block_id,
+          mainhand: mainhand?.typeId ?? null,
+          dimension: dimension.id
+        }
+      );
+      interaction.post_interaction();
+    });
+  });
+}
+__name(blockBreak, "blockBreak");
+
+// behaviour_pack/scripts-dev/features/interactions/block-place.ts
+import { EntityComponentTypes as EntityComponentTypes13, EquipmentSlot as EquipmentSlot9, system as system22, world as world18 } from "@minecraft/server";
+function blockPlace() {
+  world18.afterEvents.playerPlaceBlock.subscribe((event) => {
+    const block_id = event.block.typeId;
+    const block_location = [event.block.x, event.block.y, event.block.z];
+    const dimension = event.player.dimension;
+    const mainhand = event.player.getComponent(EntityComponentTypes13.Equippable)?.getEquipment(EquipmentSlot9.Mainhand);
+    system22.run(() => {
+      const interaction = new api_default.Interaction(
+        {
+          thorny_id: api_default.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
+          type: "place",
+          coordinates: block_location,
+          reference: block_id,
+          mainhand: mainhand?.typeId ?? null,
+          dimension: dimension.id
+        }
+      );
+      interaction.post_interaction();
+    });
+  });
+}
+__name(blockPlace, "blockPlace");
+
+// behaviour_pack/scripts-dev/features/interactions/entity-interact.ts
+import { EntityComponentTypes as EntityComponentTypes14, EquipmentSlot as EquipmentSlot10, system as system23, world as world19 } from "@minecraft/server";
+function entityInteract() {
+  const LOGGABLE_ENTITIES = [
+    // Villagers
+    MinecraftEntityTypes.VillagerV2,
+    MinecraftEntityTypes.WanderingTrader,
+    // Rideable Entities
+    MinecraftEntityTypes.Horse,
+    MinecraftEntityTypes.Donkey,
+    MinecraftEntityTypes.Mule,
+    MinecraftEntityTypes.Minecart,
+    MinecraftEntityTypes.Strider,
+    MinecraftEntityTypes.Pig,
+    MinecraftEntityTypes.Boat,
+    MinecraftEntityTypes.Camel,
+    MinecraftEntityTypes.ZombieHorse,
+    MinecraftEntityTypes.SkeletonHorse,
+    MinecraftEntityTypes.Nautilus,
+    MinecraftEntityTypes.ZombieNautilus,
+    MinecraftEntityTypes.CamelHusk,
+    MinecraftEntityTypes.HappyGhast,
+    MinecraftEntityTypes.Llama,
+    MinecraftEntityTypes.TraderLlama,
+    // Entity Containers
+    MinecraftEntityTypes.ChestBoat,
+    MinecraftEntityTypes.ChestMinecart,
+    MinecraftEntityTypes.HopperMinecart,
+    // Amethyst Entities
+    "amethyst:james_collector"
+  ];
+  function entityInteraction(event) {
+    const entity_id = event.target.typeId;
+    const entity_location = [event.target.location.x, event.target.location.y, event.target.location.z];
+    const dimension = event.player.dimension;
+    const mainhand = event.player.getComponent(EntityComponentTypes14.Equippable)?.getEquipment(EquipmentSlot10.Mainhand);
+    system23.run(() => {
+      const interaction = new api_default.Interaction(
+        {
+          thorny_id: api_default.ThornyUser.fetch_user(event.player.name)?.thorny_id ?? 0,
+          type: "use",
+          coordinates: entity_location,
+          reference: entity_id,
+          mainhand: mainhand?.typeId ?? null,
+          dimension: dimension.id
+        }
+      );
+      interaction.post_interaction();
+    });
+  }
+  __name(entityInteraction, "entityInteraction");
+  world19.afterEvents.playerInteractWithEntity.subscribe((event) => {
+    if (LOGGABLE_ENTITIES.includes(event.target.typeId)) {
+      entityInteraction(event);
+    }
+  });
+}
+__name(entityInteract, "entityInteract");
+
+// behaviour_pack/scripts-dev/features/interactions/entity-die.ts
+import { world as world20 } from "@minecraft/server";
+import { EntityComponentTypes as EntityComponentTypes15, EquipmentSlot as EquipmentSlot11, Player as Player15 } from "@minecraft/server";
+function entityDie() {
+  async function playerKillEntity(player, entity) {
+    const dimension = player.dimension;
+    const mainhand = player.getComponent(EntityComponentTypes15.Equippable)?.getEquipment(EquipmentSlot11.Mainhand);
+    const thorny_user = api_default.ThornyUser.fetch_user(player.name);
+    const interaction = new api_default.Interaction(
+      {
+        thorny_id: thorny_user?.thorny_id ?? 0,
+        type: "kill",
+        coordinates: [entity.location.x, entity.location.y, entity.location.z],
+        reference: entity.typeId,
+        mainhand: mainhand?.typeId ?? null,
+        dimension: dimension.id
+      }
+    );
+    await interaction.post_interaction();
+  }
+  __name(playerKillEntity, "playerKillEntity");
+  async function playerDieByPlayer(killer_player, dead_player) {
+    const dimension = killer_player.dimension;
+    const entity_mainhand = dead_player.getComponent(EntityComponentTypes15.Equippable)?.getEquipment(EquipmentSlot11.Mainhand);
+    const dead_thorny_user = api_default.ThornyUser.fetch_user(dead_player.name);
+    const death_interaction = new api_default.Interaction(
+      {
+        thorny_id: dead_thorny_user?.thorny_id ?? 0,
+        type: "die",
+        coordinates: [dead_player.location.x, dead_player.location.y, dead_player.location.z],
+        reference: killer_player.name,
+        mainhand: entity_mainhand?.typeId ?? null,
+        dimension: dimension.id
+      }
+    );
+    await death_interaction.post_interaction();
+    api_default.Relay.event(utils_default.DeathMessage.random_pvp(killer_player.name, dead_player.name), "", "other");
+  }
+  __name(playerDieByPlayer, "playerDieByPlayer");
+  async function playerDieByEntity(player, entity) {
+    const dimension = player.dimension;
+    const mainhand = player.getComponent(EntityComponentTypes15.Equippable)?.getEquipment(EquipmentSlot11.Mainhand);
+    const thorny_user = api_default.ThornyUser.fetch_user(player.name);
+    const death_interaction = new api_default.Interaction(
+      {
+        thorny_id: thorny_user?.thorny_id ?? 0,
+        type: "die",
+        coordinates: [player.location.x, player.location.y, player.location.z],
+        reference: entity.typeId,
+        mainhand: mainhand?.typeId ?? null,
+        dimension: dimension.id
+      }
+    );
+    await death_interaction.post_interaction();
+    api_default.Relay.event(utils_default.DeathMessage.random_pve(player.name, entity.typeId), "", "other");
+  }
+  __name(playerDieByEntity, "playerDieByEntity");
+  async function playerDieByOther(player, damageCause) {
+    const dimension = player.dimension;
+    const mainhand = player.getComponent(EntityComponentTypes15.Equippable)?.getEquipment(EquipmentSlot11.Mainhand);
+    const thorny_user = api_default.ThornyUser.fetch_user(player.name);
+    const death_interaction = new api_default.Interaction(
+      {
+        thorny_id: thorny_user?.thorny_id ?? 0,
+        type: "die",
+        coordinates: [player.location.x, player.location.y, player.location.z],
+        reference: damageCause,
+        mainhand: mainhand?.typeId ?? null,
+        dimension: dimension.id
+      }
+    );
+    await death_interaction.post_interaction();
+    api_default.Relay.event(utils_default.DeathMessage.random_suicide(player.name, damageCause), "", "other");
+  }
+  __name(playerDieByOther, "playerDieByOther");
+  world20.afterEvents.entityDie.subscribe(async (event) => {
+    const damage_cause = event.damageSource.cause;
+    const damaging_entity = event.damageSource.damagingEntity;
+    const dead_entity = event.deadEntity;
+    if (damaging_entity instanceof Player15) {
+      await playerKillEntity(damaging_entity, dead_entity);
+      if (dead_entity instanceof Player15) {
+        await playerDieByPlayer(damaging_entity, dead_entity);
+      }
+    } else if (dead_entity instanceof Player15 && damaging_entity) {
+      await playerDieByEntity(dead_entity, damaging_entity);
+    } else if (dead_entity instanceof Player15 && !damaging_entity) {
+      await playerDieByOther(dead_entity, damage_cause);
+    }
+  });
+}
+__name(entityDie, "entityDie");
+
+// behaviour_pack/scripts-dev/features/interactions/index.ts
+function loadInteractionHandlers() {
+  blockInteract();
+  blockBreak();
+  blockPlace();
+  entityInteract();
+  entityDie();
+}
+__name(loadInteractionHandlers, "loadInteractionHandlers");
+
+// behaviour_pack/scripts-dev/features/connections.ts
+import { world as world21 } from "@minecraft/server";
+function loadConnectionsFeature() {
+  world21.afterEvents.playerSpawn.subscribe(async (spawn_event) => {
+    if (spawn_event.initialSpawn) {
+      try {
+        const thorny_user = api_default.ThornyUser.fetch_user(spawn_event.player.name);
+        await thorny_user.send_connect_event("connect");
+        api_default.Relay.event(`${spawn_event.player.name} has joined the server`, "", "join");
+        utils_default.send_motd(spawn_event.player);
+        if (thorny_user.patron) {
+          spawn_event.player.nameTag = `\xA7l\xA7c${spawn_event.player.nameTag}\xA7r`;
+        }
+      } catch (e) {
+        api_default.Relay.event(`${spawn_event.player.name} has joined the server`, "API Issue Detected", "join");
+        console.error(e);
+      }
+    }
+  });
+  world21.afterEvents.playerLeave.subscribe(async (leave_event) => {
+    const thorny_user = api_default.ThornyUser.fetch_user(leave_event.playerName);
+    await thorny_user?.send_connect_event("disconnect");
+    api_default.Relay.event(`${leave_event.playerName} has left the server`, "", "leave");
+  });
+}
+__name(loadConnectionsFeature, "loadConnectionsFeature");
+
+// behaviour_pack/scripts-dev/features/location-logger.ts
+import { EntityComponentTypes as EntityComponentTypes16, EquipmentSlot as EquipmentSlot12, system as system25, world as world22, TicksPerSecond as TicksPerSecond9 } from "@minecraft/server";
+var HEAD_GEAR = [
+  MinecraftItemTypes.SkeletonSkull,
+  MinecraftItemTypes.WitherSkeletonSkull,
+  MinecraftItemTypes.CarvedPumpkin,
+  MinecraftItemTypes.PlayerHead,
+  MinecraftItemTypes.PiglinHead,
+  MinecraftItemTypes.CreeperHead,
+  MinecraftItemTypes.ZombieHead,
+  MinecraftItemTypes.DragonHead
+];
+function location_log(player) {
+  const head_gear = player.getComponent(EntityComponentTypes16.Equippable)?.getEquipment(EquipmentSlot12.Head);
+  let hidden = (head_gear?.typeId ? HEAD_GEAR.includes(head_gear.typeId) : false) || player.isSneaking;
+  const location = [Math.round(player.location.x), Math.round(player.location.y), Math.round(player.location.z)];
+  const thorny_user = api_default.ThornyUser.fetch_user(player.name);
+  if (thorny_user) {
+    thorny_user.location = location;
+    thorny_user.dimension = player.dimension.id;
+    thorny_user.hidden = hidden;
+    thorny_user.update().then();
+  }
+}
+__name(location_log, "location_log");
+function loadLocationLogger() {
+  system25.runInterval(() => {
+    let playerlist = world22.getPlayers();
+    playerlist.forEach((player) => {
+      location_log(player);
+    });
+  }, TicksPerSecond9 * 5);
+}
+__name(loadLocationLogger, "loadLocationLogger");
+
+// behaviour_pack/scripts-dev/features/quests/progress-cache.ts
+import { system as system31, TicksPerSecond as TicksPerSecond13, world as world27 } from "@minecraft/server";
+
+// behaviour_pack/scripts-dev/features/quests/processors/mine-target-processor.ts
+import { EquipmentSlot as EquipmentSlot13, system as system26, world as world23 } from "@minecraft/server";
+
+// behaviour_pack/scripts-dev/features/quests/core/action-dispatch.ts
+var questProcessor;
+function processGameAction(player, action, ref) {
+  questProcessor ??= new QuestProcessor();
+  const cached = getCachedProgress(ref);
+  if (!cached) return;
+  questProcessor.process(action, player, cached);
+}
+__name(processGameAction, "processGameAction");
+
+// behaviour_pack/scripts-dev/features/quests/processors/mine-target-processor.ts
+var NATURAL_LOOKUPS = /* @__PURE__ */ new Map();
+function isNaturallyMined(event) {
+  const { x, y, z } = event.block;
+  const key = `${event.dimension.id}:${x},${y},${z}@${system26.currentTick}`;
+  let lookup = NATURAL_LOOKUPS.get(key);
+  if (!lookup) {
+    lookup = listInteractionsV1GuildsMeInteractionsGet({
+      coordinates: [x, y, z],
+      interaction_types: ["mine", "place"]
+    }).then((interactions) => interactions.length <= 1);
+    NATURAL_LOOKUPS.set(key, lookup);
+    const forget = /* @__PURE__ */ __name(() => {
+      NATURAL_LOOKUPS.delete(key);
+    }, "forget");
+    lookup.then(forget, forget);
+  }
+  return lookup;
+}
+__name(isNaturallyMined, "isNaturallyMined");
+var MineTargetProcessor = class {
+  constructor() {
+    this.subscriptions = /* @__PURE__ */ new Map();
+  }
+  static {
+    __name(this, "MineTargetProcessor");
+  }
+  // slotKey → unsubscribe
+  onActivate(ctx, _objective, _objectiveProgress) {
+    const player = ctx.player;
+    const ref = { thornyId: ctx.thornyId, slot: ctx.slot };
+    const blockTypes = _objective.targets.filter((t) => t.target_type === "mine").map((t) => t.block);
+    const handler = /* @__PURE__ */ __name(async (event) => {
+      if (event.player.id !== player.id) return;
+      const mainhand = event.player.getComponent("minecraft:equippable")?.getEquipment(EquipmentSlot13.Mainhand)?.typeId ?? null;
+      const naturally_mined = await isNaturallyMined(event);
+      const action = {
+        type: "mine",
+        time: /* @__PURE__ */ new Date(),
+        player: event.player,
+        coordinates: event.block.location,
+        dimension: event.dimension.id,
+        mainhand,
+        block_id: event.brokenBlockPermutation.type.id,
+        naturally_mined
+      };
+      processGameAction(event.player, action, ref);
+    }, "handler");
+    world23.afterEvents.playerBreakBlock.subscribe(handler, { blockTypes });
+    this.subscriptions.set(slotKey(ctx), () => world23.afterEvents.playerBreakBlock.unsubscribe(handler));
+  }
+  onDeactivate(ctx, _objective, _objectiveProgress) {
+    this.subscriptions.get(slotKey(ctx))?.();
+    this.subscriptions.delete(slotKey(ctx));
+  }
+  evaluate(action, objective, targetProgress) {
+    if (action.type !== "mine") return 0;
+    if (targetProgress.target_type !== "mine") return 0;
+    const mine = action;
+    const target = objective.targets.find(
+      (t) => t.target_type === "mine" && t.target_uuid === targetProgress.target_uuid
+    );
+    if (!target) return 0;
+    if (!this.matchesBlock(mine.block_id, target.block)) return 0;
+    return 1;
+  }
+  matchesBlock(actual, pattern) {
+    if (pattern.endsWith(":*")) {
+      const namespace = pattern.slice(0, -2);
+      return actual.startsWith(namespace + ":");
+    }
+    return actual === pattern;
+  }
+};
+
+// behaviour_pack/scripts-dev/features/quests/processors/kill-target-processor.ts
+import { EquipmentSlot as EquipmentSlot14, world as world24 } from "@minecraft/server";
+var KillTargetProcessor = class {
+  constructor() {
+    this.subscriptions = /* @__PURE__ */ new Map();
+  }
+  static {
+    __name(this, "KillTargetProcessor");
+  }
+  // slotKey → unsubscribe
+  onActivate(ctx, _objective, _objectiveProgress) {
+    const player = ctx.player;
+    const ref = { thornyId: ctx.thornyId, slot: ctx.slot };
+    const entityTypes = _objective.targets.filter((t) => t.target_type === "kill").map((t) => t.entity);
+    const handler = /* @__PURE__ */ __name((event) => {
+      const killer = event.damageSource.damagingEntity;
+      if (!killer || killer.id !== player.id) return;
+      const mainhand = killer.getComponent("minecraft:equippable")?.getEquipment(EquipmentSlot14.Mainhand)?.typeId ?? null;
+      const action = {
+        type: "kill",
+        time: /* @__PURE__ */ new Date(),
+        player: killer,
+        coordinates: event.deadEntity.location,
+        dimension: event.deadEntity.dimension.id,
+        mainhand,
+        entity_id: event.deadEntity.typeId
+      };
+      processGameAction(player, action, ref);
+    }, "handler");
+    world24.afterEvents.entityDie.subscribe(handler, { entityTypes });
+    this.subscriptions.set(slotKey(ctx), () => world24.afterEvents.entityDie.unsubscribe(handler));
+  }
+  onDeactivate(ctx, _objective, _objectiveProgress) {
+    this.subscriptions.get(slotKey(ctx))?.();
+    this.subscriptions.delete(slotKey(ctx));
+  }
+  evaluate(action, objective, targetProgress) {
+    if (action.type !== "kill") return 0;
+    if (targetProgress.target_type !== "kill") return 0;
+    const kill = action;
+    const target = objective.targets.find(
+      (t) => t.target_type === "kill" && t.target_uuid === targetProgress.target_uuid
+    );
+    if (!target) return 0;
+    if (!this.matchesEntity(kill.entity_id, target.entity)) return 0;
+    return 1;
+  }
+  matchesEntity(actual, pattern) {
+    if (pattern.endsWith(":*")) {
+      const namespace = pattern.slice(0, -2);
+      return actual.startsWith(namespace + ":");
+    }
+    return actual === pattern;
+  }
+};
+
 // behaviour_pack/scripts-dev/features/quests/customizations/death-plugin.ts
 import { world as world25 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/features/quests/write-back.ts
-import { system as system25, TicksPerSecond as TicksPerSecond10 } from "@minecraft/server";
+import { system as system27, TicksPerSecond as TicksPerSecond10 } from "@minecraft/server";
 var DIRTY = /* @__PURE__ */ new Map();
-function markDirty(thorny_id) {
-  const progress = QUEST_PROGRESS_CACHE.get(thorny_id);
-  if (progress) DIRTY.set(thorny_id, progress);
+var markCounter = 0;
+var IN_FLIGHT = /* @__PURE__ */ new Map();
+var onProgressFinished;
+function setFinishedProgressHandler(handler) {
+  onProgressFinished = handler;
+}
+__name(setFinishedProgressHandler, "setFinishedProgressHandler");
+function markDirty(progress) {
+  DIRTY.set(progress.progress_id, { progress, mark: ++markCounter });
 }
 __name(markDirty, "markDirty");
 function buildUpdate(progress) {
@@ -6908,23 +7238,62 @@ function buildUpdate(progress) {
   };
 }
 __name(buildUpdate, "buildUpdate");
-async function flush() {
-  if (DIRTY.size === 0) return;
-  for (const [thorny_id, progress] of DIRTY) {
-    try {
-      await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut(
-        progress.progress_id,
-        buildUpdate(progress)
-      );
-      DIRTY.delete(thorny_id);
-    } catch (error) {
-      console.error(`[write-back] Failed to flush progress for thorny_id ${thorny_id}:`, error);
+async function saveEntry(progress_id) {
+  const entry = DIRTY.get(progress_id);
+  if (!entry) return true;
+  const { progress, mark } = entry;
+  try {
+    await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut(
+      progress.progress_id,
+      buildUpdate(progress)
+    );
+    if (DIRTY.get(progress_id)?.mark === mark) DIRTY.delete(progress_id);
+    return true;
+  } catch (error) {
+    if (error instanceof ConflictError && error.detail?.error === "progress_finished") {
+      DIRTY.delete(progress_id);
+      console.warn(`[write-back] Progress ${progress_id} was already ${error.detail.status} on the server, dropping it`);
+      try {
+        onProgressFinished?.(progress, error.detail.status);
+      } catch (handlerError) {
+        console.error(`[write-back] Failed to handle finished progress ${progress_id}:`, handlerError);
+      }
+      return true;
     }
+    console.error(`[write-back] Failed to flush progress ${progress_id} (thorny_id ${progress.thorny_id}):`, error);
+    return false;
+  }
+}
+__name(saveEntry, "saveEntry");
+function save(progress_id) {
+  const inFlight = IN_FLIGHT.get(progress_id);
+  if (inFlight) return inFlight;
+  const request = (async () => {
+    try {
+      return await saveEntry(progress_id);
+    } finally {
+      IN_FLIGHT.delete(progress_id);
+    }
+  })();
+  IN_FLIGHT.set(progress_id, request);
+  return request;
+}
+__name(save, "save");
+async function flushProgress(progress_id) {
+  for (let attempt = 0; attempt < 3 && DIRTY.has(progress_id); attempt++) {
+    if (!await save(progress_id)) return false;
+  }
+  return !DIRTY.has(progress_id);
+}
+__name(flushProgress, "flushProgress");
+async function flush() {
+  for (const progress_id of Array.from(DIRTY.keys())) {
+    await save(progress_id);
   }
 }
 __name(flush, "flush");
 function loadWriteBackLoop() {
-  system25.runInterval(async () => {
+  system27.runInterval(async () => {
     await flush();
   }, TicksPerSecond10 * 5);
 }
@@ -6939,12 +7308,13 @@ var DeathPlugin = class {
   static {
     __name(this, "DeathPlugin");
   }
-  onActivate(player, objective, progress) {
+  onActivate(ctx, objective, progress) {
     const c = objective.customizations.maximum_deaths;
     if (!c) return;
     this.exceeded = false;
     this.shouldFail = c.fail ?? false;
-    const thornyUser = ThornyUser.fetch_user(player.name);
+    const player = ctx.player;
+    const ref = { thornyId: ctx.thornyId, slot: ctx.slot };
     let deaths = progress.customization_progress.maximum_deaths?.deaths ?? 0;
     const handler = /* @__PURE__ */ __name((event) => {
       if (event.deadEntity.id !== player.id) return;
@@ -6953,7 +7323,8 @@ var DeathPlugin = class {
         progress.customization_progress.maximum_deaths = { deaths: 0 };
       }
       progress.customization_progress.maximum_deaths.deaths = deaths;
-      markDirty(thornyUser.thorny_id);
+      const cached = getCachedProgress(ref);
+      if (cached) markDirty(cached.progress);
       if (deaths >= c.deaths) this.exceeded = true;
     }, "handler");
     world25.afterEvents.entityDie.subscribe(handler);
@@ -7012,7 +7383,7 @@ var NaturalBlockPlugin = class {
 };
 
 // behaviour_pack/scripts-dev/features/quests/customizations/timer-plugin.ts
-import { system as system26, TicksPerSecond as TicksPerSecond11 } from "@minecraft/server";
+import { system as system28, TicksPerSecond as TicksPerSecond11 } from "@minecraft/server";
 var TimerPlugin = class {
   constructor() {
     this.expired = false;
@@ -7022,7 +7393,7 @@ var TimerPlugin = class {
   static {
     __name(this, "TimerPlugin");
   }
-  onActivate(player, objective, progress) {
+  onActivate(_ctx, objective, progress) {
     const c = objective.customizations.timer;
     if (!c) return;
     this.shouldFail = c.fail ?? false;
@@ -7034,13 +7405,13 @@ var TimerPlugin = class {
       this.expired = true;
       return;
     }
-    this.runId = system26.runTimeout(() => {
+    this.runId = system28.runTimeout(() => {
       this.expired = true;
     }, Math.ceil(this.remaining_seconds) * TicksPerSecond11);
   }
   onDeactivate(_ctx, _objective, _progress) {
     if (this.runId !== void 0) {
-      system26.clearRun(this.runId);
+      system28.clearRun(this.runId);
       this.runId = void 0;
     }
     this.expired = false;
@@ -7056,14 +7427,18 @@ var TimerPlugin = class {
 // behaviour_pack/scripts-dev/features/quests/customizations/waypoint-plugin.ts
 import { LocationWaypoint, world as world26 } from "@minecraft/server";
 var WaypointPlugin = class {
+  constructor() {
+    this.added = [];
+  }
   static {
     __name(this, "WaypointPlugin");
   }
-  onActivate(player, objective, _progress) {
+  onActivate(ctx, objective, _progress) {
     const c = objective.customizations.waypoint;
     if (!c) return;
+    const player = ctx.player;
     c.waypoints.forEach((waypoint) => {
-      player.locatorBar.addWaypoint(new LocationWaypoint(
+      const locationWaypoint = new LocationWaypoint(
         {
           dimension: world26.getDimension(waypoint.dimension ?? MinecraftDimensionTypes.Overworld),
           x: waypoint.coordinates[0],
@@ -7082,12 +7457,21 @@ var WaypointPlugin = class {
             }
           ]
         }
-      ));
+      );
+      player.locatorBar.addWaypoint(locationWaypoint);
+      this.added.push(locationWaypoint);
     });
   }
   onDeactivate(ctx, _objective, _progress) {
+    const added = this.added;
+    this.added = [];
     if (ctx.isLeaving || !ctx.player?.isValid) return;
-    ctx.player.locatorBar.removeAllWaypoints();
+    for (const waypoint of added) {
+      try {
+        ctx.player.locatorBar.removeWaypoint(waypoint);
+      } catch (e) {
+      }
+    }
   }
 };
 
@@ -7101,34 +7485,34 @@ var CUSTOMIZATION_PLUGINS = {
   waypoint: WaypointPlugin
 };
 var ACTIVE_PLUGINS = /* @__PURE__ */ new Map();
-function activateObjective(player, thorny_id, objective, objectiveProgress) {
+function activateObjective(ctx, objective, objectiveProgress) {
   const processor = TARGET_PROCESSORS[objective.objective_type];
-  processor?.onActivate?.(player, objective, objectiveProgress);
+  processor?.onActivate?.(ctx, objective, objectiveProgress);
   const plugins = [];
   for (const [key, value] of Object.entries(objective.customizations)) {
     if (value === null) continue;
     const PluginClass = CUSTOMIZATION_PLUGINS[key];
     if (!PluginClass) continue;
     const plugin = new PluginClass();
-    plugin.onActivate?.(player, objective, objectiveProgress);
+    plugin.onActivate?.(ctx, objective, objectiveProgress);
     plugins.push(plugin);
   }
-  ACTIVE_PLUGINS.set(thorny_id, plugins);
+  ACTIVE_PLUGINS.set(slotKey(ctx), plugins);
 }
 __name(activateObjective, "activateObjective");
 function deactivateObjective(ctx, objective, objectiveProgress) {
   const processor = TARGET_PROCESSORS[objective.objective_type];
   processor?.onDeactivate?.(ctx, objective, objectiveProgress);
-  const plugins = ACTIVE_PLUGINS.get(ctx.thornyId) ?? [];
+  const plugins = ACTIVE_PLUGINS.get(slotKey(ctx)) ?? [];
   for (const plugin of plugins) {
     plugin.onDeactivate?.(ctx, objective, objectiveProgress);
   }
-  ACTIVE_PLUGINS.delete(ctx.thornyId);
+  ACTIVE_PLUGINS.delete(slotKey(ctx));
 }
 __name(deactivateObjective, "deactivateObjective");
 
 // behaviour_pack/scripts-dev/features/quests/processors/scriptevent-target-processor.ts
-import { EquipmentSlot as EquipmentSlot15, system as system27 } from "@minecraft/server";
+import { EquipmentSlot as EquipmentSlot15, system as system29 } from "@minecraft/server";
 var ScripteventTargetProcessor = class {
   constructor() {
     this.subscriptions = /* @__PURE__ */ new Map();
@@ -7136,8 +7520,10 @@ var ScripteventTargetProcessor = class {
   static {
     __name(this, "ScripteventTargetProcessor");
   }
-  onActivate(player, _objective, _objectiveProgress) {
-    const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
+  // slotKey → unsubscribe
+  onActivate(ctx, _objective, _objectiveProgress) {
+    const player = ctx.player;
+    const ref = { thornyId: ctx.thornyId, slot: ctx.slot };
     const handler = /* @__PURE__ */ __name((event) => {
       if (event.message !== player.name) return;
       const mainhand = player.getComponent("minecraft:equippable")?.getEquipment(EquipmentSlot15.Mainhand)?.typeId ?? null;
@@ -7150,14 +7536,14 @@ var ScripteventTargetProcessor = class {
         mainhand,
         script_id: event.id
       };
-      processGameAction(player, action);
+      processGameAction(player, action, ref);
     }, "handler");
-    system27.afterEvents.scriptEventReceive.subscribe(handler);
-    this.subscriptions.set(thorny_id, () => system27.afterEvents.scriptEventReceive.unsubscribe(handler));
+    system29.afterEvents.scriptEventReceive.subscribe(handler);
+    this.subscriptions.set(slotKey(ctx), () => system29.afterEvents.scriptEventReceive.unsubscribe(handler));
   }
   onDeactivate(ctx, _objective, _objectiveProgress) {
-    this.subscriptions.get(ctx.thornyId)?.();
-    this.subscriptions.delete(ctx.thornyId);
+    this.subscriptions.get(slotKey(ctx))?.();
+    this.subscriptions.delete(slotKey(ctx));
   }
   evaluate(action, objective, targetProgress) {
     if (action.type !== "scriptevent") return 0;
@@ -7180,7 +7566,7 @@ var ScripteventTargetProcessor = class {
 };
 
 // behaviour_pack/scripts-dev/features/quests/processors/visit-target-processor.ts
-import { EquipmentSlot as EquipmentSlot16, system as system28, TicksPerSecond as TicksPerSecond12 } from "@minecraft/server";
+import { EquipmentSlot as EquipmentSlot16, system as system30, TicksPerSecond as TicksPerSecond12 } from "@minecraft/server";
 var VisitTargetProcessor = class {
   constructor() {
     this.subscriptions = /* @__PURE__ */ new Map();
@@ -7188,6 +7574,7 @@ var VisitTargetProcessor = class {
   static {
     __name(this, "VisitTargetProcessor");
   }
+  // slotKey → unsubscribe
   checkCoordinates(action, target) {
     const dx = Math.abs(action.coordinates.x - target.coordinates[0]);
     const dy = Math.abs(action.coordinates.y - target.coordinates[1]);
@@ -7196,8 +7583,9 @@ var VisitTargetProcessor = class {
     const verticalOk = target.vertical_radius == null || target.vertical_radius <= 0 || dy <= target.vertical_radius;
     return horizontalOk && verticalOk;
   }
-  onActivate(player, _objective, _objectiveProgress) {
-    const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
+  onActivate(ctx, _objective, _objectiveProgress) {
+    const player = ctx.player;
+    const ref = { thornyId: ctx.thornyId, slot: ctx.slot };
     const handler = /* @__PURE__ */ __name(() => {
       const mainhand = player.getComponent("minecraft:equippable")?.getEquipment(EquipmentSlot16.Mainhand)?.typeId ?? null;
       const action = {
@@ -7208,14 +7596,14 @@ var VisitTargetProcessor = class {
         dimension: player.dimension.id,
         mainhand
       };
-      processGameAction(player, action);
+      processGameAction(player, action, ref);
     }, "handler");
-    const runId = system28.runInterval(handler, TicksPerSecond12);
-    this.subscriptions.set(thorny_id, () => system28.clearRun(runId));
+    const runId = system30.runInterval(handler, TicksPerSecond12);
+    this.subscriptions.set(slotKey(ctx), () => system30.clearRun(runId));
   }
   onDeactivate(ctx, _objective, _objectiveProgress) {
-    this.subscriptions.get(ctx.thornyId)?.();
-    this.subscriptions.delete(ctx.thornyId);
+    this.subscriptions.get(slotKey(ctx))?.();
+    this.subscriptions.delete(slotKey(ctx));
   }
   evaluate(action, objective, targetProgress) {
     if (action.type !== "visit") return 0;
@@ -7250,14 +7638,14 @@ var ObjectiveProcessor = class {
    * Processes an objective against the given action.
    * @param action
    * @param player
-   * @param thorny_id
+   * @param ref        The quest slot the objective belongs to
    * @param objective
    * @param objectiveProgress
    * @returns true if the objective is complete, false otherwise
    */
-  process(action, player, thorny_id, objective, objectiveProgress) {
+  process(action, player, ref, objective, objectiveProgress) {
     if (objectiveProgress.status === ObjectiveProgressOutStatus.completed) return false;
-    if (!this.passesCustomizations(action, thorny_id, objective, objectiveProgress)) return false;
+    if (!this.passesCustomizations(action, ref, objective, objectiveProgress)) return false;
     const processor = TARGET_PROCESSORS[objective.objective_type];
     if (!processor) return false;
     switch (objective.logic) {
@@ -7275,11 +7663,11 @@ var ObjectiveProcessor = class {
     return true;
   }
   /**
-   * Iterates the passes() hook of every active plugin for this player.
+   * Iterates the passes() hook of every active plugin for this quest slot.
    * Returns false as soon as any plugin blocks the action.
    */
-  passesCustomizations(action, thorny_id, objective, progress) {
-    const plugins = ACTIVE_PLUGINS.get(thorny_id) ?? [];
+  passesCustomizations(action, ref, objective, progress) {
+    const plugins = ACTIVE_PLUGINS.get(slotKey(ref)) ?? [];
     for (const plugin of plugins) {
       if (plugin.passes?.(action, objective, progress) === false) return false;
     }
@@ -7574,13 +7962,15 @@ var BalanceReward = class {
     return reward.balance !== null;
   }
   async grant(player, thorny_id, reward) {
+    const thorny_user = await getUserV1GuildsMeUsersThornyIdGet(thorny_id);
+    const delta = reward.balance - thorny_user.balance;
     await partialUpdateUserV1GuildsMeUsersThornyIdPatch(thorny_id, {
       balance: reward.balance
     });
     utils_default.commands.send_message(
       player.dimension.id,
       player.name,
-      `\xA7l[\xA7aQuests\xA7f]\xA7r You received \xA76${reward.balance}${utils_default.emojis.NUGS}\xA7r!`
+      `\xA7l[\xA7aQuests\xA7f]\xA7r You received \xA76${delta}${utils_default.emojis.NUGS}\xA7r!`
     );
   }
 };
@@ -7676,22 +8066,36 @@ async function grantRewards(player, thorny_id, currentBalance, rewards, objectiv
 }
 __name(grantRewards, "grantRewards");
 
+// behaviour_pack/scripts-dev/features/quests/core/status.ts
+var FINISHED_STATUSES = [
+  QuestProgressOutStatus.completed,
+  QuestProgressOutStatus.failed,
+  QuestProgressOutStatus.abandoned
+];
+function isFinished(status) {
+  return FINISHED_STATUSES.includes(status);
+}
+__name(isFinished, "isFinished");
+
 // behaviour_pack/scripts-dev/features/quests/processors/quest-processor.ts
 var objectiveProcessor = new ObjectiveProcessor();
+function deactivationContext(player, cached) {
+  return { ...cached.ref, playerName: player.name, player, isLeaving: false };
+}
+__name(deactivationContext, "deactivationContext");
 var QuestProcessor = class {
   static {
     __name(this, "QuestProcessor");
   }
-  process(action, player, quest, questProgress) {
-    if (questProgress.status === QuestProgressOutStatus.completed) return false;
-    if (questProgress.status === QuestProgressOutStatus.failed) return false;
+  process(action, player, cached) {
+    const { quest, progress: questProgress } = cached;
+    if (isFinished(questProgress.status)) return false;
     const active = getActiveObjective(quest, questProgress);
     if (!active) return false;
-    const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
-    const completed = objectiveProcessor.process(action, player, thorny_id, active.obj_def, active.obj_progress);
-    markDirty(thorny_id);
+    const completed = objectiveProcessor.process(action, player, cached.ref, active.obj_def, active.obj_progress);
+    markDirty(questProgress);
     if (!completed) return false;
-    return this.completeObjective(player, thorny_id, quest, questProgress, active.obj_def, active.obj_progress);
+    return this.completeObjective(player, cached, active.obj_def, active.obj_progress);
   }
   /**
    * Called by the tick loop when a watcher plugin signals 'advance'
@@ -7699,26 +8103,26 @@ var QuestProcessor = class {
    * Skips the active objective — deactivates it and transitions onward,
    * but grants NO objective rewards, unlike a normal completion.
    */
-  skipObjective(player, quest, questProgress) {
-    if (questProgress.status === QuestProgressOutStatus.completed) return;
-    if (questProgress.status === QuestProgressOutStatus.failed) return;
+  skipObjective(player, cached) {
+    const { quest, progress: questProgress } = cached;
+    if (isFinished(questProgress.status)) return;
     const active = getActiveObjective(quest, questProgress);
     if (!active) return;
-    const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
     active.obj_progress.status = ObjectiveProgressOutStatus.failed;
     active.obj_progress.end_time = (/* @__PURE__ */ new Date()).toISOString();
-    deactivateObjective({ thornyId: thorny_id, playerName: player.name, player, isLeaving: false }, active.obj_def, active.obj_progress);
-    this.advanceQuest(player, thorny_id, quest, questProgress);
+    deactivateObjective(deactivationContext(player, cached), active.obj_def, active.obj_progress);
+    this.advanceQuest(player, cached);
   }
   /**
    * Called when an objective is genuinely completed via process().
    * Deactivates it, grants its rewards, then transitions onward.
    */
-  completeObjective(player, thorny_id, quest, questProgress, objectiveDef, objectiveProgress) {
-    deactivateObjective({ thornyId: thorny_id, playerName: player.name, player, isLeaving: false }, objectiveDef, objectiveProgress);
+  completeObjective(player, cached, objectiveDef, objectiveProgress) {
+    deactivateObjective(deactivationContext(player, cached), objectiveDef, objectiveProgress);
+    const thorny_id = cached.ref.thornyId;
     const thorny_user = ThornyUser.fetch_user_by_id(thorny_id);
     grantRewards(player, thorny_id, thorny_user.balance, objectiveDef.rewards, objectiveProgress).then();
-    return this.advanceQuest(player, thorny_id, quest, questProgress);
+    return this.advanceQuest(player, cached);
   }
   /**
    * Shared transition logic used by both completion and skip paths.
@@ -7726,7 +8130,8 @@ var QuestProcessor = class {
    * completes the quest. Grants no rewards itself — reward-granting
    * is the caller's responsibility.
    */
-  advanceQuest(player, thorny_id, quest, questProgress) {
+  advanceQuest(player, cached) {
+    const { quest, progress: questProgress } = cached;
     const nextObjectiveProgress = questProgress.objectives.find(
       (o) => o.status === ObjectiveProgressOutStatus.pending
     );
@@ -7737,9 +8142,9 @@ var QuestProcessor = class {
         (o) => o.objective_id === nextObjectiveProgress.objective_id
       );
       if (nextObjectiveDef) {
-        activateObjective(player, thorny_id, nextObjectiveDef, nextObjectiveProgress);
+        activateObjective({ ...cached.ref, player }, nextObjectiveDef, nextObjectiveProgress);
       }
-      markDirty(thorny_id);
+      markDirty(questProgress);
       notifyQuestProgress(
         player,
         nextObjectiveDef,
@@ -7749,20 +8154,22 @@ var QuestProcessor = class {
       );
       return false;
     }
-    return this.onQuestComplete(player, thorny_id, quest, questProgress);
+    return this.onQuestComplete(player, cached);
   }
-  onQuestComplete(player, thorny_id, questOut, questProgress) {
+  onQuestComplete(player, cached) {
+    const questProgress = cached.progress;
     questProgress.status = QuestProgressOutStatus.completed;
     questProgress.end_time = (/* @__PURE__ */ new Date()).toISOString();
-    markDirty(thorny_id);
-    notifyQuestComplete(player, questOut.title);
+    markDirty(questProgress);
+    notifyQuestComplete(player, cached.quest.title, cached.ref.slot);
     return true;
   }
-  fail(player, quest, questProgress) {
-    const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
+  fail(player, cached) {
+    const { quest, progress: questProgress } = cached;
+    if (isFinished(questProgress.status)) return;
     const active = getActiveObjective(quest, questProgress);
     if (active) {
-      deactivateObjective({ thornyId: thorny_id, playerName: player.name, player, isLeaving: false }, active.obj_def, active.obj_progress);
+      deactivateObjective(deactivationContext(player, cached), active.obj_def, active.obj_progress);
     }
     questProgress.status = QuestProgressOutStatus.failed;
     questProgress.end_time = (/* @__PURE__ */ new Date()).toISOString();
@@ -7772,14 +8179,14 @@ var QuestProcessor = class {
         obj.end_time = (/* @__PURE__ */ new Date()).toISOString();
       }
     }
-    markDirty(thorny_id);
-    notifyQuestFailure(player, quest.title);
+    markDirty(questProgress);
+    notifyQuestFailure(player, quest.title, cached.ref.slot);
   }
 };
 
 // behaviour_pack/scripts-dev/features/quests/core/objective/objective-tick.ts
-function tickPlugins(player, thorny_id, objective, progress) {
-  const plugins = ACTIVE_PLUGINS.get(thorny_id) ?? [];
+function tickPlugins(player, ref, objective, progress) {
+  const plugins = ACTIVE_PLUGINS.get(slotKey(ref)) ?? [];
   for (const plugin of plugins) {
     const signal = plugin.onTick?.(player, objective, progress);
     if (signal) return signal;
@@ -7788,99 +8195,229 @@ function tickPlugins(player, thorny_id, objective, progress) {
 __name(tickPlugins, "tickPlugins");
 
 // behaviour_pack/scripts-dev/features/quests/progress-cache.ts
-var QUEST_PROGRESS_CACHE = /* @__PURE__ */ new Map();
 var questProcessor2 = new QuestProcessor();
+var DAILY_POLL_SECONDS = 30;
+var SYNCING = /* @__PURE__ */ new Set();
+async function syncOnce(ref, sync) {
+  const key = slotKey(ref);
+  if (SYNCING.has(key)) return;
+  SYNCING.add(key);
+  try {
+    await sync();
+  } finally {
+    SYNCING.delete(key);
+  }
+}
+__name(syncOnce, "syncOnce");
+async function loadSlot(player, ref, progress) {
+  const quest = await getQuest(progress.quest_id);
+  if (!player.isValid) return void 0;
+  const cached = { ref, quest, progress };
+  setCachedProgress(cached);
+  if (progress.status === QuestProgressOutStatus.active) {
+    const active = getActiveObjective(quest, progress);
+    if (active) {
+      activateObjective({ ...ref, player }, active.obj_def, active.obj_progress);
+    }
+  }
+  return cached;
+}
+__name(loadSlot, "loadSlot");
+function unloadSlot(ref, playerName, player, isLeaving) {
+  const cached = getCachedProgress(ref);
+  if (!cached) return void 0;
+  const active = getActiveObjective(cached.quest, cached.progress);
+  if (active) {
+    deactivateObjective({ ...ref, playerName, player, isLeaving }, active.obj_def, active.obj_progress);
+  }
+  deleteCachedProgress(ref);
+  return cached;
+}
+__name(unloadSlot, "unloadSlot");
+function findPlayer(thornyId) {
+  return world27.getPlayers().find((p) => ThornyUser.fetch_user(p.name)?.thorny_id === thornyId);
+}
+__name(findPlayer, "findPlayer");
+function notifyQuestEnded(player, cached) {
+  const what = cached.ref.slot === "daily" ? "daily quest" : "quest";
+  notifyOfQuestUpdate(player, `Your ${what} has ended: ${cached.quest.title}`);
+}
+__name(notifyQuestEnded, "notifyQuestEnded");
+function adoptServerFinish(cached, player, status, serverProgress) {
+  const active = getActiveObjective(cached.quest, cached.progress);
+  if (active) {
+    deactivateObjective({ ...cached.ref, playerName: player.name, player, isLeaving: false }, active.obj_def, active.obj_progress);
+  }
+  if (serverProgress) {
+    cached.progress = serverProgress;
+  } else {
+    cached.progress.status = status;
+    cached.progress.end_time = (/* @__PURE__ */ new Date()).toISOString();
+    if (active) active.obj_progress.status = status;
+  }
+}
+__name(adoptServerFinish, "adoptServerFinish");
+function handleProgressFinishedByServer(progress, serverStatus) {
+  const cached = findCachedProgressById(progress.progress_id);
+  if (!cached || isFinished(cached.progress.status)) return;
+  const player = findPlayer(cached.ref.thornyId);
+  if (!player) {
+    unloadSlot(cached.ref, "", void 0, true);
+    return;
+  }
+  const status = isFinished(serverStatus ?? "") ? serverStatus : QuestProgressOutStatus.abandoned;
+  adoptServerFinish(cached, player, status);
+  notifyQuestEnded(player, cached);
+}
+__name(handleProgressFinishedByServer, "handleProgressFinishedByServer");
+function showActiveObjective(player, cached) {
+  const active = getActiveObjective(cached.quest, cached.progress);
+  if (!active) return;
+  system31.runTimeout(() => {
+    if (!player.isValid) return;
+    notifyOfQuestUpdate(
+      player,
+      generateObjectiveDisplayString(
+        active.obj_def,
+        cached.quest.objectives.indexOf(active.obj_def) + 1,
+        cached.quest.objectives.length,
+        cached.quest.title
+      )
+    );
+  }, TicksPerSecond13 * 10);
+}
+__name(showActiveObjective, "showActiveObjective");
+function showDailySummary(player, cached, delayTicks) {
+  system31.runTimeout(() => {
+    if (!player.isValid) return;
+    notifyOfQuestUpdate(player, generateDailyDisplayString(cached.quest, cached.progress, true));
+  }, delayTicks);
+}
+__name(showDailySummary, "showDailySummary");
+async function syncDailySlot(player, thornyId, isJoin = false) {
+  const ref = { thornyId, slot: "daily" };
+  await syncOnce(ref, async () => {
+    let progress;
+    try {
+      progress = await accept_daily_quest(thornyId);
+    } catch (error) {
+      console.warn(`[daily] Couldn't sync the daily quest for thorny_id ${thornyId}, retrying later:`, error);
+      return;
+    }
+    if (!player.isValid) return;
+    const cached = getCachedProgress(ref);
+    if (cached && progress && cached.progress.progress_id === progress.progress_id) {
+      if (isFinished(progress.status) && !isFinished(cached.progress.status)) {
+        adoptServerFinish(cached, player, progress.status, progress);
+        cached.finishHandled = true;
+        notifyQuestEnded(player, cached);
+      }
+      return;
+    }
+    if (cached) {
+      unloadSlot(ref, player.name, player, false);
+      if (!isFinished(cached.progress.status)) notifyQuestEnded(player, cached);
+    }
+    if (!progress) return;
+    const loaded = await loadSlot(player, ref, progress);
+    if (!loaded) return;
+    if (isFinished(progress.status)) loaded.finishHandled = true;
+    showDailySummary(player, loaded, isJoin ? TicksPerSecond13 * 11 : TicksPerSecond13);
+  });
+}
+__name(syncDailySlot, "syncDailySlot");
+function followUpFinishedDaily(player, thornyId) {
+  const cached = getCachedProgress({ thornyId, slot: "daily" });
+  if (!cached || cached.finishHandled || !isFinished(cached.progress.status)) return;
+  cached.finishHandled = true;
+  flushProgress(cached.progress.progress_id).then((saved) => {
+    if (saved && player.isValid) return syncDailySlot(player, thornyId);
+  }).catch((e) => console.error("[daily] Failed to follow up a finished daily:", e));
+}
+__name(followUpFinishedDaily, "followUpFinishedDaily");
 function loadQuestProgressCache() {
   const PLAYER_LOOP_RUN_IDS = /* @__PURE__ */ new Map();
-  async function new_active_quest(questProgress, thornyUser, player) {
-    const quest = QUEST_CACHE.get(questProgress.quest_id);
-    QUEST_PROGRESS_CACHE.set(thornyUser.thorny_id, questProgress);
-    const active = getActiveObjective(quest, questProgress);
-    if (questProgress.status === QuestProgressOutStatus.active) {
-      if (active) {
-        activateObjective(player, thornyUser.thorny_id, active.obj_def, active.obj_progress);
-      }
-    }
-    system29.runTimeout(() => {
-      notifyOfQuestUpdate(
-        player,
-        generateObjectiveDisplayString(
-          active?.obj_def,
-          quest.objectives.indexOf(active?.obj_def) + 1,
-          quest.objectives.length,
-          quest.title
-        )
-      );
-    }, TicksPerSecond13 * 10);
+  setFinishedProgressHandler(handleProgressFinishedByServer);
+  async function new_active_quest(questProgress, ref, player) {
+    unloadSlot(ref, player.name, player, false);
+    const cached = await loadSlot(player, ref, questProgress);
+    if (cached) showActiveObjective(player, cached);
   }
   __name(new_active_quest, "new_active_quest");
-  async function dropped_quest(questProgress, thornyUser, player) {
-    const cached_quest = QUEST_CACHE.get(questProgress.quest_id);
-    const cached_quest_progress = QUEST_PROGRESS_CACHE.get(thornyUser.thorny_id);
-    const active = getActiveObjective(cached_quest, questProgress);
-    if (active) {
-      deactivateObjective({ thornyId: thornyUser.thorny_id, playerName: player.name, player, isLeaving: false }, active.obj_def, active.obj_progress);
-    }
-    QUEST_PROGRESS_CACHE.delete(thornyUser.thorny_id);
-    if (cached_quest_progress.status !== "completed" && cached_quest_progress.status !== "failed") {
-      notifyOfQuestUpdate(player, `You have dropped your quest: ${cached_quest.title}`);
+  function dropped_quest(ref, player) {
+    const cached = unloadSlot(ref, player.name, player, false);
+    if (!cached) return;
+    if (!isFinished(cached.progress.status)) {
+      notifyOfQuestUpdate(player, `You have dropped your quest: ${cached.quest.title}`);
     }
   }
   __name(dropped_quest, "dropped_quest");
-  async function update_player_quest(player_name) {
-    const player = world27.getPlayers().find((p) => p.name == player_name);
-    if (!player) return;
-    const thorny_user = ThornyUser.fetch_user(player_name);
-    const questProgress = await get_quest_progress(thorny_user.thorny_id);
-    const cachedQuestProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
-    if (questProgress && cachedQuestProgress?.progress_id !== questProgress.progress_id) {
-      await new_active_quest(questProgress, thorny_user, player);
-    } else if (!questProgress && cachedQuestProgress) {
-      await dropped_quest(cachedQuestProgress, thorny_user, player);
-    }
+  async function syncRegularSlot(player, thornyUser) {
+    const ref = { thornyId: thornyUser.thorny_id, slot: "regular" };
+    await syncOnce(ref, async () => {
+      const questProgress = await get_quest_progress(thornyUser.thorny_id);
+      if (!player.isValid) return;
+      const cached = getCachedProgress(ref);
+      if (questProgress && cached?.progress.progress_id !== questProgress.progress_id) {
+        await new_active_quest(questProgress, ref, player);
+      } else if (!questProgress && cached) {
+        dropped_quest(ref, player);
+      }
+    });
   }
-  __name(update_player_quest, "update_player_quest");
-  async function tickQuest(player_name) {
-    const player = world27.getPlayers().find((p) => p.name == player_name);
-    if (!player) return;
-    const thorny_user = ThornyUser.fetch_user(player_name);
-    const cachedQuestProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
-    if (!cachedQuestProgress) return;
-    const quest = QUEST_CACHE.get(cachedQuestProgress.quest_id);
-    if (!quest) return;
-    const active = getActiveObjective(quest, cachedQuestProgress);
+  __name(syncRegularSlot, "syncRegularSlot");
+  function tickSlot(player, ref) {
+    const cached = getCachedProgress(ref);
+    if (!cached) return;
+    const active = getActiveObjective(cached.quest, cached.progress);
     if (!active) return;
-    const signal = tickPlugins(player, thorny_user.thorny_id, active.obj_def, active.obj_progress);
+    const signal = tickPlugins(player, ref, active.obj_def, active.obj_progress);
     if (signal === "fail") {
-      questProcessor2.fail(player, quest, cachedQuestProgress);
+      questProcessor2.fail(player, cached);
     } else if (signal === "skip") {
-      questProcessor2.skipObjective(player, quest, cachedQuestProgress);
+      questProcessor2.skipObjective(player, cached);
     }
   }
-  __name(tickQuest, "tickQuest");
+  __name(tickSlot, "tickSlot");
   async function runPlayerInit(player, playerName) {
-    const thorny_user = ThornyUser.fetch_user(playerName);
-    if (thorny_user) {
-      const questProgress = await get_quest_progress(thorny_user.thorny_id);
-      if (questProgress) {
-        await new_active_quest(questProgress, thorny_user, player);
-      }
-    }
-    const cacheRunId = system29.runInterval(async () => {
+    const cacheRunId = system31.runInterval(async () => {
       if (!player.isValid) {
-        system29.clearRun(cacheRunId);
+        system31.clearRun(cacheRunId);
         return;
       }
-      await update_player_quest(playerName);
+      const thornyUser2 = ThornyUser.fetch_user(playerName);
+      if (!thornyUser2) return;
+      await syncRegularSlot(player, thornyUser2);
     }, TicksPerSecond13 * 2);
-    const tickRunId = system29.runInterval(async () => {
+    const tickRunId = system31.runInterval(() => {
       if (!player.isValid) {
-        system29.clearRun(tickRunId);
+        system31.clearRun(tickRunId);
         return;
       }
-      await tickQuest(playerName);
+      const thornyUser2 = ThornyUser.fetch_user(playerName);
+      if (!thornyUser2) return;
+      for (const slot of QUEST_SLOTS) {
+        tickSlot(player, { thornyId: thornyUser2.thorny_id, slot });
+      }
+      followUpFinishedDaily(player, thornyUser2.thorny_id);
     }, TicksPerSecond13);
-    PLAYER_LOOP_RUN_IDS.set(playerName, [cacheRunId, tickRunId]);
+    const dailyRunId = system31.runInterval(async () => {
+      if (!player.isValid) {
+        system31.clearRun(dailyRunId);
+        return;
+      }
+      const thornyUser2 = ThornyUser.fetch_user(playerName);
+      if (!thornyUser2) return;
+      await syncDailySlot(player, thornyUser2.thorny_id);
+    }, TicksPerSecond13 * DAILY_POLL_SECONDS);
+    PLAYER_LOOP_RUN_IDS.set(playerName, [cacheRunId, tickRunId, dailyRunId]);
+    const thornyUser = ThornyUser.fetch_user(playerName) ?? await ThornyUser.get_user_from_api(playerName).catch(() => void 0);
+    if (thornyUser && player.isValid) {
+      await Promise.all([
+        syncRegularSlot(player, thornyUser),
+        syncDailySlot(player, thornyUser.thorny_id, true)
+      ]);
+    }
   }
   __name(runPlayerInit, "runPlayerInit");
   world27.afterEvents.playerSpawn.subscribe((spawn_event) => {
@@ -7889,13 +8426,13 @@ function loadQuestProgressCache() {
     const playerName = player.name;
     let attempts = 0;
     const MAX_ATTEMPTS = 100;
-    const readyCheckId = system29.runInterval(() => {
+    const readyCheckId = system31.runInterval(() => {
       attempts++;
       if (!player.isValid) {
-        if (attempts >= MAX_ATTEMPTS) system29.clearRun(readyCheckId);
+        if (attempts >= MAX_ATTEMPTS) system31.clearRun(readyCheckId);
         return;
       }
-      system29.clearRun(readyCheckId);
+      system31.clearRun(readyCheckId);
       runPlayerInit(player, playerName).then();
     }, 1);
   });
@@ -7903,20 +8440,14 @@ function loadQuestProgressCache() {
     const playerName = leave_event.playerName;
     const runIds = PLAYER_LOOP_RUN_IDS.get(playerName);
     if (runIds !== void 0) {
-      runIds.map((i) => system29.clearRun(i));
+      runIds.map((i) => system31.clearRun(i));
       PLAYER_LOOP_RUN_IDS.delete(playerName);
     }
     const thorny_user = ThornyUser.fetch_user(playerName);
     if (!thorny_user) return;
-    const questProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
-    if (questProgress) {
-      const quest = QUEST_CACHE.get(questProgress.quest_id);
-      const active = quest ? getActiveObjective(quest, questProgress) : void 0;
-      if (active) {
-        deactivateObjective({ thornyId: thorny_user.thorny_id, playerName, isLeaving: true }, active.obj_def, active.obj_progress);
-      }
+    for (const slot of QUEST_SLOTS) {
+      unloadSlot({ thornyId: thorny_user.thorny_id, slot }, playerName, void 0, true);
     }
-    QUEST_PROGRESS_CACHE.delete(thorny_user.thorny_id);
   });
 }
 __name(loadQuestProgressCache, "loadQuestProgressCache");

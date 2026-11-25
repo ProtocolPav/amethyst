@@ -2,12 +2,13 @@ import { Player } from "@minecraft/server";
 import { ObjectiveOut, ObjectiveProgressOut } from "../../../api/nexuscore/model";
 import { GameAction } from "./action";
 import { DeactivationContext } from "./deactivation-context";
+import { ActivationContext } from "./slot";
 
 /**
  * A CustomizationPlugin is a modular participant in an objective's lifecycle.
  *
- * Plugins are instantiated once per objective activation (per player) and
- * stored in ACTIVE_PLUGINS in objective-processor.ts. Each plugin can
+ * Plugins are instantiated once per objective activation (per player per
+ * quest slot) and stored in ACTIVE_PLUGINS in objective-lifecycle.ts. Each plugin can
  * implement any combination of the four hooks below — omitting a hook means
  * the plugin has nothing to do at that point.
  *
@@ -26,10 +27,10 @@ import { DeactivationContext } from "./deactivation-context";
  */
 export interface CustomizationPlugin {
     /**
-     * Called when the objective becomes active for a player.
+     * Called when the objective becomes active for a player's quest slot.
      * Use to start timers, subscribe to events, play music, run commands, etc.
      */
-    onActivate?(player: Player, objective: ObjectiveOut, progress: ObjectiveProgressOut): void
+    onActivate?(ctx: ActivationContext, objective: ObjectiveOut, progress: ObjectiveProgressOut): void
 
     /**
      * Called when the objective is deactivated for any reason
