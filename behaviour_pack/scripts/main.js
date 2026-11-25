@@ -5184,6 +5184,18 @@ var lookupUserV1GuildsMeUsersLookupGet = /* @__PURE__ */ __name(async (params, o
     }
   );
 }, "lookupUserV1GuildsMeUsersLookupGet");
+var getGetUserV1GuildsMeUsersThornyIdGetUrl = /* @__PURE__ */ __name((thornyId) => {
+  return `/v1/guilds/me/users/${thornyId}`;
+}, "getGetUserV1GuildsMeUsersThornyIdGetUrl");
+var getUserV1GuildsMeUsersThornyIdGet = /* @__PURE__ */ __name(async (thornyId, options) => {
+  return minecraftFetch(
+    getGetUserV1GuildsMeUsersThornyIdGetUrl(thornyId),
+    {
+      ...options,
+      method: "GET"
+    }
+  );
+}, "getUserV1GuildsMeUsersThornyIdGet");
 var getPartialUpdateUserV1GuildsMeUsersThornyIdPatchUrl = /* @__PURE__ */ __name((thornyId) => {
   return `/v1/guilds/me/users/${thornyId}`;
 }, "getPartialUpdateUserV1GuildsMeUsersThornyIdPatchUrl");
@@ -7574,13 +7586,15 @@ var BalanceReward = class {
     return reward.balance !== null;
   }
   async grant(player, thorny_id, reward) {
+    const thorny_user = await getUserV1GuildsMeUsersThornyIdGet(thorny_id);
+    const delta = reward.balance - thorny_user.balance;
     await partialUpdateUserV1GuildsMeUsersThornyIdPatch(thorny_id, {
       balance: reward.balance
     });
     utils_default.commands.send_message(
       player.dimension.id,
       player.name,
-      `\xA7l[\xA7aQuests\xA7f]\xA7r You received \xA76${reward.balance}${utils_default.emojis.NUGS}\xA7r!`
+      `\xA7l[\xA7aQuests\xA7f]\xA7r You received \xA76${delta}${utils_default.emojis.NUGS}\xA7r!`
     );
   }
 };
