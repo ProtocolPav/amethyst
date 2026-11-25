@@ -4,7 +4,7 @@ import { CustomizationPlugin } from "../types/customization-plugin";
 import { DeactivationContext } from "../types/deactivation-context";
 import {markDirty} from "../write-back";
 import ThornyUser from "../../../api/user";
-import {QUEST_PROGRESS_CACHE} from "../progress-cache";
+import {QUEST_PROGRESS_CACHE} from "../progress-store";
 
 /**
  * Watcher — fails the objective if the player dies too many times.
@@ -43,8 +43,8 @@ export class DeathPlugin implements CustomizationPlugin {
             }
             progress.customization_progress.maximum_deaths.deaths = deaths
 
-            const questProgress = QUEST_PROGRESS_CACHE.get(thornyUser.thorny_id)
-            if (questProgress) markDirty(questProgress)
+            const cached = QUEST_PROGRESS_CACHE.get(thornyUser.thorny_id)
+            if (cached) markDirty(cached.progress)
 
             if (deaths >= c.deaths) this.exceeded = true
         }

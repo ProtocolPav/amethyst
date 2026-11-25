@@ -1,8 +1,7 @@
 // core/action-dispatch.ts
 import { Player } from "@minecraft/server";
 import { GameAction } from "../types/action";
-import { QUEST_PROGRESS_CACHE } from "../progress-cache";
-import { QUEST_CACHE } from "../quest-cache";
+import { QUEST_PROGRESS_CACHE } from "../progress-store";
 import { QuestProcessor } from "../processors/quest-processor";
 import ThornyUser from "../../../api/user";
 
@@ -20,11 +19,8 @@ export function processGameAction(player: Player, action: GameAction): void {
     const thorny_user = ThornyUser.fetch_user(player.name)
     if (!thorny_user) return
 
-    const questProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id)
-    if (!questProgress) return
+    const cached = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id)
+    if (!cached) return
 
-    const quest = QUEST_CACHE.get(questProgress.quest_id)
-    if (!quest) return
-
-    questProcessor.process(action, player, quest, questProgress)
+    questProcessor.process(action, player, cached.quest, cached.progress)
 }

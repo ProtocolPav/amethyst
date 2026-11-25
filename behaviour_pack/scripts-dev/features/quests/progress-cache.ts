@@ -1,5 +1,6 @@
 import { Player, system, TicksPerSecond, world } from "@minecraft/server";
-import { QUEST_CACHE } from "./quest-cache";
+import { getQuest } from "./quest-cache";
+import { CachedQuestProgress, QUEST_PROGRESS_CACHE } from "./progress-store";
 import ThornyUser from "../../api/user";
 import { get_quest_progress } from "./core/fetch";
 import { QuestProgressOut, QuestProgressOutStatus } from "../../api/nexuscore/model";
@@ -10,17 +11,15 @@ import { tickPlugins } from "./core/objective/objective-tick";
 import { getActiveObjective } from "./core/objective/objective-lookup";
 import {generateObjectiveDisplayString} from "./core/objective/objective-display";
 
-export const QUEST_PROGRESS_CACHE = new Map<number, QuestProgressOut>()
-
 const questProcessor = new QuestProcessor()
 
 export default function loadQuestProgressCache() {
     const PLAYER_LOOP_RUN_IDS = new Map<string, number[]>()
 
     async function new_active_quest(questProgress: QuestProgressOut, thornyUser: ThornyUser, player: Player) {
-        const quest = QUEST_CACHE.get(questProgress.quest_id)!
+        const quest = await getQuest(questProgress.quest_id)
 
-        QUEST_PROGRESS_CACHE.set(thornyUser.thorny_id, questProgress)
+        QUEST_PROGRESS_CACHE.set(thornyUser.thorny_id, { quest, progress: questProgress })
         const active = getActiveObjective(quest, questProgress)
 
         // Activate the current objective if the quest is active
@@ -43,12 +42,12 @@ export default function loadQuestProgressCache() {
         }, TicksPerSecond * 10)
     }
 
-    async function dropped_quest(questProgress: QuestProgressOut, thornyUser: ThornyUser, player: Player) {
-        const cached_quest = QUEST_CACHE.get(questProgress.quest_id)!
-        const cached_quest_progress = QUEST_PROGRESS_CACHE.get(thornyUser.thorny_id)!
+    async function dropped_quest(cached: CachedQuestProgress, thornyUser: ThornyUser, player: Player) {
+        const cached_quest = cached.quest
+        const cached_quest_progress = cached.progress
 
         // Deactivate the active objective before evicting
-        const active = getActiveObjective(cached_quest as any, questProgress)
+        const active = getActiveObjective(cached_quest, cached_quest_progress)
         if (active) {
             deactivateObjective({ thornyId: thornyUser.thorny_id, playerName: player.name, player, isLeaving: false }, active.obj_def, active.obj_progress)
         }
@@ -69,7 +68,7 @@ export default function loadQuestProgressCache() {
         const cachedQuestProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id)
 
         // User has accepted a new quest
-        if (questProgress && cachedQuestProgress?.progress_id !== questProgress.progress_id) {
+        if (questProgress && cachedQuestProgress?.progress.progress_id !== questProgress.progress_id) {
             await new_active_quest(questProgress, thorny_user, player)
         }
 
@@ -84,20 +83,17 @@ export default function loadQuestProgressCache() {
         if (!player) return;
 
         const thorny_user = ThornyUser.fetch_user(player_name)!
-        const cachedQuestProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id)
-        if (!cachedQuestProgress) return
+        const cached = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id)
+        if (!cached) return
 
-        const quest = QUEST_CACHE.get(cachedQuestProgress.quest_id)
-        if (!quest) return
-
-        const active = getActiveObjective(quest as any, cachedQuestProgress)
+        const active = getActiveObjective(cached.quest, cached.progress)
         if (!active) return
 
         const signal = tickPlugins(player, thorny_user.thorny_id, active.obj_def, active.obj_progress)
         if (signal === 'fail') {
-            questProcessor.fail(player, quest as any, cachedQuestProgress)
+            questProcessor.fail(player, cached.quest, cached.progress)
         } else if (signal === 'skip') {
-            questProcessor.skipObjective(player, quest as any, cachedQuestProgress)
+            questProcessor.skipObjective(player, cached.quest, cached.progress)
         }
     }
 
@@ -165,12 +161,11 @@ export default function loadQuestProgressCache() {
         const thorny_user = ThornyUser.fetch_user(playerName)
         if (!thorny_user) return
 
-        const questProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id)
+        const cached = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id)
 
         // Deactivate the active objective before evicting the cache entry
-        if (questProgress) {
-            const quest = QUEST_CACHE.get(questProgress.quest_id)
-            const active = quest ? getActiveObjective(quest as any, questProgress) : undefined
+        if (cached) {
+            const active = getActiveObjective(cached.quest, cached.progress)
             if (active) {
                 deactivateObjective({ thornyId: thorny_user.thorny_id, playerName, isLeaving: true }, active.obj_def, active.obj_progress)
             }

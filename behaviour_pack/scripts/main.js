@@ -6475,6 +6475,18 @@ var listQuestsV1GuildsMeQuestsGet = /* @__PURE__ */ __name(async (params, option
     }
   );
 }, "listQuestsV1GuildsMeQuestsGet");
+var getGetQuestV1GuildsMeQuestsQuestIdGetUrl = /* @__PURE__ */ __name((questId) => {
+  return `/v1/guilds/me/quests/${questId}`;
+}, "getGetQuestV1GuildsMeQuestsQuestIdGetUrl");
+var getQuestV1GuildsMeQuestsQuestIdGet = /* @__PURE__ */ __name(async (questId, options) => {
+  return minecraftFetch(
+    getGetQuestV1GuildsMeQuestsQuestIdGetUrl(questId),
+    {
+      ...options,
+      method: "GET"
+    }
+  );
+}, "getQuestV1GuildsMeQuestsQuestIdGet");
 var getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl = /* @__PURE__ */ __name((thornyId, params) => {
   const normalizedParams = new URLSearchParams();
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -6509,14 +6521,29 @@ var partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut = /* @__PURE
   );
 }, "partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut");
 
+// behaviour_pack/scripts-dev/features/quests/progress-store.ts
+var QUEST_PROGRESS_CACHE = /* @__PURE__ */ new Map();
+
 // behaviour_pack/scripts-dev/features/quests/quest-cache.ts
 var QUEST_CACHE = /* @__PURE__ */ new Map();
 async function reload_quest_cache() {
   const quests_list = await listQuestsV1GuildsMeQuestsGet({ active: true });
   QUEST_CACHE.clear();
   quests_list.forEach((quest) => QUEST_CACHE.set(quest.quest_id, quest));
+  for (const cached of QUEST_PROGRESS_CACHE.values()) {
+    const fresh = QUEST_CACHE.get(cached.quest.quest_id);
+    if (fresh) cached.quest = fresh;
+  }
 }
 __name(reload_quest_cache, "reload_quest_cache");
+async function getQuest(quest_id) {
+  const cached = QUEST_CACHE.get(quest_id);
+  if (cached) return cached;
+  const quest = await getQuestV1GuildsMeQuestsQuestIdGet(quest_id);
+  QUEST_CACHE.set(quest.quest_id, quest);
+  return quest;
+}
+__name(getQuest, "getQuest");
 function loadQuestCache() {
   system23.run(async () => {
     await reload_quest_cache();
@@ -6576,11 +6603,9 @@ function processGameAction(player, action) {
   questProcessor ??= new QuestProcessor();
   const thorny_user = ThornyUser.fetch_user(player.name);
   if (!thorny_user) return;
-  const questProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
-  if (!questProgress) return;
-  const quest = QUEST_CACHE.get(questProgress.quest_id);
-  if (!quest) return;
-  questProcessor.process(action, player, quest, questProgress);
+  const cached = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
+  if (!cached) return;
+  questProcessor.process(action, player, cached.quest, cached.progress);
 }
 __name(processGameAction, "processGameAction");
 
@@ -6992,8 +7017,8 @@ var DeathPlugin = class {
         progress.customization_progress.maximum_deaths = { deaths: 0 };
       }
       progress.customization_progress.maximum_deaths.deaths = deaths;
-      const questProgress = QUEST_PROGRESS_CACHE.get(thornyUser.thorny_id);
-      if (questProgress) markDirty(questProgress);
+      const cached = QUEST_PROGRESS_CACHE.get(thornyUser.thorny_id);
+      if (cached) markDirty(cached.progress);
       if (deaths >= c.deaths) this.exceeded = true;
     }, "handler");
     world25.afterEvents.entityDie.subscribe(handler);
@@ -7830,13 +7855,12 @@ function tickPlugins(player, thorny_id, objective, progress) {
 __name(tickPlugins, "tickPlugins");
 
 // behaviour_pack/scripts-dev/features/quests/progress-cache.ts
-var QUEST_PROGRESS_CACHE = /* @__PURE__ */ new Map();
 var questProcessor2 = new QuestProcessor();
 function loadQuestProgressCache() {
   const PLAYER_LOOP_RUN_IDS = /* @__PURE__ */ new Map();
   async function new_active_quest(questProgress, thornyUser, player) {
-    const quest = QUEST_CACHE.get(questProgress.quest_id);
-    QUEST_PROGRESS_CACHE.set(thornyUser.thorny_id, questProgress);
+    const quest = await getQuest(questProgress.quest_id);
+    QUEST_PROGRESS_CACHE.set(thornyUser.thorny_id, { quest, progress: questProgress });
     const active = getActiveObjective(quest, questProgress);
     if (questProgress.status === QuestProgressOutStatus.active) {
       if (active) {
@@ -7856,10 +7880,10 @@ function loadQuestProgressCache() {
     }, TicksPerSecond13 * 10);
   }
   __name(new_active_quest, "new_active_quest");
-  async function dropped_quest(questProgress, thornyUser, player) {
-    const cached_quest = QUEST_CACHE.get(questProgress.quest_id);
-    const cached_quest_progress = QUEST_PROGRESS_CACHE.get(thornyUser.thorny_id);
-    const active = getActiveObjective(cached_quest, questProgress);
+  async function dropped_quest(cached, thornyUser, player) {
+    const cached_quest = cached.quest;
+    const cached_quest_progress = cached.progress;
+    const active = getActiveObjective(cached_quest, cached_quest_progress);
     if (active) {
       deactivateObjective({ thornyId: thornyUser.thorny_id, playerName: player.name, player, isLeaving: false }, active.obj_def, active.obj_progress);
     }
@@ -7875,7 +7899,7 @@ function loadQuestProgressCache() {
     const thorny_user = ThornyUser.fetch_user(player_name);
     const questProgress = await get_quest_progress(thorny_user.thorny_id);
     const cachedQuestProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
-    if (questProgress && cachedQuestProgress?.progress_id !== questProgress.progress_id) {
+    if (questProgress && cachedQuestProgress?.progress.progress_id !== questProgress.progress_id) {
       await new_active_quest(questProgress, thorny_user, player);
     } else if (!questProgress && cachedQuestProgress) {
       await dropped_quest(cachedQuestProgress, thorny_user, player);
@@ -7886,17 +7910,15 @@ function loadQuestProgressCache() {
     const player = world27.getPlayers().find((p) => p.name == player_name);
     if (!player) return;
     const thorny_user = ThornyUser.fetch_user(player_name);
-    const cachedQuestProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
-    if (!cachedQuestProgress) return;
-    const quest = QUEST_CACHE.get(cachedQuestProgress.quest_id);
-    if (!quest) return;
-    const active = getActiveObjective(quest, cachedQuestProgress);
+    const cached = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
+    if (!cached) return;
+    const active = getActiveObjective(cached.quest, cached.progress);
     if (!active) return;
     const signal = tickPlugins(player, thorny_user.thorny_id, active.obj_def, active.obj_progress);
     if (signal === "fail") {
-      questProcessor2.fail(player, quest, cachedQuestProgress);
+      questProcessor2.fail(player, cached.quest, cached.progress);
     } else if (signal === "skip") {
-      questProcessor2.skipObjective(player, quest, cachedQuestProgress);
+      questProcessor2.skipObjective(player, cached.quest, cached.progress);
     }
   }
   __name(tickQuest, "tickQuest");
@@ -7950,10 +7972,9 @@ function loadQuestProgressCache() {
     }
     const thorny_user = ThornyUser.fetch_user(playerName);
     if (!thorny_user) return;
-    const questProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
-    if (questProgress) {
-      const quest = QUEST_CACHE.get(questProgress.quest_id);
-      const active = quest ? getActiveObjective(quest, questProgress) : void 0;
+    const cached = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id);
+    if (cached) {
+      const active = getActiveObjective(cached.quest, cached.progress);
       if (active) {
         deactivateObjective({ thornyId: thorny_user.thorny_id, playerName, isLeaving: true }, active.obj_def, active.obj_progress);
       }
