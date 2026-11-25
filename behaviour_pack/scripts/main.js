@@ -6434,7 +6434,7 @@ import { system as system23, TicksPerSecond as TicksPerSecond9 } from "@minecraf
 var getListQuestsV1GuildsMeQuestsGetUrl = /* @__PURE__ */ __name((params) => {
   const normalizedParams = new URLSearchParams();
   Object.entries(params || {}).forEach(([key, value]) => {
-    const arrayFormatParameters = ["creator_thorny_ids", "quest_types"];
+    const arrayFormatParameters = ["creator_thorny_ids", "quest_types", "exclude_quest_types"];
     if (Array.isArray(value) && arrayFormatParameters.includes(key)) {
       value.forEach((v) => {
         normalizedParams.append(key, v === null ? "null" : String(v));
@@ -6457,12 +6457,19 @@ var listQuestsV1GuildsMeQuestsGet = /* @__PURE__ */ __name(async (params, option
     }
   );
 }, "listQuestsV1GuildsMeQuestsGet");
-var getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl = /* @__PURE__ */ __name((thornyId) => {
-  return `/v1/guilds/me/quests/progress/user/${thornyId}/active`;
+var getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl = /* @__PURE__ */ __name((thornyId, params) => {
+  const normalizedParams = new URLSearchParams();
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== void 0) {
+      normalizedParams.append(key, value === null ? "null" : String(value));
+    }
+  });
+  const stringifiedParams = normalizedParams.toString();
+  return stringifiedParams.length > 0 ? `/v1/guilds/me/quests/progress/user/${thornyId}/active?${stringifiedParams}` : `/v1/guilds/me/quests/progress/user/${thornyId}/active`;
 }, "getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl");
-var getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet = /* @__PURE__ */ __name(async (thornyId, options) => {
+var getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet = /* @__PURE__ */ __name(async (thornyId, params, options) => {
   return minecraftFetch(
-    getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl(thornyId),
+    getGetActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGetUrl(thornyId, params),
     {
       ...options,
       method: "GET"
@@ -6529,7 +6536,8 @@ var ObjectiveProgressOutStatus = {
   active: "active",
   pending: "pending",
   completed: "completed",
-  failed: "failed"
+  failed: "failed",
+  abandoned: "abandoned"
 };
 
 // behaviour_pack/scripts-dev/api/nexuscore/model/questProgressOutStatus.ts
@@ -6537,7 +6545,8 @@ var QuestProgressOutStatus = {
   active: "active",
   pending: "pending",
   completed: "completed",
-  failed: "failed"
+  failed: "failed",
+  abandoned: "abandoned"
 };
 
 // behaviour_pack/scripts-dev/features/quests/processors/mine-target-processor.ts
