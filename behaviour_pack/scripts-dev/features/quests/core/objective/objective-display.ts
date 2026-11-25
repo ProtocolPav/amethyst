@@ -11,10 +11,10 @@ import utils from "../../../../utils";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-const SECTION = "§8§m                              §r"
-const DIVIDER  = "§8- - - - - - - - - - - - - - - -§r"
+export const SECTION = "§8§m                              §r"
+export const DIVIDER  = "§8- - - - - - - - - - - - - - - -§r"
 
-function targetId(target: AnyTarget): string {
+export function targetId(target: AnyTarget): string {
     switch (target.target_type) {
         case 'mine': return (target as MineTargetModel).block
         case 'kill': return (target as KillTargetModel).entity
@@ -34,7 +34,7 @@ function logicVerb(type: string): string {
 
 // ─── Rewards ─────────────────────────────────────────────────────────────────
 
-function rewardsLine(rewards: RewardOut[]): string {
+export function rewardsLine(rewards: RewardOut[]): string {
     if (rewards.length === 0) return '§7None§r'
 
     const parts = rewards.map(r => {
@@ -56,7 +56,7 @@ function rewardsLine(rewards: RewardOut[]): string {
 
 // ─── Task line ────────────────────────────────────────────────────────────────
 
-function taskLine(objective: ObjectiveOut): string {
+export function taskLine(objective: ObjectiveOut): string {
     // Author-supplied display string takes priority
     if (objective.display) return `§b${objective.display}§r`
 
@@ -103,7 +103,7 @@ function buildSentence(verb: string, parts: string[], conjunction: string): stri
 
 // ─── Requirements ─────────────────────────────────────────────────────────────
 
-function requirementLines(objective: ObjectiveOut): string[] {
+export function requirementLines(objective: ObjectiveOut): string[] {
     const c = objective.customizations
     const lines: string[] = []
     const failables: string[] = []

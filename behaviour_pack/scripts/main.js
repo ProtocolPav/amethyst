@@ -8047,6 +8047,99 @@ function tickPlugins(player, ref, objective, progress) {
 }
 __name(tickPlugins, "tickPlugins");
 
+// behaviour_pack/scripts-dev/features/quests/core/daily-display.ts
+function formatDuration(ms) {
+  const totalMinutes = Math.max(0, Math.ceil(ms / 6e4));
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+}
+__name(formatDuration, "formatDuration");
+function nextUtcMidnight(now) {
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
+}
+__name(nextUtcMidnight, "nextUtcMidnight");
+function displayedObjective(quest, progress) {
+  const byOrder = /* @__PURE__ */ __name((a, b) => a.order_index - b.order_index, "byOrder");
+  const objectives = [...quest.objectives].sort(byOrder);
+  if (objectives.length === 0) return void 0;
+  const progressFor = /* @__PURE__ */ __name((def) => progress?.objectives.find((o) => o.objective_id === def.objective_id), "progressFor");
+  const active = objectives.find((def) => progressFor(def)?.status === ObjectiveProgressOutStatus.active);
+  if (active) return { def: active, progress: progressFor(active) };
+  const reached = objectives.filter((def) => {
+    const status = progressFor(def)?.status;
+    return status !== void 0 && status !== ObjectiveProgressOutStatus.pending;
+  });
+  const last = reached[reached.length - 1] ?? objectives[0];
+  return { def: last, progress: progressFor(last) };
+}
+__name(displayedObjective, "displayedObjective");
+function progressLine(objective, objectiveProgress) {
+  const targetProgress = objectiveProgress?.target_progress ?? [];
+  const countFor = /* @__PURE__ */ __name((target) => targetProgress.find((tp) => tp.target_uuid === target.target_uuid)?.count ?? 0, "countFor");
+  const targets = objective.targets;
+  if (objective.logic === ObjectiveOutLogic.or && objective.target_count !== null && objective.target_count !== void 0) {
+    const total = Math.min(targets.reduce((sum, t) => sum + countFor(t), 0), objective.target_count);
+    return `\xA7f${total}\xA77/${objective.target_count}\xA7r`;
+  }
+  return targets.map((target) => {
+    const name = utils_default.clean_id(targetId(target));
+    const goal = target.count ?? 1;
+    const count = Math.min(countFor(target), goal);
+    if (target.target_type === "visit") {
+      return count >= goal ? `\xA7f${name} \xA7a(visited)\xA7r` : `\xA7f${name} \xA77(not yet)\xA7r`;
+    }
+    return `\xA7f${name} \xA77${count}/${goal}\xA7r`;
+  }).join("\xA77, \xA7r");
+}
+__name(progressLine, "progressLine");
+function statusLine(progress, quest, now) {
+  const endsIn = formatDuration(new Date(quest.end_time).getTime() - now.getTime());
+  const nextIn = formatDuration(nextUtcMidnight(now).getTime() - now.getTime());
+  switch (progress?.status) {
+    case "completed":
+      return `\xA7aCompleted!\xA7r \xA77Next daily quest in \xA7f${nextIn}\xA7r`;
+    case "failed":
+      return `\xA7cFailed\xA7r \xA77Next daily quest in \xA7f${nextIn}\xA7r`;
+    case "abandoned":
+      return `\xA77Ended. Next daily quest in \xA7f${nextIn}\xA7r`;
+    case "active":
+    case "pending":
+      return `\xA7eIn progress\xA7r \xA77Ends in \xA7f${endsIn}\xA7r`;
+    default:
+      return `\xA77Not started.\xA7r \xA77Ends in \xA7f${endsIn}\xA7r`;
+  }
+}
+__name(statusLine, "statusLine");
+function generateDailyDisplayString(quest, progress, withCommand, now = /* @__PURE__ */ new Date()) {
+  const parts = [
+    SECTION,
+    `\xA7e\xA7l[ Daily Quest ]\xA7r \xA7f\xA7l${quest.title}\xA7r`,
+    DIVIDER
+  ];
+  const shown = displayedObjective(quest, progress);
+  if (shown) {
+    const { def, progress: objectiveProgress } = shown;
+    if (quest.objectives.length > 1) {
+      const index = [...quest.objectives].sort((a, b) => a.order_index - b.order_index).indexOf(def) + 1;
+      parts.push(`\xA77Objective ${index} of ${quest.objectives.length}\xA7r`);
+    }
+    if (def.description) parts.push(`\xA77${def.description}\xA7r`);
+    parts.push(`\xA7aTask:\xA7r ${taskLine(def)}`);
+    parts.push(`\xA7bProgress:\xA7r ${progressLine(def, objectiveProgress)}`);
+    parts.push(`\xA76Rewards:\xA7r ${rewardsLine(def.rewards)}`);
+    const requirements = requirementLines(def);
+    if (requirements.length > 0) {
+      parts.push(DIVIDER, `\xA7eRequirements:\xA7r`, ...requirements);
+    }
+  }
+  parts.push(DIVIDER, `\xA77Status:\xA7r ${statusLine(progress, quest, now)}`);
+  if (withCommand) parts.push(`\xA77Run \xA75${DAILY_COMMAND}\xA77 to see this again\xA7r`);
+  parts.push(SECTION);
+  return parts.join("\n");
+}
+__name(generateDailyDisplayString, "generateDailyDisplayString");
+
 // behaviour_pack/scripts-dev/features/quests/progress-cache.ts
 var questProcessor2 = new QuestProcessor();
 var DAILY_POLL_SECONDS = 30;
@@ -8125,7 +8218,14 @@ function showActiveObjective(player, cached) {
   }, TicksPerSecond13 * 10);
 }
 __name(showActiveObjective, "showActiveObjective");
-async function syncDailySlot(player, thornyId) {
+function showDailySummary(player, cached, delayTicks) {
+  system30.runTimeout(() => {
+    if (!player.isValid) return;
+    notifyOfQuestUpdate(player, generateDailyDisplayString(cached.quest, cached.progress, true));
+  }, delayTicks);
+}
+__name(showDailySummary, "showDailySummary");
+async function syncDailySlot(player, thornyId, isJoin = false) {
   const ref = { thornyId, slot: "daily" };
   await syncOnce(ref, async () => {
     let progress;
@@ -8153,11 +8253,8 @@ async function syncDailySlot(player, thornyId) {
     if (!progress) return;
     const loaded = await loadSlot(player, ref, progress);
     if (!loaded) return;
-    if (isFinished(progress.status)) {
-      loaded.finishHandled = true;
-    } else {
-      showActiveObjective(player, loaded);
-    }
+    if (isFinished(progress.status)) loaded.finishHandled = true;
+    showDailySummary(player, loaded, isJoin ? TicksPerSecond13 * 11 : TicksPerSecond13);
   });
 }
 __name(syncDailySlot, "syncDailySlot");
@@ -8250,7 +8347,7 @@ function loadQuestProgressCache() {
     if (thornyUser && player.isValid) {
       await Promise.all([
         syncRegularSlot(player, thornyUser),
-        syncDailySlot(player, thornyUser.thorny_id)
+        syncDailySlot(player, thornyUser.thorny_id, true)
       ]);
     }
   }

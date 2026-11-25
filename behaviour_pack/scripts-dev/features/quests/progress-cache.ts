@@ -9,6 +9,7 @@ import { activateObjective, deactivateObjective } from "./core/objective/objecti
 import { tickPlugins } from "./core/objective/objective-tick";
 import { getActiveObjective } from "./core/objective/objective-lookup";
 import { generateObjectiveDisplayString } from "./core/objective/objective-display";
+import { generateDailyDisplayString } from "./core/daily-display";
 import { CachedQuestProgress, deleteCachedProgress, findCachedProgressById, getCachedProgress, setCachedProgress } from "./progress-store";
 import { flushProgress, setFinishedProgressHandler } from "./write-back";
 import { QUEST_SLOTS, SlotRef, slotKey } from "./types/slot";
@@ -129,14 +130,27 @@ function showActiveObjective(player: Player, cached: CachedQuestProgress) {
 }
 
 /**
+ * Shows the player the daily quest summary.
+ */
+function showDailySummary(player: Player, cached: CachedQuestProgress, delayTicks: number) {
+    system.runTimeout(() => {
+        if (!player.isValid) return
+        notifyOfQuestUpdate(player, generateDailyDisplayString(cached.quest, cached.progress, true))
+    }, delayTicks)
+}
+
+/**
  * Syncs the daily quest slot with the player's current daily in Nexuscore.
  *
  * Uses the accept-daily endpoint, which is safe to call repeatedly: it returns
  * the player's unfinished daily while it's running, otherwise accepts today's
  * (or returns today's existing progress, whatever its status). So this both
  * notices a daily that expired server-side and picks up the next one.
+ *
+ * Whenever a different daily is loaded, the player is shown its summary:
+ * on join just after the regular quest's message, otherwise straight away.
  */
-export async function syncDailySlot(player: Player, thornyId: number): Promise<void> {
+export async function syncDailySlot(player: Player, thornyId: number, isJoin: boolean = false): Promise<void> {
     const ref: SlotRef = { thornyId, slot: 'daily' }
 
     await syncOnce(ref, async () => {
@@ -179,12 +193,10 @@ export async function syncDailySlot(player: Player, thornyId: number): Promise<v
         const loaded = await loadSlot(player, ref, progress)
         if (!loaded) return
 
-        if (isFinished(progress.status)) {
-            // Nexuscore returned finished progress, so there's no newer daily yet
-            loaded.finishHandled = true
-        } else {
-            showActiveObjective(player, loaded)
-        }
+        // Nexuscore returned finished progress, so there's no newer daily yet
+        if (isFinished(progress.status)) loaded.finishHandled = true
+
+        showDailySummary(player, loaded, isJoin ? TicksPerSecond * 11 : TicksPerSecond)
     })
 }
 
@@ -316,7 +328,7 @@ export default function loadQuestProgressCache() {
         if (thornyUser && player.isValid) {
             await Promise.all([
                 syncRegularSlot(player, thornyUser),
-                syncDailySlot(player, thornyUser.thorny_id),
+                syncDailySlot(player, thornyUser.thorny_id, true),
             ])
         }
     }
