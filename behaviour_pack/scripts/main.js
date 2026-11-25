@@ -8243,16 +8243,31 @@ function notifyQuestEnded(player, cached) {
   notifyOfQuestUpdate(player, `Your ${what} has ended: ${cached.quest.title}`);
 }
 __name(notifyQuestEnded, "notifyQuestEnded");
-function handleProgressFinishedByServer(progress) {
-  const cached = findCachedProgressById(progress.progress_id);
-  if (!cached) return;
-  const player = findPlayer(cached.ref.thornyId);
-  const wasUnfinished = !isFinished(cached.progress.status);
-  unloadSlot(cached.ref, player?.name ?? "", player, !player);
-  if (player && wasUnfinished) notifyQuestEnded(player, cached);
-  if (player && cached.ref.slot === "daily") {
-    syncDailySlot(player, cached.ref.thornyId).catch((e) => console.error("[daily] Sync failed:", e));
+function adoptServerFinish(cached, player, status, serverProgress) {
+  const active = getActiveObjective(cached.quest, cached.progress);
+  if (active) {
+    deactivateObjective({ ...cached.ref, playerName: player.name, player, isLeaving: false }, active.obj_def, active.obj_progress);
   }
+  if (serverProgress) {
+    cached.progress = serverProgress;
+  } else {
+    cached.progress.status = status;
+    cached.progress.end_time = (/* @__PURE__ */ new Date()).toISOString();
+    if (active) active.obj_progress.status = status;
+  }
+}
+__name(adoptServerFinish, "adoptServerFinish");
+function handleProgressFinishedByServer(progress, serverStatus) {
+  const cached = findCachedProgressById(progress.progress_id);
+  if (!cached || isFinished(cached.progress.status)) return;
+  const player = findPlayer(cached.ref.thornyId);
+  if (!player) {
+    unloadSlot(cached.ref, "", void 0, true);
+    return;
+  }
+  const status = isFinished(serverStatus ?? "") ? serverStatus : QuestProgressOutStatus.abandoned;
+  adoptServerFinish(cached, player, status);
+  notifyQuestEnded(player, cached);
 }
 __name(handleProgressFinishedByServer, "handleProgressFinishedByServer");
 function showActiveObjective(player, cached) {
@@ -8293,10 +8308,9 @@ async function syncDailySlot(player, thornyId, isJoin = false) {
     const cached = getCachedProgress(ref);
     if (cached && progress && cached.progress.progress_id === progress.progress_id) {
       if (isFinished(progress.status) && !isFinished(cached.progress.status)) {
-        unloadSlot(ref, player.name, player, false);
+        adoptServerFinish(cached, player, progress.status, progress);
+        cached.finishHandled = true;
         notifyQuestEnded(player, cached);
-        const loaded2 = await loadSlot(player, ref, progress);
-        if (loaded2) loaded2.finishHandled = true;
       }
       return;
     }

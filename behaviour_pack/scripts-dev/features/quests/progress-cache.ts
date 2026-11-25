@@ -2,7 +2,7 @@ import { Player, system, TicksPerSecond, world } from "@minecraft/server";
 import { getQuest } from "./quest-cache";
 import ThornyUser from "../../api/user";
 import { accept_daily_quest, get_quest_progress } from "./core/fetch";
-import { QuestProgressOut, QuestProgressOutStatus } from "../../api/nexuscore/model";
+import { ObjectiveProgressOutStatus, QuestProgressOut, QuestProgressOutStatus } from "../../api/nexuscore/model";
 import { QuestProcessor } from "./processors/quest-processor";
 import { notifyOfQuestUpdate } from "./core/notify";
 import { activateObjective, deactivateObjective } from "./core/objective/objective-lifecycle";
@@ -90,25 +90,44 @@ export function notifyQuestEnded(player: Player, cached: CachedQuestProgress) {
 }
 
 /**
- * Handles Nexuscore rejecting a save because it already finished the
- * progress (usually because the quest expired): evicts it from its slot
- * and tells the player, if they're online and it was still unfinished here.
+ * Ends a slot's quest because Nexuscore finished it (usually because it
+ * expired): deactivates its objective and takes on the server's status,
+ * without saving anything. The slot keeps the finished progress; the
+ * regular slot's poll then evicts it quietly, and the daily slot's
+ * follow-up asks for the next daily.
  */
-function handleProgressFinishedByServer(progress: QuestProgressOut) {
+function adoptServerFinish(cached: CachedQuestProgress, player: Player, status: QuestProgressOutStatus, serverProgress?: QuestProgressOut) {
+    const active = getActiveObjective(cached.quest, cached.progress)
+    if (active) {
+        deactivateObjective({ ...cached.ref, playerName: player.name, player, isLeaving: false }, active.obj_def, active.obj_progress)
+    }
+
+    if (serverProgress) {
+        cached.progress = serverProgress
+    } else {
+        cached.progress.status = status
+        cached.progress.end_time = new Date().toISOString()
+        if (active) active.obj_progress.status = status as ObjectiveProgressOutStatus
+    }
+}
+
+/**
+ * Handles Nexuscore rejecting a save because it already finished the
+ * progress: ends it in its slot and tells the player their quest has ended.
+ */
+function handleProgressFinishedByServer(progress: QuestProgressOut, serverStatus: string | undefined) {
     const cached = findCachedProgressById(progress.progress_id)
-    if (!cached) return  // Slot has already moved on
+    if (!cached || isFinished(cached.progress.status)) return  // Slot has moved on, or already ended
 
     const player = findPlayer(cached.ref.thornyId)
-    const wasUnfinished = !isFinished(cached.progress.status)
-
-    unloadSlot(cached.ref, player?.name ?? '', player, !player)
-
-    if (player && wasUnfinished) notifyQuestEnded(player, cached)
-
-    // The player's next daily may already be available
-    if (player && cached.ref.slot === 'daily') {
-        syncDailySlot(player, cached.ref.thornyId).catch(e => console.error('[daily] Sync failed:', e))
+    if (!player) {
+        unloadSlot(cached.ref, '', undefined, true)
+        return
     }
+
+    const status = isFinished(serverStatus ?? '') ? serverStatus as QuestProgressOutStatus : QuestProgressOutStatus.abandoned
+    adoptServerFinish(cached, player, status)
+    notifyQuestEnded(player, cached)
 }
 
 function showActiveObjective(player: Player, cached: CachedQuestProgress) {
@@ -172,12 +191,10 @@ export async function syncDailySlot(player: Player, thornyId: number, isJoin: bo
             // the server never overrides it, except when the server finished a daily
             // that's unfinished here, i.e. it expired.
             if (isFinished(progress.status) && !isFinished(cached.progress.status)) {
-                unloadSlot(ref, player.name, player, false)
+                // This is already the server's answer, so there's no newer daily to ask for
+                adoptServerFinish(cached, player, progress.status, progress)
+                cached.finishHandled = true
                 notifyQuestEnded(player, cached)
-
-                // Keep the finished progress so the player can still see it
-                const loaded = await loadSlot(player, ref, progress)
-                if (loaded) loaded.finishHandled = true
             }
             return
         }
