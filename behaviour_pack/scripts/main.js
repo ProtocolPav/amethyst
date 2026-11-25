@@ -7143,6 +7143,9 @@ var TimerPlugin = class {
 // behaviour_pack/scripts-dev/features/quests/customizations/waypoint-plugin.ts
 import { LocationWaypoint, world as world26 } from "@minecraft/server";
 var WaypointPlugin = class {
+  constructor() {
+    this.added = [];
+  }
   static {
     __name(this, "WaypointPlugin");
   }
@@ -7151,7 +7154,7 @@ var WaypointPlugin = class {
     if (!c) return;
     const player = ctx.player;
     c.waypoints.forEach((waypoint) => {
-      player.locatorBar.addWaypoint(new LocationWaypoint(
+      const locationWaypoint = new LocationWaypoint(
         {
           dimension: world26.getDimension(waypoint.dimension ?? MinecraftDimensionTypes.Overworld),
           x: waypoint.coordinates[0],
@@ -7170,12 +7173,21 @@ var WaypointPlugin = class {
             }
           ]
         }
-      ));
+      );
+      player.locatorBar.addWaypoint(locationWaypoint);
+      this.added.push(locationWaypoint);
     });
   }
   onDeactivate(ctx, _objective, _progress) {
+    const added = this.added;
+    this.added = [];
     if (ctx.isLeaving || !ctx.player?.isValid) return;
-    ctx.player.locatorBar.removeAllWaypoints();
+    for (const waypoint of added) {
+      try {
+        ctx.player.locatorBar.removeWaypoint(waypoint);
+      } catch (e) {
+      }
+    }
   }
 };
 
