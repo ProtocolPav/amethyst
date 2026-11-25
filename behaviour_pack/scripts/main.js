@@ -6979,7 +6979,7 @@ import { world as world25 } from "@minecraft/server";
 import { system as system25, TicksPerSecond as TicksPerSecond10 } from "@minecraft/server";
 var DIRTY = /* @__PURE__ */ new Map();
 var markCounter = 0;
-var flushing = false;
+var IN_FLIGHT = /* @__PURE__ */ new Map();
 var onProgressFinished;
 function setFinishedProgressHandler(handler) {
   onProgressFinished = handler;
@@ -7006,40 +7006,53 @@ function buildUpdate(progress) {
   };
 }
 __name(buildUpdate, "buildUpdate");
-async function flush() {
-  if (DIRTY.size === 0 || flushing) return;
-  flushing = true;
+async function saveEntry(progress_id) {
+  const entry = DIRTY.get(progress_id);
+  if (!entry) return true;
+  const { progress, mark } = entry;
   try {
-    await flushAll();
-  } finally {
-    flushing = false;
+    await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut(
+      progress.progress_id,
+      buildUpdate(progress)
+    );
+    if (DIRTY.get(progress_id)?.mark === mark) DIRTY.delete(progress_id);
+    return true;
+  } catch (error) {
+    if (error instanceof ConflictError && error.detail?.error === "progress_finished") {
+      DIRTY.delete(progress_id);
+      console.warn(`[write-back] Progress ${progress_id} was already ${error.detail.status} on the server, dropping it`);
+      try {
+        onProgressFinished?.(progress, error.detail.status);
+      } catch (handlerError) {
+        console.error(`[write-back] Failed to handle finished progress ${progress_id}:`, handlerError);
+      }
+      return true;
+    }
+    console.error(`[write-back] Failed to flush progress ${progress_id} (thorny_id ${progress.thorny_id}):`, error);
+    return false;
+  }
+}
+__name(saveEntry, "saveEntry");
+function save(progress_id) {
+  const inFlight = IN_FLIGHT.get(progress_id);
+  if (inFlight) return inFlight;
+  const request = (async () => {
+    try {
+      return await saveEntry(progress_id);
+    } finally {
+      IN_FLIGHT.delete(progress_id);
+    }
+  })();
+  IN_FLIGHT.set(progress_id, request);
+  return request;
+}
+__name(save, "save");
+async function flush() {
+  for (const progress_id of Array.from(DIRTY.keys())) {
+    await save(progress_id);
   }
 }
 __name(flush, "flush");
-async function flushAll() {
-  for (const [progress_id, { progress, mark }] of DIRTY) {
-    try {
-      await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut(
-        progress.progress_id,
-        buildUpdate(progress)
-      );
-      if (DIRTY.get(progress_id)?.mark === mark) DIRTY.delete(progress_id);
-    } catch (error) {
-      if (error instanceof ConflictError && error.detail?.error === "progress_finished") {
-        DIRTY.delete(progress_id);
-        console.warn(`[write-back] Progress ${progress_id} was already ${error.detail.status} on the server, dropping it`);
-        try {
-          onProgressFinished?.(progress, error.detail.status);
-        } catch (handlerError) {
-          console.error(`[write-back] Failed to handle finished progress ${progress_id}:`, handlerError);
-        }
-        continue;
-      }
-      console.error(`[write-back] Failed to flush progress ${progress_id} (thorny_id ${progress.thorny_id}):`, error);
-    }
-  }
-}
-__name(flushAll, "flushAll");
 function loadWriteBackLoop() {
   system25.runInterval(async () => {
     await flush();

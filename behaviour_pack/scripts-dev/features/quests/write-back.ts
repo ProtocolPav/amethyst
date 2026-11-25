@@ -12,7 +12,9 @@ import { ConflictError } from "../../api/http-errors";
 // progress changed again while its request was in flight.
 const DIRTY = new Map<number, { progress: QuestProgressOut, mark: number }>()  // progress_id → entry
 let markCounter = 0
-let flushing = false
+
+// Saves currently in flight, keyed by progress_id
+const IN_FLIGHT = new Map<number, Promise<boolean>>()
 
 /**
  * Called when Nexuscore rejects a save because it has already finished the
@@ -56,46 +58,81 @@ function buildUpdate(progress: QuestProgressOut): QuestProgressUpdate {
 }
 
 /**
+ * Saves one dirty progress entry. Returns false if the save failed and the
+ * entry is still dirty, true otherwise.
+ */
+async function saveEntry(progress_id: number): Promise<boolean> {
+    const entry = DIRTY.get(progress_id)
+    if (!entry) return true
+    const { progress, mark } = entry
+
+    try {
+        await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut(
+            progress.progress_id,
+            buildUpdate(progress)
+        )
+        // Only remove on success, and only if it wasn't marked again mid-flush
+        if (DIRTY.get(progress_id)?.mark === mark) DIRTY.delete(progress_id)
+        return true
+    } catch (error) {
+        if (error instanceof ConflictError && error.detail?.error === 'progress_finished') {
+            // The server finished this progress (e.g. the quest expired).
+            // Finished progress is final, so retrying can never succeed.
+            DIRTY.delete(progress_id)
+            console.warn(`[write-back] Progress ${progress_id} was already ${error.detail.status} on the server, dropping it`)
+            try {
+                onProgressFinished?.(progress, error.detail.status)
+            } catch (handlerError) {
+                console.error(`[write-back] Failed to handle finished progress ${progress_id}:`, handlerError)
+            }
+            return true
+        }
+
+        // Leave in DIRTY — retries next interval
+        console.error(`[write-back] Failed to flush progress ${progress_id} (thorny_id ${progress.thorny_id}):`, error)
+        return false
+    }
+}
+
+/**
+ * Saves a progress entry, or joins the save already in flight for it, so the
+ * same progress is never sent twice at once.
+ */
+function save(progress_id: number): Promise<boolean> {
+    const inFlight = IN_FLIGHT.get(progress_id)
+    if (inFlight) return inFlight
+
+    const request = (async () => {
+        try {
+            return await saveEntry(progress_id)
+        } finally {
+            IN_FLIGHT.delete(progress_id)
+        }
+    })()
+    IN_FLIGHT.set(progress_id, request)
+    return request
+}
+
+/**
+ * Saves a progress entry now instead of waiting for the next interval,
+ * including changes made while an earlier save was in flight.
+ * Returns true once nothing is left unsaved, false if a save failed.
+ */
+export async function flushProgress(progress_id: number): Promise<boolean> {
+    for (let attempt = 0; attempt < 3 && DIRTY.has(progress_id); attempt++) {
+        if (!await save(progress_id)) return false
+    }
+    return !DIRTY.has(progress_id)
+}
+
+/**
  * Flushes all dirty progress entries to the API.
  * Failures are logged but do not throw — a missed flush will retry next tick,
  * except for progress Nexuscore has already finished, which is never retried.
  */
 async function flush(): Promise<void> {
-    if (DIRTY.size === 0 || flushing) return
-    flushing = true
-    try {
-        await flushAll()
-    } finally {
-        flushing = false
-    }
-}
-
-async function flushAll(): Promise<void> {
-    for (const [progress_id, { progress, mark }] of DIRTY) {
-        try {
-            await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut(
-                progress.progress_id,
-                buildUpdate(progress)
-            )
-            // Only remove on success, and only if it wasn't marked again mid-flush
-            if (DIRTY.get(progress_id)?.mark === mark) DIRTY.delete(progress_id)
-        } catch (error) {
-            if (error instanceof ConflictError && error.detail?.error === 'progress_finished') {
-                // The server finished this progress (e.g. the quest expired).
-                // Finished progress is final, so retrying can never succeed.
-                DIRTY.delete(progress_id)
-                console.warn(`[write-back] Progress ${progress_id} was already ${error.detail.status} on the server, dropping it`)
-                try {
-                    onProgressFinished?.(progress, error.detail.status)
-                } catch (handlerError) {
-                    console.error(`[write-back] Failed to handle finished progress ${progress_id}:`, handlerError)
-                }
-                continue
-            }
-
-            // Leave in DIRTY — retries next interval with the same snapshot
-            console.error(`[write-back] Failed to flush progress ${progress_id} (thorny_id ${progress.thorny_id}):`, error)
-        }
+    for (const progress_id of Array.from(DIRTY.keys())) {
+        await save(progress_id)
     }
 }
 
