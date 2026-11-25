@@ -1,7 +1,7 @@
 import { Player, system, TicksPerSecond, world } from "@minecraft/server";
 import { getQuest } from "./quest-cache";
 import ThornyUser from "../../api/user";
-import { get_quest_progress } from "./core/fetch";
+import { accept_daily_quest, get_quest_progress } from "./core/fetch";
 import { QuestProgressOut, QuestProgressOutStatus } from "../../api/nexuscore/model";
 import { QuestProcessor } from "./processors/quest-processor";
 import { notifyOfQuestUpdate } from "./core/notify";
@@ -10,11 +10,14 @@ import { tickPlugins } from "./core/objective/objective-tick";
 import { getActiveObjective } from "./core/objective/objective-lookup";
 import { generateObjectiveDisplayString } from "./core/objective/objective-display";
 import { CachedQuestProgress, deleteCachedProgress, findCachedProgressById, getCachedProgress, setCachedProgress } from "./progress-store";
-import { setFinishedProgressHandler } from "./write-back";
+import { flushProgress, setFinishedProgressHandler } from "./write-back";
 import { QUEST_SLOTS, SlotRef, slotKey } from "./types/slot";
 import { isFinished } from "./core/status";
 
 const questProcessor = new QuestProcessor()
+
+/** How often each player's daily quest slot is synced with Nexuscore. */
+const DAILY_POLL_SECONDS = 30
 
 /** Slots with a sync in flight, so slow requests can't overlap and double-load a slot. */
 const SYNCING = new Set<string>()
@@ -100,30 +103,115 @@ function handleProgressFinishedByServer(progress: QuestProgressOut) {
     unloadSlot(cached.ref, player?.name ?? '', player, !player)
 
     if (player && wasUnfinished) notifyQuestEnded(player, cached)
+
+    // The player's next daily may already be available
+    if (player && cached.ref.slot === 'daily') {
+        syncDailySlot(player, cached.ref.thornyId).catch(e => console.error('[daily] Sync failed:', e))
+    }
+}
+
+function showActiveObjective(player: Player, cached: CachedQuestProgress) {
+    const active = getActiveObjective(cached.quest, cached.progress)
+    if (!active) return
+
+    system.runTimeout(() => {
+        if (!player.isValid) return
+        notifyOfQuestUpdate(
+            player,
+            generateObjectiveDisplayString(
+                active.obj_def,
+                cached.quest.objectives.indexOf(active.obj_def) + 1,
+                cached.quest.objectives.length,
+                cached.quest.title
+            )
+        )
+    }, TicksPerSecond * 10)
+}
+
+/**
+ * Syncs the daily quest slot with the player's current daily in Nexuscore.
+ *
+ * Uses the accept-daily endpoint, which is safe to call repeatedly: it returns
+ * the player's unfinished daily while it's running, otherwise accepts today's
+ * (or returns today's existing progress, whatever its status). So this both
+ * notices a daily that expired server-side and picks up the next one.
+ */
+export async function syncDailySlot(player: Player, thornyId: number): Promise<void> {
+    const ref: SlotRef = { thornyId, slot: 'daily' }
+
+    await syncOnce(ref, async () => {
+        let progress: QuestProgressOut | null
+        try {
+            progress = await accept_daily_quest(thornyId)
+        } catch (error) {
+            // e.g. 400 if the next daily hasn't quite started yet; retried on the next poll
+            console.warn(`[daily] Couldn't sync the daily quest for thorny_id ${thornyId}, retrying later:`, error)
+            return
+        }
+        if (!player.isValid) return
+
+        const cached = getCachedProgress(ref)
+
+        // Still the same daily
+        if (cached && progress && cached.progress.progress_id === progress.progress_id) {
+            // Local progress is ahead of the server until it's saved, so a status from
+            // the server never overrides it, except when the server finished a daily
+            // that's unfinished here, i.e. it expired.
+            if (isFinished(progress.status) && !isFinished(cached.progress.status)) {
+                unloadSlot(ref, player.name, player, false)
+                notifyQuestEnded(player, cached)
+
+                // Keep the finished progress so the player can still see it
+                const loaded = await loadSlot(player, ref, progress)
+                if (loaded) loaded.finishHandled = true
+            }
+            return
+        }
+
+        // The cached daily is gone: it was replaced by the next one, or none is available
+        if (cached) {
+            unloadSlot(ref, player.name, player, false)
+            if (!isFinished(cached.progress.status)) notifyQuestEnded(player, cached)
+        }
+
+        if (!progress) return
+
+        const loaded = await loadSlot(player, ref, progress)
+        if (!loaded) return
+
+        if (isFinished(progress.status)) {
+            // Nexuscore returned finished progress, so there's no newer daily yet
+            loaded.finishHandled = true
+        } else {
+            showActiveObjective(player, loaded)
+        }
+    })
+}
+
+/**
+ * Once the player finishes their daily (completed or failed), saves it and
+ * asks Nexuscore for the next one, e.g. today's after finishing yesterday's
+ * while they overlap. Saving first matters: until the save lands, Nexuscore
+ * would still return the finished daily as active.
+ */
+function followUpFinishedDaily(player: Player, thornyId: number) {
+    const cached = getCachedProgress({ thornyId, slot: 'daily' })
+    if (!cached || cached.finishHandled || !isFinished(cached.progress.status)) return
+
+    cached.finishHandled = true
+
+    flushProgress(cached.progress.progress_id)
+        .then(saved => {
+            // If the save failed, the regular daily poll catches up later
+            if (saved && player.isValid) return syncDailySlot(player, thornyId)
+        })
+        .catch(e => console.error('[daily] Failed to follow up a finished daily:', e))
 }
 
 export default function loadQuestProgressCache() {
     const PLAYER_LOOP_RUN_IDS = new Map<string, number[]>()
 
     setFinishedProgressHandler(handleProgressFinishedByServer)
-
-    function showActiveObjective(player: Player, cached: CachedQuestProgress) {
-        const active = getActiveObjective(cached.quest, cached.progress)
-        if (!active) return
-
-        system.runTimeout(() => {
-            if (!player.isValid) return
-            notifyOfQuestUpdate(
-                player,
-                generateObjectiveDisplayString(
-                    active.obj_def,
-                    cached.quest.objectives.indexOf(active.obj_def) + 1,
-                    cached.quest.objectives.length,
-                    cached.quest.title
-                )
-            )
-        }, TicksPerSecond * 10)
-    }
 
     async function new_active_quest(questProgress: QuestProgressOut, ref: SlotRef, player: Player) {
         unloadSlot(ref, player.name, player, false)
@@ -204,13 +292,32 @@ export default function loadQuestProgressCache() {
             for (const slot of QUEST_SLOTS) {
                 tickSlot(player, { thornyId: thornyUser.thorny_id, slot })
             }
+            followUpFinishedDaily(player, thornyUser.thorny_id)
         }, TicksPerSecond)
 
-        PLAYER_LOOP_RUN_IDS.set(playerName, [cacheRunId, tickRunId])
+        const dailyRunId = system.runInterval(async () => {
+            if (!player.isValid) {
+                system.clearRun(dailyRunId)
+                return
+            }
 
+            const thornyUser = ThornyUser.fetch_user(playerName)
+            if (!thornyUser) return
+
+            await syncDailySlot(player, thornyUser.thorny_id)
+        }, TicksPerSecond * DAILY_POLL_SECONDS)
+
+        PLAYER_LOOP_RUN_IDS.set(playerName, [cacheRunId, tickRunId, dailyRunId])
+
+        // On first join the user may not be cached yet; wait for it so the
+        // daily quest loads now rather than on the next daily poll
         const thornyUser = ThornyUser.fetch_user(playerName)
-        if (thornyUser) {
-            await syncRegularSlot(player, thornyUser)
+            ?? await ThornyUser.get_user_from_api(playerName).catch(() => undefined)
+        if (thornyUser && player.isValid) {
+            await Promise.all([
+                syncRegularSlot(player, thornyUser),
+                syncDailySlot(player, thornyUser.thorny_id),
+            ])
         }
     }
 

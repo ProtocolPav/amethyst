@@ -6506,6 +6506,18 @@ var getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet = /* @__
     }
   );
 }, "getActiveQuestProgressV1GuildsMeQuestsProgressUserThornyIdActiveGet");
+var getAcceptDailyQuestV1GuildsMeQuestsProgressUserThornyIdDailyPostUrl = /* @__PURE__ */ __name((thornyId) => {
+  return `/v1/guilds/me/quests/progress/user/${thornyId}/daily`;
+}, "getAcceptDailyQuestV1GuildsMeQuestsProgressUserThornyIdDailyPostUrl");
+var acceptDailyQuestV1GuildsMeQuestsProgressUserThornyIdDailyPost = /* @__PURE__ */ __name(async (thornyId, options) => {
+  return minecraftFetch(
+    getAcceptDailyQuestV1GuildsMeQuestsProgressUserThornyIdDailyPostUrl(thornyId),
+    {
+      ...options,
+      method: "POST"
+    }
+  );
+}, "acceptDailyQuestV1GuildsMeQuestsProgressUserThornyIdDailyPost");
 var getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPutUrl = /* @__PURE__ */ __name((progressId) => {
   return `/v1/guilds/me/quests/progress/${progressId}`;
 }, "getPartialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPutUrl");
@@ -6594,6 +6606,17 @@ async function get_quest_progress(thorny_id) {
   return quest_progress_response;
 }
 __name(get_quest_progress, "get_quest_progress");
+async function accept_daily_quest(thorny_id) {
+  try {
+    return await acceptDailyQuestV1GuildsMeQuestsProgressUserThornyIdDailyPost(thorny_id);
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      return null;
+    }
+    throw error;
+  }
+}
+__name(accept_daily_quest, "accept_daily_quest");
 
 // behaviour_pack/scripts-dev/api/nexuscore/model/objectiveOutLogic.ts
 var ObjectiveOutLogic = {
@@ -7047,6 +7070,13 @@ function save(progress_id) {
   return request;
 }
 __name(save, "save");
+async function flushProgress(progress_id) {
+  for (let attempt = 0; attempt < 3 && DIRTY.has(progress_id); attempt++) {
+    if (!await save(progress_id)) return false;
+  }
+  return !DIRTY.has(progress_id);
+}
+__name(flushProgress, "flushProgress");
 async function flush() {
   for (const progress_id of Array.from(DIRTY.keys())) {
     await save(progress_id);
@@ -7957,6 +7987,7 @@ __name(tickPlugins, "tickPlugins");
 
 // behaviour_pack/scripts-dev/features/quests/progress-cache.ts
 var questProcessor2 = new QuestProcessor();
+var DAILY_POLL_SECONDS = 30;
 var SYNCING = /* @__PURE__ */ new Set();
 async function syncOnce(ref, sync) {
   const key = slotKey(ref);
@@ -8010,28 +8041,76 @@ function handleProgressFinishedByServer(progress) {
   const wasUnfinished = !isFinished(cached.progress.status);
   unloadSlot(cached.ref, player?.name ?? "", player, !player);
   if (player && wasUnfinished) notifyQuestEnded(player, cached);
+  if (player && cached.ref.slot === "daily") {
+    syncDailySlot(player, cached.ref.thornyId).catch((e) => console.error("[daily] Sync failed:", e));
+  }
 }
 __name(handleProgressFinishedByServer, "handleProgressFinishedByServer");
+function showActiveObjective(player, cached) {
+  const active = getActiveObjective(cached.quest, cached.progress);
+  if (!active) return;
+  system29.runTimeout(() => {
+    if (!player.isValid) return;
+    notifyOfQuestUpdate(
+      player,
+      generateObjectiveDisplayString(
+        active.obj_def,
+        cached.quest.objectives.indexOf(active.obj_def) + 1,
+        cached.quest.objectives.length,
+        cached.quest.title
+      )
+    );
+  }, TicksPerSecond13 * 10);
+}
+__name(showActiveObjective, "showActiveObjective");
+async function syncDailySlot(player, thornyId) {
+  const ref = { thornyId, slot: "daily" };
+  await syncOnce(ref, async () => {
+    let progress;
+    try {
+      progress = await accept_daily_quest(thornyId);
+    } catch (error) {
+      console.warn(`[daily] Couldn't sync the daily quest for thorny_id ${thornyId}, retrying later:`, error);
+      return;
+    }
+    if (!player.isValid) return;
+    const cached = getCachedProgress(ref);
+    if (cached && progress && cached.progress.progress_id === progress.progress_id) {
+      if (isFinished(progress.status) && !isFinished(cached.progress.status)) {
+        unloadSlot(ref, player.name, player, false);
+        notifyQuestEnded(player, cached);
+        const loaded2 = await loadSlot(player, ref, progress);
+        if (loaded2) loaded2.finishHandled = true;
+      }
+      return;
+    }
+    if (cached) {
+      unloadSlot(ref, player.name, player, false);
+      if (!isFinished(cached.progress.status)) notifyQuestEnded(player, cached);
+    }
+    if (!progress) return;
+    const loaded = await loadSlot(player, ref, progress);
+    if (!loaded) return;
+    if (isFinished(progress.status)) {
+      loaded.finishHandled = true;
+    } else {
+      showActiveObjective(player, loaded);
+    }
+  });
+}
+__name(syncDailySlot, "syncDailySlot");
+function followUpFinishedDaily(player, thornyId) {
+  const cached = getCachedProgress({ thornyId, slot: "daily" });
+  if (!cached || cached.finishHandled || !isFinished(cached.progress.status)) return;
+  cached.finishHandled = true;
+  flushProgress(cached.progress.progress_id).then((saved) => {
+    if (saved && player.isValid) return syncDailySlot(player, thornyId);
+  }).catch((e) => console.error("[daily] Failed to follow up a finished daily:", e));
+}
+__name(followUpFinishedDaily, "followUpFinishedDaily");
 function loadQuestProgressCache() {
   const PLAYER_LOOP_RUN_IDS = /* @__PURE__ */ new Map();
   setFinishedProgressHandler(handleProgressFinishedByServer);
-  function showActiveObjective(player, cached) {
-    const active = getActiveObjective(cached.quest, cached.progress);
-    if (!active) return;
-    system29.runTimeout(() => {
-      if (!player.isValid) return;
-      notifyOfQuestUpdate(
-        player,
-        generateObjectiveDisplayString(
-          active.obj_def,
-          cached.quest.objectives.indexOf(active.obj_def) + 1,
-          cached.quest.objectives.length,
-          cached.quest.title
-        )
-      );
-    }, TicksPerSecond13 * 10);
-  }
-  __name(showActiveObjective, "showActiveObjective");
   async function new_active_quest(questProgress, ref, player) {
     unloadSlot(ref, player.name, player, false);
     const cached = await loadSlot(player, ref, questProgress);
@@ -8093,11 +8172,24 @@ function loadQuestProgressCache() {
       for (const slot of QUEST_SLOTS) {
         tickSlot(player, { thornyId: thornyUser2.thorny_id, slot });
       }
+      followUpFinishedDaily(player, thornyUser2.thorny_id);
     }, TicksPerSecond13);
-    PLAYER_LOOP_RUN_IDS.set(playerName, [cacheRunId, tickRunId]);
-    const thornyUser = ThornyUser.fetch_user(playerName);
-    if (thornyUser) {
-      await syncRegularSlot(player, thornyUser);
+    const dailyRunId = system29.runInterval(async () => {
+      if (!player.isValid) {
+        system29.clearRun(dailyRunId);
+        return;
+      }
+      const thornyUser2 = ThornyUser.fetch_user(playerName);
+      if (!thornyUser2) return;
+      await syncDailySlot(player, thornyUser2.thorny_id);
+    }, TicksPerSecond13 * DAILY_POLL_SECONDS);
+    PLAYER_LOOP_RUN_IDS.set(playerName, [cacheRunId, tickRunId, dailyRunId]);
+    const thornyUser = ThornyUser.fetch_user(playerName) ?? await ThornyUser.get_user_from_api(playerName).catch(() => void 0);
+    if (thornyUser && player.isValid) {
+      await Promise.all([
+        syncRegularSlot(player, thornyUser),
+        syncDailySlot(player, thornyUser.thorny_id)
+      ]);
     }
   }
   __name(runPlayerInit, "runPlayerInit");

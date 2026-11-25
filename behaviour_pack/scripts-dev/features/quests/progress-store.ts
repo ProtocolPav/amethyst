@@ -12,6 +12,8 @@ export interface CachedQuestProgress {
     ref: SlotRef
     quest: QuestOut
     progress: QuestProgressOut
+    /** Daily slot only: set once the slot has asked Nexuscore for the next daily after this one finished. */
+    finishHandled?: boolean
 }
 
 /** Cached progress per player per slot, keyed by slotKey(). */
