@@ -3388,6 +3388,22 @@ var UnauthorizedError = class extends HttpError {
     this.name = "UnauthorizedError";
   }
 };
+var ConflictError = class extends HttpError {
+  static {
+    __name(this, "ConflictError");
+  }
+  constructor(body) {
+    super(409, body);
+    this.name = "ConflictError";
+    let detail = null;
+    try {
+      const parsed = JSON.parse(body);
+      if (parsed && typeof parsed.detail === "object") detail = parsed.detail;
+    } catch {
+    }
+    this.detail = detail;
+  }
+};
 
 // behaviour_pack/scripts-dev/api/minecraft-fetch.ts
 var BASE_URL2 = "http://nexuscore:8000/api";
@@ -3428,6 +3444,8 @@ var minecraftFetch = /* @__PURE__ */ __name(async (url, options = {}) => {
         throw new NotFoundError(response.body);
       case 401:
         throw new UnauthorizedError(response.body);
+      case 409:
+        throw new ConflictError(response.body);
       default:
         throw new HttpError(response.status, response.body);
     }

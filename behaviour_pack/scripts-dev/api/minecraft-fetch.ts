@@ -1,6 +1,6 @@
 import {http, HttpHeader, HttpRequest, HttpRequestMethod} from '@minecraft/server-net';
 import {getAccessToken} from "./token";
-import {HttpError, NotFoundError, UnauthorizedError} from "./http-errors";
+import {ConflictError, HttpError, NotFoundError, UnauthorizedError} from "./http-errors";
 
 const BASE_URL = 'http://nexuscore:8000/api';
 
@@ -49,6 +49,7 @@ export const minecraftFetch = async <T>(
         switch (response.status) {
             case 404: throw new NotFoundError(response.body);
             case 401: throw new UnauthorizedError(response.body);
+            case 409: throw new ConflictError(response.body);
             default:  throw new HttpError(response.status, response.body);
         }
     }
