@@ -6904,6 +6904,7 @@ ${reqLines.join("\n")}` : null;
 __name(generateObjectiveDisplayString, "generateObjectiveDisplayString");
 
 // behaviour_pack/scripts-dev/features/quests/core/notify.ts
+var DAILY_COMMAND = "/daily";
 function showProgressTick(player, target, current, goal) {
   let label = "Progress";
   switch (target?.target_type) {
@@ -6937,7 +6938,11 @@ function notifyQuestProgress(player, objective, objectiveIndex, totalObjectives,
   player.sendMessage(generateObjectiveDisplayString(objective, objectiveIndex, totalObjectives, questTitle));
 }
 __name(notifyQuestProgress, "notifyQuestProgress");
-function notifyQuestComplete(player, questTitle) {
+function notifyQuestComplete(player, questTitle, slot = "regular") {
+  if (slot === "daily") {
+    notifyDailyQuestComplete(player, questTitle);
+    return;
+  }
   world24.sendMessage(
     `\xA7l\xA7a[ \xA7l\xA7eQ\xA7du\xA7se\xA7as\xA7tt \xA7uC\xA7io\xA7mm\xA7pp\xA79l\xA7ee\xA7nt\xA7be\xA7f!\xA7a ]\xA7r
 ${player.name} has just completed \xA7l\xA7n${questTitle}\xA7r!
@@ -6962,7 +6967,36 @@ Run \`/quests view\` to try your luck with it!`,
   }
 }
 __name(notifyQuestComplete, "notifyQuestComplete");
-function notifyQuestFailure(player, questTitle) {
+function notifyDailyQuestComplete(player, questTitle) {
+  world24.sendMessage(
+    `\xA7l\xA7a[ \xA7eDaily Quest Complete! \xA7a]\xA7r
+${player.name} has just completed the daily quest \xA7l\xA7n${questTitle}\xA7r!
+Run \xA75${DAILY_COMMAND}\xA7r to see yours!`
+  );
+  api_default.Relay.event(
+    "Daily Quest Complete!",
+    `${player.name} has just completed the daily quest **${questTitle}**!
+Run \`/quests daily\` to see yours!`,
+    "other"
+  );
+  player.onScreenDisplay.setTitle(`\xA7l\xA7eDaily Quest Complete!`);
+  player.dimension.playSound(
+    "quest.complete",
+    player.location,
+    { volume: 1e4 }
+  );
+  for (let i = 0; i < 5; i++) {
+    system24.runTimeout(() => {
+      player.runCommand(`particle minecraft:totem_particle ~ ~2 ~`);
+    }, 10);
+  }
+}
+__name(notifyDailyQuestComplete, "notifyDailyQuestComplete");
+function notifyQuestFailure(player, questTitle, slot = "regular") {
+  if (slot === "daily") {
+    notifyDailyQuestFailure(player, questTitle);
+    return;
+  }
   world24.sendMessage(
     `\xA7l\xA7c[ Quest Failed :( ]\xA7r
 ${player.name} has failed \xA7l\xA7n${questTitle}\xA7r.
@@ -6982,6 +7016,18 @@ Think you can do better? Run \`/quests view\` to try your luck with it.`,
   );
 }
 __name(notifyQuestFailure, "notifyQuestFailure");
+function notifyDailyQuestFailure(player, questTitle) {
+  player.sendMessage(
+    `\xA7l\xA7c[ Daily Quest Failed ]\xA7r
+You have failed the daily quest \xA7l\xA7n${questTitle}\xA7r.`
+  );
+  player.onScreenDisplay.setTitle(`\xA7l\xA7cDaily Quest Failed`);
+  player.playSound(
+    "quest.fail",
+    { volume: 100, location: player.location }
+  );
+}
+__name(notifyDailyQuestFailure, "notifyDailyQuestFailure");
 function showTimer(player, remaining_seconds) {
   const minutes = Math.floor(remaining_seconds / 60);
   const seconds = Math.floor(remaining_seconds % 60);
@@ -7952,7 +7998,7 @@ var QuestProcessor = class {
     questProgress.status = QuestProgressOutStatus.completed;
     questProgress.end_time = (/* @__PURE__ */ new Date()).toISOString();
     markDirty(questProgress);
-    notifyQuestComplete(player, cached.quest.title);
+    notifyQuestComplete(player, cached.quest.title, cached.ref.slot);
     return true;
   }
   fail(player, cached) {
@@ -7971,7 +8017,7 @@ var QuestProcessor = class {
       }
     }
     markDirty(questProgress);
-    notifyQuestFailure(player, quest.title);
+    notifyQuestFailure(player, quest.title, cached.ref.slot);
   }
 };
 

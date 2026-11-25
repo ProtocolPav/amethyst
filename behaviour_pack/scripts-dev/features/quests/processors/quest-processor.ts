@@ -131,7 +131,7 @@ export class QuestProcessor {
         questProgress.end_time = new Date().toISOString()
         markDirty(questProgress)
 
-        notifyQuestComplete(player, cached.quest.title)
+        notifyQuestComplete(player, cached.quest.title, cached.ref.slot)
         return true
     }
 
@@ -156,6 +156,6 @@ export class QuestProcessor {
 
         markDirty(questProgress)
 
-        notifyQuestFailure(player, quest.title)
+        notifyQuestFailure(player, quest.title, cached.ref.slot)
     }
 }
