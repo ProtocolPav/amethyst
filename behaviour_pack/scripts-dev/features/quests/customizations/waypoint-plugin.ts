@@ -2,13 +2,16 @@ import {LocationWaypoint, Player, world} from "@minecraft/server";
 import {ObjectiveOut, ObjectiveProgressOut} from "../../../api/nexuscore/model";
 import {CustomizationPlugin} from "../types/customization-plugin";
 import { DeactivationContext } from "../types/deactivation-context";
+import { ActivationContext } from "../types/slot";
 import {MinecraftDimensionTypes} from "@minecraft/vanilla-data";
 
 
 export class WaypointPlugin implements CustomizationPlugin {
-    onActivate(player: Player, objective: ObjectiveOut, _progress: ObjectiveProgressOut): void {
+    onActivate(ctx: ActivationContext, objective: ObjectiveOut, _progress: ObjectiveProgressOut): void {
         const c = objective.customizations.waypoint
         if (!c) return
+
+        const player = ctx.player
 
         c.waypoints.forEach((waypoint) => {
             player.locatorBar.addWaypoint(new LocationWaypoint(

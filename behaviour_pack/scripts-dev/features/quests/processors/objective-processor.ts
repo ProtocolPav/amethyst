@@ -13,6 +13,7 @@ import {showProgressTick} from "../core/notify";
 import {ACTIVE_PLUGINS} from "../core/objective/objective-lifecycle";
 import {ScripteventTargetProcessor} from "./scriptevent-target-processor";
 import {VisitTargetProcessor} from "./visit-target-processor";
+import {SlotRef, slotKey} from "../types/slot";
 
 /**
  * Registry of target processors, keyed by objective_type.
@@ -34,16 +35,16 @@ export class ObjectiveProcessor {
      * Processes an objective against the given action.
      * @param action
      * @param player
-     * @param thorny_id
+     * @param ref        The quest slot the objective belongs to
      * @param objective
      * @param objectiveProgress
      * @returns true if the objective is complete, false otherwise
      */
-    process(action: GameAction, player: Player, thorny_id: number, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): boolean {
+    process(action: GameAction, player: Player, ref: SlotRef, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): boolean {
         if (objectiveProgress.status === ObjectiveProgressOutStatus.completed) return false
 
         // Run all passer plugins — if any return false, block the action
-        if (!this.passesCustomizations(action, thorny_id, objective, objectiveProgress)) return false
+        if (!this.passesCustomizations(action, ref, objective, objectiveProgress)) return false
 
         const processor = TARGET_PROCESSORS[objective.objective_type]
         if (!processor) return false
@@ -62,11 +63,11 @@ export class ObjectiveProcessor {
     }
 
     /**
-     * Iterates the passes() hook of every active plugin for this player.
+     * Iterates the passes() hook of every active plugin for this quest slot.
      * Returns false as soon as any plugin blocks the action.
      */
-    private passesCustomizations(action: GameAction, thorny_id: number, objective: ObjectiveOut, progress: ObjectiveProgressOut): boolean {
-        const plugins = ACTIVE_PLUGINS.get(thorny_id) ?? []
+    private passesCustomizations(action: GameAction, ref: SlotRef, objective: ObjectiveOut, progress: ObjectiveProgressOut): boolean {
+        const plugins = ACTIVE_PLUGINS.get(slotKey(ref)) ?? []
         for (const plugin of plugins) {
             if (plugin.passes?.(action, objective, progress) === false) return false
         }

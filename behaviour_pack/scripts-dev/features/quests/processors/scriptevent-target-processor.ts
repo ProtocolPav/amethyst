@@ -2,15 +2,16 @@ import {ObjectiveOut, KillTargetModel, ObjectiveProgressOut} from "../../../api/
 import {GameAction, KillAction, ScripteventAction} from "../types/action";
 import { AnyTargetProgress, TargetProcessor } from "../types/target-processor";
 import {EquipmentSlot, Player, ScriptEventCommandMessageAfterEvent, system} from "@minecraft/server";
-import ThornyUser from "../../../api/user";
 import {processGameAction} from "../core/action-dispatch";
 import { DeactivationContext } from "../types/deactivation-context";
+import { ActivationContext, SlotRef, slotKey } from "../types/slot";
 
 export class ScripteventTargetProcessor implements TargetProcessor {
-    private subscriptions = new Map<number, () => void>()
+    private subscriptions = new Map<string, () => void>()  // slotKey → unsubscribe
 
-    onActivate(player: Player, _objective: ObjectiveOut, _objectiveProgress: ObjectiveProgressOut): void {
-        const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
+    onActivate(ctx: ActivationContext, _objective: ObjectiveOut, _objectiveProgress: ObjectiveProgressOut): void {
+        const player = ctx.player
+        const ref: SlotRef = { thornyId: ctx.thornyId, slot: ctx.slot }
 
         const handler = (event: ScriptEventCommandMessageAfterEvent) => {
             if (event.message !== player.name) return
@@ -30,16 +31,16 @@ export class ScripteventTargetProcessor implements TargetProcessor {
                 script_id: event.id,
             }
 
-            processGameAction(player, action)
+            processGameAction(player, action, ref)
         }
 
         system.afterEvents.scriptEventReceive.subscribe(handler)
-        this.subscriptions.set(thorny_id, () => system.afterEvents.scriptEventReceive.unsubscribe(handler))
+        this.subscriptions.set(slotKey(ctx), () => system.afterEvents.scriptEventReceive.unsubscribe(handler))
     }
 
     onDeactivate(ctx: DeactivationContext, _objective: ObjectiveOut, _objectiveProgress: ObjectiveProgressOut): void {
-        this.subscriptions.get(ctx.thornyId)?.()
-        this.subscriptions.delete(ctx.thornyId)
+        this.subscriptions.get(slotKey(ctx))?.()
+        this.subscriptions.delete(slotKey(ctx))
     }
 
     evaluate(action: GameAction, objective: ObjectiveOut, targetProgress: AnyTargetProgress): number {

@@ -2,6 +2,7 @@ import {Player, system, TicksPerSecond} from "@minecraft/server";
 import { ObjectiveOut, ObjectiveProgressOut } from "../../../api/nexuscore/model";
 import { CustomizationPlugin } from "../types/customization-plugin";
 import { DeactivationContext } from "../types/deactivation-context";
+import { ActivationContext } from "../types/slot";
 import {showTimer} from "../core/notify";
 
 /**
@@ -24,7 +25,7 @@ export class TimerPlugin implements CustomizationPlugin {
     private shouldFail = false
     private remaining_seconds = 0
 
-    onActivate(player: Player, objective: ObjectiveOut, progress: ObjectiveProgressOut): void {
+    onActivate(_ctx: ActivationContext, objective: ObjectiveOut, progress: ObjectiveProgressOut): void {
         const c = objective.customizations.timer
         if (!c) return
 

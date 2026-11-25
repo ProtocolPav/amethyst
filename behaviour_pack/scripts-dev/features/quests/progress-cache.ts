@@ -1,6 +1,5 @@
 import { Player, system, TicksPerSecond, world } from "@minecraft/server";
 import { getQuest } from "./quest-cache";
-import { CachedQuestProgress, QUEST_PROGRESS_CACHE } from "./progress-store";
 import ThornyUser from "../../api/user";
 import { get_quest_progress } from "./core/fetch";
 import { QuestProgressOut, QuestProgressOutStatus } from "../../api/nexuscore/model";
@@ -9,120 +8,177 @@ import { notifyOfQuestUpdate } from "./core/notify";
 import { activateObjective, deactivateObjective } from "./core/objective/objective-lifecycle";
 import { tickPlugins } from "./core/objective/objective-tick";
 import { getActiveObjective } from "./core/objective/objective-lookup";
-import {generateObjectiveDisplayString} from "./core/objective/objective-display";
+import { generateObjectiveDisplayString } from "./core/objective/objective-display";
+import { CachedQuestProgress, deleteCachedProgress, getCachedProgress, setCachedProgress } from "./progress-store";
+import { QUEST_SLOTS, SlotRef, slotKey } from "./types/slot";
 
 const questProcessor = new QuestProcessor()
+
+/** Slots with a sync in flight, so slow requests can't overlap and double-load a slot. */
+const SYNCING = new Set<string>()
+
+/**
+ * Runs a slot sync unless one is already running for that slot.
+ */
+export async function syncOnce(ref: SlotRef, sync: () => Promise<void>): Promise<void> {
+    const key = slotKey(ref)
+    if (SYNCING.has(key)) return
+
+    SYNCING.add(key)
+    try {
+        await sync()
+    } finally {
+        SYNCING.delete(key)
+    }
+}
+
+/**
+ * Caches progress in a slot together with its quest, and activates its
+ * current objective if the quest is active. Returns undefined, caching
+ * nothing, if the player left while the quest was being fetched.
+ */
+export async function loadSlot(player: Player, ref: SlotRef, progress: QuestProgressOut): Promise<CachedQuestProgress | undefined> {
+    const quest = await getQuest(progress.quest_id)
+    if (!player.isValid) return undefined
+
+    const cached: CachedQuestProgress = { ref, quest, progress }
+    setCachedProgress(cached)
+
+    if (progress.status === QuestProgressOutStatus.active) {
+        const active = getActiveObjective(quest, progress)
+        if (active) {
+            activateObjective({ ...ref, player }, active.obj_def, active.obj_progress)
+        }
+    }
+
+    return cached
+}
+
+/**
+ * Deactivates a slot's active objective, if any, and evicts it from the cache.
+ * Returns the evicted entry.
+ */
+export function unloadSlot(ref: SlotRef, playerName: string, player: Player | undefined, isLeaving: boolean): CachedQuestProgress | undefined {
+    const cached = getCachedProgress(ref)
+    if (!cached) return undefined
+
+    const active = getActiveObjective(cached.quest, cached.progress)
+    if (active) {
+        deactivateObjective({ ...ref, playerName, player, isLeaving }, active.obj_def, active.obj_progress)
+    }
+
+    deleteCachedProgress(ref)
+    return cached
+}
 
 export default function loadQuestProgressCache() {
     const PLAYER_LOOP_RUN_IDS = new Map<string, number[]>()
 
-    async function new_active_quest(questProgress: QuestProgressOut, thornyUser: ThornyUser, player: Player) {
-        const quest = await getQuest(questProgress.quest_id)
-
-        QUEST_PROGRESS_CACHE.set(thornyUser.thorny_id, { quest, progress: questProgress })
-        const active = getActiveObjective(quest, questProgress)
-
-        // Activate the current objective if the quest is active
-        if (questProgress.status === QuestProgressOutStatus.active) {
-            if (active) {
-                activateObjective(player, thornyUser.thorny_id, active.obj_def, active.obj_progress)
-            }
-        }
+    function showActiveObjective(player: Player, cached: CachedQuestProgress) {
+        const active = getActiveObjective(cached.quest, cached.progress)
+        if (!active) return
 
         system.runTimeout(() => {
+            if (!player.isValid) return
             notifyOfQuestUpdate(
                 player,
                 generateObjectiveDisplayString(
-                    active?.obj_def!,
-                    quest.objectives.indexOf(active?.obj_def!) + 1,
-                    quest.objectives.length,
-                    quest.title
+                    active.obj_def,
+                    cached.quest.objectives.indexOf(active.obj_def) + 1,
+                    cached.quest.objectives.length,
+                    cached.quest.title
                 )
             )
         }, TicksPerSecond * 10)
     }
 
-    async function dropped_quest(cached: CachedQuestProgress, thornyUser: ThornyUser, player: Player) {
-        const cached_quest = cached.quest
-        const cached_quest_progress = cached.progress
+    async function new_active_quest(questProgress: QuestProgressOut, ref: SlotRef, player: Player) {
+        unloadSlot(ref, player.name, player, false)
+        const cached = await loadSlot(player, ref, questProgress)
+        if (cached) showActiveObjective(player, cached)
+    }
 
-        // Deactivate the active objective before evicting
-        const active = getActiveObjective(cached_quest, cached_quest_progress)
-        if (active) {
-            deactivateObjective({ thornyId: thornyUser.thorny_id, playerName: player.name, player, isLeaving: false }, active.obj_def, active.obj_progress)
-        }
+    function dropped_quest(ref: SlotRef, player: Player) {
+        const cached = unloadSlot(ref, player.name, player, false)
+        if (!cached) return
 
-        QUEST_PROGRESS_CACHE.delete(thornyUser.thorny_id)
-
-        if (cached_quest_progress.status !== "completed" && cached_quest_progress.status !== "failed") {
-            notifyOfQuestUpdate(player, `You have dropped your quest: ${cached_quest.title}`)
+        if (cached.progress.status !== "completed" && cached.progress.status !== "failed") {
+            notifyOfQuestUpdate(player, `You have dropped your quest: ${cached.quest.title}`)
         }
     }
 
-    async function update_player_quest(player_name: string) {
-        const player = world.getPlayers().find((p) => p.name == player_name)
-        if (!player) return;
+    /**
+     * Syncs the regular quest slot with the player's active quest in Nexuscore.
+     */
+    async function syncRegularSlot(player: Player, thornyUser: ThornyUser) {
+        const ref: SlotRef = { thornyId: thornyUser.thorny_id, slot: 'regular' }
 
-        const thorny_user = ThornyUser.fetch_user(player_name)!
-        const questProgress = await get_quest_progress(thorny_user.thorny_id)
-        const cachedQuestProgress = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id)
+        await syncOnce(ref, async () => {
+            const questProgress = await get_quest_progress(thornyUser.thorny_id)
+            if (!player.isValid) return
 
-        // User has accepted a new quest
-        if (questProgress && cachedQuestProgress?.progress.progress_id !== questProgress.progress_id) {
-            await new_active_quest(questProgress, thorny_user, player)
-        }
+            const cached = getCachedProgress(ref)
 
-        // User has dropped a quest
-        else if (!questProgress && cachedQuestProgress) {
-            await dropped_quest(cachedQuestProgress, thorny_user, player)
-        }
+            // User has accepted a new quest
+            if (questProgress && cached?.progress.progress_id !== questProgress.progress_id) {
+                await new_active_quest(questProgress, ref, player)
+            }
+
+            // User has dropped a quest
+            else if (!questProgress && cached) {
+                dropped_quest(ref, player)
+            }
+        })
     }
 
-    async function tickQuest(player_name: string) {
-        const player = world.getPlayers().find((p) => p.name == player_name)
-        if (!player) return;
-
-        const thorny_user = ThornyUser.fetch_user(player_name)!
-        const cached = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id)
+    function tickSlot(player: Player, ref: SlotRef) {
+        const cached = getCachedProgress(ref)
         if (!cached) return
 
         const active = getActiveObjective(cached.quest, cached.progress)
         if (!active) return
 
-        const signal = tickPlugins(player, thorny_user.thorny_id, active.obj_def, active.obj_progress)
+        const signal = tickPlugins(player, ref, active.obj_def, active.obj_progress)
         if (signal === 'fail') {
-            questProcessor.fail(player, cached.quest, cached.progress)
+            questProcessor.fail(player, cached)
         } else if (signal === 'skip') {
-            questProcessor.skipObjective(player, cached.quest, cached.progress)
+            questProcessor.skipObjective(player, cached)
         }
     }
 
     async function runPlayerInit(player: Player, playerName: string) {
-        const thorny_user = ThornyUser.fetch_user(playerName)!
-        if (thorny_user) {
-            const questProgress = await get_quest_progress(thorny_user.thorny_id)
-            if (questProgress) {
-                await new_active_quest(questProgress, thorny_user, player)
-            }
-        }
-
         const cacheRunId = system.runInterval(async () => {
             if (!player.isValid) {
                 system.clearRun(cacheRunId)
                 return
             }
-            await update_player_quest(playerName)
+
+            const thornyUser = ThornyUser.fetch_user(playerName)
+            if (!thornyUser) return
+
+            await syncRegularSlot(player, thornyUser)
         }, TicksPerSecond * 2)
 
-        const tickRunId = system.runInterval(async () => {
+        const tickRunId = system.runInterval(() => {
             if (!player.isValid) {
                 system.clearRun(tickRunId)
                 return
             }
-            await tickQuest(playerName)
+
+            const thornyUser = ThornyUser.fetch_user(playerName)
+            if (!thornyUser) return
+
+            for (const slot of QUEST_SLOTS) {
+                tickSlot(player, { thornyId: thornyUser.thorny_id, slot })
+            }
         }, TicksPerSecond)
 
         PLAYER_LOOP_RUN_IDS.set(playerName, [cacheRunId, tickRunId])
+
+        const thornyUser = ThornyUser.fetch_user(playerName)
+        if (thornyUser) {
+            await syncRegularSlot(player, thornyUser)
+        }
     }
 
     world.afterEvents.playerSpawn.subscribe((spawn_event) => {
@@ -161,16 +217,9 @@ export default function loadQuestProgressCache() {
         const thorny_user = ThornyUser.fetch_user(playerName)
         if (!thorny_user) return
 
-        const cached = QUEST_PROGRESS_CACHE.get(thorny_user.thorny_id)
-
-        // Deactivate the active objective before evicting the cache entry
-        if (cached) {
-            const active = getActiveObjective(cached.quest, cached.progress)
-            if (active) {
-                deactivateObjective({ thornyId: thorny_user.thorny_id, playerName, isLeaving: true }, active.obj_def, active.obj_progress)
-            }
+        // Deactivate each slot's active objective before evicting it
+        for (const slot of QUEST_SLOTS) {
+            unloadSlot({ thornyId: thorny_user.thorny_id, slot }, playerName, undefined, true)
         }
-
-        QUEST_PROGRESS_CACHE.delete(thorny_user.thorny_id)
     })
 }

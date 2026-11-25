@@ -1,5 +1,4 @@
 import {
-    QuestOut,
     QuestProgressOut,
     QuestProgressOutStatus,
     ObjectiveProgressOutStatus,
@@ -14,28 +13,37 @@ import { activateObjective, deactivateObjective } from "../core/objective/object
 import {getActiveObjective} from "../core/objective/objective-lookup";
 import {notifyQuestComplete, notifyQuestFailure, notifyQuestProgress} from "../core/notify";
 import {grantRewards} from "../rewards/grant-rewards";
+import {CachedQuestProgress} from "../progress-store";
+import {DeactivationContext} from "../types/deactivation-context";
 
 const objectiveProcessor = new ObjectiveProcessor()
 
 // TODO: Quest does not set quest start_time, nor does it override the first objective start_time
 
+function deactivationContext(player: Player, cached: CachedQuestProgress): DeactivationContext {
+    return { ...cached.ref, playerName: player.name, player, isLeaving: false }
+}
+
+/**
+ * Drives a single quest slot's progress. Every method takes the slot's
+ * cached entry, so the regular and daily quests are processed independently.
+ */
 export class QuestProcessor {
-    process(action: GameAction, player: Player, quest: QuestOut, questProgress: QuestProgressOut): boolean {
+    process(action: GameAction, player: Player, cached: CachedQuestProgress): boolean {
+        const { quest, progress: questProgress } = cached
         if (questProgress.status === QuestProgressOutStatus.completed) return false
         if (questProgress.status === QuestProgressOutStatus.failed) return false
 
         const active = getActiveObjective(quest, questProgress)
         if (!active) return false
 
-        const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
-
-        const completed = objectiveProcessor.process(action, player, thorny_id, active.obj_def, active.obj_progress)
+        const completed = objectiveProcessor.process(action, player, cached.ref, active.obj_def, active.obj_progress)
 
         markDirty(questProgress)
 
         if (!completed) return false
 
-        return this.completeObjective(player, thorny_id, quest, questProgress, active.obj_def, active.obj_progress)
+        return this.completeObjective(player, cached, active.obj_def, active.obj_progress)
     }
 
     /**
@@ -44,21 +52,20 @@ export class QuestProcessor {
      * Skips the active objective — deactivates it and transitions onward,
      * but grants NO objective rewards, unlike a normal completion.
      */
-    skipObjective(player: Player, quest: QuestOut, questProgress: QuestProgressOut): void {
+    skipObjective(player: Player, cached: CachedQuestProgress): void {
+        const { quest, progress: questProgress } = cached
         if (questProgress.status === QuestProgressOutStatus.completed) return
         if (questProgress.status === QuestProgressOutStatus.failed) return
 
         const active = getActiveObjective(quest, questProgress)
         if (!active) return
 
-        const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
-
         active.obj_progress.status = ObjectiveProgressOutStatus.failed
         active.obj_progress.end_time = new Date().toISOString()
 
-        deactivateObjective({ thornyId: thorny_id, playerName: player.name, player, isLeaving: false }, active.obj_def, active.obj_progress)
+        deactivateObjective(deactivationContext(player, cached), active.obj_def, active.obj_progress)
 
-        this.advanceQuest(player, thorny_id, quest, questProgress)
+        this.advanceQuest(player, cached)
     }
 
     /**
@@ -67,18 +74,17 @@ export class QuestProcessor {
      */
     private completeObjective(
         player: Player,
-        thorny_id: number,
-        quest: QuestOut,
-        questProgress: QuestProgressOut,
+        cached: CachedQuestProgress,
         objectiveDef: ObjectiveOut,
         objectiveProgress: QuestProgressOut['objectives'][number]
     ): boolean {
-        deactivateObjective({ thornyId: thorny_id, playerName: player.name, player, isLeaving: false }, objectiveDef, objectiveProgress)
+        deactivateObjective(deactivationContext(player, cached), objectiveDef, objectiveProgress)
 
+        const thorny_id = cached.ref.thornyId
         const thorny_user = ThornyUser.fetch_user_by_id(thorny_id)
         grantRewards(player, thorny_id, thorny_user.balance, objectiveDef.rewards, objectiveProgress).then()
 
-        return this.advanceQuest(player, thorny_id, quest, questProgress)
+        return this.advanceQuest(player, cached)
     }
 
     /**
@@ -87,7 +93,8 @@ export class QuestProcessor {
      * completes the quest. Grants no rewards itself — reward-granting
      * is the caller's responsibility.
      */
-    private advanceQuest(player: Player, thorny_id: number, quest: QuestOut, questProgress: QuestProgressOut): boolean {
+    private advanceQuest(player: Player, cached: CachedQuestProgress): boolean {
+        const { quest, progress: questProgress } = cached
         const nextObjectiveProgress = questProgress.objectives.find(
             o => o.status === ObjectiveProgressOutStatus.pending
         )
@@ -100,7 +107,7 @@ export class QuestProcessor {
                 o => o.objective_id === nextObjectiveProgress.objective_id
             )
             if (nextObjectiveDef) {
-                activateObjective(player, thorny_id, nextObjectiveDef, nextObjectiveProgress)
+                activateObjective({ ...cached.ref, player }, nextObjectiveDef, nextObjectiveProgress)
             }
 
             markDirty(questProgress)
@@ -116,24 +123,25 @@ export class QuestProcessor {
             return false
         }
 
-        return this.onQuestComplete(player, thorny_id, quest, questProgress)
+        return this.onQuestComplete(player, cached)
     }
 
-    private onQuestComplete(player: Player, thorny_id: number, questOut: QuestOut, questProgress: QuestProgressOut): true {
+    private onQuestComplete(player: Player, cached: CachedQuestProgress): true {
+        const questProgress = cached.progress
         questProgress.status = QuestProgressOutStatus.completed
         questProgress.end_time = new Date().toISOString()
         markDirty(questProgress)
 
-        notifyQuestComplete(player, questOut.title)
+        notifyQuestComplete(player, cached.quest.title)
         return true
     }
 
-    fail(player: Player, quest: QuestOut, questProgress: QuestProgressOut): void {
-        const thorny_id = ThornyUser.fetch_user(player.name)!.thorny_id
+    fail(player: Player, cached: CachedQuestProgress): void {
+        const { quest, progress: questProgress } = cached
 
         const active = getActiveObjective(quest, questProgress)
         if (active) {
-            deactivateObjective({ thornyId: thorny_id, playerName: player.name, player, isLeaving: false }, active.obj_def, active.obj_progress)
+            deactivateObjective(deactivationContext(player, cached), active.obj_def, active.obj_progress)
         }
 
         questProgress.status = QuestProgressOutStatus.failed

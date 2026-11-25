@@ -1,7 +1,7 @@
 import {CustomizationPlugin} from "../../types/customization-plugin";
-import {Player} from "@minecraft/server";
 import {ObjectiveOut, ObjectiveProgressOut} from "../../../../api/nexuscore/model";
 import { DeactivationContext } from "../../types/deactivation-context";
+import { ActivationContext, slotKey } from "../../types/slot";
 import {TARGET_PROCESSORS} from "../../processors/objective-processor";
 import {DeathPlugin} from "../../customizations/death-plugin";
 import {LocationPlugin} from "../../customizations/location-plugin";
@@ -28,21 +28,21 @@ const CUSTOMIZATION_PLUGINS: Record<string, new () => CustomizationPlugin> = {
 }
 
 /**
- * Live plugin instances for each currently active objective, keyed by thorny_id.
+ * Live plugin instances for each currently active objective, keyed by slotKey().
  * Populated by activateObjective, cleared by deactivateObjective.
- * One entry per player — a player can only have one active objective at a time.
+ * One entry per player per quest slot — each slot has at most one active objective.
  */
-export const ACTIVE_PLUGINS: Map<number, CustomizationPlugin[]> = new Map()
+export const ACTIVE_PLUGINS: Map<string, CustomizationPlugin[]> = new Map()
 
 /**
- * Activates the currently active objective for a player.
+ * Activates the currently active objective of a player's quest slot.
  * Calls onActivate on the matching target processor if defined,
  * then instantiates and activates all matching customization plugins.
  */
-export function activateObjective(player: Player, thorny_id: number, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): void {
+export function activateObjective(ctx: ActivationContext, objective: ObjectiveOut, objectiveProgress: ObjectiveProgressOut): void {
     // Activate the target processor lifecycle hook
     const processor = TARGET_PROCESSORS[objective.objective_type]
-    processor?.onActivate?.(player, objective, objectiveProgress)
+    processor?.onActivate?.(ctx, objective, objectiveProgress)
 
     // Instantiate a plugin for every customization that is not null
     const plugins: CustomizationPlugin[] = []
@@ -51,14 +51,14 @@ export function activateObjective(player: Player, thorny_id: number, objective: 
         const PluginClass = CUSTOMIZATION_PLUGINS[key]
         if (!PluginClass) continue
         const plugin = new PluginClass()
-        plugin.onActivate?.(player, objective, objectiveProgress)
+        plugin.onActivate?.(ctx, objective, objectiveProgress)
         plugins.push(plugin)
     }
-    ACTIVE_PLUGINS.set(thorny_id, plugins)
+    ACTIVE_PLUGINS.set(slotKey(ctx), plugins)
 }
 
 /**
- * Deactivates the currently active objective for a player.
+ * Deactivates the currently active objective of a player's quest slot.
  * Calls onDeactivate on the matching target processor if defined,
  * then deactivates and discards all active customization plugins.
  */
@@ -68,9 +68,9 @@ export function deactivateObjective(ctx: DeactivationContext, objective: Objecti
     processor?.onDeactivate?.(ctx, objective, objectiveProgress)
 
     // Deactivate all plugins and remove them from the map
-    const plugins = ACTIVE_PLUGINS.get(ctx.thornyId) ?? []
+    const plugins = ACTIVE_PLUGINS.get(slotKey(ctx)) ?? []
     for (const plugin of plugins) {
         plugin.onDeactivate?.(ctx, objective, objectiveProgress)
     }
-    ACTIVE_PLUGINS.delete(ctx.thornyId)
+    ACTIVE_PLUGINS.delete(slotKey(ctx))
 }
