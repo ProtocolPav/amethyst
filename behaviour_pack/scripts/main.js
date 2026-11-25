@@ -7782,6 +7782,17 @@ async function grantRewards(player, thorny_id, currentBalance, rewards, objectiv
 }
 __name(grantRewards, "grantRewards");
 
+// behaviour_pack/scripts-dev/features/quests/core/status.ts
+var FINISHED_STATUSES = [
+  QuestProgressOutStatus.completed,
+  QuestProgressOutStatus.failed,
+  QuestProgressOutStatus.abandoned
+];
+function isFinished(status) {
+  return FINISHED_STATUSES.includes(status);
+}
+__name(isFinished, "isFinished");
+
 // behaviour_pack/scripts-dev/features/quests/processors/quest-processor.ts
 var objectiveProcessor = new ObjectiveProcessor();
 function deactivationContext(player, cached) {
@@ -7794,8 +7805,7 @@ var QuestProcessor = class {
   }
   process(action, player, cached) {
     const { quest, progress: questProgress } = cached;
-    if (questProgress.status === QuestProgressOutStatus.completed) return false;
-    if (questProgress.status === QuestProgressOutStatus.failed) return false;
+    if (isFinished(questProgress.status)) return false;
     const active = getActiveObjective(quest, questProgress);
     if (!active) return false;
     const completed = objectiveProcessor.process(action, player, cached.ref, active.obj_def, active.obj_progress);
@@ -7811,8 +7821,7 @@ var QuestProcessor = class {
    */
   skipObjective(player, cached) {
     const { quest, progress: questProgress } = cached;
-    if (questProgress.status === QuestProgressOutStatus.completed) return;
-    if (questProgress.status === QuestProgressOutStatus.failed) return;
+    if (isFinished(questProgress.status)) return;
     const active = getActiveObjective(quest, questProgress);
     if (!active) return;
     active.obj_progress.status = ObjectiveProgressOutStatus.failed;
@@ -7873,6 +7882,7 @@ var QuestProcessor = class {
   }
   fail(player, cached) {
     const { quest, progress: questProgress } = cached;
+    if (isFinished(questProgress.status)) return;
     const active = getActiveObjective(quest, questProgress);
     if (active) {
       deactivateObjective(deactivationContext(player, cached), active.obj_def, active.obj_progress);
@@ -7967,7 +7977,7 @@ function loadQuestProgressCache() {
   function dropped_quest(ref, player) {
     const cached = unloadSlot(ref, player.name, player, false);
     if (!cached) return;
-    if (cached.progress.status !== "completed" && cached.progress.status !== "failed") {
+    if (!isFinished(cached.progress.status)) {
       notifyOfQuestUpdate(player, `You have dropped your quest: ${cached.quest.title}`);
     }
   }

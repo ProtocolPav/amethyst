@@ -15,6 +15,7 @@ import {notifyQuestComplete, notifyQuestFailure, notifyQuestProgress} from "../c
 import {grantRewards} from "../rewards/grant-rewards";
 import {CachedQuestProgress} from "../progress-store";
 import {DeactivationContext} from "../types/deactivation-context";
+import {isFinished} from "../core/status";
 
 const objectiveProcessor = new ObjectiveProcessor()
 
@@ -31,8 +32,7 @@ function deactivationContext(player: Player, cached: CachedQuestProgress): Deact
 export class QuestProcessor {
     process(action: GameAction, player: Player, cached: CachedQuestProgress): boolean {
         const { quest, progress: questProgress } = cached
-        if (questProgress.status === QuestProgressOutStatus.completed) return false
-        if (questProgress.status === QuestProgressOutStatus.failed) return false
+        if (isFinished(questProgress.status)) return false
 
         const active = getActiveObjective(quest, questProgress)
         if (!active) return false
@@ -54,8 +54,7 @@ export class QuestProcessor {
      */
     skipObjective(player: Player, cached: CachedQuestProgress): void {
         const { quest, progress: questProgress } = cached
-        if (questProgress.status === QuestProgressOutStatus.completed) return
-        if (questProgress.status === QuestProgressOutStatus.failed) return
+        if (isFinished(questProgress.status)) return
 
         const active = getActiveObjective(quest, questProgress)
         if (!active) return
@@ -138,6 +137,7 @@ export class QuestProcessor {
 
     fail(player: Player, cached: CachedQuestProgress): void {
         const { quest, progress: questProgress } = cached
+        if (isFinished(questProgress.status)) return
 
         const active = getActiveObjective(quest, questProgress)
         if (active) {

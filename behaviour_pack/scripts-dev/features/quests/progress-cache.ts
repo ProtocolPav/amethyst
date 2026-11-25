@@ -11,6 +11,7 @@ import { getActiveObjective } from "./core/objective/objective-lookup";
 import { generateObjectiveDisplayString } from "./core/objective/objective-display";
 import { CachedQuestProgress, deleteCachedProgress, getCachedProgress, setCachedProgress } from "./progress-store";
 import { QUEST_SLOTS, SlotRef, slotKey } from "./types/slot";
+import { isFinished } from "./core/status";
 
 const questProcessor = new QuestProcessor()
 
@@ -102,7 +103,7 @@ export default function loadQuestProgressCache() {
         const cached = unloadSlot(ref, player.name, player, false)
         if (!cached) return
 
-        if (cached.progress.status !== "completed" && cached.progress.status !== "failed") {
+        if (!isFinished(cached.progress.status)) {
             notifyOfQuestUpdate(player, `You have dropped your quest: ${cached.quest.title}`)
         }
     }
