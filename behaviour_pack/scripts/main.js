@@ -6443,7 +6443,7 @@ function loadLocationLogger() {
 __name(loadLocationLogger, "loadLocationLogger");
 
 // behaviour_pack/scripts-dev/features/quests/progress-cache.ts
-import { system as system29, TicksPerSecond as TicksPerSecond13, world as world27 } from "@minecraft/server";
+import { system as system30, TicksPerSecond as TicksPerSecond13, world as world27 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/features/quests/quest-cache.ts
 import { system as system23, TicksPerSecond as TicksPerSecond9 } from "@minecraft/server";
@@ -6644,7 +6644,7 @@ var QuestProgressOutStatus = {
 };
 
 // behaviour_pack/scripts-dev/features/quests/processors/mine-target-processor.ts
-import { EquipmentSlot as EquipmentSlot13, world as world22 } from "@minecraft/server";
+import { EquipmentSlot as EquipmentSlot13, system as system24, world as world22 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/features/quests/core/action-dispatch.ts
 var questProcessor;
@@ -6657,6 +6657,25 @@ function processGameAction(player, action, ref) {
 __name(processGameAction, "processGameAction");
 
 // behaviour_pack/scripts-dev/features/quests/processors/mine-target-processor.ts
+var NATURAL_LOOKUPS = /* @__PURE__ */ new Map();
+function isNaturallyMined(event) {
+  const { x, y, z } = event.block;
+  const key = `${event.dimension.id}:${x},${y},${z}@${system24.currentTick}`;
+  let lookup = NATURAL_LOOKUPS.get(key);
+  if (!lookup) {
+    lookup = listInteractionsV1GuildsMeInteractionsGet({
+      coordinates: [x, y, z],
+      interaction_types: ["mine", "place"]
+    }).then((interactions) => interactions.length <= 1);
+    NATURAL_LOOKUPS.set(key, lookup);
+    const forget = /* @__PURE__ */ __name(() => {
+      NATURAL_LOOKUPS.delete(key);
+    }, "forget");
+    lookup.then(forget, forget);
+  }
+  return lookup;
+}
+__name(isNaturallyMined, "isNaturallyMined");
 var MineTargetProcessor = class {
   constructor() {
     this.subscriptions = /* @__PURE__ */ new Map();
@@ -6672,10 +6691,7 @@ var MineTargetProcessor = class {
     const handler = /* @__PURE__ */ __name(async (event) => {
       if (event.player.id !== player.id) return;
       const mainhand = event.player.getComponent("minecraft:equippable")?.getEquipment(EquipmentSlot13.Mainhand)?.typeId ?? null;
-      const interactions = await listInteractionsV1GuildsMeInteractionsGet({
-        coordinates: [event.block.x, event.block.y, event.block.z],
-        interaction_types: ["mine", "place"]
-      });
+      const naturally_mined = await isNaturallyMined(event);
       const action = {
         type: "mine",
         time: /* @__PURE__ */ new Date(),
@@ -6684,7 +6700,7 @@ var MineTargetProcessor = class {
         dimension: event.dimension.id,
         mainhand,
         block_id: event.brokenBlockPermutation.type.id,
-        naturally_mined: interactions.length <= 1
+        naturally_mined
       };
       processGameAction(event.player, action, ref);
     }, "handler");
@@ -6772,7 +6788,7 @@ var KillTargetProcessor = class {
 };
 
 // behaviour_pack/scripts-dev/features/quests/core/notify.ts
-import { system as system24, world as world24 } from "@minecraft/server";
+import { system as system25, world as world24 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/features/quests/core/objective/objective-display.ts
 var SECTION = "\xA78\xA7m                              \xA7r";
@@ -6961,7 +6977,7 @@ Run \`/quests view\` to try your luck with it!`,
     { volume: 1e4 }
   );
   for (let i = 0; i < 5; i++) {
-    system24.runTimeout(() => {
+    system25.runTimeout(() => {
       player.runCommand(`particle minecraft:totem_particle ~ ~2 ~`);
     }, 10);
   }
@@ -6986,7 +7002,7 @@ Run \`/quests daily\` to see yours!`,
     { volume: 1e4 }
   );
   for (let i = 0; i < 5; i++) {
-    system24.runTimeout(() => {
+    system25.runTimeout(() => {
       player.runCommand(`particle minecraft:totem_particle ~ ~2 ~`);
     }, 10);
   }
@@ -7045,7 +7061,7 @@ __name(showTimer, "showTimer");
 import { world as world25 } from "@minecraft/server";
 
 // behaviour_pack/scripts-dev/features/quests/write-back.ts
-import { system as system25, TicksPerSecond as TicksPerSecond10 } from "@minecraft/server";
+import { system as system26, TicksPerSecond as TicksPerSecond10 } from "@minecraft/server";
 var DIRTY = /* @__PURE__ */ new Map();
 var markCounter = 0;
 var IN_FLIGHT = /* @__PURE__ */ new Map();
@@ -7130,7 +7146,7 @@ async function flush() {
 }
 __name(flush, "flush");
 function loadWriteBackLoop() {
-  system25.runInterval(async () => {
+  system26.runInterval(async () => {
     await flush();
   }, TicksPerSecond10 * 5);
 }
@@ -7220,7 +7236,7 @@ var NaturalBlockPlugin = class {
 };
 
 // behaviour_pack/scripts-dev/features/quests/customizations/timer-plugin.ts
-import { system as system26, TicksPerSecond as TicksPerSecond11 } from "@minecraft/server";
+import { system as system27, TicksPerSecond as TicksPerSecond11 } from "@minecraft/server";
 var TimerPlugin = class {
   constructor() {
     this.expired = false;
@@ -7242,13 +7258,13 @@ var TimerPlugin = class {
       this.expired = true;
       return;
     }
-    this.runId = system26.runTimeout(() => {
+    this.runId = system27.runTimeout(() => {
       this.expired = true;
     }, Math.ceil(this.remaining_seconds) * TicksPerSecond11);
   }
   onDeactivate(_ctx, _objective, _progress) {
     if (this.runId !== void 0) {
-      system26.clearRun(this.runId);
+      system27.clearRun(this.runId);
       this.runId = void 0;
     }
     this.expired = false;
@@ -7349,7 +7365,7 @@ function deactivateObjective(ctx, objective, objectiveProgress) {
 __name(deactivateObjective, "deactivateObjective");
 
 // behaviour_pack/scripts-dev/features/quests/processors/scriptevent-target-processor.ts
-import { EquipmentSlot as EquipmentSlot15, system as system27 } from "@minecraft/server";
+import { EquipmentSlot as EquipmentSlot15, system as system28 } from "@minecraft/server";
 var ScripteventTargetProcessor = class {
   constructor() {
     this.subscriptions = /* @__PURE__ */ new Map();
@@ -7375,8 +7391,8 @@ var ScripteventTargetProcessor = class {
       };
       processGameAction(player, action, ref);
     }, "handler");
-    system27.afterEvents.scriptEventReceive.subscribe(handler);
-    this.subscriptions.set(slotKey(ctx), () => system27.afterEvents.scriptEventReceive.unsubscribe(handler));
+    system28.afterEvents.scriptEventReceive.subscribe(handler);
+    this.subscriptions.set(slotKey(ctx), () => system28.afterEvents.scriptEventReceive.unsubscribe(handler));
   }
   onDeactivate(ctx, _objective, _objectiveProgress) {
     this.subscriptions.get(slotKey(ctx))?.();
@@ -7403,7 +7419,7 @@ var ScripteventTargetProcessor = class {
 };
 
 // behaviour_pack/scripts-dev/features/quests/processors/visit-target-processor.ts
-import { EquipmentSlot as EquipmentSlot16, system as system28, TicksPerSecond as TicksPerSecond12 } from "@minecraft/server";
+import { EquipmentSlot as EquipmentSlot16, system as system29, TicksPerSecond as TicksPerSecond12 } from "@minecraft/server";
 var VisitTargetProcessor = class {
   constructor() {
     this.subscriptions = /* @__PURE__ */ new Map();
@@ -7435,8 +7451,8 @@ var VisitTargetProcessor = class {
       };
       processGameAction(player, action, ref);
     }, "handler");
-    const runId = system28.runInterval(handler, TicksPerSecond12);
-    this.subscriptions.set(slotKey(ctx), () => system28.clearRun(runId));
+    const runId = system29.runInterval(handler, TicksPerSecond12);
+    this.subscriptions.set(slotKey(ctx), () => system29.clearRun(runId));
   }
   onDeactivate(ctx, _objective, _objectiveProgress) {
     this.subscriptions.get(slotKey(ctx))?.();
@@ -8095,7 +8111,7 @@ __name(handleProgressFinishedByServer, "handleProgressFinishedByServer");
 function showActiveObjective(player, cached) {
   const active = getActiveObjective(cached.quest, cached.progress);
   if (!active) return;
-  system29.runTimeout(() => {
+  system30.runTimeout(() => {
     if (!player.isValid) return;
     notifyOfQuestUpdate(
       player,
@@ -8199,18 +8215,18 @@ function loadQuestProgressCache() {
   }
   __name(tickSlot, "tickSlot");
   async function runPlayerInit(player, playerName) {
-    const cacheRunId = system29.runInterval(async () => {
+    const cacheRunId = system30.runInterval(async () => {
       if (!player.isValid) {
-        system29.clearRun(cacheRunId);
+        system30.clearRun(cacheRunId);
         return;
       }
       const thornyUser2 = ThornyUser.fetch_user(playerName);
       if (!thornyUser2) return;
       await syncRegularSlot(player, thornyUser2);
     }, TicksPerSecond13 * 2);
-    const tickRunId = system29.runInterval(() => {
+    const tickRunId = system30.runInterval(() => {
       if (!player.isValid) {
-        system29.clearRun(tickRunId);
+        system30.clearRun(tickRunId);
         return;
       }
       const thornyUser2 = ThornyUser.fetch_user(playerName);
@@ -8220,9 +8236,9 @@ function loadQuestProgressCache() {
       }
       followUpFinishedDaily(player, thornyUser2.thorny_id);
     }, TicksPerSecond13);
-    const dailyRunId = system29.runInterval(async () => {
+    const dailyRunId = system30.runInterval(async () => {
       if (!player.isValid) {
-        system29.clearRun(dailyRunId);
+        system30.clearRun(dailyRunId);
         return;
       }
       const thornyUser2 = ThornyUser.fetch_user(playerName);
@@ -8245,13 +8261,13 @@ function loadQuestProgressCache() {
     const playerName = player.name;
     let attempts = 0;
     const MAX_ATTEMPTS = 100;
-    const readyCheckId = system29.runInterval(() => {
+    const readyCheckId = system30.runInterval(() => {
       attempts++;
       if (!player.isValid) {
-        if (attempts >= MAX_ATTEMPTS) system29.clearRun(readyCheckId);
+        if (attempts >= MAX_ATTEMPTS) system30.clearRun(readyCheckId);
         return;
       }
-      system29.clearRun(readyCheckId);
+      system30.clearRun(readyCheckId);
       runPlayerInit(player, playerName).then();
     }, 1);
   });
@@ -8259,7 +8275,7 @@ function loadQuestProgressCache() {
     const playerName = leave_event.playerName;
     const runIds = PLAYER_LOOP_RUN_IDS.get(playerName);
     if (runIds !== void 0) {
-      runIds.map((i) => system29.clearRun(i));
+      runIds.map((i) => system30.clearRun(i));
       PLAYER_LOOP_RUN_IDS.delete(playerName);
     }
     const thorny_user = ThornyUser.fetch_user(playerName);

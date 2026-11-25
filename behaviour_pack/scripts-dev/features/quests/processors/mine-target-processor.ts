@@ -1,11 +1,37 @@
 import {ObjectiveOut, MineTargetModel, ObjectiveProgressOut} from "../../../api/nexuscore/model";
 import { GameAction, MineAction } from "../types/action";
 import { AnyTargetProgress, TargetProcessor } from "../types/target-processor";
-import {EquipmentSlot, Player, PlayerBreakBlockAfterEvent, world} from "@minecraft/server";
+import {EquipmentSlot, PlayerBreakBlockAfterEvent, system, world} from "@minecraft/server";
 import {processGameAction} from "../core/action-dispatch";
 import { DeactivationContext } from "../types/deactivation-context";
 import { ActivationContext, SlotRef, slotKey } from "../types/slot";
 import {listInteractionsV1GuildsMeInteractionsGet} from "../../../api/nexuscore/guilds/guilds";
+
+/**
+ * Natural-block lookups in flight, keyed by block and tick. When both of a
+ * player's quest slots have a mine objective, each slot's handler receives
+ * the same block break; this lets them share one Nexuscore request.
+ */
+const NATURAL_LOOKUPS = new Map<string, Promise<boolean>>()
+
+/** Whether the broken block was naturally generated (never placed or mined before). */
+function isNaturallyMined(event: PlayerBreakBlockAfterEvent): Promise<boolean> {
+    const { x, y, z } = event.block
+    const key = `${event.dimension.id}:${x},${y},${z}@${system.currentTick}`
+
+    let lookup = NATURAL_LOOKUPS.get(key)
+    if (!lookup) {
+        lookup = listInteractionsV1GuildsMeInteractionsGet({
+            coordinates: [x, y, z],
+            interaction_types: ['mine', 'place'],
+        }).then(interactions => interactions.length <= 1)
+
+        NATURAL_LOOKUPS.set(key, lookup)
+        const forget = () => { NATURAL_LOOKUPS.delete(key) }
+        lookup.then(forget, forget)
+    }
+    return lookup
+}
 
 export class MineTargetProcessor implements TargetProcessor {
     private subscriptions = new Map<string, () => void>()  // slotKey → unsubscribe
@@ -26,10 +52,7 @@ export class MineTargetProcessor implements TargetProcessor {
                 ?.getEquipment(EquipmentSlot.Mainhand)
                 ?.typeId ?? null
 
-            const interactions = await listInteractionsV1GuildsMeInteractionsGet({
-                coordinates: [event.block.x, event.block.y, event.block.z],
-                interaction_types: ['mine', 'place'],
-            })
+            const naturally_mined = await isNaturallyMined(event)
 
             const action: MineAction = {
                 type: 'mine',
@@ -39,7 +62,7 @@ export class MineTargetProcessor implements TargetProcessor {
                 dimension: event.dimension.id,
                 mainhand,
                 block_id: event.brokenBlockPermutation.type.id,
-                naturally_mined: interactions.length <= 1,
+                naturally_mined,
             }
 
             processGameAction(event.player, action, ref)
