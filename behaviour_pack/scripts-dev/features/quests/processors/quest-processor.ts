@@ -31,7 +31,7 @@ export class QuestProcessor {
 
         const completed = objectiveProcessor.process(action, player, thorny_id, active.obj_def, active.obj_progress)
 
-        markDirty(thorny_id)
+        markDirty(questProgress)
 
         if (!completed) return false
 
@@ -103,7 +103,7 @@ export class QuestProcessor {
                 activateObjective(player, thorny_id, nextObjectiveDef, nextObjectiveProgress)
             }
 
-            markDirty(thorny_id)
+            markDirty(questProgress)
 
             notifyQuestProgress(
                 player,
@@ -122,7 +122,7 @@ export class QuestProcessor {
     private onQuestComplete(player: Player, thorny_id: number, questOut: QuestOut, questProgress: QuestProgressOut): true {
         questProgress.status = QuestProgressOutStatus.completed
         questProgress.end_time = new Date().toISOString()
-        markDirty(thorny_id)
+        markDirty(questProgress)
 
         notifyQuestComplete(player, questOut.title)
         return true
@@ -146,7 +146,7 @@ export class QuestProcessor {
             }
         }
 
-        markDirty(thorny_id)
+        markDirty(questProgress)
 
         notifyQuestFailure(player, quest.title)
     }

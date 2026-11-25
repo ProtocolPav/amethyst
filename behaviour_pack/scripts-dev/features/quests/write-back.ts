@@ -3,19 +3,21 @@ import { QuestProgressOut, QuestProgressUpdate } from "../../api/nexuscore/model
 import {
     partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut
 } from "../../api/nexuscore/quests/quests";
-import { QUEST_PROGRESS_CACHE } from "./progress-cache";
 
-// Dirty set — thorny_ids of players whose progress needs flushing
-const DIRTY = new Map<number, QuestProgressOut>()  // thorny_id → snapshot
+// Dirty set — quest progress that needs flushing, keyed by progress_id.
+// Keyed by progress rather than player so that a player moving on to new
+// progress (e.g. a new daily quest) can't overwrite an unflushed old one.
+// `mark` increases on every markDirty, so a flush can tell whether the
+// progress changed again while its request was in flight.
+const DIRTY = new Map<number, { progress: QuestProgressOut, mark: number }>()  // progress_id → entry
+let markCounter = 0
 
 /**
- * Mark a player's progress as dirty.
- * Call this after any mutation to QUEST_PROGRESS_CACHE.
+ * Mark quest progress as dirty.
+ * Call this after any mutation to cached quest progress.
  */
-
-export function markDirty(thorny_id: number): void {
-    const progress = QUEST_PROGRESS_CACHE.get(thorny_id)
-    if (progress) DIRTY.set(thorny_id, progress)  // snapshot at mark time
+export function markDirty(progress: QuestProgressOut): void {
+    DIRTY.set(progress.progress_id, { progress, mark: ++markCounter })
 }
 
 /**
@@ -46,16 +48,17 @@ function buildUpdate(progress: QuestProgressOut): QuestProgressUpdate {
 async function flush(): Promise<void> {
     if (DIRTY.size === 0) return
 
-    for (const [thorny_id, progress] of DIRTY) {
+    for (const [progress_id, { progress, mark }] of DIRTY) {
         try {
             await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut(
                 progress.progress_id,
                 buildUpdate(progress)
             )
-            DIRTY.delete(thorny_id)  // only remove on success
+            // Only remove on success, and only if it wasn't marked again mid-flush
+            if (DIRTY.get(progress_id)?.mark === mark) DIRTY.delete(progress_id)
         } catch (error) {
             // Leave in DIRTY — retries next interval with the same snapshot
-            console.error(`[write-back] Failed to flush progress for thorny_id ${thorny_id}:`, error)
+            console.error(`[write-back] Failed to flush progress ${progress_id} (thorny_id ${progress.thorny_id}):`, error)
         }
     }
 }

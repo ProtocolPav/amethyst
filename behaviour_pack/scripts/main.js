@@ -6925,9 +6925,9 @@ import { world as world25 } from "@minecraft/server";
 // behaviour_pack/scripts-dev/features/quests/write-back.ts
 import { system as system25, TicksPerSecond as TicksPerSecond10 } from "@minecraft/server";
 var DIRTY = /* @__PURE__ */ new Map();
-function markDirty(thorny_id) {
-  const progress = QUEST_PROGRESS_CACHE.get(thorny_id);
-  if (progress) DIRTY.set(thorny_id, progress);
+var markCounter = 0;
+function markDirty(progress) {
+  DIRTY.set(progress.progress_id, { progress, mark: ++markCounter });
 }
 __name(markDirty, "markDirty");
 function buildUpdate(progress) {
@@ -6949,15 +6949,15 @@ function buildUpdate(progress) {
 __name(buildUpdate, "buildUpdate");
 async function flush() {
   if (DIRTY.size === 0) return;
-  for (const [thorny_id, progress] of DIRTY) {
+  for (const [progress_id, { progress, mark }] of DIRTY) {
     try {
       await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut(
         progress.progress_id,
         buildUpdate(progress)
       );
-      DIRTY.delete(thorny_id);
+      if (DIRTY.get(progress_id)?.mark === mark) DIRTY.delete(progress_id);
     } catch (error) {
-      console.error(`[write-back] Failed to flush progress for thorny_id ${thorny_id}:`, error);
+      console.error(`[write-back] Failed to flush progress ${progress_id} (thorny_id ${progress.thorny_id}):`, error);
     }
   }
 }
@@ -6992,7 +6992,8 @@ var DeathPlugin = class {
         progress.customization_progress.maximum_deaths = { deaths: 0 };
       }
       progress.customization_progress.maximum_deaths.deaths = deaths;
-      markDirty(thornyUser.thorny_id);
+      const questProgress = QUEST_PROGRESS_CACHE.get(thornyUser.thorny_id);
+      if (questProgress) markDirty(questProgress);
       if (deaths >= c.deaths) this.exceeded = true;
     }, "handler");
     world25.afterEvents.entityDie.subscribe(handler);
@@ -7730,7 +7731,7 @@ var QuestProcessor = class {
     if (!active) return false;
     const thorny_id = ThornyUser.fetch_user(player.name).thorny_id;
     const completed = objectiveProcessor.process(action, player, thorny_id, active.obj_def, active.obj_progress);
-    markDirty(thorny_id);
+    markDirty(questProgress);
     if (!completed) return false;
     return this.completeObjective(player, thorny_id, quest, questProgress, active.obj_def, active.obj_progress);
   }
@@ -7780,7 +7781,7 @@ var QuestProcessor = class {
       if (nextObjectiveDef) {
         activateObjective(player, thorny_id, nextObjectiveDef, nextObjectiveProgress);
       }
-      markDirty(thorny_id);
+      markDirty(questProgress);
       notifyQuestProgress(
         player,
         nextObjectiveDef,
@@ -7795,7 +7796,7 @@ var QuestProcessor = class {
   onQuestComplete(player, thorny_id, questOut, questProgress) {
     questProgress.status = QuestProgressOutStatus.completed;
     questProgress.end_time = (/* @__PURE__ */ new Date()).toISOString();
-    markDirty(thorny_id);
+    markDirty(questProgress);
     notifyQuestComplete(player, questOut.title);
     return true;
   }
@@ -7813,7 +7814,7 @@ var QuestProcessor = class {
         obj.end_time = (/* @__PURE__ */ new Date()).toISOString();
       }
     }
-    markDirty(thorny_id);
+    markDirty(questProgress);
     notifyQuestFailure(player, quest.title);
   }
 };
