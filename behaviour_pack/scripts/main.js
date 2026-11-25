@@ -6542,6 +6542,13 @@ function deleteCachedProgress(ref) {
   QUEST_PROGRESS_CACHE.delete(slotKey(ref));
 }
 __name(deleteCachedProgress, "deleteCachedProgress");
+function findCachedProgressById(progress_id) {
+  for (const entry of QUEST_PROGRESS_CACHE.values()) {
+    if (entry.progress.progress_id === progress_id) return entry;
+  }
+  return void 0;
+}
+__name(findCachedProgressById, "findCachedProgressById");
 
 // behaviour_pack/scripts-dev/features/quests/quest-cache.ts
 var QUEST_CACHE = /* @__PURE__ */ new Map();
@@ -6972,6 +6979,12 @@ import { world as world25 } from "@minecraft/server";
 import { system as system25, TicksPerSecond as TicksPerSecond10 } from "@minecraft/server";
 var DIRTY = /* @__PURE__ */ new Map();
 var markCounter = 0;
+var flushing = false;
+var onProgressFinished;
+function setFinishedProgressHandler(handler) {
+  onProgressFinished = handler;
+}
+__name(setFinishedProgressHandler, "setFinishedProgressHandler");
 function markDirty(progress) {
   DIRTY.set(progress.progress_id, { progress, mark: ++markCounter });
 }
@@ -6994,7 +7007,16 @@ function buildUpdate(progress) {
 }
 __name(buildUpdate, "buildUpdate");
 async function flush() {
-  if (DIRTY.size === 0) return;
+  if (DIRTY.size === 0 || flushing) return;
+  flushing = true;
+  try {
+    await flushAll();
+  } finally {
+    flushing = false;
+  }
+}
+__name(flush, "flush");
+async function flushAll() {
   for (const [progress_id, { progress, mark }] of DIRTY) {
     try {
       await partialUpdateQuestProgressV1GuildsMeQuestsProgressProgressIdPut(
@@ -7003,11 +7025,21 @@ async function flush() {
       );
       if (DIRTY.get(progress_id)?.mark === mark) DIRTY.delete(progress_id);
     } catch (error) {
+      if (error instanceof ConflictError && error.detail?.error === "progress_finished") {
+        DIRTY.delete(progress_id);
+        console.warn(`[write-back] Progress ${progress_id} was already ${error.detail.status} on the server, dropping it`);
+        try {
+          onProgressFinished?.(progress, error.detail.status);
+        } catch (handlerError) {
+          console.error(`[write-back] Failed to handle finished progress ${progress_id}:`, handlerError);
+        }
+        continue;
+      }
       console.error(`[write-back] Failed to flush progress ${progress_id} (thorny_id ${progress.thorny_id}):`, error);
     }
   }
 }
-__name(flush, "flush");
+__name(flushAll, "flushAll");
 function loadWriteBackLoop() {
   system25.runInterval(async () => {
     await flush();
@@ -7949,8 +7981,27 @@ function unloadSlot(ref, playerName, player, isLeaving) {
   return cached;
 }
 __name(unloadSlot, "unloadSlot");
+function findPlayer(thornyId) {
+  return world27.getPlayers().find((p) => ThornyUser.fetch_user(p.name)?.thorny_id === thornyId);
+}
+__name(findPlayer, "findPlayer");
+function notifyQuestEnded(player, cached) {
+  const what = cached.ref.slot === "daily" ? "daily quest" : "quest";
+  notifyOfQuestUpdate(player, `Your ${what} has ended: ${cached.quest.title}`);
+}
+__name(notifyQuestEnded, "notifyQuestEnded");
+function handleProgressFinishedByServer(progress) {
+  const cached = findCachedProgressById(progress.progress_id);
+  if (!cached) return;
+  const player = findPlayer(cached.ref.thornyId);
+  const wasUnfinished = !isFinished(cached.progress.status);
+  unloadSlot(cached.ref, player?.name ?? "", player, !player);
+  if (player && wasUnfinished) notifyQuestEnded(player, cached);
+}
+__name(handleProgressFinishedByServer, "handleProgressFinishedByServer");
 function loadQuestProgressCache() {
   const PLAYER_LOOP_RUN_IDS = /* @__PURE__ */ new Map();
+  setFinishedProgressHandler(handleProgressFinishedByServer);
   function showActiveObjective(player, cached) {
     const active = getActiveObjective(cached.quest, cached.progress);
     if (!active) return;

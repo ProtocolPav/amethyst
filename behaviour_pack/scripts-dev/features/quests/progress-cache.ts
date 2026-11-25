@@ -9,7 +9,8 @@ import { activateObjective, deactivateObjective } from "./core/objective/objecti
 import { tickPlugins } from "./core/objective/objective-tick";
 import { getActiveObjective } from "./core/objective/objective-lookup";
 import { generateObjectiveDisplayString } from "./core/objective/objective-display";
-import { CachedQuestProgress, deleteCachedProgress, getCachedProgress, setCachedProgress } from "./progress-store";
+import { CachedQuestProgress, deleteCachedProgress, findCachedProgressById, getCachedProgress, setCachedProgress } from "./progress-store";
+import { setFinishedProgressHandler } from "./write-back";
 import { QUEST_SLOTS, SlotRef, slotKey } from "./types/slot";
 import { isFinished } from "./core/status";
 
@@ -72,8 +73,39 @@ export function unloadSlot(ref: SlotRef, playerName: string, player: Player | un
     return cached
 }
 
+function findPlayer(thornyId: number): Player | undefined {
+    return world.getPlayers().find(p => ThornyUser.fetch_user(p.name)?.thorny_id === thornyId)
+}
+
+/**
+ * Tells the player their quest has ended without them finishing it.
+ */
+export function notifyQuestEnded(player: Player, cached: CachedQuestProgress) {
+    const what = cached.ref.slot === 'daily' ? 'daily quest' : 'quest'
+    notifyOfQuestUpdate(player, `Your ${what} has ended: ${cached.quest.title}`)
+}
+
+/**
+ * Handles Nexuscore rejecting a save because it already finished the
+ * progress (usually because the quest expired): evicts it from its slot
+ * and tells the player, if they're online and it was still unfinished here.
+ */
+function handleProgressFinishedByServer(progress: QuestProgressOut) {
+    const cached = findCachedProgressById(progress.progress_id)
+    if (!cached) return  // Slot has already moved on
+
+    const player = findPlayer(cached.ref.thornyId)
+    const wasUnfinished = !isFinished(cached.progress.status)
+
+    unloadSlot(cached.ref, player?.name ?? '', player, !player)
+
+    if (player && wasUnfinished) notifyQuestEnded(player, cached)
+}
+
 export default function loadQuestProgressCache() {
     const PLAYER_LOOP_RUN_IDS = new Map<string, number[]>()
+
+    setFinishedProgressHandler(handleProgressFinishedByServer)
 
     function showActiveObjective(player: Player, cached: CachedQuestProgress) {
         const active = getActiveObjective(cached.quest, cached.progress)
